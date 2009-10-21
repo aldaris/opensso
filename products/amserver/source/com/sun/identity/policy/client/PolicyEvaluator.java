@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.6 2008-08-19 19:09:15 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.7 2009-10-21 23:50:46 dillidorai Exp $
  *
  */
 
@@ -173,8 +173,13 @@ public class PolicyEvaluator {
         appSSOToken = getNewAppSSOToken();
 
         if (PolicyProperties.previouslyNotificationEnabled()) {
-            resourceResultCache.removeRemotePolicyListener(appSSOToken,
-                    serviceName, PolicyProperties.getPreviousNotificationURL());
+            if (policyProperties.useRESTProtocol()) {
+                resourceResultCache.removeRESTRemotePolicyListener(appSSOToken,
+                        serviceName, PolicyProperties.getPreviousNotificationURL());
+            } else {
+                resourceResultCache.removeRemotePolicyListener(appSSOToken,
+                        serviceName, PolicyProperties.getPreviousNotificationURL());
+            }
         }
 
         if (policyProperties.notificationEnabled()) {
@@ -186,8 +191,13 @@ public class PolicyEvaluator {
                         + "service");
 
             }
-            resourceResultCache.addRemotePolicyListener(appSSOToken,
-                    serviceName, policyProperties.getNotificationURL());
+            if (policyProperties.useRESTProtocol()) {
+                resourceResultCache.addRESTRemotePolicyListener(appSSOToken,
+                        serviceName, policyProperties.getRESTNotificationURL());
+            } else {
+                resourceResultCache.addRemotePolicyListener(appSSOToken,
+                        serviceName, policyProperties.getNotificationURL());
+            }
         }
 
         ActionDecision.setClientClockSkew(policyProperties.getClientClockSkew());

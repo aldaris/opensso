@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.16 2009-10-12 17:53:05 dillidorai Exp $
+ * $Id: ResourceResultCache.java,v 1.17 2009-10-21 23:50:46 dillidorai Exp $
  *
  */
 
@@ -123,13 +123,17 @@ class ResourceResultCache implements SSOTokenListener {
 
     private static final String POLICY_SERVICE = "policyservice";
     private static final String REST_POLICY_SERVICE = "ws/1/entitlement/entitlement";
-
+    private static final String REST_POLICY_SERVICE_LISTENER = "ws/1/entitlement/listener";
+    private static final String REST_LISTENER_NOTIFICATION_URL = "url";
+    
     private static final String IPLANET_AM_WEB_AGENT_SERVICE = "iPlanetAMWebAgentService";
 
     private static final String REST_QUERY_REALM = "realm";
-    private static final String REST_QUERY_APPLICATION = "applicationName";
+    private static final String REST_QUERY_APPLICATION = "application";
+    private static final String REST_QUERY_ADMIN = "admin";
     private static final String REST_QUERY_SUBJECT = "subject";
     private static final String REST_QUERY_RESOURCE = "resource";
+    private static final String REST_QUERY_RESOURCES = "resources";
     private static final String REST_QUERY_ACTION = "actionName";
     private static final String REST_QUERY_ENV = "env";
 
@@ -607,7 +611,8 @@ class ResourceResultCache implements SSOTokenListener {
             //FIXME: need to be able to handle non uuid, for example ssoTokenId
             String subjectUuid = userIdentity.getUniversalId();
             String restUrl = getRESTPolicyServiceURL(token, scope);
-            String queryString = buildQueryString("/", serviceName, subjectUuid,
+            String queryString = buildEntitlementRequestQueryString(
+                    "/", serviceName, subjectUuid,
                     resourceName, actionNames, env);
             restUrl = restUrl + "?" + queryString;
             if (debug.messageEnabled()) {
@@ -1724,82 +1729,6 @@ class ResourceResultCache implements SSOTokenListener {
         return sb.toString();
     }
 
-    static String buildQueryString(
-            String realm, 
-            String serviceName, 
-            String subjectUuid,
-            String resource,
-            Set actionNames,
-            Map envMap) throws PolicyException {
-        StringBuilder sb = new StringBuilder();
-        try {
-            realm = (realm == null || (realm.trim().length() == 0)) ? "/"
-                    : realm;
-            realm = URLEncoder.encode(realm, "UTF-8");
-            sb.append(REST_QUERY_REALM).append("=");
-            sb.append(realm);
-            if ((serviceName == null) || (serviceName.length() == 0)) {
-                if (debug.warningEnabled()) {
-                    debug.warning("ResourceResultCache.buildQueryString():"
-                            + "serviceName can not be null");
-                }
-                throw new PolicyException(ResBundleUtils.rbName,
-                        "service_name_can_not_be_null", null, null);
-            } else {
-                sb.append("&").append(REST_QUERY_APPLICATION).append("=");
-                sb.append(URLEncoder.encode(serviceName, "UTF-8"));
-            }
-            if ((subjectUuid == null) || (subjectUuid.trim().length() == 0)) {
-                if (debug.warningEnabled()) {
-                    debug.warning("ResourceResultCache.buildQueryString():"
-                            + "subject can not be null");
-                }
-                throw new PolicyException(ResBundleUtils.rbName,
-                        "subject_can_not_be_null", null, null);
-            } else {
-                sb.append("&").append(REST_QUERY_SUBJECT).append("=");
-                sb.append(URLEncoder.encode(subjectUuid, "UTF-8"));
-            }
-            if ((resource == null) || (resource.trim().length() == 0)) {
-                if (debug.warningEnabled()) {
-                    debug.warning("ResourceResultCache.buildQueryString():"
-                            + "resource can not be null");
-                }
-                throw new PolicyException(ResBundleUtils.rbName,
-                        "resource_can_not_be_null", null, null);
-            } else {
-                sb.append("&").append(REST_QUERY_RESOURCE).append("=");
-                sb.append(URLEncoder.encode(resource, "UTF-8"));
-            }
-            if ((actionNames != null) && !actionNames.isEmpty()) {
-                for (Object actObj: actionNames) {
-                    sb.append("&").append(REST_QUERY_ACTION).append("=");
-                    sb.append(URLEncoder.encode(actObj.toString(), "UTF-8"));
-                }
-            }
-            if ((envMap != null) && !envMap.isEmpty()) {
-                String encodedEq = URLEncoder.encode("=", "UTF-8");
-                Set keys = envMap.keySet();
-                for (Object keyOb : keys) {
-                    Set values = (Set)envMap.get(keyOb);
-                    String key = URLEncoder.encode(keyOb.toString(), "UTF-8");
-                    if ((values != null) && !values.isEmpty()) {
-                        for (Object valueOb : values) {
-                            sb.append("&").append(REST_QUERY_ENV).append("=");
-                            sb.append(key);
-                            sb.append(encodedEq);
-                            sb.append(URLEncoder.encode(valueOb.toString(), "UTF-8"));
-                        }
-                    }
-                }
-            }
-        } catch (UnsupportedEncodingException use) {
-            // should not happen
-            debug.error("ResourceResultCache.buildQueryString():" + use.getMessage());
-        }
-        return sb.toString();
-    }
-
     Set<ResourceResult> jsonResourceContentToResourceResults(
             String jsonResourceContent, String serviceName) 
             throws JSONException, PolicyException {
@@ -1866,5 +1795,599 @@ class ResourceResultCache implements SSOTokenListener {
         return resourceResult;
     }
 
+
+    /**
+     * Registers a REST listener with policy service to recieve
+     * notifications on policy changes
+     * @param appToken session token identifying the client
+     * @param serviceName service name
+     * @param notificationURL end point on the client that listens for
+     * notifications
+     */
+    void addRESTRemotePolicyListener(SSOToken appToken, 
+            String serviceName, String notificationURL) {
+        addRESTRemotePolicyListener(appToken, serviceName, notificationURL, 
+                false);
+    }
+
+    /**
+     * Registers a REST listener with policy service to recieve
+     * notifications on policy changes
+     * @param appToken session token identifying the client
+     * @param serviceName service name
+     * @param notificationURL end point on the client that listens for
+     * notifications
+     *
+     * @param reRegister flag indicating whether to register listener
+     *  even if it was already registered. <code>true</code> indicates
+     * to register listener again even if it was previously registered
+     */
+    boolean addRESTRemotePolicyListener(SSOToken appToken, 
+            String serviceName, String notificationURL, 
+            boolean reRegister) {
+        boolean  status = false;
+        if (debug.messageEnabled()) {
+            debug.message("ResourceResultCache.addRESTRemotePolicyListener():"
+                    + "serviceName=" + serviceName
+                    + ":notificationURL=" + notificationURL);
+        } 
+
+        if (remotePolicyListeners.contains(serviceName)
+                    && !reRegister) {
+            if (debug.messageEnabled()) {
+                debug.message("ResourceResultCache.addRESTRemotePolicyListener():"
+                        + "serviceName=" + serviceName
+                        + ":notificationURL=" + notificationURL
+                        + ":is already registered");
+            } 
+            return status;
+        } //else do the following
+
+        if (appToken != null) {
+            try {
+                String policyServiceListenerURL = null;
+                policyServiceListenerURL 
+                        = getRESTPolicyServiceListenerURL(appToken);
+                String rootURL = getRootURL(notificationURL);
+                if (debug.messageEnabled()) {
+                    debug.message("ResourceResultCache."
+                            + "addRESTRemotePolicyListener():"
+                            + "serviceName=" + serviceName
+                            + ":notificationURL=" + notificationURL
+                            + ":rootURL=" + rootURL
+                            + ":policyServiceListenerURL=" + policyServiceListenerURL
+                            );
+                } 
+                StringBuilder sb = new StringBuilder();
+                sb.append(policyServiceListenerURL).append("/");
+                sb.append(URLEncoder.encode(notificationURL));
+                String restUrl = sb.toString();
+                String admin = appToken.getTokenID().toString(); 
+                Set<String> resourceNames = new HashSet<String>();
+                resourceNames.add(rootURL);
+                String queryString = buildRegisterListenerQueryString(
+                        admin, serviceName, resourceNames);
+                String resourceContent = postForm(restUrl, queryString);
+                if (debug.messageEnabled()) {
+                    debug.message("ResourceResultCache."
+                            + "addRESTRemotePolicyListener():"
+                            + ":resourceContent=" + resourceContent
+                            );
+                } 
+                //FIXME: check the response, detect error conditions
+                status = true;
+                remotePolicyListeners.add(serviceName);
+                // FIXME: what do we check in the content
+            } catch (SSOException se) {
+                debug.error("ResourceResultCache.addRESTRemotePolicyListener():"
+                        + "Can not add policy listner", se);
+            } catch (PolicyException pe) {
+                debug.error("ResourceResultCache.addRESTRemotePolicyListener():"
+                        + "Can not add policy listner", pe);
+            }
+        } else {
+            // log a debug message: not registering listener
+            if (debug.messageEnabled()) {
+                debug.message("ResourceResultCache.addRESTRemotePolicyListener():"
+                        + "not adding listener, app sso token is null");
+            }
+        }
+
+        return status;
+    } 
+
+    /**
+     * Removes a REST listener registered with policy service to recieve
+     * notifications on policy changes
+     * @param appToken session token identifying the client
+     * @param serviceName service name
+     * @param notificationURL end point on the client that listens for
+     * notifications
+     */
+     public boolean removeRESTRemotePolicyListener(SSOToken appToken, 
+            String serviceName, String notificationURL) {
+        boolean status = false;
+        URL policyServiceURL = null;
+        remotePolicyListeners.remove(notificationURL);
+        if (appToken != null) {
+            try {
+                policyServiceURL = getPolicyServiceURL(appToken);
+            } catch (PolicyException pe) {
+                debug.error("ResourceResultCache.removeRemotePolicyListener():"
+                        + "Can not remove policy listner:", pe);
+            }
+        }
+
+        if (appToken != null) {
+            try {
+                String policyServiceListenerURL = null;
+                policyServiceListenerURL 
+                        = getRESTPolicyServiceListenerURL(appToken);
+                if (debug.messageEnabled()) {
+                    debug.message("ResourceResultCache."
+                            + "removeRESTRemotePolicyListener():"
+                            + "serviceName=" + serviceName
+                            + ":notificationURL=" + notificationURL
+                            + ":policyServiceListenerURL=" + policyServiceListenerURL
+                            );
+                } 
+                StringBuilder sb = new StringBuilder();
+                sb.append(policyServiceListenerURL).append("/");
+                sb.append(URLEncoder.encode(notificationURL));
+                String admin = appToken.getTokenID().toString(); 
+                Set<String> resourceNames = null;
+                sb.append(buildRegisterListenerQueryString(admin, serviceName, resourceNames));
+                String restUrl = sb.toString();
+                String resourceContent = deleteRESTResourceContent(restUrl);
+                //FIXME: what do we check in the content
+                if (debug.messageEnabled()) {
+                    debug.message("ResourceResultCache."
+                            + "removeRESTRemotePolicyListener():"
+                            + ":resourceContent=" + resourceContent
+                            );
+                } 
+                remotePolicyListeners.remove(notificationURL);
+            } catch (SSOException se) {
+                debug.error("ResourceResultCache.addRESTRemotePolicyListener():"
+                        + "Can not add policy listner", se);
+            } catch (PolicyException pe) {
+                debug.error("ResourceResultCache.removeRESTRemotePolicyListener():"
+                        + "Can not remove policy listner", pe);
+            }
+        } else {
+            // log a debug message: not removing listener
+            // log a debug message: not registering listener
+            if (debug.messageEnabled()) {
+                debug.message("ResourceResultCache.removeRESTRemotePolicyListener():"
+                        + "not removing listener, app sso token is null");
+            }
+        }
+
+        return status;
+    }
+
+    /**
+     * Processes REST policy notifications forwarded from listener end 
+     * point of policy client
+     * @param pn REST policy notification
+     */
+    static void processRESTPolicyNotification(String pn) //pn has to be JSON string
+            throws PolicyEvaluationException {
+        // samplePn = "{realm: "/", privilgeName: "p1", resources: ["r1", "r2"]}";
+        if (pn != null) {
+            if (debug.messageEnabled()) {
+                debug.message("ResourceResultCache:processRESTPolicyNotification(), jsonString:"
+                        + pn);
+            }
+            ResourceResultCache cache = ResourceResultCache.getInstance();
+            String serviceName = "iPlanetAMWebAgentService"; //FIXME
+            Set<String> affectedResourceNames = null;  //FIXME
+            try {
+                JSONObject jo = new JSONObject(pn);
+                JSONArray jsonArray = jo.optJSONArray("resources");
+                if (jsonArray != null) {
+                    int arrayLen = jsonArray.length();
+                    for (int i = 0; i < arrayLen; i++) {
+                        String  resName = jsonArray.optString(i);
+                        if (affectedResourceNames == null) {
+                            affectedResourceNames = new HashSet<String>();
+                        }
+                        affectedResourceNames.add(resName);
+                    }
+                }
+            } catch (JSONException je) {
+                debug.error("ResourceResultCache.processRESTPolicyNotification():"
+                    + "pn=" + pn);
+                throw new PolicyEvaluationException("notification_not_valid_json");
+            }
+            if (serviceName != null && affectedResourceNames != null) {
+                if (cache.remotePolicyListeners.contains(serviceName)) {
+                    if (debug.messageEnabled()) {
+                        debug.message("ResourceResultCache:"
+                                + "processRESTPolicyNotification():" 
+                                + "serviceName=" + serviceName
+                                + ":affectedResourceNames=" 
+                                + affectedResourceNames
+                                + ":clearing cache for affected "
+                                + "resource names");
+                    }
+                    clearCacheForResourceNames(serviceName, 
+                            affectedResourceNames);
+                } else {
+                    if (debug.messageEnabled()) {
+                        debug.message("ResourceResultCache:"
+                                + "processRESTPolicyNotification():" 
+                                + "serviceName not registered"
+                                + ":no resource names cleared from cache");
+                    }
+                }
+            } else {
+                if (debug.messageEnabled()) {
+                    debug.message("ResourceResultCache:"
+                            + "processRESTPolicyNotification():" 
+                            + "serviceName or affectedResourceNames is null"
+                            + ":no resource names cleared from cache");
+                }
+            }
+        } else {
+            debug.error("ResourceResultCache.processRESTPolicyNotification()" 
+                    + "PolicyNotification is null");
+        } 
+    } 
+
+    private String getRESTPolicyServiceListenerURL(SSOToken token) 
+            throws SSOException, PolicyException {
+        String restUrl = null;
+        URL policyServiceURL = getPolicyServiceURL(token);
+        restUrl = policyServiceURL.toString();
+        restUrl = restUrl.replace(POLICY_SERVICE, REST_POLICY_SERVICE_LISTENER);
+        if (debug.messageEnabled()) {
+            debug.message("ResourceResultCache.getRESTPolicyServiceURL():"
+                + "restPolicyServiceListenerUrl=" + restUrl);
+        }
+        return restUrl;
+    }
+    
+    String postForm(String url, String formContent) throws PolicyException {
+        if (debug.messageEnabled()) {
+            debug.message("ResourceResultCache."
+                    + "postForm():"
+                    + "url=" + url
+                    + ", formContent=" + formContent);
+        }
+        StringBuilder sb = new StringBuilder();
+        HttpURLConnection conn = null;
+        OutputStream out = null;
+        BufferedReader reader = null;
+        try {
+            conn = HttpURLConnectionManager.getConnection(new URL(url));
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", 
+                    "application/x-www-form-urlencoded");
+            conn.setRequestProperty("Content-Length", 
+                    Integer.toString(formContent.length()));
+
+            conn.connect();
+
+            out =   conn.getOutputStream();
+            out.write(formContent.getBytes("UTF-8"));
+            out.write("\r\n".getBytes("UTF-8"));
+            out.flush();
+            out.close();
+
+            reader =  new BufferedReader(
+                    new InputStreamReader(
+                    conn.getInputStream(), "UTF-8"));
+            int len;
+            char[] buf = new char[1024];
+            while ((len = reader.read(buf, 0, buf.length)) != -1) {
+                sb.append(buf, 0, len);
+            }
+            int responseCode = conn.getResponseCode();
+            // any 200 series response code is success
+            if (responseCode < 200 || responseCode > 299) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("ResourceResultCache."
+                                + "postForm():"
+                                + "REST call failed with HTTP response code:" 
+                                + responseCode);
+                    }
+                    throw new PolicyException(
+                            "Entitlement REST call failed with error code:" 
+                            + responseCode);
+            }
+        } catch (UnsupportedEncodingException uee) {
+            // should not happen
+            debug.error("ResourceResultCache.postFormParams():"
+                    + "UnsupportedEncodingException:" + uee.getMessage());
+        } catch (IOException ie) {
+            debug.error("ResourceResultCache.postForm():IOException:" 
+                    + ie.getMessage(), ie);
+            throw new PolicyException(ResBundleUtils.rbName,
+                    "rest_call_failed_with_io_exception", null, ie);
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+                if (conn != null) {
+                    conn.disconnect();
+                }
+                
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return sb.toString();
+    }
+
+    String getRESTResourceContent(String url) throws PolicyException {
+        StringBuilder sb = new StringBuilder();
+        HttpURLConnection conn = null;
+        OutputStream out = null;
+        BufferedReader reader = null;
+        try {
+            conn = HttpURLConnectionManager.getConnection(new URL(url));
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("GET");
+            conn.connect();
+
+            reader =  new BufferedReader(
+                    new InputStreamReader(
+                    conn.getInputStream(), "UTF-8"));
+            int len;
+            char[] buf = new char[1024];
+            while ((len = reader.read(buf, 0, buf.length)) != -1) {
+                sb.append(buf, 0, len);
+            }
+            int responseCode = conn.getResponseCode();
+            if (responseCode != conn.HTTP_OK) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("ResourceResultCache."
+                                + "getRESTResourceContent():"
+                                + "REST call failed with HTTP response code:" 
+                                + responseCode);
+                    }
+                    throw new PolicyException(
+                            "Entitlement REST call failed with error code:" 
+                            + responseCode);
+            }
+        } catch (UnsupportedEncodingException uee) {
+            // should not happen
+            debug.error("ResourceResultCache.getRESTResourceContent():"
+                    + "UnsupportedEncodingException:" + uee.getMessage());
+        } catch (IOException ie) {
+            debug.error("ResourceResultCache.getResourceConent():IOException:" 
+                    + ie.getMessage(), ie);
+            throw new PolicyException(ResBundleUtils.rbName,
+                    "rest_call_failed_with_io_exception", null, ie);
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+                if (conn != null) {
+                    conn.disconnect();
+                }
+                
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return sb.toString();
+    }
+
+    String deleteRESTResourceContent(String url) throws PolicyException {
+        StringBuilder sb = new StringBuilder();
+        HttpURLConnection conn = null;
+        OutputStream out = null;
+        BufferedReader reader = null;
+        try {
+            conn = HttpURLConnectionManager.getConnection(new URL(url));
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("DELETE");
+            conn.connect();
+
+            reader =  new BufferedReader(
+                    new InputStreamReader(
+                    conn.getInputStream(), "UTF-8"));
+            int len;
+            char[] buf = new char[1024];
+            while ((len = reader.read(buf, 0, buf.length)) != -1) {
+                sb.append(buf, 0, len);
+            }
+            int responseCode = conn.getResponseCode();
+            if (responseCode != conn.HTTP_OK) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("ResourceResultCache."
+                                + "deleteRESTResourceContent():"
+                                + "REST call failed with HTTP response code:" 
+                                + responseCode);
+                    }
+                    throw new PolicyException(
+                            "Entitlement REST call failed with error code:" 
+                             + responseCode);
+            }
+        } catch (UnsupportedEncodingException uee) {
+            // should not happen
+            debug.error("ResourceResultCache.deleteRESTResourceContent():"
+                    + "UnsupportedEncodingException:" + uee.getMessage());
+        } catch (IOException ie) {
+            debug.error("IOException:" + ie);
+            throw new PolicyException(ResBundleUtils.rbName,
+                    "rest_call_failed_with_io_exception", null, ie);
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+                if (conn != null) {
+                    conn.disconnect();
+                }
+                
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return sb.toString();
+    }
+
+    static String buildRegisterListenerQueryString(
+            String admin, 
+            String serviceName, // called application in entitlement
+            Set<String> resourceNames) throws PolicyException {
+        StringBuilder sb = new StringBuilder();
+        try {
+            if ((admin == null) || (admin.length() == 0)) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ResourceResultCache.builRegisterListenerdQueryString():"
+                            + "admin is null");
+                }
+                throw new PolicyException(ResBundleUtils.rbName,
+                        "admin_can_not_be_null", null, null); // FIXME: add l10n
+            } else {
+                sb.append(REST_QUERY_ADMIN).append("=");
+                sb.append(URLEncoder.encode(admin, "UTF-8"));
+            }
+
+            if ((serviceName == null) || (serviceName.length() == 0)) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ResourceResultCache.builRegisterListenerdQueryString():"
+                            + "serviceName can not be null");
+                }
+                throw new PolicyException(ResBundleUtils.rbName,
+                        "service_name_can_not_be_null", null, null);
+            } else {
+                if (sb.length() > 0) {
+                    sb.append("&");
+                }
+                sb.append(REST_QUERY_APPLICATION).append("=");
+                sb.append(URLEncoder.encode(serviceName, "UTF-8"));
+            }
+
+            if ((resourceNames == null) || resourceNames.isEmpty()) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ResourceResultCache.builRegisterListenerdQueryString():"
+                            + "resoureNames is null or empty");
+                }
+            } else {
+                for (String resourceName : resourceNames) {
+                    if (sb.length() > 0) {
+                        sb.append("&");
+                    }
+                    sb.append(REST_QUERY_RESOURCES).append("=");
+                    sb.append(URLEncoder.encode(resourceName, "UTF-8"));
+                }
+            }
+        } catch (UnsupportedEncodingException use) {
+            // should not happen
+            debug.error("ResourceResultCache.buildRegisterListenerQueryString():" 
+                    + use.getMessage());
+        }
+        return sb.toString();
+    }
+
+    static String buildEntitlementRequestQueryString(
+            String realm, 
+            String serviceName, 
+            String subjectUuid,
+            String resource,
+            Set actionNames,
+            Map envMap) throws PolicyException {
+        StringBuilder sb = new StringBuilder();
+        try {
+            realm = (realm == null || (realm.trim().length() == 0)) ? "/"
+                    : realm;
+            realm = URLEncoder.encode(realm, "UTF-8");
+            sb.append(REST_QUERY_REALM).append("=");
+            sb.append(realm);
+            if ((serviceName == null) || (serviceName.length() == 0)) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ResourceResultCache."
+                            + "buildEntitlementRequestQueryString():"
+                            + "serviceName can not be null");
+                }
+                throw new PolicyException(ResBundleUtils.rbName,
+                        "service_name_can_not_be_null", null, null);
+            } else {
+                sb.append("&").append(REST_QUERY_APPLICATION).append("=");
+                sb.append(URLEncoder.encode(serviceName, "UTF-8"));
+            }
+            if ((subjectUuid == null) || (subjectUuid.trim().length() == 0)) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ResourceResultCache."
+                            + "buildEntitlementRequestQueryString():"
+                            + "subject can not be null");
+                }
+                throw new PolicyException(ResBundleUtils.rbName,
+                        "subject_can_not_be_null", null, null);
+            } else {
+                sb.append("&").append(REST_QUERY_SUBJECT).append("=");
+                sb.append(URLEncoder.encode(subjectUuid, "UTF-8"));
+            }
+            if ((resource == null) || (resource.trim().length() == 0)) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ResourceResultCache."
+                            + "buildEntitlementRequestQueryString():"
+                            + "resource can not be null");
+                }
+                throw new PolicyException(ResBundleUtils.rbName,
+                        "resource_can_not_be_null", null, null);
+            } else {
+                sb.append("&").append(REST_QUERY_RESOURCE).append("=");
+                sb.append(URLEncoder.encode(resource, "UTF-8"));
+            }
+            if ((actionNames != null) && !actionNames.isEmpty()) {
+                for (Object actObj: actionNames) {
+                    sb.append("&").append(REST_QUERY_ACTION).append("=");
+                    sb.append(URLEncoder.encode(actObj.toString(), "UTF-8"));
+                }
+            }
+            if ((envMap != null) && !envMap.isEmpty()) {
+                String encodedEq = URLEncoder.encode("=", "UTF-8");
+                Set keys = envMap.keySet();
+                for (Object keyOb : keys) {
+                    Set values = (Set)envMap.get(keyOb);
+                    String key = URLEncoder.encode(keyOb.toString(), "UTF-8");
+                    if ((values != null) && !values.isEmpty()) {
+                        for (Object valueOb : values) {
+                            sb.append("&").append(REST_QUERY_ENV).append("=");
+                            sb.append(key);
+                            sb.append(encodedEq);
+                            sb.append(URLEncoder.encode(valueOb.toString(), "UTF-8"));
+                        }
+                    }
+                }
+            }
+        } catch (UnsupportedEncodingException use) {
+            // should not happen
+            debug.error("ResourceResultCache.buildEntitlementRequestQueryString():" 
+                    + use.getMessage());
+        }
+        return sb.toString();
+    }
+
+    String getRootURL(String url) {
+        String rootUrl = null;
+        if (url == null) {
+            return null;
+        }
+        int dsi = url.indexOf("//");
+        if (dsi == -1) {
+            return url;
+        }
+        int si = url.indexOf("/", dsi + 3);
+        if (si == -1) {
+            return url;
+        }
+        return (url.substring(0, si));
+    }
+
+    
 }
 

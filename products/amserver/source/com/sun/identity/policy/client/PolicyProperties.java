@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyProperties.java,v 1.9 2009-09-21 18:33:45 dillidorai Exp $
+ * $Id: PolicyProperties.java,v 1.10 2009-10-21 23:50:46 dillidorai Exp $
  *
  */
 
@@ -118,6 +118,9 @@ class PolicyProperties {
     public static final String RESULTS_CACHE_RESOURCE_CAP 
             = "com.sun.identity.policy.client.resultsCacheResourceCap";
 
+    private final static String REST_NOTIFICATION_URL
+            = "com.sun.identity.client.rest.notification.url";
+
     private final static String COLON = ":";
     private final static String PIPE = "|";
     final static String ALLOW = "ALLOW";
@@ -146,6 +149,7 @@ class PolicyProperties {
     private String pre22FalseValue = PRE22_FALSE_VALUE;
     private ResourceName prefixResourceName = new PrefixResourceName();
     private boolean useRESTProtocolFlag = false;
+    private String restNotificationURL;
 
     /**
      * Difference of system clock on the client machine compared to 
@@ -519,6 +523,23 @@ class PolicyProperties {
                     + useRESTProtocolFlag);
         }
 
+        //initialize restNotificationURL
+        restNotificationURL = getSystemProperty(REST_NOTIFICATION_URL, ignoreCase);
+        if ((restNotificationURL == null) || (restNotificationURL.length() == 0)) {
+            if (notificationEnabledFlag && useRESTProtocolFlag) {
+                if (debug.warningEnabled()) {
+                    debug.warning("PolicyProperties:empty REST notification URL, "
+                        + "disabling notification");
+                }
+                notificationEnabledFlag = false;
+            } else {
+                if (debug.messageEnabled()) {
+                    debug.message("PolicyProperties: restNotificationURL:"
+                        + restNotificationURL);
+                }
+            }
+        }
+
         if (debug.messageEnabled()) {
             debug.message("PolicyProperties():constructed");
         }
@@ -588,6 +609,14 @@ class PolicyProperties {
      */
     boolean useRESTProtocol() {
         return useRESTProtocolFlag;
+    }
+
+    /**
+     * Returns REST notificaton URL
+     * @return REST notification URL
+     */
+    String getRESTNotificationURL() {
+        return restNotificationURL;
     }
 
     /**

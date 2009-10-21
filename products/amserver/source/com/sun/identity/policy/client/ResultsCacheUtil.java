@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResultsCacheUtil.java,v 1.3 2008-06-25 05:43:46 qcheng Exp $
+ * $Id: ResultsCacheUtil.java,v 1.4 2009-10-21 23:50:47 dillidorai Exp $
  *
  */
 
@@ -74,6 +74,31 @@ public class ResultsCacheUtil {
         } else {
             debug.error("ResultsCacheUtil.processPolicyNotification():" 
                     + "PolicyNotification is null");
+        }
+    }
+
+    /**
+      * Processes REST notifications forwarded from the endpoint on policy 
+      * client that is listening for notifications from policy service
+      *
+      * @param message notification as JSON string
+      * @throws PolicyEvaluationException 
+      *
+      */
+    public static void processRESTNotification(String message)
+            throws PolicyEvaluationException {
+        // sample json string
+        // {realm: "/", privilgeName: "p1", 
+        //     resources: ["http://www.sample.com/a.html", "http://www.sample.com/b.html"]}
+        if (debug.messageEnabled()) {
+            debug.message("ResultsCacheUtil.processRESTNotification():"
+                    + "recieved notification =" + message);
+        }
+        if (message != null) {
+            ResourceResultCache.processRESTPolicyNotification(message);
+        } else {
+            debug.error("ResultsCacheUtil.processRESTNotification():" 
+                    + "notification message is null");
         }
     }
 
