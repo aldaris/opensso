@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimpleProxyServlet.java,v 1.3 2009-10-15 07:08:29 pbryan Exp $
+ * $Id: SimpleProxyServlet.java,v 1.4 2009-10-21 00:01:45 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -45,7 +45,7 @@ import javax.servlet.ServletException;
  *
  * @author Paul C. Bryan
  */
-public class SimpleProxyServlet extends HandlerServlet<Chain>
+public class SimpleProxyServlet extends HandlerServlet
 {
     /**
      * Creates a new simple proxy servlet, initializing the filter chain
@@ -81,7 +81,7 @@ public class SimpleProxyServlet extends HandlerServlet<Chain>
      * @throws IllegalArgumentException if the filter to add already has a next filter.
      */
     public void addFilter(Filter filter) {
-        handler.addFilter(filter);
+        ((Chain)handler).addFilter(filter);
     }
 }
 

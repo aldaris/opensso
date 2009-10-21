@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HandlerServlet.java,v 1.6 2009-10-18 18:41:29 pbryan Exp $
+ * $Id: HandlerServlet.java,v 1.7 2009-10-21 00:01:44 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,18 +43,19 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Receives HTTP requests through a the Servlet API, translates to proxy
- * message exchange and dispatches to a handler. The handler type is generic
+ * Receives HTTP requests through the Servlet API, translates to proxy message
+ * exchange and dispatches to a handler. This class is intended to be subclassed
+ * to establish handler and base URI.
  *
  * @author Paul C. Bryan
  */
-public class HandlerServlet<H extends Handler> extends HttpServlet
+public class HandlerServlet extends HttpServlet
 {
     /** The handler to dispatch exchanges to. */
-    public H handler = null;
+    protected Handler handler = null;
 
     /** The base URI (scheme, host, port) of the remote server to relay requests to. */
-    public URI base = null;
+    protected URI base = null;
 
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response)
@@ -68,13 +69,20 @@ public class HandlerServlet<H extends Handler> extends HttpServlet
 
         exchange.request.method = request.getMethod();
 
-        // request uri
-        StringBuilder sb = new StringBuilder(request.getRequestURI());
+        // build request URI manually to avoid inadvertent normalization
+        StringBuilder sb = new StringBuilder();
+        sb.append(base.getScheme()).append("://").append(base.getHost());
+        int port = base.getPort();
+        if (port != -1) {
+            sb.append(':').append(Integer.toString(port));
+        }
+        sb.append(request.getRequestURI());
         String queryString = request.getQueryString();
         if (queryString != null) {
             sb.append('?').append(queryString);
         }
-        exchange.request.uri = base.resolve(sb.toString());
+        exchange.request.uri = URI.create(sb.toString());
+System.err.println("URI=" + exchange.request.uri);
 
         // request headers
         for (Enumeration<String> e = request.getHeaderNames(); e.hasMoreElements();) {
@@ -152,6 +160,15 @@ public class HandlerServlet<H extends Handler> extends HttpServlet
                 }
             }
         }        
+    }
+
+    private String normalizeURI(String uri) {
+        for (int n = 0, len = uri.length(); n < len; n++) {
+            if (uri.charAt(n) != '/') {
+                return (n <= 1 ? uri : uri.substring(n - 1));
+            }
+        }
+        return "/";
     }
 }
 
