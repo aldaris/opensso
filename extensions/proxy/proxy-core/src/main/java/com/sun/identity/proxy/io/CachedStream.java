@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedStream.java,v 1.7 2009-10-20 18:05:22 pbryan Exp $
+ * $Id: CachedStream.java,v 1.8 2009-10-21 00:00:36 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,7 @@ import java.io.IOException;
  * be partially read before relaying to the remote client (e.g.
  * parsing to detect presence or absence of session state).
  * <p>
- * When no additional data needs to be cached, the <tt>stop</tt> method should
+ * When no additional data needs to be cached, the {@link #stop} method should
  * be called. After this, all subsequent requests for data are passed-through
  * to the underlying stream without storing data.
  *
