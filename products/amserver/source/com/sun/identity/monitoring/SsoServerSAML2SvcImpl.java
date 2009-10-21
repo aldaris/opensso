@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSAML2SvcImpl.java,v 1.2 2009-09-23 22:24:14 bigfatrat Exp $
+ * $Id: SsoServerSAML2SvcImpl.java,v 1.3 2009-10-21 00:03:14 bigfatrat Exp $
  *
  */
 
@@ -70,80 +70,80 @@ public class SsoServerSAML2SvcImpl extends SsoServerSAML2Svc {
         if (debug == null) {
             debug = Debug.getInstance("amMonitoring");
         }
-        SsoServerSAML2HostedIDPCount = new Long(0);
-        SsoServerSAML2RemoteIDPCount = new Long(0);
-        SsoServerSAML2FedSessionCount = new Long(0);
-        SsoServerSAML2IDPSessionCount = new Long(0);
-        SsoServerSAML2Status = "dormant";
+        SAML2HostedIDPCount = new Long(0);
+        SAML2RemoteIDPCount = new Long(0);
+        SAML2FedSessionCount = new Long(0);
+        SAML2IDPSessionCount = new Long(0);
+        SAML2Status = "dormant";
     }
 
     public void incHostedIDPCount() {
-        if (SsoServerSAML2Status.equals("dormant")) {
-            SsoServerSAML2Status = "operational";
+        if (SAML2Status.equals("dormant")) {
+            SAML2Status = "operational";
         }
-        long li = SsoServerSAML2HostedIDPCount.longValue();
+        long li = SAML2HostedIDPCount.longValue();
         li++;
-        SsoServerSAML2HostedIDPCount = Long.valueOf(li);
+        SAML2HostedIDPCount = Long.valueOf(li);
     }
 
     public void incRemoteIDPCount() {
-        if (SsoServerSAML2Status.equals("dormant")) {
-            SsoServerSAML2Status = "operational";
+        if (SAML2Status.equals("dormant")) {
+            SAML2Status = "operational";
         }
-        long li = SsoServerSAML2RemoteIDPCount.longValue();
+        long li = SAML2RemoteIDPCount.longValue();
         li++;
-        SsoServerSAML2RemoteIDPCount = Long.valueOf(li);
+        SAML2RemoteIDPCount = Long.valueOf(li);
     }
 
     public void incFedSessionCount() {
-        if (SsoServerSAML2Status.equals("dormant")) {
-            SsoServerSAML2Status = "operational";
+        if (SAML2Status.equals("dormant")) {
+            SAML2Status = "operational";
         }
-        long li = SsoServerSAML2FedSessionCount.longValue();
+        long li = SAML2FedSessionCount.longValue();
         li++;
-        SsoServerSAML2FedSessionCount = Long.valueOf(li);
+        SAML2FedSessionCount = Long.valueOf(li);
     }
 
     public void decFedSessionCount() {
-        long li = SsoServerSAML2FedSessionCount.longValue();
+        long li = SAML2FedSessionCount.longValue();
         li--;
-        SsoServerSAML2FedSessionCount = Long.valueOf(li);
+        SAML2FedSessionCount = Long.valueOf(li);
     }
 
     public void setFedSessionCount(long count) {
-        if (SsoServerSAML2Status.equals("dormant")) {
-            SsoServerSAML2Status = "operational";
+        if (SAML2Status.equals("dormant")) {
+            SAML2Status = "operational";
         }
-        SsoServerSAML2FedSessionCount = Long.valueOf(count);
+        SAML2FedSessionCount = Long.valueOf(count);
     }
 
     public void incIdpSessionCount() {
-        if (SsoServerSAML2Status.equals("dormant")) {
-            SsoServerSAML2Status = "operational";
+        if (SAML2Status.equals("dormant")) {
+            SAML2Status = "operational";
         }
-        long li = SsoServerSAML2IDPSessionCount.longValue();
+        long li = SAML2IDPSessionCount.longValue();
         li++;
-        SsoServerSAML2IDPSessionCount = Long.valueOf(li);
+        SAML2IDPSessionCount = Long.valueOf(li);
     }
 
     public void decIdpSessionCount() {
-        long li = SsoServerSAML2IDPSessionCount.longValue();
+        long li = SAML2IDPSessionCount.longValue();
         li--;
-        SsoServerSAML2IDPSessionCount = Long.valueOf(li);
+        SAML2IDPSessionCount = Long.valueOf(li);
     }
 
     public void setIdpSessionCount(long count) {
-        if (SsoServerSAML2Status.equals("dormant")) {
-            SsoServerSAML2Status = "operational";
+        if (SAML2Status.equals("dormant")) {
+            SAML2Status = "operational";
         }
-        SsoServerSAML2IDPSessionCount = Long.valueOf(count);
+        SAML2IDPSessionCount = Long.valueOf(count);
     }
 
     public void incIDPCounter (String realm, String idpName, String counter) {
         String classMethod = "SsoServerSAML2SvcImpl.incIDPCounter:";
 
-        if (SsoServerSAML2Status.equals("dormant")) {
-            SsoServerSAML2Status = "operational";
+        if (SAML2Status.equals("dormant")) {
+            SAML2Status = "operational";
         }
         /*
          *  given the realm's and IDP's name, get the corresponding
@@ -236,8 +236,8 @@ public class SsoServerSAML2SvcImpl extends SsoServerSAML2Svc {
         if (entName.indexOf(":") >= 0) {
             entName = entName.replaceAll(":", "&#58;");
         }
-        if (SsoServerSAML2Status.equals("dormant")) {
-            SsoServerSAML2Status = "operational";
+        if (SAML2Status.equals("dormant")) {
+            SAML2Status = "operational";
         }
 
         entName = realm + "|" + entName;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSAML1EndPointEntryImpl.java,v 1.1 2009-06-19 02:23:18 bigfatrat Exp $
+ * $Id: SsoServerSAML1EndPointEntryImpl.java,v 1.2 2009-10-21 00:03:13 bigfatrat Exp $
  *
  */
 
@@ -66,15 +66,13 @@ public class SsoServerSAML1EndPointEntryImpl extends
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerSAML1EndPointIndex = " +
-                SsoServerSAML1EndPointIndex +
-                "\n    SsoServerSAML1EndPointName = " +
-                SsoServerSAML1EndPointName);
+                "\n    SAML1EndPointIndex = " + SAML1EndPointIndex +
+                "\n    SAML1EndPointName = " + SAML1EndPointName);
         }
 
         String objname = myMibName +
             "/ssoServerSAML1EndPointTable:" +
-            prfx + "SsoServerSAML1EndPointName=" + SsoServerSAML1EndPointName;
+            prfx + "sAML1EndPointName=" + SAML1EndPointName;
 
         try {
             if (server == null) {

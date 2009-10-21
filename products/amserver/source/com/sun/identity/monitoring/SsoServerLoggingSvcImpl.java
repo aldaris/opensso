@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerLoggingSvcImpl.java,v 1.1 2009-06-19 02:23:16 bigfatrat Exp $
+ * $Id: SsoServerLoggingSvcImpl.java,v 1.2 2009-10-21 00:03:11 bigfatrat Exp $
  *
  */
 
@@ -79,14 +79,15 @@ public class SsoServerLoggingSvcImpl extends SsoServerLoggingSvc {
             int ind = 1;
             // DB Handler
             lg_dbh = new SsoServerLoggingHdlrEntryImpl(myMib);
-            lg_dbh.SsoServerLoggingHdlrConnRqts = new Long(0);
-            lg_dbh.SsoServerLoggingHdlrDroppedCt = new Long(0);
-            lg_dbh.SsoServerLoggingHdlrFailureCt = new Long(0);
-            lg_dbh.SsoServerLoggingHdlrSuccessCt = new Long(0);
-            lg_dbh.SsoServerLoggingHdlrName = DB_HANDLER_NAME;
-            lg_dbh.SsoServerLoggingHdlrRqtCt = new Long(0);
-            lg_dbh.SsoServerLoggingHdlrSuccessCt = new Long(0);
-            lg_dbh.SsoServerLoggingHdlrIndex = new Integer(ind++);
+            lg_dbh.LoggingHdlrConnRqts = new Long(0);
+            lg_dbh.LoggingHdlrDroppedCt = new Long(0);
+            lg_dbh.LoggingHdlrFailureCt = new Long(0);
+            lg_dbh.LoggingHdlrSuccessCt = new Long(0);
+            lg_dbh.LoggingHdlrName = DB_HANDLER_NAME;
+            lg_dbh.LoggingHdlrRqtCt = new Long(0);
+            lg_dbh.LoggingHdlrConnMade = new Long(0);
+            lg_dbh.LoggingHdlrConnFailed = new Long(0);
+            lg_dbh.LoggingHdlrIndex = new Integer(ind++);
 
             final ObjectName dbhName =
                     lg_dbh.createSsoServerLoggingHdlrEntryObjectName(server);
@@ -104,14 +105,15 @@ public class SsoServerLoggingSvcImpl extends SsoServerLoggingSvc {
 
             // File Handler
             lg_fh = new SsoServerLoggingHdlrEntryImpl(myMib);
-            lg_fh.SsoServerLoggingHdlrConnRqts = new Long(0);
-            lg_fh.SsoServerLoggingHdlrDroppedCt = new Long(0);
-            lg_fh.SsoServerLoggingHdlrFailureCt = new Long(0);
-            lg_fh.SsoServerLoggingHdlrSuccessCt = new Long(0);
-            lg_fh.SsoServerLoggingHdlrName = FILE_HANDLER_NAME;
-            lg_fh.SsoServerLoggingHdlrRqtCt = new Long(0);
-            lg_fh.SsoServerLoggingHdlrSuccessCt = new Long(0);
-            lg_fh.SsoServerLoggingHdlrIndex = new Integer(ind++);
+            lg_fh.LoggingHdlrConnRqts = new Long(0);
+            lg_fh.LoggingHdlrDroppedCt = new Long(0);
+            lg_fh.LoggingHdlrFailureCt = new Long(0);
+            lg_fh.LoggingHdlrSuccessCt = new Long(0);
+            lg_fh.LoggingHdlrName = FILE_HANDLER_NAME;
+            lg_fh.LoggingHdlrRqtCt = new Long(0);
+            lg_fh.LoggingHdlrConnMade = new Long(0);
+            lg_fh.LoggingHdlrConnFailed = new Long(0);
+            lg_fh.LoggingHdlrIndex = new Integer(ind++);
 
             final ObjectName fhName =
                     lg_fh.createSsoServerLoggingHdlrEntryObjectName(server);
@@ -129,14 +131,15 @@ public class SsoServerLoggingSvcImpl extends SsoServerLoggingSvc {
 
             // Secure File Handler
             lg_sfh = new SsoServerLoggingHdlrEntryImpl(myMib);
-            lg_sfh.SsoServerLoggingHdlrConnRqts = new Long(0);
-            lg_sfh.SsoServerLoggingHdlrDroppedCt = new Long(0);
-            lg_sfh.SsoServerLoggingHdlrFailureCt = new Long(0);
-            lg_sfh.SsoServerLoggingHdlrName =
-                    new String(SECURE_FILE_HANDLER_NAME);
-            lg_sfh.SsoServerLoggingHdlrRqtCt = new Long(0);
-            lg_sfh.SsoServerLoggingHdlrSuccessCt = new Long(0);
-            lg_sfh.SsoServerLoggingHdlrIndex = new Integer(ind++);
+            lg_sfh.LoggingHdlrConnRqts = new Long(0);
+            lg_sfh.LoggingHdlrDroppedCt = new Long(0);
+            lg_sfh.LoggingHdlrFailureCt = new Long(0);
+            lg_sfh.LoggingHdlrName = new String(SECURE_FILE_HANDLER_NAME);
+            lg_sfh.LoggingHdlrRqtCt = new Long(0);
+            lg_sfh.LoggingHdlrSuccessCt = new Long(0);
+            lg_sfh.LoggingHdlrConnMade = new Long(0);
+            lg_sfh.LoggingHdlrConnFailed = new Long(0);
+            lg_sfh.LoggingHdlrIndex = new Integer(ind++);
 
             final ObjectName sfhName =
                     lg_sfh.createSsoServerLoggingHdlrEntryObjectName(server);
@@ -154,14 +157,15 @@ public class SsoServerLoggingSvcImpl extends SsoServerLoggingSvc {
 
             // Remote Handler
             lg_rh = new SsoServerLoggingHdlrEntryImpl(myMib);
-            lg_rh.SsoServerLoggingHdlrConnRqts = new Long(0);
-            lg_rh.SsoServerLoggingHdlrDroppedCt = new Long(0);
-            lg_rh.SsoServerLoggingHdlrFailureCt = new Long(0);
-            lg_rh.SsoServerLoggingHdlrSuccessCt = new Long(0);
-            lg_rh.SsoServerLoggingHdlrRqtCt = new Long(0);
-            lg_rh.SsoServerLoggingHdlrName = REMOTE_HANDLER_NAME;
-            lg_rh.SsoServerLoggingHdlrSuccessCt = new Long(0);
-            lg_rh.SsoServerLoggingHdlrIndex = new Integer(ind++);
+            lg_rh.LoggingHdlrConnRqts = new Long(0);
+            lg_rh.LoggingHdlrDroppedCt = new Long(0);
+            lg_rh.LoggingHdlrFailureCt = new Long(0);
+            lg_rh.LoggingHdlrSuccessCt = new Long(0);
+            lg_rh.LoggingHdlrRqtCt = new Long(0);
+            lg_rh.LoggingHdlrName = REMOTE_HANDLER_NAME;
+            lg_rh.LoggingHdlrConnMade = new Long(0);
+            lg_rh.LoggingHdlrConnFailed = new Long(0);
+            lg_rh.LoggingHdlrIndex = new Integer(ind++);
 
             final ObjectName rhName =
                     lg_rh.createSsoServerLoggingHdlrEntryObjectName(server);
@@ -180,73 +184,73 @@ public class SsoServerLoggingSvcImpl extends SsoServerLoggingSvc {
     }
 
     /**
-     * Setter for the "SsoServerLoggingLoggers" variable.
+     * Setter for the "LoggingLoggers" variable.
      */
     public void setSsoServerLoggingLoggers(Integer l) {
-        SsoServerLoggingLoggers = l;
+        LoggingLoggers = l;
     }
 
     /**
-     * Setter for the "SsoServerLoggingBufferSize" variable.
+     * Setter for the "LoggingBufferSize" variable.
      */
     public void setSsoServerLoggingBufferSize(long l) {
-        SsoServerLoggingBufferSize = new Long(l);
+        LoggingBufferSize = new Long(l);
     }
 
     /**
-     * Setter for the "SsoServerLoggingBufferTime" variable.
+     * Setter for the "LoggingBufferTime" variable.
      */
     public void setSsoServerLoggingBufferTime(long l) {
-        SsoServerLoggingBufferTime = new Long(l);
+        LoggingBufferTime = new Long(l);
     }
 
     /**
-     * Setter for the "SsoServerLoggingTimeBuffering" variable.
+     * Setter for the "LoggingTimeBuffering" variable.
      */
     public void setSsoServerLoggingTimeBuffering(String s) {
-        SsoServerLoggingTimeBuffering = s;
+        LoggingTimeBuffering = s;
     }
 
     /**
-     * Setter for the "SsoServerLoggingSecure" variable.
+     * Setter for the "LoggingSecure" variable.
      */
     public void setSsoServerLoggingSecure(String s) {
-        SsoServerLoggingSecure = s;
+        LoggingSecure = s;
     }
 
     /**
-     * Setter for the "SsoServerLoggingNumberHistoryFiles" variable.
+     * Setter for the "LoggingNumberHistoryFiles" variable.
      */
     public void setSsoServerLoggingNumberHistoryFiles(long l) {
-        SsoServerLoggingNumHistFiles = new Long(l);
+        LoggingNumHistFiles = new Long(l);
     }
 
     /**
-     * Setter for the "SsoServerLoggingMaxLogSize" variable.
+     * Setter for the "LoggingMaxLogSize" variable.
      */
     public void setSsoServerLoggingMaxLogSize(long l) {
-        SsoServerLoggingMaxLogSize = new Long(l);
+        LoggingMaxLogSize = new Long(l);
     }
 
     /**
-     * Setter for the "SsoServerLoggingLocation" variable.
+     * Setter for the "LoggingLocation" variable.
      */
     public void setSsoServerLoggingLocation(String s) {
-        SsoServerLoggingLocation = s;
+        LoggingLocation = s;
     }
 
     /**
-     * Setter for the "SsoServerLoggingType" variable.
+     * Setter for the "LoggingType" variable.
      */
     public void setSsoServerLoggingType(String s) {
-        SsoServerLoggingType = s;
+        LoggingType = s;
     }
 
     /**
-     * Setter for the "SsoServerLoggingRecsRejected" variable.
+     * Setter for the "LoggingRecsRejected" variable.
      */
     public void setSsoServerLoggingRecsRejected(long l) {
-        SsoServerLoggingRecsRejected = new Long(l);
+        LoggingRecsRejected = new Long(l);
     }
 
     /**

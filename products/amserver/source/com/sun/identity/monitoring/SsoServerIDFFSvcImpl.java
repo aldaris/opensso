@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerIDFFSvcImpl.java,v 1.2 2009-08-03 18:15:01 bigfatrat Exp $
+ * $Id: SsoServerIDFFSvcImpl.java,v 1.3 2009-10-21 00:02:10 bigfatrat Exp $
  *
  */
 
@@ -55,141 +55,141 @@ public class SsoServerIDFFSvcImpl extends SsoServerIDFFSvc {
     }
 
     private void init(SnmpMib myMib, MBeanServer server) {
-        SsoServerIDFFIdLocalSessToken = new Long(0);
-        SsoServerIDFFIdAuthnRqt = new Long(0);
-        SsoServerIDFFUserIDSessionList = new Long(0);
-        SsoServerIDFFArtifacts = new Long(0);
-        SsoServerIDFFAssertions = new Long(0);
-        SsoServerIDFFStatus = new String("dormant");
-        SsoServerIDFFRelayState = new Long(0);
-        SsoServerIDFFIdDestn = new Long(0);
+        IDFFIdLocalSessToken = new Long(0);
+        IDFFIdAuthnRqt = new Long(0);
+        IDFFUserIDSessionList = new Long(0);
+        IDFFArtifacts = new Long(0);
+        IDFFAssertions = new Long(0);
+        IDFFStatus = new String("dormant");
+        IDFFRelayState = new Long(0);
+        IDFFIdDestn = new Long(0);
     }
 
     public void incIdLocalSessToken() {
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        long li = SsoServerIDFFIdLocalSessToken.longValue();
+        long li = IDFFIdLocalSessToken.longValue();
         li++;
-        SsoServerIDFFIdLocalSessToken = Long.valueOf(li);
+        IDFFIdLocalSessToken = Long.valueOf(li);
     }
 
     public void decIdLocalSessToken() {
-        long li = SsoServerIDFFIdLocalSessToken.longValue();
+        long li = IDFFIdLocalSessToken.longValue();
         li--;
-        SsoServerIDFFIdLocalSessToken = Long.valueOf(li);
+        IDFFIdLocalSessToken = Long.valueOf(li);
     }
 
     public void setIdLocalSessToken(long count) {
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        SsoServerIDFFIdLocalSessToken = Long.valueOf(count);
+        IDFFIdLocalSessToken = Long.valueOf(count);
     }
 
     public void incIdAuthnRqt() {
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        long li = SsoServerIDFFIdAuthnRqt.longValue();
+        long li = IDFFIdAuthnRqt.longValue();
         li++;
-        SsoServerIDFFIdAuthnRqt = Long.valueOf(li);
+        IDFFIdAuthnRqt = Long.valueOf(li);
     }
 
     public void incUserIDSessionList() {
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        long li = SsoServerIDFFUserIDSessionList.longValue();
+        long li = IDFFUserIDSessionList.longValue();
         li++;
-        SsoServerIDFFUserIDSessionList = Long.valueOf(li);
+        IDFFUserIDSessionList = Long.valueOf(li);
     }
 
     public void decUserIDSessionList() {
-        long li = SsoServerIDFFUserIDSessionList.longValue();
+        long li = IDFFUserIDSessionList.longValue();
         li--;
-        SsoServerIDFFUserIDSessionList = Long.valueOf(li);
+        IDFFUserIDSessionList = Long.valueOf(li);
     }
 
     public void setUserIDSessionList(long count) {
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        SsoServerIDFFUserIDSessionList = Long.valueOf(count);
+        IDFFUserIDSessionList = Long.valueOf(count);
     }
 
     public void incArtifacts() {
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        long li = SsoServerIDFFArtifacts.longValue();
+        long li = IDFFArtifacts.longValue();
         li++;
-        SsoServerIDFFArtifacts = Long.valueOf(li);
+        IDFFArtifacts = Long.valueOf(li);
     }
 
     public void decArtifacts() {
-        long li = SsoServerIDFFArtifacts.longValue();
+        long li = IDFFArtifacts.longValue();
         li--;
-        SsoServerIDFFArtifacts = Long.valueOf(li);
+        IDFFArtifacts = Long.valueOf(li);
     }
 
     public void setArtifacts(long count) {
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        SsoServerIDFFArtifacts = Long.valueOf(count);
+        IDFFArtifacts = Long.valueOf(count);
     }
 
     public void incAssertions() {
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        long li = SsoServerIDFFAssertions.longValue();
+        long li = IDFFAssertions.longValue();
         li++;
-        SsoServerIDFFAssertions = Long.valueOf(li);
+        IDFFAssertions = Long.valueOf(li);
     }
 
     public void decAssertions() {
-        long li = SsoServerIDFFAssertions.longValue();
+        long li = IDFFAssertions.longValue();
         li--;
-        SsoServerIDFFAssertions = Long.valueOf(li);
+        IDFFAssertions = Long.valueOf(li);
     }
 
     public void setAssertions(long count) {
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        SsoServerIDFFAssertions = Long.valueOf(count);
+        IDFFAssertions = Long.valueOf(count);
     }
 
     public void setRelayState(long state) {
         // might need to change this attribute's type
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        SsoServerIDFFRelayState = Long.valueOf(state);
+        IDFFRelayState = Long.valueOf(state);
     }
 
     public void incIdDestn() {
         // is this a counter?
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        long li = SsoServerIDFFIdDestn.longValue();
+        long li = IDFFIdDestn.longValue();
         li++;
-        SsoServerIDFFIdDestn = Long.valueOf(li);
+        IDFFIdDestn = Long.valueOf(li);
     }
 
     public void decIdDestn() {
-        long li = SsoServerIDFFIdDestn.longValue();
+        long li = IDFFIdDestn.longValue();
         li--;
-        SsoServerIDFFIdDestn = Long.valueOf(li);
+        IDFFIdDestn = Long.valueOf(li);
     }
 
     public void setIdDestn(long count) {
-        if (SsoServerIDFFStatus.equals("dormant")) {
-            SsoServerIDFFStatus = "operational";
+        if (IDFFStatus.equals("dormant")) {
+            IDFFStatus = "operational";
         }
-        SsoServerIDFFIdDestn = Long.valueOf(count);
+        IDFFIdDestn = Long.valueOf(count);
     }
 }

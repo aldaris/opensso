@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerAuthModulesEntryImpl.java,v 1.2 2009-08-07 20:07:22 bigfatrat Exp $
+ * $Id: SsoServerAuthModulesEntryImpl.java,v 1.3 2009-10-21 00:02:10 bigfatrat Exp $
  *
  */
 
@@ -68,20 +68,20 @@ public class SsoServerAuthModulesEntryImpl extends SsoServerAuthModulesEntry {
             debug.message(classModule +
                 "\n    SsoServerRealmIndex = " +
                 SsoServerRealmIndex +
-                "\n    SsoServerAuthModuleIndex = " +
-                SsoServerAuthModuleIndex +
-                "\n    SsoServerAuthModuleName = " +
-                SsoServerAuthModuleName +
-                "\n    SsoServerAuthModuleType = " +
-                SsoServerAuthModuleType +
-                "\n    SsoServerAuthModuleName = " +
-                SsoServerAuthModuleName);
+                "\n    AuthModuleIndex = " +
+                AuthModuleIndex +
+                "\n    AuthModuleName = " +
+                AuthModuleName +
+                "\n    AuthModuleType = " +
+                AuthModuleType +
+                "\n    AuthModuleName = " +
+                AuthModuleName);
         }
 
         String objname = myMibName +
             "/ssoServerAuthModulesTable:" +
             prfx + "ssoServerRealmName=" + realmName + "," +
-            prfx + "ssoServerAuthModuleName=" + SsoServerAuthModuleName;
+            prfx + "authModuleName=" + AuthModuleName;
 
         try {
             if (server == null) {
@@ -101,17 +101,17 @@ public class SsoServerAuthModulesEntryImpl extends SsoServerAuthModulesEntry {
      * increment the module's authentication failure count
      */
     public void incModuleFailureCount() {
-        long li = SsoServerAuthModuleFailureCount.longValue();
+        long li = AuthModuleFailureCount.longValue();
         li++;
-        SsoServerAuthModuleFailureCount = Long.valueOf(li);
+        AuthModuleFailureCount = Long.valueOf(li);
     }
 
     /*
      * increment the module's authentication success count
      */
     public void incModuleSuccessCount() {
-        long li = SsoServerAuthModuleSuccessCount.longValue();
+        long li = AuthModuleSuccessCount.longValue();
         li++;
-        SsoServerAuthModuleSuccessCount = Long.valueOf(li);
+        AuthModuleSuccessCount = Long.valueOf(li);
     }
 }

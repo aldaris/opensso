@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerIdRepoSvcImpl.java,v 1.1 2009-06-19 02:23:16 bigfatrat Exp $
+ * $Id: SsoServerIdRepoSvcImpl.java,v 1.2 2009-10-21 00:02:10 bigfatrat Exp $
  *
  */
 
@@ -58,11 +58,11 @@ public class SsoServerIdRepoSvcImpl extends SsoServerIdRepoSvc {
         if (debug == null) {
             debug = Debug.getInstance("amMonitoring");
         }
-        SsoServerIdRepoSearchCacheHits = new Long(0);
-        SsoServerIdRepoSearchRqts = new Long(0);
-        SsoServerIdRepoCacheHits = new Long(0);
-        SsoServerIdRepoCacheEntries = new Long(0);
-        SsoServerIdRepoGetRqts = new Long(0);
+        IdRepoSearchCacheHits = new Long(0);
+        IdRepoSearchRqts = new Long(0);
+        IdRepoCacheHits = new Long(0);
+        IdRepoCacheEntries = new Long(0);
+        IdRepoGetRqts = new Long(0);
     }
 
     /*
@@ -70,10 +70,10 @@ public class SsoServerIdRepoSvcImpl extends SsoServerIdRepoSvc {
      * increments totalSearchHits and totalIntervalHits
      */
     public void incSearchCacheHits (long cacheEntries) {
-        long li = SsoServerIdRepoSearchCacheHits.longValue();
+        long li = IdRepoSearchCacheHits.longValue();
         li++;
-        SsoServerIdRepoSearchCacheHits = Long.valueOf(li);
-        SsoServerIdRepoCacheEntries = Long.valueOf(cacheEntries);
+        IdRepoSearchCacheHits = Long.valueOf(li);
+        IdRepoCacheEntries = Long.valueOf(cacheEntries);
     }
 
     /*
@@ -81,10 +81,10 @@ public class SsoServerIdRepoSvcImpl extends SsoServerIdRepoSvc {
      * increments totalGetRequests and intervalCount
      */
     public void incGetRqts (long cacheEntries) {
-        long li = SsoServerIdRepoGetRqts.longValue();
+        long li = IdRepoGetRqts.longValue();
         li++;
-        SsoServerIdRepoGetRqts = Long.valueOf(li);
-        SsoServerIdRepoCacheEntries = Long.valueOf(cacheEntries);
+        IdRepoGetRqts = Long.valueOf(li);
+        IdRepoCacheEntries = Long.valueOf(cacheEntries);
     }
 
     /*
@@ -92,10 +92,10 @@ public class SsoServerIdRepoSvcImpl extends SsoServerIdRepoSvc {
      * increments totalGetCacheHits and totalIntervalHits
      */
     public void incCacheHits (long cacheEntries) {
-        long li = SsoServerIdRepoCacheHits.longValue();
+        long li = IdRepoCacheHits.longValue();
         li++;
-        SsoServerIdRepoCacheHits = Long.valueOf(li);
-        SsoServerIdRepoCacheEntries = Long.valueOf(cacheEntries);
+        IdRepoCacheHits = Long.valueOf(li);
+        IdRepoCacheEntries = Long.valueOf(cacheEntries);
     }
 
     /*
@@ -103,9 +103,9 @@ public class SsoServerIdRepoSvcImpl extends SsoServerIdRepoSvc {
      * increments totalSearchRequests and intervalCount
      */
     public void incSearchRqts (long cacheEntries) {
-        long li = SsoServerIdRepoSearchRqts.longValue();
+        long li = IdRepoSearchRqts.longValue();
         li++;
-        SsoServerIdRepoSearchRqts = Long.valueOf(li);
-        SsoServerIdRepoCacheEntries = Long.valueOf(cacheEntries);
+        IdRepoSearchRqts = Long.valueOf(li);
+        IdRepoCacheEntries = Long.valueOf(cacheEntries);
     }
 }

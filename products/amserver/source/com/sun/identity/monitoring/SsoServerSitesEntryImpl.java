@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSitesEntryImpl.java,v 1.1 2009-06-19 02:23:19 bigfatrat Exp $
+ * $Id: SsoServerSitesEntryImpl.java,v 1.2 2009-10-21 00:03:15 bigfatrat Exp $
  *
  */
 
@@ -63,15 +63,13 @@ public class SsoServerSitesEntryImpl extends SsoServerSitesEntry {
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerSiteId = " +
-                SsoServerSiteId +
-                "\n    SsoServerSiteName = " +
-                SsoServerSiteName);
+                "\n    SiteId = " + SiteId +
+                "\n    SiteName = " + SiteName);
         }
 
         String objname = myMibName +
             "/ssoServerSitesTable:" +
-            prfx + "ssoServerSiteName=" + SsoServerSiteName;
+            prfx + "siteName=" + SiteName;
 
         try {
             if (server == null) {

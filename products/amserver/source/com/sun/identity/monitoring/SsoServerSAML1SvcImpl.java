@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSAML1SvcImpl.java,v 1.1 2009-06-19 02:23:18 bigfatrat Exp $
+ * $Id: SsoServerSAML1SvcImpl.java,v 1.2 2009-10-21 00:03:13 bigfatrat Exp $
  *
  */
 
@@ -105,21 +105,21 @@ public class SsoServerSAML1SvcImpl extends SsoServerSAML1Svc {
 
         long li;
         if (rWHM.equals(CREAD)) {
-            li = ce.SsoServerSAML1CacheReads.longValue();
+            li = ce.SAML1CacheReads.longValue();
             li++;
-            ce.SsoServerSAML1CacheReads = Long.valueOf(li);
+            ce.SAML1CacheReads = Long.valueOf(li);
         } else if (rWHM.equals(CWRITE)) {
-            li = ce.SsoServerSAML1CacheWrites.longValue();
+            li = ce.SAML1CacheWrites.longValue();
             li++;
-            ce.SsoServerSAML1CacheWrites = Long.valueOf(li);
+            ce.SAML1CacheWrites = Long.valueOf(li);
         } else if (rWHM.equals(CHIT)) {
-            li = ce.SsoServerSAML1CacheHits.longValue();
+            li = ce.SAML1CacheHits.longValue();
             li++;
-            ce.SsoServerSAML1CacheHits = Long.valueOf(li);
+            ce.SAML1CacheHits = Long.valueOf(li);
         } else if (rWHM.equals(CMISS)) {
-            li = ce.SsoServerSAML1CacheMisses.longValue();
+            li = ce.SAML1CacheMisses.longValue();
             li++;
-            ce.SsoServerSAML1CacheMisses = Long.valueOf(li);
+            ce.SAML1CacheMisses = Long.valueOf(li);
         } else {
             debug.error(classModule + "no such cache action: " + rWHM);
             return;
@@ -153,21 +153,21 @@ public class SsoServerSAML1SvcImpl extends SsoServerSAML1Svc {
 
         long li;
         if (rType.equals(EPRQTIN)) {
-            li = ee.SsoServerSAML1EndPointRqtIn.longValue();
+            li = ee.SAML1EndPointRqtIn.longValue();
             li++;
-            ee.SsoServerSAML1EndPointRqtIn = Long.valueOf(li);
+            ee.SAML1EndPointRqtIn = Long.valueOf(li);
         } else if (rType.equals(EPRQTOUT)) {
-            li = ee.SsoServerSAML1EndPointRqtOut.longValue();
+            li = ee.SAML1EndPointRqtOut.longValue();
             li++;
-            ee.SsoServerSAML1EndPointRqtOut = Long.valueOf(li);
+            ee.SAML1EndPointRqtOut = Long.valueOf(li);
         } else if (rType.equals(EPRQTFAILED)) {
-            li = ee.SsoServerSAML1EndPointRqtFailed.longValue();
+            li = ee.SAML1EndPointRqtFailed.longValue();
             li++;
-            ee.SsoServerSAML1EndPointRqtFailed = Long.valueOf(li);
+            ee.SAML1EndPointRqtFailed = Long.valueOf(li);
         } else if (rType.equals(EPRQTABORTED)) {
-            li = ee.SsoServerSAML1EndPointRqtAborted.longValue();
+            li = ee.SAML1EndPointRqtAborted.longValue();
             li++;
-            ee.SsoServerSAML1EndPointRqtAborted = Long.valueOf(li);
+            ee.SAML1EndPointRqtAborted = Long.valueOf(li);
         } else {
             debug.error(classModule + "no such counter: " + rType);
             return;
@@ -194,6 +194,6 @@ public class SsoServerSAML1SvcImpl extends SsoServerSAML1Svc {
             return;
         }
 
-        ee.SsoServerSAML1EndPointStatus = "operational";
+        ee.SAML1EndPointStatus = "operational";
     }
 }

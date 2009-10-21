@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerTopologyImpl.java,v 1.1 2009-06-19 02:23:19 bigfatrat Exp $
+ * $Id: SsoServerTopologyImpl.java,v 1.2 2009-10-21 00:03:15 bigfatrat Exp $
  *
  */
 
@@ -122,12 +122,12 @@ public class SsoServerTopologyImpl extends SsoServerTopology {
             }
             SsoServerServerEntryImpl ssrv =
                 new SsoServerServerEntryImpl(myMib);
-            ssrv.SsoServerServerPort = iport;
-            ssrv.SsoServerServerHostName = host;
-            ssrv.SsoServerServerProtocol = proto;
-            ssrv.SsoServerServerId = iid;
+            ssrv.ServerPort = iport;
+            ssrv.ServerHostName = host;
+            ssrv.ServerProtocol = proto;
+            ssrv.ServerId = iid;
             /* need a way to know what the real status is */
-            ssrv.SsoServerServerStatus = new Integer(1);
+            ssrv.ServerStatus = new Integer(1);
 
             final ObjectName svrName =
                 ssrv.createSsoServerServerEntryObjectName(server);

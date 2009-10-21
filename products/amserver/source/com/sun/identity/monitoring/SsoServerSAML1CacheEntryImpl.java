@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSAML1CacheEntryImpl.java,v 1.1 2009-06-19 02:23:18 bigfatrat Exp $
+ * $Id: SsoServerSAML1CacheEntryImpl.java,v 1.2 2009-10-21 00:03:12 bigfatrat Exp $
  *
  */
 
@@ -66,15 +66,13 @@ public class SsoServerSAML1CacheEntryImpl extends SsoServerSAML1CacheEntry {
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerSAML1CacheIndex = " +
-                SsoServerSAML1CacheIndex +
-                "\n    SsoServerSAML1CacheName = " +
-                SsoServerSAML1CacheName);
+                "\n    SAML1CacheIndex = " + SAML1CacheIndex +
+                "\n    SAML1CacheName = " + SAML1CacheName);
         }
 
         String objname = myMibName +
             "/ssoServerSAML1CacheTable:" +
-            prfx + "ssoServerSAML1CacheName=" + SsoServerSAML1CacheName;
+            prfx + "sAML1CacheName=" + SAML1CacheName;
 
         try {
             if (server == null) {

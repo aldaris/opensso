@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TableEntryListenerImpl.java,v 1.1 2009-06-19 02:23:21 bigfatrat Exp $
+ * $Id: TableEntryListenerImpl.java,v 1.2 2009-10-21 00:03:15 bigfatrat Exp $
  *
  */
 
@@ -56,13 +56,13 @@ public class TableEntryListenerImpl implements NotificationListener {
                     (SsoServerAuthModulesEntryImpl) notif.getEntry();
                 java.lang.System.out.println(
                     "    ModuleName = " +
-                    added.getSsoServerAuthModuleName());
+                    added.getAuthModuleName());
                 java.lang.System.out.println(
                     "    FailureCount = " +
-                    added.getSsoServerAuthModuleFailureCount());
+                    added.getAuthModuleFailureCount());
                 java.lang.System.out.println(
                     "    SuccessCount = " +
-                    added.getSsoServerAuthModuleSuccessCount());
+                    added.getAuthModuleSuccessCount());
             } else if (type.equals(
                             SnmpTableEntryNotification.SNMP_ENTRY_REMOVED))
             {

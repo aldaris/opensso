@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSessSvcImpl.java,v 1.1 2009-06-19 02:23:19 bigfatrat Exp $
+ * $Id: SsoServerSessSvcImpl.java,v 1.2 2009-10-21 00:03:14 bigfatrat Exp $
  *
  */
 
@@ -58,13 +58,13 @@ public class SsoServerSessSvcImpl extends SsoServerSessSvc {
         if (debug == null) {
             debug = Debug.getInstance("amMonitoring");
         }
-        SsoServerSessAveSessSize = new Integer(0);
-        SsoServerSessNotifListnrCount = new Long(0);
-        SsoServerSessNotifCount = new Long(0);
-        SsoServerSessValidationsCount = new Long(0);
-        SsoServerSessCreatedCount = new Long(0);
-        SsoServerSessActiveCount = new Long(0);
-        SsoServerSessSFOBroker = "N/A";
+        SessionAveSessSize = new Integer(0);
+        SessionNotifListnrCount = new Long(0);
+        SessionNotifCount = new Long(0);
+        SessionValidationsCount = new Long(0);
+        SessionCreatedCount = new Long(0);
+        SessionActiveCount = new Long(0);
+        SessionSFOBroker = "N/A";
     }
 
     /*
@@ -79,9 +79,9 @@ public class SsoServerSessSvcImpl extends SsoServerSessSvc {
             debug.message("SsoServerSessSvcImpl.incSessionActiveCount");
         }
 
-        long li = SsoServerSessActiveCount.longValue();
+        long li = SessionActiveCount.longValue();
         li++;
-        SsoServerSessActiveCount = Long.valueOf(li);
+        SessionActiveCount = Long.valueOf(li);
     }
 
     /*
@@ -96,12 +96,12 @@ public class SsoServerSessSvcImpl extends SsoServerSessSvc {
             debug.message("SsoServerSessSvcImpl.decSessionActiveCount");
         }
 
-        long li = SsoServerSessActiveCount.longValue();
+        long li = SessionActiveCount.longValue();
         li--;
         if (li < 0) {
-            SsoServerSessActiveCount = new Long(0);
+            SessionActiveCount = new Long(0);
         } else {
-            SsoServerSessActiveCount = Long.valueOf(li);
+            SessionActiveCount = Long.valueOf(li);
         }
     }
 
@@ -116,13 +116,13 @@ public class SsoServerSessSvcImpl extends SsoServerSessSvc {
             return;
         }
 
-        long li = SsoServerSessCreatedCount.longValue();
+        long li = SessionCreatedCount.longValue();
         li++;
-        SsoServerSessCreatedCount = Long.valueOf(li);
+        SessionCreatedCount = Long.valueOf(li);
     }
 
     public void setSessNotifCount (long count) {
-        SsoServerSessNotifCount = Long.valueOf(count);
+        SessionNotifCount = Long.valueOf(count);
     }
 
 }

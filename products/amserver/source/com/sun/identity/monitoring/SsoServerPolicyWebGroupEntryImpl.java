@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerPolicyWebGroupEntryImpl.java,v 1.2 2009-08-07 20:07:22 bigfatrat Exp $
+ * $Id: SsoServerPolicyWebGroupEntryImpl.java,v 1.3 2009-10-21 00:03:12 bigfatrat Exp $
  *
  */
 
@@ -66,22 +66,17 @@ public class SsoServerPolicyWebGroupEntryImpl extends
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerRealmIndex = " +
-                SsoServerRealmIndex +
-                "\n    SsoServerPolicyWebGroupIndex = " +
-                SsoServerPolicyWebGroupIndex +
-                "\n    SsoServerPolicyWebGroupName = " +
-                SsoServerPolicyWebGroupName +
-                "\n    SsoServerPolicyWebGroupServerURL = " +
-                SsoServerPolicyWebGroupServerURL);
+                "\n    SsoServerRealmIndex = " + SsoServerRealmIndex +
+                "\n    PolicyWebGroupIndex = " + PolicyWebGroupIndex +
+                "\n    PolicyWebGroupName = " + PolicyWebGroupName +
+                "\n    PolicyWebGroupServerURL = " + PolicyWebGroupServerURL);
         }
 
         String realm = Agent.getEscRealmNameFromIndex(SsoServerRealmIndex);
         String objname = myMibName +
             "/ssoServerPolicyWebGroupTable:" +
             prfx + "ssoServerRealmName=" + realm + "," +
-            prfx + "ssoServerPolicyWebGroupName=" +
-            SsoServerPolicyWebGroupName;
+            prfx + "policyWebGroupName=" + PolicyWebGroupName;
 
         try {
             if (server == null) {

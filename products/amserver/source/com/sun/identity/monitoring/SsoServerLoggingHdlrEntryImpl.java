@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerLoggingHdlrEntryImpl.java,v 1.1 2009-06-19 02:23:16 bigfatrat Exp $
+ * $Id: SsoServerLoggingHdlrEntryImpl.java,v 1.2 2009-10-21 00:03:10 bigfatrat Exp $
  *
  */
 
@@ -53,13 +53,13 @@ public class SsoServerLoggingHdlrEntryImpl extends SsoServerLoggingHdlrEntry {
         if (debug == null) {
             debug = Debug.getInstance("amMonitoring");
         }
-        SsoServerLoggingHdlrConnFailed = new Long(0);
-        SsoServerLoggingHdlrConnMade = new Long(0);
-        SsoServerLoggingHdlrConnRqts = new Long(0);
-        SsoServerLoggingHdlrDroppedCt = new Long(0);
-        SsoServerLoggingHdlrFailureCt = new Long(0);
-        SsoServerLoggingHdlrSuccessCt = new Long(0);
-        SsoServerLoggingHdlrRqtCt = new Long(0);
+        LoggingHdlrConnFailed = new Long(0);
+        LoggingHdlrConnMade = new Long(0);
+        LoggingHdlrConnRqts = new Long(0);
+        LoggingHdlrDroppedCt = new Long(0);
+        LoggingHdlrFailureCt = new Long(0);
+        LoggingHdlrSuccessCt = new Long(0);
+        LoggingHdlrRqtCt = new Long(0);
     }
 
     public ObjectName
@@ -71,15 +71,15 @@ public class SsoServerLoggingHdlrEntryImpl extends SsoServerLoggingHdlrEntry {
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerLoggingHdlrIndex = " +
-                SsoServerLoggingHdlrIndex +
-                "\n    SsoServerLoggingHdlrName = " +
-                SsoServerLoggingHdlrName);
+                "\n    LoggingHdlrIndex = " +
+                LoggingHdlrIndex +
+                "\n    LoggingHdlrName = " +
+                LoggingHdlrName);
         }
 
         String objname = myMibName +
             "/ssoServerLoggingHdlrTable:" +
-            prfx + "ssoServerLoggingHdlrName=" + SsoServerLoggingHdlrName;
+            prfx + "loggingHdlrName=" + LoggingHdlrName;
 
         try {
             if (server == null) {
@@ -99,9 +99,9 @@ public class SsoServerLoggingHdlrEntryImpl extends SsoServerLoggingHdlrEntry {
      * Increment the handler's logging request count
      */
     public void incHandlerRequestCount(int n) {
-        long li = SsoServerLoggingHdlrRqtCt.longValue();
+        long li = LoggingHdlrRqtCt.longValue();
         li = li + n;
-        SsoServerLoggingHdlrRqtCt = Long.valueOf(li);
+        LoggingHdlrRqtCt = Long.valueOf(li);
     }
 
     /*
@@ -111,45 +111,45 @@ public class SsoServerLoggingHdlrEntryImpl extends SsoServerLoggingHdlrEntry {
      * extra requests need to be dropped.
      */
     public void incHandlerDroppedCount(int n) {
-        long li = SsoServerLoggingHdlrDroppedCt.longValue();
+        long li = LoggingHdlrDroppedCt.longValue();
         li = li + n;
-        SsoServerLoggingHdlrDroppedCt = Long.valueOf(li);
+        LoggingHdlrDroppedCt = Long.valueOf(li);
     }
 
     /*
      * Increment the handler's logging failure count
      */
     public void incHandlerFailureCount(int n) {
-        long li = SsoServerLoggingHdlrFailureCt.longValue();
+        long li = LoggingHdlrFailureCt.longValue();
         li = li + n;
-        SsoServerLoggingHdlrFailureCt = Long.valueOf(li);
+        LoggingHdlrFailureCt = Long.valueOf(li);
     }
 
     /*
      * Increment the handler's logging success count
      */
     public void incHandlerSuccessCount(int n) {
-        long li = SsoServerLoggingHdlrSuccessCt.longValue();
+        long li = LoggingHdlrSuccessCt.longValue();
         li = li + n;
-        SsoServerLoggingHdlrSuccessCt = Long.valueOf(li);
+        LoggingHdlrSuccessCt = Long.valueOf(li);
     }
 
     /*
      * Increment the DB handler's DB connection requests count
      */
     public void incHandlerConnectionRequests(int n) {
-        long li = SsoServerLoggingHdlrConnRqts.longValue();
+        long li = LoggingHdlrConnRqts.longValue();
         li = li + n;
-        SsoServerLoggingHdlrConnRqts = Long.valueOf(li);
+        LoggingHdlrConnRqts = Long.valueOf(li);
     }
 
     /*
      * Increment the DB handler's DB connections failed count
      */
     public void incHandlerConnectionsFailed(int n) {
-        long li = SsoServerLoggingHdlrFailureCt.longValue();
+        long li = LoggingHdlrFailureCt.longValue();
         li = li + n;
-        SsoServerLoggingHdlrFailureCt = Long.valueOf(li);
+        LoggingHdlrFailureCt = Long.valueOf(li);
     }
 
     /*
@@ -160,9 +160,9 @@ public class SsoServerLoggingHdlrEntryImpl extends SsoServerLoggingHdlrEntry {
      * since the OpenSSO server came up.
      */
     public void incHandlerConnectionsMade(int n) {
-        long li = SsoServerLoggingHdlrConnMade.longValue();
+        long li = LoggingHdlrConnMade.longValue();
         li = li + n;
-        SsoServerLoggingHdlrConnMade = Long.valueOf(li);
+        LoggingHdlrConnMade = Long.valueOf(li);
     }
 
 }

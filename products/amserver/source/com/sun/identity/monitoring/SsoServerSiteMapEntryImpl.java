@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSiteMapEntryImpl.java,v 1.1 2009-06-19 02:23:19 bigfatrat Exp $
+ * $Id: SsoServerSiteMapEntryImpl.java,v 1.2 2009-10-21 00:03:14 bigfatrat Exp $
  *
  */
 
@@ -67,37 +67,32 @@ public class SsoServerSiteMapEntryImpl extends SsoServerSiteMapEntry {
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerSiteMapIndex = " +
-                SsoServerSiteMapIndex +
-                "\n    SsoServerMapId = " +
-                SsoServerMapId +
-                "\n    SsoServerSiteMapId = " +
-                SsoServerSiteMapId +
-                "\n    SsoServerMapServerURL = " +
-                SsoServerMapServerURL +
-                "\n    SsoServerMapSiteName = " +
-                SsoServerMapSiteName);
+                "\n    SiteMapIndex = " + SiteMapIndex +
+                "\n    MapId = " + MapId +
+                "\n    SiteMapId = " + SiteMapId +
+                "\n    MapServerURL = " + MapServerURL +
+                "\n    MapSiteName = " + MapSiteName);
         }
 
         String host = null;
         String path = null;
         int port = 0;
         try {
-            URL url = new URL(SsoServerMapServerURL);
+            URL url = new URL(MapServerURL);
             host = url.getHost();
             port = url.getPort();
             path = url.getPath();
         } catch (MalformedURLException mue) {
             debug.error(classModule + "invalid URL: " +
-                SsoServerMapServerURL + "; " + mue.getMessage());
+                MapServerURL + "; " + mue.getMessage());
             return null;
         }
 
         String objname = myMibName +
             "/ssoServerSiteMapTable:" +
-            prfx + "ssoServerMapServerHost=" + host + "," +
-            prfx + "ssoServerMapServerPort=" + port + "," +
-            prfx + "ssoServerMapServerPath=" + path;
+            prfx + "mapServerHost=" + host + "," +
+            prfx + "mapServerPort=" + port + "," +
+            prfx + "mapServerPath=" + path;
 
         try {
             if (server == null) {

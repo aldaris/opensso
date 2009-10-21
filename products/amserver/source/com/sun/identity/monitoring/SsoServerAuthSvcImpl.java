@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerAuthSvcImpl.java,v 1.1 2009-06-19 02:23:15 bigfatrat Exp $
+ * $Id: SsoServerAuthSvcImpl.java,v 1.2 2009-10-21 00:02:10 bigfatrat Exp $
  *
  */
 
@@ -61,10 +61,10 @@ public class SsoServerAuthSvcImpl extends SsoServerAuthSvc {
         if (debug == null) {
             debug = Debug.getInstance("amMonitoring");
         }
-        SsoServerAuthFailureRate = new Long(0);
-        SsoServerAuthSuccessRate = new Long(0);
-        SsoServerAuthFailureCount = new Long(0);
-        SsoServerAuthSuccessCount = new Long(0);
+        AuthenticationFailureRate = new Long(0);
+        AuthenticationSuccessRate = new Long(0);
+        AuthenticationFailureCount = new Long(0);
+        AuthenticationSuccessCount = new Long(0);
     }
 
     /*
@@ -79,18 +79,18 @@ public class SsoServerAuthSvcImpl extends SsoServerAuthSvc {
             return;
         }
 
-        long li = SsoServerAuthFailureCount.longValue();
+        long li = AuthenticationFailureCount.longValue();
         li++;
-        SsoServerAuthFailureCount = Long.valueOf(li);
+        AuthenticationFailureCount = Long.valueOf(li);
     }
 
     public void incSsoServerAuthenticationSuccessCount() {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerAuthSuccessCount.longValue();
+        long li = AuthenticationSuccessCount.longValue();
         li++;
-        SsoServerAuthSuccessCount = Long.valueOf(li);
+        AuthenticationSuccessCount = Long.valueOf(li);
     }
 
     /**

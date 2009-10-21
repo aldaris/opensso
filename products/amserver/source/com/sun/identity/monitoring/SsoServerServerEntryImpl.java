@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerServerEntryImpl.java,v 1.1 2009-06-19 02:23:19 bigfatrat Exp $
+ * $Id: SsoServerServerEntryImpl.java,v 1.2 2009-10-21 00:03:14 bigfatrat Exp $
  *
  */
 
@@ -64,14 +64,13 @@ public class SsoServerServerEntryImpl extends SsoServerServerEntry {
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerServerId = " +
-                SsoServerServerId);
+                "\n    ServerId = " + ServerId);
         }
 
         String objname = myMibName +
             "/ssoServerServerTable:" +
-            prfx + "ssoServerServerHostName=" + SsoServerServerHostName + "," +
-            prfx + "ssoServerServerPort=" + SsoServerServerPort;
+            prfx + "serverHostName=" + ServerHostName + "," +
+            prfx + "serverPort=" + ServerPort;
 
         try {
             if (server == null) {

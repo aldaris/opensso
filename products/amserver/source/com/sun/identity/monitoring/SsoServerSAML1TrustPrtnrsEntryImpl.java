@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSAML1TrustPrtnrsEntryImpl.java,v 1.2 2009-08-19 20:27:57 bigfatrat Exp $
+ * $Id: SsoServerSAML1TrustPrtnrsEntryImpl.java,v 1.3 2009-10-21 00:03:13 bigfatrat Exp $
  *
  */
 
@@ -66,10 +66,8 @@ public class SsoServerSAML1TrustPrtnrsEntryImpl extends
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerSAML1TrustPrtnrIndex = " +
-                SsoServerSAML1TrustPrtnrIndex +
-                "\n    SsoServerSAML1TrustPrtnrName = " +
-                SsoServerSAML1TrustPrtnrName);
+                "\n    SAML1TrustPrtnrIndex = " + SAML1TrustPrtnrIndex +
+                "\n    SAML1TrustPrtnrName = " + SAML1TrustPrtnrName);
         }
 
         /*
@@ -78,8 +76,7 @@ public class SsoServerSAML1TrustPrtnrsEntryImpl extends
          */
         String objname = myMibName +
             "/ssoServerSAML1TrustPrtnrsTable:" +
-            prfx + "ssoServerSAML1TrustPrtnrName=" +
-            SsoServerSAML1TrustPrtnrName;
+            prfx + "sAML1TrustPrtnrName=" + SAML1TrustPrtnrName;
 
         try {
             if (server == null) {

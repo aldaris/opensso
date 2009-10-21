@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerPolicyJ2EEAgentEntryImpl.java,v 1.2 2009-08-07 20:07:22 bigfatrat Exp $
+ * $Id: SsoServerPolicyJ2EEAgentEntryImpl.java,v 1.3 2009-10-21 00:03:11 bigfatrat Exp $
  *
  */
 
@@ -67,24 +67,18 @@ public class SsoServerPolicyJ2EEAgentEntryImpl extends
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerRealmIndex = " +
-                SsoServerRealmIndex +
-                "\n    SsoServerPolicyJ2EEAgentIndex = " +
-                SsoServerPolicyJ2EEAgentIndex +
-                "\n    SsoServerPolicyJ2EEAgentName = " +
-                SsoServerPolicyJ2EEAgentName +
-                "\n    SsoServerPolicyJ2EEAgentGroup = " +
-                SsoServerPolicyJ2EEAgentGroup +
-                "\n    SsoServerPolicyJ2EEAgentAgentURL = " +
-                SsoServerPolicyJ2EEAgentAgentURL);
+                "\n    SsoServerRealmIndex = " + SsoServerRealmIndex +
+                "\n    PolicyJ2EEAgentIndex = " + PolicyJ2EEAgentIndex +
+                "\n    PolicyJ2EEAgentName = " + PolicyJ2EEAgentName +
+                "\n    PolicyJ2EEAgentGroup = " + PolicyJ2EEAgentGroup +
+                "\n    PolicyJ2EEAgentAgentURL = " + PolicyJ2EEAgentAgentURL);
         }
 
         String realm = Agent.getEscRealmNameFromIndex(SsoServerRealmIndex);
         String objname = myMibName +
             "/ssoServerPolicyJ2EEAgentTable:" +
             prfx + "ssoServerRealmName=" + realm + "," +
-            prfx + "ssoServerPolicyJ2EEAgentName=" +
-            SsoServerPolicyJ2EEAgentName;
+            prfx + "policyJ2EEAgentName=" + PolicyJ2EEAgentName;
 
         try {
             if (server == null) {

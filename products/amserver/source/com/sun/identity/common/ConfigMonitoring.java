@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigMonitoring.java,v 1.3 2009-08-19 20:30:08 bigfatrat Exp $
+ * $Id: ConfigMonitoring.java,v 1.4 2009-10-20 23:57:33 bigfatrat Exp $
  *
  */
 
@@ -1145,7 +1145,6 @@ public class ConfigMonitoring {
                     monRmiEnabled(rmiEna).
                     monSnmpEnabled(snmpEna).build();
 
-            debug.error("starting monitoring Agent");
             int i = Agent.startAgent(sMonInfo);
             if (i != 0) {
                 if (debug.warningEnabled()) {

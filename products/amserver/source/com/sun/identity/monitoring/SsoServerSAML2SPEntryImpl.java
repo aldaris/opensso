@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSAML2SPEntryImpl.java,v 1.2 2009-08-07 20:07:23 bigfatrat Exp $
+ * $Id: SsoServerSAML2SPEntryImpl.java,v 1.3 2009-10-21 00:03:14 bigfatrat Exp $
  *
  */
 
@@ -65,18 +65,15 @@ public class SsoServerSAML2SPEntryImpl extends SsoServerSAML2SPEntry {
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerRealmIndex = " +
-                SsoServerRealmIndex +
-                "\n    SsoServerSAML2SPIndex = " +
-                SsoServerSAML2SPIndex +
-                "\n    SsoServerSAML2SPName = " +
-                SsoServerSAML2SPName);
+                "\n    SsoServerRealmIndex = " + SsoServerRealmIndex +
+                "\n    SAML2SPIndex = " + SAML2SPIndex +
+                "\n    SAML2SPName = " + SAML2SPName);
         }
 
         String objname = myMibName +
             "/ssoServerSAML2SPTable:" +
             prfx + "ssoServerRealmName=" + realm + "," +
-            prfx + "ssoServerSAML2SPName=" + SsoServerSAML2SPName;
+            prfx + "sAML2SPName=" + SAML2SPName;
 
         try {
             if (server == null) {
@@ -99,9 +96,9 @@ public class SsoServerSAML2SPEntryImpl extends SsoServerSAML2SPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2SPInvalidArtifactsRcvd.longValue();
+        long li = SAML2SPInvalidArtifactsRcvd.longValue();
         li++;
-        SsoServerSAML2SPInvalidArtifactsRcvd = Long.valueOf(li);
+        SAML2SPInvalidArtifactsRcvd = Long.valueOf(li);
     }
 
     public void incSAML2SPValidAssertsRcvd() {
@@ -111,9 +108,9 @@ public class SsoServerSAML2SPEntryImpl extends SsoServerSAML2SPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2SPValidAssertionsRcvd.longValue();
+        long li = SAML2SPValidAssertionsRcvd.longValue();
         li++;
-        SsoServerSAML2SPValidAssertionsRcvd = Long.valueOf(li);
+        SAML2SPValidAssertionsRcvd = Long.valueOf(li);
     }
 
     public void incSAML2SPRqtsSent() {
@@ -123,8 +120,8 @@ public class SsoServerSAML2SPEntryImpl extends SsoServerSAML2SPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2SPRqtsSent.longValue();
+        long li = SAML2SPRqtsSent.longValue();
         li++;
-        SsoServerSAML2SPRqtsSent = Long.valueOf(li);
+        SAML2SPRqtsSent = Long.valueOf(li);
     }
 }

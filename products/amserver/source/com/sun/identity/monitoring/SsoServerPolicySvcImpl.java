@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerPolicySvcImpl.java,v 1.1 2009-06-19 02:23:17 bigfatrat Exp $
+ * $Id: SsoServerPolicySvcImpl.java,v 1.2 2009-10-21 00:03:12 bigfatrat Exp $
  *
  */
 
@@ -58,9 +58,9 @@ public class SsoServerPolicySvcImpl extends SsoServerPolicySvc {
         if (debug == null) {
             debug = Debug.getInstance("amMonitoring");
         }
-        SsoServerPolicyEvalsOut = new Long(0);
-        SsoServerPolicyEvalsIn = new Long(0);
-        SsoServerPolicyStatus = "dormant";
+        PolicyEvalsOut = new Long(0);
+        PolicyEvalsIn = new Long(0);
+        PolicyStatus = "dormant";
     }
 
     /*
@@ -70,7 +70,7 @@ public class SsoServerPolicySvcImpl extends SsoServerPolicySvc {
         if (!Agent.isRunning()) {
             return;
         }
-        SsoServerPolicyStatus = new String("operational");
+        PolicyStatus = new String("operational");
     }
 
     /*
@@ -81,7 +81,7 @@ public class SsoServerPolicySvcImpl extends SsoServerPolicySvc {
         if (!Agent.isRunning()) {
             return;
         }
-        SsoServerPolicyStatus = new String("dormant");
+        PolicyStatus = new String("dormant");
     }
 
     /*
@@ -91,12 +91,12 @@ public class SsoServerPolicySvcImpl extends SsoServerPolicySvc {
         if (!Agent.isRunning()) {
             return;
         }
-        if (SsoServerPolicyStatus.equals("dormant")) {
+        if (PolicyStatus.equals("dormant")) {
             setPolicyStatusOperational();
         }
-        long li = SsoServerPolicyEvalsIn.longValue();
+        long li = PolicyEvalsIn.longValue();
         li++;
-        SsoServerPolicyEvalsIn = Long.valueOf(li);
+        PolicyEvalsIn = Long.valueOf(li);
     }
 
     /*
@@ -106,8 +106,8 @@ public class SsoServerPolicySvcImpl extends SsoServerPolicySvc {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerPolicyEvalsOut.longValue();
+        long li = PolicyEvalsOut.longValue();
         li++;
-        SsoServerPolicyEvalsOut = Long.valueOf(li);
+        PolicyEvalsOut = Long.valueOf(li);
     }
 }

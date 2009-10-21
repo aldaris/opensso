@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSvcMgmtSvcImpl.java,v 1.1 2009-06-19 02:23:19 bigfatrat Exp $
+ * $Id: SsoServerSvcMgmtSvcImpl.java,v 1.2 2009-10-21 00:03:15 bigfatrat Exp $
  *
  */
 
@@ -113,14 +113,14 @@ public class SsoServerSvcMgmtSvcImpl extends SsoServerSvcMgmtSvc {
                 debug.message(classMethod + sbp1.toString());
             }
 
-            SsoServerSvcMgmtRepositoryType = dsType;
-            SsoServerSvcMgmtStatus = "operational";
+            SvcMgmtRepositoryType = dsType;
+            SvcMgmtStatus = "operational";
             if (!siStat) {
-                SsoServerSvcMgmtStatus = "dormant";
+                SvcMgmtStatus = "dormant";
             }
-            SsoServerSvcMgmtRepositorySSL = dirSSL;
-                SsoServerSvcMgmtRepositoryOrgDN = orgDN;
-                SsoServerSvcMgmtRepositoryBindDN = bindDN;
+            SvcMgmtRepositorySSL = dirSSL;
+                SvcMgmtRepositoryOrgDN = orgDN;
+                SvcMgmtRepositoryBindDN = bindDN;
             String portS = "0";
             try {
                 portS = Integer.toString(port);
@@ -128,7 +128,7 @@ public class SsoServerSvcMgmtSvcImpl extends SsoServerSvcMgmtSvc {
                 debug.error(classMethod + "port retrieved invalid (" +
                     port + ": " + nex.getMessage());
             }
-                SsoServerSvcMgmtRepositoryHostPort = portS;
+                SvcMgmtRepositoryHostPort = portS;
         } catch (Exception d) {
             debug.error(classMethod + "trying to get Directory Server Config");
         }

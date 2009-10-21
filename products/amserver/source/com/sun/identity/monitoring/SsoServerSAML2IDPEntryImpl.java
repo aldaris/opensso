@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerSAML2IDPEntryImpl.java,v 1.2 2009-08-07 20:07:23 bigfatrat Exp $
+ * $Id: SsoServerSAML2IDPEntryImpl.java,v 1.3 2009-10-21 00:03:13 bigfatrat Exp $
  *
  */
 
@@ -65,18 +65,15 @@ public class SsoServerSAML2IDPEntryImpl extends SsoServerSAML2IDPEntry {
 
         if (debug.messageEnabled()) {
             debug.message(classModule +
-                "\n    SsoServerRealmIndex = " +
-                SsoServerRealmIndex +
-                "\n    SsoServerSAML2IDPIndex = " +
-                SsoServerSAML2IDPIndex +
-                "\n    SsoServerSAML2IDPName = " +
-                SsoServerSAML2IDPName);
+                "\n    SsoServerRealmIndex = " + SsoServerRealmIndex +
+                "\n    SAML2IDPIndex = " + SAML2IDPIndex +
+                "\n    SAML2IDPName = " + SAML2IDPName);
         }
         
         String objname = myMibName +
             "/ssoServerSAML2IDPTable:" +
             prfx + "ssoServerRealmName=" + realm + "," +
-            prfx + "ssoServerSAML2IDPName=" + SsoServerSAML2IDPName;
+            prfx + "sAML2IDPName=" + SAML2IDPName;
 
         try {
             if (server == null) {
@@ -99,9 +96,9 @@ public class SsoServerSAML2IDPEntryImpl extends SsoServerSAML2IDPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2IDPArtifactsIssued.longValue();
+        long li = SAML2IDPArtifactsIssued.longValue();
         li++;
-        SsoServerSAML2IDPArtifactsIssued = Long.valueOf(li);
+        SAML2IDPArtifactsIssued = Long.valueOf(li);
     }
 
     public void incSAML2IDPAssertsIssued() {
@@ -111,9 +108,9 @@ public class SsoServerSAML2IDPEntryImpl extends SsoServerSAML2IDPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2IDPAssertionsIssued.longValue();
+        long li = SAML2IDPAssertionsIssued.longValue();
         li++;
-        SsoServerSAML2IDPAssertionsIssued = Long.valueOf(li);
+        SAML2IDPAssertionsIssued = Long.valueOf(li);
     }
 
     public void incSAML2IDPInvalRqtsRcvd() {
@@ -123,9 +120,9 @@ public class SsoServerSAML2IDPEntryImpl extends SsoServerSAML2IDPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2IDPInvalRqtsRcvd.longValue();
+        long li = SAML2IDPInvalRqtsRcvd.longValue();
         li++;
-        SsoServerSAML2IDPInvalRqtsRcvd = Long.valueOf(li);
+        SAML2IDPInvalRqtsRcvd = Long.valueOf(li);
     }
 
     public void incSAML2IDPRqtsRcvd() {
@@ -135,9 +132,9 @@ public class SsoServerSAML2IDPEntryImpl extends SsoServerSAML2IDPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2IDPRqtsRcvd.longValue();
+        long li = SAML2IDPRqtsRcvd.longValue();
         li++;
-        SsoServerSAML2IDPRqtsRcvd = Long.valueOf(li);
+        SAML2IDPRqtsRcvd = Long.valueOf(li);
     }
 
     public void incSAML2IDPArtifsInCache() {
@@ -147,9 +144,9 @@ public class SsoServerSAML2IDPEntryImpl extends SsoServerSAML2IDPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2IDPArtifactsInCache.longValue();
+        long li = SAML2IDPArtifactsInCache.longValue();
         li++;
-        SsoServerSAML2IDPArtifactsInCache = Long.valueOf(li);
+        SAML2IDPArtifactsInCache = Long.valueOf(li);
     }
 
     public void decSAML2IDPArtifsInCache() {
@@ -159,9 +156,9 @@ public class SsoServerSAML2IDPEntryImpl extends SsoServerSAML2IDPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2IDPArtifactsInCache.longValue();
+        long li = SAML2IDPArtifactsInCache.longValue();
         li--;
-        SsoServerSAML2IDPArtifactsInCache = Long.valueOf(li);
+        SAML2IDPArtifactsInCache = Long.valueOf(li);
     }
 
     public void incSAML2IDPAssertsInCache() {
@@ -171,9 +168,9 @@ public class SsoServerSAML2IDPEntryImpl extends SsoServerSAML2IDPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2IDPAssertionsInCache.longValue();
+        long li = SAML2IDPAssertionsInCache.longValue();
         li++;
-        SsoServerSAML2IDPAssertionsInCache = Long.valueOf(li);
+        SAML2IDPAssertionsInCache = Long.valueOf(li);
     }
 
     public void decSAML2IDPAssertsInCache() {
@@ -183,8 +180,8 @@ public class SsoServerSAML2IDPEntryImpl extends SsoServerSAML2IDPEntry {
         if (!Agent.isRunning()) {
             return;
         }
-        long li = SsoServerSAML2IDPAssertionsInCache.longValue();
+        long li = SAML2IDPAssertionsInCache.longValue();
         li--;
-        SsoServerSAML2IDPAssertionsInCache = Long.valueOf(li);
+        SAML2IDPAssertionsInCache = Long.valueOf(li);
     }
 }
