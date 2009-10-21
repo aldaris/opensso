@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultipleResourceRestTest.java,v 1.2 2009-09-15 20:56:16 veiming Exp $
+ * $Id: MultipleResourceRestTest.java,v 1.3 2009-10-21 01:11:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -146,6 +146,7 @@ public class MultipleResourceRestTest {
         params.add("resources", RESOURCE_NAME + "/a");
         params.add("action", "GET");
         params.add("realm", REALM);
+        params.add("admin", adminToken.getTokenID().toString());
 
         String json = decisionsClient.queryParams(params).accept(
             "application/json").get(String.class);
@@ -176,6 +177,7 @@ public class MultipleResourceRestTest {
         params.add("subject", user.getUniversalId());
         params.add("resource", RESOURCE_NAME);
         params.add("realm", REALM);
+        params.add("admin", adminToken.getTokenID().toString());
 
         String json = entitlementsClient.queryParams(params).accept(
             "application/json").get(String.class);

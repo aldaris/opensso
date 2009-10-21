@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerResource.java,v 1.1 2009-09-14 23:02:40 veiming Exp $
+ * $Id: ListenerResource.java,v 1.2 2009-10-21 01:11:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -51,14 +52,14 @@ public class ListenerResource extends ResourceBase {
     @Path("/{url}")
     public String addListener(
         @Context HttpHeaders headers,
+        @Context HttpServletRequest request,
         @PathParam("url") String url,
-        @FormParam("admin") String admin,
         @FormParam("resources") List<String> resources,
         @FormParam("application") @DefaultValue("iPlanetAMWebAgentService")
             String application
     ) {
         try {
-            Subject caller = delegationCheck(admin);
+            Subject caller = getCaller(request);
             URL urlObj = new URL(url);
             EntitlementListener l = new EntitlementListener(urlObj,
                 application, resources);
@@ -78,11 +79,11 @@ public class ListenerResource extends ResourceBase {
     @Path("/{url}")
     public String deleteListener(
         @Context HttpHeaders headers,
-        @PathParam("admin") String admin,
+        @Context HttpServletRequest request,
         @PathParam("url") String url
     ) {
         try {
-            Subject caller = delegationCheck(admin);
+            Subject caller = getCaller(request);
             URL urlObj = new URL(url);
             ListenerManager.getInstance().removeListener(caller, urlObj);
             return "OK";
@@ -101,11 +102,11 @@ public class ListenerResource extends ResourceBase {
     @Path("/{url}")
     public String getListener(
         @Context HttpHeaders headers,
-        @PathParam("admin") String admin,
+        @Context HttpServletRequest request,
         @PathParam("url") String url
     ) {
         try {
-            Subject caller = delegationCheck(admin);
+            Subject caller = getCaller(request);
             URL urlObj = new URL(url);
             EntitlementListener listener = ListenerManager.getInstance()
                 .getListener(caller, urlObj);

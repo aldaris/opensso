@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestTest.java,v 1.5 2009-09-10 16:35:38 veiming Exp $
+ * $Id: RestTest.java,v 1.6 2009-10-21 01:11:37 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -182,6 +182,7 @@ public class RestTest {
         MultivaluedMap params = new MultivaluedMapImpl();
         params.add("subject", user.getUniversalId());
         params.add("realm", REALM);
+        params.add("admin", adminToken.getTokenID().toString());
 
         try {
             entitlementClient.queryParams(params).accept(
@@ -202,6 +203,7 @@ public class RestTest {
         MultivaluedMap params = new MultivaluedMapImpl();
         params.add("resource", "http://whatever.com");
         params.add("realm", REALM);
+        params.add("admin", adminToken.getTokenID().toString());
 
         try {
             entitlementClient.queryParams(params).accept(
@@ -223,6 +225,7 @@ public class RestTest {
         params.add("resource", "http://whatever.com");
         params.add("subject", user.getUniversalId());
         params.add("realm", REALM);
+        params.add("admin", adminToken.getTokenID().toString());
 
         try {
             decisionClient.queryParams(params).accept(
@@ -243,6 +246,7 @@ public class RestTest {
         params.add("subject", user.getUniversalId());
         params.add("resource", RESOURCE_NAME + "/index.html");
         params.add("action", "GET");
+        params.add("admin", adminToken.getTokenID().toString());
         params.add("realm", REALM);
         return params;
     }

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-jars.xml,v 1.10 2009-08-19 05:40:29 veiming Exp $
+   $Id: build-jars.xml,v 1.11 2009-10-21 01:11:03 veiming Exp $
 
 -->
 
@@ -50,6 +50,8 @@
             <fileset dir="${products.license.dir}" includes="license.txt" />
             <zipfileset dir="${amserver.built.dir}/classes"
                 excludes="${console.packages},com/sun/enterprise/**" />
+            <zipfileset dir="${amserver.services}/amserver"
+                prefix="META-INF/services" />
         </jar>
 
         <antcall target="jar-legacy" />

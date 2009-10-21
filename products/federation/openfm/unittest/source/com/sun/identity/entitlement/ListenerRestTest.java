@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerRestTest.java,v 1.1 2009-09-14 23:02:42 veiming Exp $
+ * $Id: ListenerRestTest.java,v 1.2 2009-10-21 01:11:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -126,6 +126,7 @@ public class ListenerRestTest {
     public void test() throws Exception {
         Form form = new Form();
         form.add("resources", RESOURCE_NAME + "/*");
+        form.add("admin", adminToken.getTokenID().toString());
         String result = listenerClient.path(ENC_NOTIFICATION_URL).post(
             String.class, form);
         if (!result.equals("OK")) {
@@ -166,6 +167,7 @@ public class ListenerRestTest {
     public void testAddMoreResources() throws Exception {
         Form form = new Form();
         form.add("resources", RESOURCE_NAME + "/a/*");
+        form.add("admin", adminToken.getTokenID().toString());
         String result = listenerClient.path(ENC_NOTIFICATION_URL).post(
             String.class, form);
         if (!result.equals("OK")) {
@@ -210,6 +212,7 @@ public class ListenerRestTest {
     public void testAddDifferentApp() throws Exception {
         Form form = new Form();
         form.add("application", "sunBank");
+        form.add("admin", adminToken.getTokenID().toString());
         String result = listenerClient.path(ENC_NOTIFICATION_URL).post(
             String.class, form);
         if (!result.equals("OK")) {
@@ -228,8 +231,8 @@ public class ListenerRestTest {
 
     @Test(dependsOnMethods = {"testAddDifferentApp"})
     public void testGetListener() throws Exception {
-        String result = listenerClient.path(ENC_NOTIFICATION_URL).get(
-            String.class);
+        String result = listenerClient.path(ENC_NOTIFICATION_URL).queryParam(
+            "admin", adminToken.getTokenID().toString()).get(String.class);
 
         try {
             EntitlementListener retrieved = new EntitlementListener(
@@ -256,7 +259,8 @@ public class ListenerRestTest {
 
     @Test(dependsOnMethods = {"testAddDifferentApp"})
     public void testRemove() throws Exception {
-        String result = listenerClient.path(ENC_NOTIFICATION_URL).
+        String result = listenerClient.path(ENC_NOTIFICATION_URL).queryParam(
+            "admin", adminToken.getTokenID().toString()).
             delete(String.class);
         if (!result.equals("OK")) {
             throw new Exception(

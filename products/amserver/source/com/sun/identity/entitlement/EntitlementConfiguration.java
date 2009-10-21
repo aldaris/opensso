@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementConfiguration.java,v 1.3 2009-09-25 05:52:54 veiming Exp $
+ * $Id: EntitlementConfiguration.java,v 1.4 2009-10-21 01:11:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,7 +30,6 @@ package com.sun.identity.entitlement;
 import com.sun.identity.entitlement.util.SearchFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -46,8 +45,6 @@ public abstract class EntitlementConfiguration {
     public static final String RESOURCE_COMPARATOR = "resourceComparator";
     
     private static Class clazz;
-    private static Map<String, EntitlementConfiguration> instances =
-        new HashMap<String, EntitlementConfiguration>();
     private Subject adminSubject;
 
     static {
@@ -73,37 +70,34 @@ public abstract class EntitlementConfiguration {
         if (clazz == null) {
             return null;
         }
-        EntitlementConfiguration impl = instances.get(realm);
-
-        if (impl == null) {
-            Class[] parameterTypes = {String.class};
-            try {
-                Constructor constructor = clazz.getConstructor(parameterTypes);
-                Object[] args = {realm};
-                impl = (EntitlementConfiguration)constructor.newInstance(args);
-                impl.adminSubject = adminSubject;
-                instances.put(realm, impl);
-            } catch (InstantiationException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            } catch (IllegalAccessException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            } catch (IllegalArgumentException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            } catch (InvocationTargetException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            } catch (NoSuchMethodException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            } catch (SecurityException ex) {
-                PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
-                    ex);
-            }
+        Class[] parameterTypes = {String.class};
+        try {
+            Constructor constructor = clazz.getConstructor(parameterTypes);
+            Object[] args = {realm};
+            EntitlementConfiguration impl = (EntitlementConfiguration)
+                constructor.newInstance(args);
+            impl.adminSubject = adminSubject;
+            return impl;
+        } catch (InstantiationException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
+        } catch (IllegalAccessException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
+        } catch (IllegalArgumentException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
+        } catch (InvocationTargetException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
+        } catch (NoSuchMethodException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
+        } catch (SecurityException ex) {
+            PrivilegeManager.debug.error("PrivilegeIndexStore.getInstance",
+                ex);
         }
-        return impl;
+        return null;
     }
 
     /**

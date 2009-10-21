@@ -19,12 +19,13 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceBase.java,v 1.1 2009-09-14 23:02:40 veiming Exp $
+ * $Id: ResourceBase.java,v 1.2 2009-10-21 01:11:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.util.AuthSPrincipal;
+import com.sun.identity.security.ISubjectable;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,16 +34,27 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import org.json.JSONException;
 
 public abstract class ResourceBase {
-    protected Subject delegationCheck(String adminID) {
-        //TOFIX: hardcoded to amadmin
-        return toSubject(
-            "id=amAdmin,ou=user,dc=opensso,dc=java,dc=net");
+    protected Subject getCaller(HttpServletRequest req)
+        throws EntitlementException {
+        Principal p = req.getUserPrincipal();
+        if (p != null) {
+            if (p instanceof ISubjectable) {
+                try {
+                    return ((ISubjectable)p).createSubject();
+                } catch (Exception e) {
+                    throw new EntitlementException(433, e);
+                }
+            }
+            return toSubject(p.getName());
+        }
+        throw new EntitlementException(423);
     }
 
     protected Map<String, Set<String>> getMap(List<String> list) {

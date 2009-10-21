@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.11 2009-10-21 00:07:22 dillidorai Exp $
+ * $Id: DecisionResource.java,v 1.12 2009-10-21 01:11:04 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -78,7 +79,7 @@ public class DecisionResource extends ResourceBase {
     @Path("/decision")
     public String getDecision(
         @Context HttpHeaders headers,
-        @QueryParam("admin") String admin,
+        @Context HttpServletRequest request,
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("subject") String subject,
         @QueryParam("action") String action,
@@ -86,15 +87,8 @@ public class DecisionResource extends ResourceBase {
         @QueryParam("application") String application,
         @QueryParam("env") List<String> environment
     ) {
-         return decision(
-            headers,
-            admin,
-            realm,
-            subject,
-            action,
-            resource,
-            application,
-            environment);
+         return decision(headers, request, realm, subject, action, resource,
+            application, environment);
     }
 
     /**
@@ -113,7 +107,7 @@ public class DecisionResource extends ResourceBase {
     @Path("/decision")
     public String postDecision(
         @Context HttpHeaders headers,
-        @FormParam("admin") String admin,
+        @Context HttpServletRequest request,
         @FormParam("realm") @DefaultValue("/") String realm,
         @FormParam("subject") String subject,
         @FormParam("action") String action,
@@ -121,15 +115,8 @@ public class DecisionResource extends ResourceBase {
         @FormParam("application") String application,
         @FormParam("env") List<String> environment
     ) {
-         return decision(
-            headers,
-            admin,
-            realm,
-            subject,
-            action,
-            resource,
-            application,
-            environment);
+         return decision(headers, request, realm, subject, action, resource,
+            application, environment);
     }
 
     /**
@@ -145,7 +132,7 @@ public class DecisionResource extends ResourceBase {
      */
     private String decision(
         HttpHeaders headers,
-        String admin,
+        HttpServletRequest request,
         String realm,
         String subject,
         String action,
@@ -157,10 +144,10 @@ public class DecisionResource extends ResourceBase {
         if (!realm.startsWith("/")) {
             realm = "/" + realm;
         }
-        Subject caller = delegationCheck(admin);
-        Map env = getMap(environment);
-
         try {
+            Subject caller = getCaller(request);
+            Map env = getMap(environment);
+
             validateSubjectAndResource(subject, resource);
 
             if ((action == null) || (action.trim().length() == 0)) {
@@ -192,21 +179,15 @@ public class DecisionResource extends ResourceBase {
     @Path("/decisions")
     public String getDecisions(
         @Context HttpHeaders headers,
-        @QueryParam("admin") String admin,
+        @Context HttpServletRequest request,
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("subject") String subject,
         @QueryParam("resources") List<String> resources,
         @QueryParam("application") String application,
         @QueryParam("env") List<String> environment
     ) {
-        return decisions(
-            headers,
-            admin,
-            realm,
-            subject,
-            resources,
-            application,
-            environment);
+        return decisions(headers, request, realm, subject, resources,
+            application, environment);
     }
 
     /**
@@ -225,21 +206,15 @@ public class DecisionResource extends ResourceBase {
     @Path("/decisions")
     public String postDecisions(
         @Context HttpHeaders headers,
-        @FormParam("admin") String admin,
+        @Context HttpServletRequest request,
         @FormParam("realm") @DefaultValue("/") String realm,
         @FormParam("subject") String subject,
         @FormParam("resources") List<String> resources,
         @FormParam("application") String application,
         @FormParam("env") List<String> environment
     ) {
-        return decisions(
-            headers,
-            admin,
-            realm,
-            subject,
-            resources,
-            application,
-            environment);
+        return decisions(headers, request, realm, subject, resources,
+            application, environment);
     }
 
     /**
@@ -255,7 +230,7 @@ public class DecisionResource extends ResourceBase {
      */
     private String decisions(
         HttpHeaders headers,
-        String admin,
+        HttpServletRequest request,
         String realm,
         String subject,
         List<String> resources,
@@ -270,7 +245,7 @@ public class DecisionResource extends ResourceBase {
                 throw new EntitlementException(424);
             }
 
-            Subject caller = delegationCheck(admin);
+            Subject caller = getCaller(request);
 
             Map env = getMap(environment);
             Set<String> setResources = new HashSet<String>();
@@ -321,21 +296,15 @@ public class DecisionResource extends ResourceBase {
     @Path("/entitlement")
     public String getEntitlement(
         @Context HttpHeaders headers,
-        @QueryParam("admin") String admin,
+        @Context HttpServletRequest request,
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("subject") String subject,
         @QueryParam("resource") String resource,
         @QueryParam("application") String application,
         @QueryParam("env") List<String> environment
     ) {
-        return entitlement(
-            headers,
-            admin,
-            realm,
-            subject,
-            resource,
-            application,
-            environment);
+        return entitlement(headers, request, realm, subject, resource,
+            application, environment);
     }
 
     /**
@@ -354,21 +323,15 @@ public class DecisionResource extends ResourceBase {
     @Path("/entitlement")
     public String postEntitlement(
         @Context HttpHeaders headers,
-        @FormParam("admin") String admin,
+        @Context HttpServletRequest request,
         @FormParam("realm") @DefaultValue("/") String realm,
         @FormParam("subject") String subject,
         @FormParam("resource") String resource,
         @FormParam("application") String application,
         @FormParam("env") List<String> environment
     ) {
-        return entitlement(
-            headers,
-            admin,
-            realm,
-            subject,
-            resource,
-            application,
-            environment);
+        return entitlement(headers, request, realm, subject, resource,
+            application, environment);
     }
 
     /**
@@ -384,7 +347,7 @@ public class DecisionResource extends ResourceBase {
      */
     private String entitlement(
         HttpHeaders headers,
-        String admin,
+        HttpServletRequest request,
         String realm,
         String subject,
         String resource,
@@ -396,9 +359,10 @@ public class DecisionResource extends ResourceBase {
         }
 
         Map env = getMap(environment);
-        Subject caller = delegationCheck(admin);
 
         try {
+            Subject caller = getCaller(request);
+
             validateSubjectAndResource(subject, resource);
             Evaluator evaluator = getEvaluator(caller, application);
             List<Entitlement> entitlements = evaluator.evaluate(
@@ -433,21 +397,15 @@ public class DecisionResource extends ResourceBase {
     @Path("/entitlements")
     public String getEntitlements(
         @Context HttpHeaders headers,
-        @QueryParam("admin") String admin,
+        @Context HttpServletRequest request,
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("subject") String subject,
         @QueryParam("resource") String resource,
         @QueryParam("application") String application,
         @QueryParam("env") List<String> environment
     ) {
-        return entitlements(
-            headers,
-            admin,
-            realm,
-            subject,
-            resource,
-            application,
-            environment);
+        return entitlements(headers, request, realm, subject, resource,
+            application, environment);
     }
 
     /**
@@ -466,21 +424,15 @@ public class DecisionResource extends ResourceBase {
     @Path("/entitlements")
     public String postEntitlements(
         @Context HttpHeaders headers,
-        @FormParam("admin") String admin,
+        @Context HttpServletRequest request,
         @FormParam("realm") @DefaultValue("/") String realm,
         @FormParam("subject") String subject,
         @FormParam("resource") String resource,
         @FormParam("application") String application,
         @FormParam("env") List<String> environment
     ) {
-        return entitlements(
-            headers,
-            admin,
-            realm,
-            subject,
-            resource,
-            application,
-            environment);
+        return entitlements(headers, request, realm, subject, resource,
+            application, environment);
     }
 
     /**
@@ -496,7 +448,7 @@ public class DecisionResource extends ResourceBase {
      */
     private String entitlements(
         HttpHeaders headers,
-        String admin,
+        HttpServletRequest request,
         String realm,
         String subject,
         String resource,
@@ -508,9 +460,9 @@ public class DecisionResource extends ResourceBase {
         }
 
         Map env = getMap(environment);
-        Subject caller = delegationCheck(admin);
 
         try {
+            Subject caller = getCaller(request);
             validateSubjectAndResource(subject, resource);
             Evaluator evaluator = getEvaluator(caller, application);
             List<Entitlement> entitlements = evaluator.evaluate(
