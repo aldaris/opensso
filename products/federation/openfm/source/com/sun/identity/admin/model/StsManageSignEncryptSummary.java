@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsManageSignEncryptSummary.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
+ * $Id: StsManageSignEncryptSummary.java,v 1.3 2009-10-21 16:46:03 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -50,22 +50,23 @@ public class StsManageSignEncryptSummary extends StsManageWizardSummary {
         ArrayList<String> a = new ArrayList<String>();
         Resources r = new Resources();
         StsManageWizardBean wizardBean = getStsManageWizardBean();
+        StsProfileBean profileBean = wizardBean.getStsProfileBean();
 
-        if( wizardBean.isRequestSignatureVerified() ) {
+        if( profileBean.isRequestSigned() ) {
             a.add(" " + r.getString(this, "requestSignatureVerified"));
         }
-        if( wizardBean.isRequestHeaderDecrypted() ) {
+        if( profileBean.isRequestHeaderEncrypted() ) {
             a.add(" " + r.getString(this, "requestHeaderDecrypted"));
         }
-        if( wizardBean.isRequestDecrypted() ) {
+        if( profileBean.isRequestEncrypted() ) {
             a.add(" " + r.getString(this, "requestDecrypted"));
         }
-        if( wizardBean.isResponseSigned() ) {
+        if( profileBean.isResponseSignatureVerified() ) {
             a.add(" " + r.getString(this, "responseSigned"));
         }
-        if( wizardBean.isResponseEncrypted() ) {
+        if( profileBean.isResponseDecrypted() ) {
             EncryptionAlgorithm encryptionAlgorithm
-             = EncryptionAlgorithm.valueOf(wizardBean.getEncryptionAlgorithm());
+             = EncryptionAlgorithm.valueOf(profileBean.getEncryptionAlgorithm());
 
             String value = r.getString(this, "responseEncryptedFormat");
             value = value.replaceAll("\\{0\\}", 

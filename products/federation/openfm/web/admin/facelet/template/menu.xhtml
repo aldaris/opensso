@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.7 2009-10-06 19:44:41 ggennaro Exp $
+   $Id: menu.xhtml,v 1.8 2009-10-21 16:46:00 ggennaro Exp $
 
 -->
 
@@ -124,7 +124,7 @@
                     action="wsp-manage" / -->
             </ice:menuItem>
             <ice:menuItem
-                rendered="#{permissionsBean.webServiceSecurityCreateAllowed}"
+                rendered="#{permissionsBean.webServiceSecurityAllowed}"
                 value="#{resources['menu.wscItemValue']}">
                 <ice:menuItem
                     rendered="#{permissionsBean.wscCreateAllowed}"

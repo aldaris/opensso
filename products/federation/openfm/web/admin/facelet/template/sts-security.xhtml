@@ -39,11 +39,11 @@
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="#{resources['sts-security3.section-title.security']}"/>
+                value="#{resources['sts-security.section-title.security']}"/>
         </ui:define>
         <ui:define name="section-details">
             <ice:outputText
-                value="#{resources['sts-security3.section-details.security']}"/>
+                value="#{resources['sts-security.section-details.security']}"/>
         </ui:define>
         <ui:define name="section-body">
 
@@ -51,11 +51,11 @@
                 <ice:outputLabel
                     for="securityMechanisms"
                     style="float: right;"
-                    value="#{resources['sts-security3.securityMechanismsLabel']}" />
+                    value="#{resources['sts-security.securityMechanismsLabel']}" />
                 <ice:panelSeries
                     styleClass="enhancedCheckboxGrp"
                     var="securityMechanismPanel"
-                    value="#{wizardBean.securityMechanismPanels}">
+                    value="#{wizardBean.stsProfileBean.securityMechanismPanels}">
 
                     <ice:panelGrid 
                         columns="2"
@@ -85,7 +85,7 @@
                                     name="panelBean" 
                                     value="#{securityMechanismPanel}" />
                                 <ice:outputText 
-                                    value="#{resources['sts-security3.showSettings']}" />
+                                    value="#{resources['sts-security.showSettings']}" />
                             </ice:commandLink>
                             <ice:commandLink
                                 actionListener="#{wizardHandler.securityMechanismPanelActionListener}"
@@ -94,7 +94,7 @@
                                     name="panelBean" 
                                     value="#{securityMechanismPanel}" />
                                 <ice:outputText 
-                                    value="#{resources['sts-security3.hideSettings']}" />
+                                    value="#{resources['sts-security.hideSettings']}" />
                             </ice:commandLink>
                         </ice:panelGroup>
                     </ice:panelGrid>
@@ -120,6 +120,9 @@
                                     name="wizardHandler"
                                     value="#{wizardHandler}"/>
                                 <ui:param
+                                    name="profileBean"
+                                    value="#{wizardBean.stsProfileBean}"/>
+                                <ui:param
                                     name="settingsRendered"
                                     value="#{securityMechanismPanel.collapsible}"/>
                                 <ui:param
@@ -138,11 +141,11 @@
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="#{resources['sts-security3.section-title.authChain']}"/>
+                value="#{resources['sts-security.section-title.authChain']}"/>
         </ui:define>
         <ui:define name="section-details">
             <ice:outputText
-                value="#{resources['sts-security3.section-details.authChain']}"/>
+                value="#{resources['sts-security.section-details.authChain']}"/>
         </ui:define>
         <ui:define name="section-body">
 
@@ -150,10 +153,10 @@
                 <ice:outputLabel
                     for="authenticationChain"
                     style="float: right;"
-                    value="#{resources['sts-security3.authenticationChainLabel']}" />
+                    value="#{resources['sts-security.authenticationChainLabel']}" />
                 <ice:selectOneMenu
                     id="authenticationChain"
-                    value="#{wizardBean.authenticationChain}">
+                    value="#{wizardBean.stsProfileBean.authenticationChain}">
                     <f:selectItems
                         value="#{wizardBean.authenticationChainList}" />
                 </ice:selectOneMenu>

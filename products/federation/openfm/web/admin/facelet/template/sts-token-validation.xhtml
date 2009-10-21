@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-token-validation.xhtml,v 1.1 2009-09-17 21:56:05 ggennaro Exp $
+   $Id: sts-token-validation.xhtml,v 1.2 2009-10-21 16:46:00 ggennaro Exp $
 
 -->
 
@@ -54,14 +54,14 @@
                     style="float: right;"
                     value="#{resources['sts-token-validation.trustedIssuersLabel']}" />
                 <o:editableSelectOne 
-                    editableSelectOneBean="#{wizardBean.trustedIssuers}" />
+                    editableSelectOneBean="#{wizardBean.stsProfileBean.trustedIssuers}" />
 
                 <ice:outputLabel 
                     for="trustedAddresses"
                     style="float: right;"
                     value="#{resources['sts-token-validation.trustedAddressesLabel']}" />
                 <o:editableSelectOne 
-                    editableSelectOneBean="#{wizardBean.trustedAddresses}" />
+                    editableSelectOneBean="#{wizardBean.stsProfileBean.trustedAddresses}" />
             </ice:panelGrid>
 
         </ui:define>

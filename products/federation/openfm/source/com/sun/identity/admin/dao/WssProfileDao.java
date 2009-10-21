@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WssProfileDao.java,v 1.5 2009-10-20 18:33:36 ggennaro Exp $
+ * $Id: WssProfileDao.java,v 1.6 2009-10-21 16:46:06 ggennaro Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.admin.model.EditableSelectOneBean;
 import com.sun.identity.admin.model.EncryptionAlgorithm;
 import com.sun.identity.admin.model.SamlAttributeMapItem;
 import com.sun.identity.admin.model.SamlAttributesTableBean;
@@ -103,6 +104,12 @@ public class WssProfileDao {
     // hosted sts schema
     private static final String SERVICE_NAME_STS = "sunFAMSTSService";
     private static final String HOSTED_STS_ENDPOINT = "stsEndPoint";
+    private static final String STS_ISSUER = "stsIssuer";
+    private static final String STS_TOKEN_LIFETIME = "stsLifetime";
+    private static final String STS_CERT_ALIAS = "stsCertAlias";
+    private static final String STS_END_USER_TOKEN_PLUGIN_CLASS = "com.sun.identity.wss.sts.clientusertoken";
+    private static final String TRUSTED_ISSUERS = "trustedIssuers";
+    private static final String TRUSTED_IP_ADDRESSES = "trustedIPAddresses";
     
     // common
     private static final String SECURITY_MECH = "SecurityMech";
@@ -442,6 +449,24 @@ public class WssProfileDao {
         return value;
     }
     
+    @SuppressWarnings("unchecked")
+    private static EditableSelectOneBean getTrustedAddresses(Map map) {
+        EditableSelectOneBean esmb = new EditableSelectOneBean();
+
+        esmb = new EditableSelectOneBean();
+        esmb.setItems(getListValue(map, TRUSTED_IP_ADDRESSES));
+        esmb.setValidPattern("((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
+
+        return esmb;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static EditableSelectOneBean getTrustedIssuers(Map map) {
+        EditableSelectOneBean esmb = new EditableSelectOneBean();
+        esmb.setItems(getListValue(map, TRUSTED_ISSUERS));
+        return esmb;
+    }
+    
     //--------------------------------------------------------------------------
     
     private static String getEncryptionAlgorithm(WssProfileBean bean) {
@@ -776,7 +801,25 @@ public class WssProfileDao {
         bean.setProfileName(null);
         bean.setEndPoint(getStringValue(map, HOSTED_STS_ENDPOINT));
         bean.setMexEndPoint(getStringValue(map, STS_MEX_ENDPOINT));
+
+        bean.setIssuer(getStringValue(map, STS_ISSUER));
+        
+        // for the ui, use seconds instead of milliseconds
+        int millis = getIntValue(map, STS_TOKEN_LIFETIME);
+        bean.setTokenLifetime(millis / 1000);
+
+        bean.setCertAlias(getStringValue(map, STS_CERT_ALIAS));
+        bean.setTokenPluginClass(getStringValue(map, STS_END_USER_TOKEN_PLUGIN_CLASS));
+
         bean.setSecurityMechanismPanels(getSecurityMechanismPanels(map));
+        bean.setKerberosDomain(getStringValue(map, KERBEROS_DOMAIN));
+        bean.setKerberosDomainServer(getStringValue(map, KERBEROS_DOMAIN_SERVER));
+        bean.setKerberosServicePrincipal(getStringValue(map, KERBEROS_SERVICE_PRINCIPAL));
+        bean.setKerberosKeyTabFile(getStringValue(map, KERBEROS_KEY_TAB_FILE));
+        bean.setUserCredentialsTable(getUserCredentialsTable(map));
+        bean.setX509SigningRefType(getX509SigningRefTypeValue(map));
+        bean.setAuthenticationChain(getStringValue(map, AUTHENTICATION_CHAIN));
+
         bean.setRequestSigned(getBooleanValue(map, IS_REQUEST_SIGN));
         bean.setRequestHeaderEncrypted(getBooleanValue(map, IS_REQUEST_HEADER_ENCRYPT));
         bean.setRequestEncrypted(getBooleanValue(map, IS_REQUEST_ENCRYPT));
@@ -785,9 +828,15 @@ public class WssProfileDao {
         bean.setEncryptionAlgorithm(getEncryptionAlgorithmValue(map));
         bean.setPrivateKeyAlias(getStringValue(map, PRIVATE_KEY_ALIAS));
         bean.setPublicKeyAlias(getStringValue(map, PUBLIC_KEY_ALIAS));
-        
-        // TODO: introduce remaining fields
 
+        bean.setAttributeNamespace(getStringValue(map, ATTRIBUTE_NAMESPACE));
+        bean.setNameIdMapper(getStringValue(map, NAME_ID_MAPPER));
+        bean.setIncludeMemberships(getBooleanValue(map, INCLUDE_MEMBERSHIPS));
+        bean.setSamlAttributesTable(getSamlAttributesTable(map));
+
+        bean.setTrustedAddresses(getTrustedAddresses(map));
+        bean.setTrustedIssuers(getTrustedIssuers(map));
+        
         return bean;
     }
     

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardStep4Validator.java,v 1.1 2009-09-30 22:01:28 ggennaro Exp $
+ * $Id: StsManageWizardStep4Validator.java,v 1.2 2009-10-21 16:46:05 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -33,6 +33,7 @@ import java.net.URISyntaxException;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
+
 
 
 public class StsManageWizardStep4Validator 
@@ -58,7 +59,9 @@ public class StsManageWizardStep4Validator
     }
 
     private boolean validNameIdMapper() {
-        String nameIdMapper = getStsManageWizardBean().getNameIdMapper();
+        StsProfileBean profileBean 
+            = getStsManageWizardBean().getStsProfileBean();
+        String nameIdMapper = profileBean.getNameIdMapper();
         boolean valid = true;
         
         if( nameIdMapper != null && nameIdMapper.length() > 0 ) {
@@ -67,10 +70,10 @@ public class StsManageWizardStep4Validator
             } catch (ClassNotFoundException cnfe) {
                 Effect e;
                 e = new InputFieldErrorEffect();
-                getStsManageWizardBean().setNameIdMapperInputEffect(e);
+                profileBean.setNameIdMapperInputEffect(e);
                 
                 e = new MessageErrorEffect();
-                getStsManageWizardBean().setNameIdMapperMessageEffect(e);
+                profileBean.setNameIdMapperMessageEffect(e);
                 
                 showErrorMessage("invalidNameIdMapperSummary", 
                                  "invalidNameIdMapperDetail");
@@ -82,19 +85,20 @@ public class StsManageWizardStep4Validator
     }
     
     private boolean validNamespace() {
-        String namespace = getStsManageWizardBean().getAttributeNamespace();
+        StsProfileBean profileBean 
+            = getStsManageWizardBean().getStsProfileBean();
+        String namespace = profileBean.getAttributeNamespace();
         boolean valid = true;
         
             try {
-                @SuppressWarnings("unused")
-                URI namespaceUri = new URI(namespace);
+                new URI(namespace);
             } catch (URISyntaxException urise) {
                 Effect e;
                 e = new InputFieldErrorEffect();
-                getStsManageWizardBean().setAttributeNamespaceInputEffect(e);
+                profileBean.setAttributeNamespaceInputEffect(e);
                 
                 e = new MessageErrorEffect();
-                getStsManageWizardBean().setAttributeNamespaceMessageEffect(e);
+                profileBean.setAttributeNamespaceMessageEffect(e);
 
                 showErrorMessage("invalidNamespaceSummary",
                                  "invalidNamespaceDetail");

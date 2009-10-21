@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Permission.java,v 1.5 2009-10-02 18:57:25 farble1670 Exp $
+ * $Id: Permission.java,v 1.6 2009-10-21 16:46:04 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -52,7 +52,5 @@ public enum Permission {
     WSP_MANAGE,
     WSC_CREATE,
     WSC_MANAGE,
-    STS_MANAGE,
-    WEB_SERVICE_SECURITY_CREATE,
-    STS_CREATE;
+    STS_MANAGE;
 }

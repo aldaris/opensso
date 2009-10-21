@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-sign-encrypt3.xhtml,v 1.2 2009-10-01 00:09:59 ggennaro Exp $
+   $Id: sts-sign-encrypt.xhtml,v 1.3 2009-10-21 16:46:01 ggennaro Exp $
 
 -->
 
@@ -41,11 +41,11 @@
     <o:section>
         <ui:define name="section-title">
             <ice:outputText
-                value="#{resources['sts-sign-encrypt3.section-title']}"/>
+                value="#{resources['sts-sign-encrypt.section-title']}"/>
         </ui:define>
         <ui:define name="section-details">
             <ice:outputText
-                value="#{resources['sts-sign-encrypt3.section-details']}"/>
+                value="#{resources['sts-sign-encrypt.section-details']}"/>
         </ui:define>
         <ui:define name="section-body">
 
@@ -54,43 +54,43 @@
         columnClasses="label-column,input-column">
         <ice:outputLabel
             style="float: right;"
-            value="#{resources['sts-sign-encrypt3.affectedElements']}" />
+            value="#{resources['sts-sign-encrypt.affectedElements']}" />
         <ice:panelGrid columns="4">
             <ice:selectBooleanCheckbox
                 id="requestSignatureVerified"
-                value="#{wizardBean.requestSignatureVerified}"/>
+                value="#{wizardBean.stsProfileBean.requestSigned}"/>
             <ice:outputLabel
                 for="requestSignatureVerified"
                 style="padding-right: 20px;"
-                value="#{resources['sts-sign-encrypt3.requestSignatureVerifiedLabel']}" />
+                value="#{resources['sts-sign-encrypt.requestSignatureVerifiedLabel']}" />
             <ice:selectBooleanCheckbox
                 id="responseSigned"
-                value="#{wizardBean.responseSigned}"/>
+                value="#{wizardBean.stsProfileBean.responseSignatureVerified}"/>
             <ice:outputLabel
                 for="responseSigned"
-                value="#{resources['sts-sign-encrypt3.responseSignedLabel']}" />
+                value="#{resources['sts-sign-encrypt.responseSignedLabel']}" />
 
             <ice:selectBooleanCheckbox
                 id="requestHeaderDecrypted"
                 style="padding-right: 20px;"
-                value="#{wizardBean.requestHeaderDecrypted}" />
+                value="#{wizardBean.stsProfileBean.requestHeaderEncrypted}" />
             <ice:outputLabel
                 for="requestHeaderDecrypted"
-                value="#{resources['sts-sign-encrypt3.requestHeaderDecryptedLabel']}" />
+                value="#{resources['sts-sign-encrypt.requestHeaderDecryptedLabel']}" />
             <ice:selectBooleanCheckbox
                 id="responseEncrypted"
-                value="#{wizardBean.responseEncrypted}" />
+                value="#{wizardBean.stsProfileBean.responseDecrypted}" />
             <ice:outputLabel
                 for="responseEncrypted"
                 style="padding-right: 20px;"
-                value="#{resources['sts-sign-encrypt3.responseEncryptedLabel']}" />
+                value="#{resources['sts-sign-encrypt.responseEncryptedLabel']}" />
 
             <ice:selectBooleanCheckbox
                 id="requestDecrypted"
-                value="#{wizardBean.requestDecrypted}" />
+                value="#{wizardBean.stsProfileBean.requestEncrypted}" />
             <ice:outputLabel
                 for="requestDecrypted"
-                value="#{resources['sts-sign-encrypt3.requestDecryptedLabel']}" />
+                value="#{resources['sts-sign-encrypt.requestDecryptedLabel']}" />
             <ice:outputText value="" />
             <ice:outputText value="" />
         </ice:panelGrid>
@@ -102,9 +102,9 @@
         <ice:outputLabel
             for="encryptionAlgorithm"
             style="float: right;"
-            value="#{resources['sts-sign-encrypt3.encryptionAlgorithmLabel']}" />
+            value="#{resources['sts-sign-encrypt.encryptionAlgorithmLabel']}" />
         <ice:selectOneMenu id="encryptionAlgorithm"
-                           value="#{wizardBean.encryptionAlgorithm}">
+                           value="#{wizardBean.stsProfileBean.encryptionAlgorithm}">
             <f:selectItems
                 value="#{wizardBean.encryptionAlgorithmList}"/>
         </ice:selectOneMenu>
@@ -112,39 +112,39 @@
         <ice:outputLabel
             for="privateKeyAlias"
             style="float: right;"
-            value="#{resources['sts-sign-encrypt3.privateKeyAliasLabel']}" />
+            value="#{resources['sts-sign-encrypt.privateKeyAliasLabel']}" />
         <ice:panelGrid columns="1">
             <ice:outputText
                 rendered="#{o:size(wizardBean.keyAliasList) == 0 }"
                 style="font-style: italic;"
-                value="#{resources['sts-sign-encrypt3.noPrivateKeyAliases']}"/>
+                value="#{resources['sts-sign-encrypt.noPrivateKeyAliases']}"/>
             <ice:selectOneMenu
                 id="privateKeyAlias"
                 rendered="#{o:size(wizardBean.keyAliasList) > 0 }"
-                value="#{wizardBean.privateKeyAlias}">
+                value="#{wizardBean.stsProfileBean.privateKeyAlias}">
                 <f:selectItems value="#{wizardBean.keyAliasList}"/>
             </ice:selectOneMenu>
             <o:inlineHelp 
-                key="sts-sign-encrypt3.privateKeyAliasInlineHelp" />
+                key="sts-sign-encrypt.privateKeyAliasInlineHelp" />
         </ice:panelGrid>
 
         <ice:outputLabel
             for="publicKeyAlias"
             style="float: right;"
-            value="#{resources['sts-sign-encrypt3.publicKeyAliasLabel']}" />
+            value="#{resources['sts-sign-encrypt.publicKeyAliasLabel']}" />
         <ice:panelGrid columns="1">
             <ice:outputText
                 rendered="#{o:size(wizardBean.keyAliasList) == 0 }"
                 style="font-style: italic;"
-                value="#{resources['sts-sign-encrypt3.noPublicKeyAliases']}"/>
+                value="#{resources['sts-sign-encrypt.noPublicKeyAliases']}"/>
             <ice:selectOneMenu
                 id="publicKeyAlias"
                 rendered="#{o:size(wizardBean.keyAliasList) > 0 }"
-                value="#{wizardBean.publicKeyAlias}">
+                value="#{wizardBean.stsProfileBean.publicKeyAlias}">
                 <f:selectItems value="#{wizardBean.keyAliasList}"/>
             </ice:selectOneMenu>
             <o:inlineHelp 
-                key="sts-sign-encrypt3.publicKeyAliasInlineHelp" />
+                key="sts-sign-encrypt.publicKeyAliasInlineHelp" />
         </ice:panelGrid>
 
     </ice:panelGrid>

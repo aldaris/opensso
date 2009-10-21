@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsManageTokenIssuanceSummary.java,v 1.1 2009-09-17 21:56:04 ggennaro Exp $
+ * $Id: StsManageTokenIssuanceSummary.java,v 1.2 2009-10-21 16:46:03 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -44,13 +44,15 @@ public class StsManageTokenIssuanceSummary extends StsManageWizardSummary {
 
     @Override
     public String getValue() {
+        StsProfileBean profileBean 
+            = getStsManageWizardBean().getStsProfileBean();
         Resources r = new Resources();
         String value = r.getString(this, "valueFormat");
 
-        value = value.replaceAll("\\{0\\}", 
-                                getStsManageWizardBean().getIssuer());
-        value = value.replaceAll("\\{1\\}", 
-                    String.valueOf(getStsManageWizardBean().getTokenLifetime()));
+        value = value.replaceAll("\\{0\\}", profileBean.getIssuer());
+        value = value.replaceAll(
+                    "\\{1\\}",
+                    String.valueOf(profileBean.getTokenLifetime()));
 
         return value;
    }

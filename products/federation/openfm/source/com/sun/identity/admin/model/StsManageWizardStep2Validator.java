@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardStep2Validator.java,v 1.3 2009-10-08 16:16:21 ggennaro Exp $
+ * $Id: StsManageWizardStep2Validator.java,v 1.4 2009-10-21 16:46:02 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -31,6 +31,7 @@ import java.util.ArrayList;
 
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
+
 
 
 public class StsManageWizardStep2Validator 
@@ -48,21 +49,21 @@ public class StsManageWizardStep2Validator
             return false;
         }
         
-        if( !validAuthChain() ) {
-            return false;
-        }
-        
         return true;
     }
 
     private boolean validSecurityTokenType() {
+        StsProfileBean profileBean 
+            = getStsManageWizardBean().getStsProfileBean();
         ArrayList<SecurityMechanismPanelBean> panelBeans 
-            = getStsManageWizardBean().getSecurityMechanismPanels();
+            = profileBean.getSecurityMechanismPanels();
         SecurityMechanismPanelBean invalidPanel = null;
+        boolean atLeastOne = false;
         
         for(SecurityMechanismPanelBean panel : panelBeans) {
             
             if( panel.isChecked() ) {
+                atLeastOne = true;
                 SecurityMechanism sm = panel.getSecurityMechanism();
                 
                 switch(sm) {
@@ -102,29 +103,24 @@ public class StsManageWizardStep2Validator
             invalidPanel.setExpanded(true);
             
             return false;
+        } else if( !atLeastOne ) {
+
+            showErrorMessage("noSecurityTokenTypeSummary", 
+                             "noSecurityTokenTypeDetail");
+            return false;
         } else {
             return true;
         }
     }
-    
-    private boolean validAuthChain() {
-        String authChain = getStsManageWizardBean().getAuthenticationChain();
-        
-        if( authChain != null && authChain.length() > 0 ) {
-            return true;
-        }
-        
-        showErrorMessage("invalidAuthChainSummary", "invalidAuthChainDetail");
-        return false;
-    }
 
     private boolean validKerberosSettings() {
         StsManageWizardBean wizardBean = getStsManageWizardBean();
+        StsProfileBean profileBean = wizardBean.getStsProfileBean();
         
-        String domain = wizardBean.getKerberosDomain();
-        String domainServer = wizardBean.getKerberosDomainServer();
-        String serverPrincipal = wizardBean.getKerberosServicePrincipal();
-        String keyTabFile = wizardBean.getKerberosKeyTabFile();
+        String domain = profileBean.getKerberosDomain();
+        String domainServer = profileBean.getKerberosDomainServer();
+        String serverPrincipal = profileBean.getKerberosServicePrincipal();
+        String keyTabFile = profileBean.getKerberosKeyTabFile();
         String pattern = "[\\w \\@\\.\\/\\&\\:]{0,255}?";
         String summaryKey = null;
         String detailKey = null;
@@ -132,36 +128,37 @@ public class StsManageWizardStep2Validator
         if(domain != null && !domain.matches(pattern)) {
             summaryKey = "invalidKerberosDomainSummary";
             detailKey = "invalidKerberosDomainDetail";
-            wizardBean.setKerberosDomainInputEffect(new InputFieldErrorEffect());
-            wizardBean.setKerberosDomainMessageEffect(new MessageErrorEffect());
+            profileBean.setKerberosDomainInputEffect(new InputFieldErrorEffect());
+            profileBean.setKerberosDomainMessageEffect(new MessageErrorEffect());
         } else if(domainServer != null && !domainServer.matches(pattern)) {
             summaryKey = "invalidKerberosDomainServerSummary";
             detailKey = "invalidKerberosDomainServerDetail";
-            wizardBean.setKerberosDomainServerInputEffect(new InputFieldErrorEffect());
-            wizardBean.setKerberosDomainServerMessageEffect(new MessageErrorEffect());
+            profileBean.setKerberosDomainServerInputEffect(new InputFieldErrorEffect());
+            profileBean.setKerberosDomainServerMessageEffect(new MessageErrorEffect());
         } else if(serverPrincipal != null && !serverPrincipal.matches(pattern)) {
             summaryKey = "invalidKerberosServicePrincipalSummary";
             detailKey = "invalidKerberosServicePrincipalDetail";
-            wizardBean.setKerberosServicePrincipalInputEffect(new InputFieldErrorEffect());
-            wizardBean.setKerberosServicePrincipalMessageEffect(new MessageErrorEffect());
+            profileBean.setKerberosServicePrincipalInputEffect(new InputFieldErrorEffect());
+            profileBean.setKerberosServicePrincipalMessageEffect(new MessageErrorEffect());
         } else if(keyTabFile != null && !keyTabFile.matches(pattern)) {
             summaryKey = "invalidKerberosKeyTabFileSummary";
             detailKey = "invalidKerberosKeyTabFileDetail";
-            wizardBean.setKerberosKeyTabFileInputEffect(new InputFieldErrorEffect());
-            wizardBean.setKerberosKeyTabFileMessageEffect(new MessageErrorEffect());
+            profileBean.setKerberosKeyTabFileInputEffect(new InputFieldErrorEffect());
+            profileBean.setKerberosKeyTabFileMessageEffect(new MessageErrorEffect());
         }
         
         if( summaryKey != null ) {
             showErrorMessage(summaryKey, detailKey);
             return false;
         }
-
+        
         return true;
     }
 
     private boolean validUserNameSettings() {
         StsManageWizardBean wizardBean = getStsManageWizardBean();
-        UserCredentialsTableBean uctb = wizardBean.getUserCredentialsTable();
+        StsProfileBean profileBean = wizardBean.getStsProfileBean();
+        UserCredentialsTableBean uctb = profileBean.getUserCredentialsTable();
         
         if( uctb == null 
                 || uctb.getUserCredentialItems() == null 
@@ -177,8 +174,9 @@ public class StsManageWizardStep2Validator
         
     private boolean validX509Settings() {
         StsManageWizardBean wizardBean = getStsManageWizardBean();
+        StsProfileBean profileBean = wizardBean.getStsProfileBean();
         X509SigningRefType signingRef 
-        = X509SigningRefType.valueOf(wizardBean.getX509SigningReferenceType());
+            = X509SigningRefType.valueOf(profileBean.getX509SigningRefType());
         
         if( signingRef != null ) {
             return true;

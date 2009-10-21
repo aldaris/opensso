@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardHandler.java,v 1.4 2009-10-08 16:16:22 ggennaro Exp $
+ * $Id: StsManageWizardHandler.java,v 1.5 2009-10-21 16:46:06 ggennaro Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -36,7 +36,6 @@ import javax.faces.event.ValueChangeEvent;
 
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
-import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SecurityMechanismPanelBean;
 import com.sun.identity.admin.model.StsManageWizardBean;
@@ -44,12 +43,12 @@ import com.sun.identity.admin.model.StsManageWizardStep;
 import com.sun.identity.admin.model.StsManageWizardStep1Validator;
 import com.sun.identity.admin.model.StsManageWizardStep2Validator;
 import com.sun.identity.admin.model.StsManageWizardStep4Validator;
+import com.sun.identity.admin.model.StsProfileBean;
 
 public class StsManageWizardHandler 
-        extends WizardHandler 
+        extends WssWizardHandler 
         implements Serializable
 {
-    private MessagesBean messagesBean;
     
     @Override
     public void initWizardStepValidators() {
@@ -108,6 +107,7 @@ public class StsManageWizardHandler
         List<LinkBean> lbs = new ArrayList<LinkBean>();
         lbs.add(LinkBean.HOME);
         lbs.add(LinkBean.WSS);
+        lbs.add(LinkBean.STS_MANAGE);
         return lbs;
     }
 
@@ -134,6 +134,7 @@ public class StsManageWizardHandler
         int step = getStep(event);
         StsManageWizardStep wizardStep = StsManageWizardStep.valueOf(step);
         StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
+        StsProfileBean profileBean = wizardBean.getStsProfileBean();
         boolean resetSecurityWidgets = false;
         boolean resetSamlWidgets = false;
         boolean resetValidationWidgets = false;
@@ -158,16 +159,16 @@ public class StsManageWizardHandler
         }
         
         if( resetSecurityWidgets ) {
-            wizardBean.getUserCredentialsTable().resetInterface();
+            profileBean.getUserCredentialsTable().resetInterface();
         }
         
         if( resetSamlWidgets ) {
-            wizardBean.getSamlAttributesTable().resetInterface();
+            profileBean.getSamlAttributesTable().resetInterface();
         }
         
         if( resetValidationWidgets ) {
-            wizardBean.getTrustedAddresses().resetInterface();
-            wizardBean.getTrustedIssuers().resetInterface();
+            profileBean.getTrustedAddresses().resetInterface();
+            profileBean.getTrustedIssuers().resetInterface();
         }        
     }
 
@@ -179,9 +180,11 @@ public class StsManageWizardHandler
     // listeners for the security mechanism panels -----------------------------
     
     public void securityMechanismPanelChangeListener(ValueChangeEvent event) {
+
         StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
+        StsProfileBean profileBean = wizardBean.getStsProfileBean();
         ArrayList<SecurityMechanismPanelBean> panelBeans
-            = wizardBean.getSecurityMechanismPanels();
+            = profileBean.getSecurityMechanismPanels();
         Object attributeValue 
             = event.getComponent().getAttributes().get("panelBean");
 
@@ -202,13 +205,15 @@ public class StsManageWizardHandler
                         panelBean.setExpanded(false);
                 }
             }
-        }   
+        }
     }
     
     public void securityMechanismPanelActionListener(ActionEvent event) {
+
         StsManageWizardBean wizardBean = (StsManageWizardBean) getWizardBean();
+        StsProfileBean profileBean = wizardBean.getStsProfileBean();
         ArrayList<SecurityMechanismPanelBean> panelBeans
-            = wizardBean.getSecurityMechanismPanels();
+            = profileBean.getSecurityMechanismPanels();
         Object attributeValue 
             = event.getComponent().getAttributes().get("panelBean");
         
@@ -227,16 +232,6 @@ public class StsManageWizardHandler
                 }
             }
         }   
+        
     }
-
-    // Getters / Setters -------------------------------------------------------
-
-    public void setMessagesBean(MessagesBean messagesBean) {
-        this.messagesBean = messagesBean;
-    }
-
-    public MessagesBean getMessagesBean() {
-        return messagesBean;
-    }
-
 }

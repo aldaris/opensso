@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-saml.xhtml,v 1.3 2009-10-07 20:00:52 ggennaro Exp $
+   $Id: sts-saml.xhtml,v 1.4 2009-10-21 16:46:02 ggennaro Exp $
 
 -->
 
@@ -54,35 +54,35 @@
             style="float: right;"
             value="#{resources['sts-saml.attributeMapping']}" />
         <o:samlAttributesTable
-            samlAttributesTable="#{wizardBean.samlAttributesTable}" />
+            samlAttributesTable="#{wizardBean.stsProfileBean.samlAttributesTable}" />
                 
         <ice:outputLabel 
-            effect="#{wizardBean.nameIdMapperMessageEffect}"
+            effect="#{wizardBean.stsProfileBean.nameIdMapperMessageEffect}"
             for="nameIdMapper"
             style="float: right;"
             value="#{resources['sts-saml.nameIdMapperLabel']}" />
         <ice:panelGrid columns="1">
             <ice:inputText
                 id="nameIdMapper"
-                effect="#{wizardBean.nameIdMapperInputEffect}"
+                effect="#{wizardBean.stsProfileBean.nameIdMapperInputEffect}"
                 size="70"
                 maxlength="1024"
-                value="#{wizardBean.nameIdMapper}" />
+                value="#{wizardBean.stsProfileBean.nameIdMapper}" />
             <o:inlineHelp key="sts-saml.nameIdMapperInlineHelp" />
         </ice:panelGrid>
 
         <ice:outputLabel 
-            effect="#{wizardBean.attributeNamespaceMessageEffect}"
+            effect="#{wizardBean.stsProfileBean.attributeNamespaceMessageEffect}"
             for="attributeNamespace"
             style="float: right;"
             value="#{resources['sts-saml.attributeNamespaceLabel']}" />
         <ice:panelGrid columns="1">
             <ice:inputText
                 id="attributeNamespace"
-                effect="#{wizardBean.attributeNamespaceInputEffect}"
+                effect="#{wizardBean.stsProfileBean.attributeNamespaceInputEffect}"
                 size="70"
                 maxlength="1024"
-                value="#{wizardBean.attributeNamespace}" />
+                value="#{wizardBean.stsProfileBean.attributeNamespace}" />
             <o:inlineHelp key="sts-saml.attributeNamespaceInlineHelp" />
         </ice:panelGrid>
 
@@ -92,7 +92,7 @@
             value="#{resources['sts-saml.includeMembershipsLabel']}" />
         <ice:panelGrid columns="1">
             <ice:selectOneRadio
-                value="#{wizardBean.includeMemberships}">
+                value="#{wizardBean.stsProfileBean.includeMemberships}">
                 <f:selectItem
                     itemLabel="#{resources['sts-saml.includeMembershipsTrueLabel']}"
                     itemValue="true" />

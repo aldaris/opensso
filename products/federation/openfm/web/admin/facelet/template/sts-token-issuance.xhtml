@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-token-issuance.xhtml,v 1.1 2009-09-17 21:56:05 ggennaro Exp $
+   $Id: sts-token-issuance.xhtml,v 1.2 2009-10-21 16:46:01 ggennaro Exp $
 
 -->
 
@@ -52,29 +52,29 @@
                 <ice:outputLabel 
                     for="issuer"
                     style="float: right;"
-                    effect="#{wizardBean.issuerMessageEffect}"
+                    effect="#{wizardBean.stsProfileBean.issuerMessageEffect}"
                     value="#{resources['sts-token-issuance.issuerLabel']}" />
                 <ice:panelGrid columns="1">
                     <ice:inputText
                         id="issuer"
-                        effect="#{wizardBean.issuerInputEffect}"
+                        effect="#{wizardBean.stsProfileBean.issuerInputEffect}"
                         size="40"
                         maxlength="255"
-                        value="#{wizardBean.issuer}" />
+                        value="#{wizardBean.stsProfileBean.issuer}" />
                     <o:inlineHelp key="sts-token-issuance.issuerInlineHelp" />
                 </ice:panelGrid>
                 <ice:outputLabel
                     for="tokenLifetime"
                     style="float: right;"
-                    effect="#{wizardBean.tokenLifetimeMessageEffect}"
+                    effect="#{wizardBean.stsProfileBean.tokenLifetimeMessageEffect}"
                     value="#{resources['sts-token-issuance.tokenLifetimeLabel']}" />
                 <ice:panelGrid columns="1">
                     <ice:inputText
                         id="tokenLifetime"
-                        effect="#{wizardBean.tokenLifetimeInputEffect}"
+                        effect="#{wizardBean.stsProfileBean.tokenLifetimeInputEffect}"
                         size="10"
                         maxlength="20"
-                        value="#{wizardBean.tokenLifetime}" />
+                        value="#{wizardBean.stsProfileBean.tokenLifetime}" />
                     <o:inlineHelp 
                         key="sts-token-issuance.tokenLifetimeInlineHelp" />
                 </ice:panelGrid>
@@ -90,7 +90,7 @@
                     <ice:selectOneMenu
                         id="keyAlias"
                         rendered="#{o:size(wizardBean.keyAliasList) > 0 }"
-                        value="#{wizardBean.keyAlias}">
+                        value="#{wizardBean.stsProfileBean.certAlias}">
                         <f:selectItems value="#{wizardBean.keyAliasList}"/>
                     </ice:selectOneMenu>
                     <o:inlineHelp key="sts-token-issuance.keyAliasInlineHelp" />
@@ -98,15 +98,15 @@
                 <ice:outputLabel
                     for="tokenPluginClass"
                     style="float: right;"
-                    effect="#{wizardBean.tokenPluginClassMessageEffect}"
+                    effect="#{wizardBean.stsProfileBean.tokenPluginClassMessageEffect}"
                     value="#{resources['sts-token-issuance.tokenPluginClassLabel']}" />
                 <ice:panelGrid columns="1">
                     <ice:inputText
                         id="tokenPluginClass"
-                        effect="#{wizardBean.tokenPluginClassInputEffect}"
+                        effect="#{wizardBean.stsProfileBean.tokenPluginClassInputEffect}"
                         size="70"
                         maxlength="1024"
-                        value="#{wizardBean.tokenPluginClass}" />
+                        value="#{wizardBean.stsProfileBean.tokenPluginClass}" />
                     <o:inlineHelp 
                         key="sts-token-issuance.tokenPluginClassInlineHelp" />
                 </ice:panelGrid>

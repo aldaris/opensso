@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsManageSamlSummary.java,v 1.3 2009-10-07 20:00:49 ggennaro Exp $
+ * $Id: StsManageSamlSummary.java,v 1.4 2009-10-21 16:46:04 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -44,9 +44,11 @@ public class StsManageSamlSummary extends StsManageWizardSummary {
 
     @Override
     public String getValue() {
+        StsManageWizardBean wizardBean = getStsManageWizardBean();
+        StsProfileBean profileBean = wizardBean.getStsProfileBean();
         Resources r = new Resources();
         SamlAttributesTableBean samlAttributeTable
-            = getStsManageWizardBean().getSamlAttributesTable();
+            = profileBean.getSamlAttributesTable();
         int count = 0;
         String value = null;
         

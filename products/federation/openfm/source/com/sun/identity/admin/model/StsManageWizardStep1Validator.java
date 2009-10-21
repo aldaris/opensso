@@ -24,7 +24,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardStep1Validator.java,v 1.2 2009-09-30 22:01:27 ggennaro Exp $
+ * $Id: StsManageWizardStep1Validator.java,v 1.3 2009-10-21 16:46:03 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -32,6 +32,7 @@ package com.sun.identity.admin.model;
 import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.effect.MessageErrorEffect;
+
 
 
 public class StsManageWizardStep1Validator 
@@ -64,7 +65,9 @@ public class StsManageWizardStep1Validator
     }
 
     private boolean validIssuer() {
-        String issuer = getStsManageWizardBean().getIssuer();
+        StsManageWizardBean wizardBean = getStsManageWizardBean();
+        StsProfileBean stsProfileBean = wizardBean.getStsProfileBean();
+        String issuer = stsProfileBean.getIssuer();
         String pattern = "[\\w ]{1,255}?";
         
         if( issuer != null && issuer.matches(pattern) ) {
@@ -73,26 +76,29 @@ public class StsManageWizardStep1Validator
         
         Effect e;
         e = new InputFieldErrorEffect();
-        getStsManageWizardBean().setIssuerInputEffect(e);
+        stsProfileBean.setIssuerInputEffect(e);
         
         e = new MessageErrorEffect();
-        getStsManageWizardBean().setIssuerMessageEffect(e);
+        stsProfileBean.setIssuerMessageEffect(e);
 
         showErrorMessage("invalidIssuerSummary", "invalidIssuerDetail");
         return false;
     }    
     
     private boolean validTokenLifetime() {
-        if( getStsManageWizardBean().getTokenLifetime() > 0 ) {
+        StsManageWizardBean wizardBean = getStsManageWizardBean();
+        StsProfileBean stsProfileBean = wizardBean.getStsProfileBean();
+
+        if( stsProfileBean.getTokenLifetime() > 0 ) {
             return true;
         }
         
         Effect e;
         e = new InputFieldErrorEffect();
-        getStsManageWizardBean().setTokenLifetimeInputEffect(e);
+        stsProfileBean.setTokenLifetimeInputEffect(e);
         
         e = new MessageErrorEffect();
-        getStsManageWizardBean().setTokenLifetimeMessageEffect(e);
+        stsProfileBean.setTokenLifetimeMessageEffect(e);
 
         showErrorMessage("invalidTokenLifetimeSummary", 
                          "invalidTokenLifetimeDetail");
@@ -100,17 +106,22 @@ public class StsManageWizardStep1Validator
     }
     
     private boolean validKeyAlias() {
+        StsManageWizardBean wizardBean = getStsManageWizardBean();
+        StsProfileBean stsProfileBean = wizardBean.getStsProfileBean();
 
-        if( getStsManageWizardBean().getKeyAlias() != null) {
+        if( stsProfileBean.getCertAlias() != null) {
             return true;
         }
         
-        showErrorMessage("invalidKeyAliasSummary", "invalidKeyAliasDetail");
+        showErrorMessage("invalidCertAliasSummary", "invalidCertAliasDetail");
         return false;
     }
     
     private boolean validTokenPluginClass() {
-        String tokenPluginClass = getStsManageWizardBean().getTokenPluginClass();
+        StsManageWizardBean wizardBean = getStsManageWizardBean();
+        StsProfileBean stsProfileBean = wizardBean.getStsProfileBean();
+
+        String tokenPluginClass = stsProfileBean.getTokenPluginClass();
         boolean result = false;
         
         try {
@@ -119,10 +130,10 @@ public class StsManageWizardStep1Validator
         } catch (ClassNotFoundException cnfe) {
             Effect e;
             e = new InputFieldErrorEffect();
-            getStsManageWizardBean().setTokenPluginClassInputEffect(e);
+            stsProfileBean.setTokenPluginClassInputEffect(e);
             
             e = new MessageErrorEffect();
-            getStsManageWizardBean().setTokenPluginClassMessageEffect(e);
+            stsProfileBean.setTokenPluginClassMessageEffect(e);
             
             showErrorMessage("invalidTokenPluginClassSummary", 
                              "invalidTokenPluginClassDetail");
