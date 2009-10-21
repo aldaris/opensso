@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SjsmeAuthFilter.java,v 1.2 2009-10-20 23:55:20 pbryan Exp $
+ * $Id: SjsmeAuthFilter.java,v 1.3 2009-10-21 00:03:21 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -63,7 +63,7 @@ public class SjsmeAuthFilter extends Filter
     public void handle(Exchange exchange) throws HandlerException, IOException
     {
         // if not a request for the login page, simply pass-through
-        if (!exchange.request.uri.getPath().equals("/")) {
+        if (!exchange.request.uri.normalize().getPath().equals("/")) {
             next.handle(exchange);
             return;
         }
