@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheet.java,v 1.10 2008-09-04 23:59:36 veiming Exp $
+ * $Id: AMPropertySheet.java,v 1.11 2009-10-21 00:46:38 asyhuang Exp $
  *
  */
 
@@ -172,6 +172,7 @@ public class AMPropertySheet
             for (Iterator i = ((Set)values).iterator(); i.hasNext(); ) {
                 String val = (String)i.next();
                 if ((val != null) && (val.indexOf('=') == -1)) {
+                    val = escapeSqBracket(val); 
                     try {
                         View view = parent.getChild(
                         PropertyTemplate.DYN_GUI_MULTIPLE_LIST_CHECKBOX_PREFIX +
@@ -681,7 +682,7 @@ public class AMPropertySheet
                 if (model.getValue(name).equals("true")) {
                     name = name.substring(len);
                     int idx = name.lastIndexOf('_');
-                    String value = name.substring(idx+1);
+                    String value = unescapeSqBracket(name.substring(idx+1)); 
                     name = name.substring(0, idx);
                                                                                 
                     Set val = (Set)values.get(name);
@@ -782,4 +783,18 @@ public class AMPropertySheet
             }
         }
     }
+
+     private String escapeSqBracket(String str) {
+         str = str.replaceAll("&", "&amp;");
+         str = str.replaceAll("\\[", "&5B");
+         str = str.replaceAll("\\]", "&5D");
+         return str;
+     }
+
+     private String unescapeSqBracket(String str) {
+         str = str.replaceAll("&5D", "]");
+         str = str.replaceAll("&5B", "[");
+         str = str.replaceAll("&amp;", "&");
+         return str;
+     }
 }
