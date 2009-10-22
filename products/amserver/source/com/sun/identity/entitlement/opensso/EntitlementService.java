@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.5 2009-10-14 03:18:39 veiming Exp $
+ * $Id: EntitlementService.java,v 1.6 2009-10-22 21:03:33 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -59,7 +59,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.security.auth.Subject;
 
 /**
@@ -666,16 +665,29 @@ public class EntitlementService extends EntitlementConfiguration {
         try {
             ServiceConfig conf = getApplicationCollectionConfig(realm);
             if (conf != null) {
+                String[] logParams = {realm, name};
+                OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                    "ATTEMPT_REMOVE_APPLICATION", logParams, getAdminSubject());
                 conf.removeSubConfig(name);
+                OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                    "SUCCEEDED_REMOVE_APPLICATION", logParams,
+                    getAdminSubject());
+
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(NotificationServlet.ATTR_REALM_NAME, realm);
                 Notifier.submit(NotificationServlet.APPLICATIONS_CHANGED,
                     params);
             }
         } catch (SMSException ex) {
+            String[] logParams = {realm, name, ex.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                "FAILED_REMOVE_APPLICATION", logParams, getAdminSubject());
             Object[] args = {name};
             throw new EntitlementException(230, args);
         } catch (SSOException ex) {
+            String[] logParams = {realm, name, ex.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                "FAILED_REMOVE_APPLICATION", logParams, getAdminSubject());
             Object[] args = {name};
             throw new EntitlementException(230, args);
         }
@@ -781,21 +793,34 @@ public class EntitlementService extends EntitlementConfiguration {
      */
     public void storeApplication(Application appl, boolean add)
         throws EntitlementException {
+        SSOToken token = SubjectUtils.getSSOToken(getAdminSubject());
         try {
             createApplicationCollectionConfig(realm);
             String dn = getApplicationDN(appl.getName(), realm);
-            SMSEntry s = new SMSEntry(adminToken, dn);
+            SMSEntry s = new SMSEntry(token, dn);
             s.setAttributes(getApplicationData(appl, add));
+
+            String[] logParams = {realm, appl.getName()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                "ATTEMPT_SAVE_APPLICATION", logParams, getAdminSubject());
             s.save();
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                "SUCCEEDED_SAVE_APPLICATION", logParams, getAdminSubject());
             
             Map<String, String> params = new HashMap<String, String>();
             params.put(NotificationServlet.ATTR_REALM_NAME, realm);
             Notifier.submit(NotificationServlet.APPLICATIONS_CHANGED,
                 params);
         } catch (SMSException ex) {
+            String[] logParams = {realm, appl.getName(), ex.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_SAVE_APPLICATION", logParams, getAdminSubject());
             Object[] arg = {appl.getName()};
             throw new EntitlementException(231, arg, ex);
         } catch (SSOException ex) {
+            String[] logParams = {realm, appl.getName(), ex.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_SAVE_APPLICATION", logParams, getAdminSubject());
             Object[] arg = {appl.getName()};
             throw new EntitlementException(231, arg, ex);
         }

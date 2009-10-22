@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogMessageProviderBase.java,v 1.6 2008-06-25 05:43:37 qcheng Exp $
+ * $Id: LogMessageProviderBase.java,v 1.7 2009-10-22 21:04:37 veiming Exp $
  *
  */
 
@@ -36,14 +36,12 @@ package com.sun.identity.log.messageid;
  */
 
 import com.sun.identity.shared.xml.Resource;
-import com.sun.identity.log.Level;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogRecord;
 import com.sun.identity.log.spi.Debug;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.io.InputStream;

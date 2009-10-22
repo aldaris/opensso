@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.1 2009-10-14 03:18:38 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.2 2009-10-22 21:03:34 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -41,6 +41,7 @@ import com.sun.identity.entitlement.Evaluator;
 import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ResourceMatch;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
@@ -556,6 +557,15 @@ public class OpenSSOApplicationPrivilegeManager extends
     }
 
     @Override
+    public boolean hasPrivilege(
+        ReferralPrivilege p,
+        ApplicationPrivilege.Action action
+    ) {
+        Permission permission = getPermissionObject(action);
+        return permission.hasPermission(p);
+    }
+
+    @Override
     public Set<String> getResources(String applicationName,
         ApplicationPrivilege.Action action) {
         Permission p = getPermissionObject(action);
@@ -692,6 +702,34 @@ public class OpenSSOApplicationPrivilegeManager extends
             for (String r : pResources) {
                 if (!isSubResource(resComp, resources, r)) {
                     return false;
+                }
+            }
+            return true;
+        }
+
+        private boolean hasPermission(ReferralPrivilege privilege) {
+            Map<String, Set<String>> map =
+                privilege.getMapApplNameToResources();
+
+            Set<String> applicationNames = map.keySet();
+            for (String applName : applicationNames) {
+                Application appl = ApplicationManager.getApplication(
+                    dsameUserSubject, realm, applName);
+                if (appl == null) {
+                    return false;
+                }
+                ResourceName resComp = appl.getResourceComparator();
+                Set<String> pResources = map.get(applName);
+
+                Set<String> resources = appNameToResourceNames.get(applName);
+                if ((resources == null) || resources.isEmpty()) {
+                    return false;
+                }
+
+                for (String r : pResources) {
+                    if (!isSubResource(resComp, resources, r)) {
+                        return false;
+                    }
                 }
             }
             return true;

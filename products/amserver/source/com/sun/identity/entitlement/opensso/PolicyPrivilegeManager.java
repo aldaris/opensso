@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.4 2009-10-14 03:18:39 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.5 2009-10-22 21:04:04 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -180,22 +180,15 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
         String name = privilege.getName();
 
         try {
-            Object policyObject = PrivilegeUtils.privilegeToPolicyObject(
-                    realm, privilege);
             if (!migratedToEntitlementSvc) {
+                Object policyObject = PrivilegeUtils.privilegeToPolicyObject(
+                    realm, privilege);
                 pm.addPolicy((Policy) policyObject);
             } else {
-                ApplicationPrivilegeManager applPrivilegeMgr =
-                    ApplicationPrivilegeManager.getInstance(realm,
-                    getAdminSubject());
-
-                if (!applPrivilegeMgr.hasPrivilege(privilege,
-                    ApplicationPrivilege.Action.MODIFY)) {
-                    throw new EntitlementException(326);
-                }
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
                 String currentRealm = getRealm();
-                pdb.addPolicy(dsameUserSubject, currentRealm, policyObject);
+                pdb.addPolicy(getAdminSubject(),
+                    currentRealm, privilege);
                 notifyPrivilegeChanged(currentRealm, null, privilege);
             }
         } catch (PolicyException e) {
@@ -222,19 +215,10 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 Privilege privilege = getPrivilege(privilegeName);
 
                 if (privilege != null) {
-                    ApplicationPrivilegeManager applPrivilegeMgr =
-                        ApplicationPrivilegeManager.getInstance(realm,
-                        getAdminSubject());
-
-                    if (!applPrivilegeMgr.hasPrivilege(privilege,
-                        ApplicationPrivilege.Action.MODIFY)) {
-                        throw new EntitlementException(326);
-                    }
-
                     PolicyDataStore pdb = PolicyDataStore.getInstance();
                     String currentRealm = getRealm();
-                    pdb.removePolicy(getAdminSubject(), currentRealm,
-                        privilegeName);
+                    pdb.removePrivilege(getAdminSubject(), currentRealm,
+                        privilege);
                     notifyPrivilegeChanged(currentRealm, null, privilege);
                 }
             }
@@ -282,23 +266,12 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 pm.removePolicy(privilege.getName());
                 pm.addPolicy(PrivilegeUtils.privilegeToPolicy(realm, privilege));
             } else {
-                ApplicationPrivilegeManager applPrivilegeMgr =
-                    ApplicationPrivilegeManager.getInstance(realm,
-                    getAdminSubject());
-
-                if (!applPrivilegeMgr.hasPrivilege(privilege,
-                    ApplicationPrivilege.Action.MODIFY)) {
-                    throw new EntitlementException(326);
-                }
-
                 PolicyDataStore pdb = PolicyDataStore.getInstance();
-                Privilege oldP = getPrivilege(privilegeName, dsameUserSubject);
-                pdb.removePolicy(dsameUserSubject, getRealm(),
-                    privilege.getName());
+                Privilege oldP = getPrivilege(privilegeName, getAdminSubject());
+                pdb.removePrivilege(getAdminSubject(), getRealm(),
+                    privilege);
                 String currentRealm = getRealm();
-                pdb.addPolicy(dsameUserSubject, getRealm(),
-                    PrivilegeUtils.privilegeToPolicyObject(
-                    currentRealm, privilege));
+                pdb.addPolicy(getAdminSubject(), getRealm(), privilege);
                 notifyPrivilegeChanged(currentRealm, oldP, privilege);
             }
         } catch (PolicyException e) {

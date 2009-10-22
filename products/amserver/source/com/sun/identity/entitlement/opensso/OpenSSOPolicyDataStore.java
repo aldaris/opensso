@@ -22,22 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPolicyDataStore.java,v 1.3 2009-10-13 21:32:32 veiming Exp $
+ * $Id: OpenSSOPolicyDataStore.java,v 1.4 2009-10-22 21:03:34 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.ApplicationPrivilege;
+import com.sun.identity.entitlement.ApplicationPrivilegeManager;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.PolicyDataStore;
+import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSEntry;
@@ -45,11 +49,13 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import java.io.ByteArrayInputStream;
+import java.security.AccessController;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import javax.security.auth.Subject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -61,26 +67,38 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
     private static final String REALM_DN_TEMPLATE =
          "ou=Policies,ou=default,ou=OrganizationConfig,ou=1.0,ou=" +
          PolicyManager.POLICY_SERVICE_NAME + ",ou=services,{0}";
+    private static Subject dsameUserSubject;
+    private static SSOToken dsameUserToken;
 
-    public void addPolicy(Subject adminSubject, String realm, Object policy)
+    static {
+        dsameUserToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        dsameUserSubject = SubjectUtils.createSubject(dsameUserToken);
+    }
+
+    public void addPolicy(Subject subject, String realm,
+        Privilege privilege)
         throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        ApplicationPrivilegeManager applPrivilegeMgr =
+            ApplicationPrivilegeManager.getInstance(realm, subject);
 
-        if (policy instanceof Policy ||
-            policy instanceof com.sun.identity.entitlement.xacml3.core.Policy
-        ) {
-            String name = PrivilegeUtils.getPolicyName(policy);
-            String dn = getPolicyDistinguishedName(realm, name);
+        if (!applPrivilegeMgr.hasPrivilege(privilege,
+            ApplicationPrivilege.Action.MODIFY)) {
+            throw new EntitlementException(326);
+        }
 
-            if (adminToken == null) {
-                Object[] params = {name};
-                throw new EntitlementException(207, params);
-            }
+        String name = "";
+        try {
+            Object policy = PrivilegeUtils.privilegeToPolicyObject(
+                realm, privilege);
+            name = PrivilegeUtils.getPolicyName(policy);
 
-            try {
-                createParentNode(adminToken, realm);
-
-                SMSEntry s = new SMSEntry(adminToken, dn);
+            if (policy instanceof Policy ||
+                policy instanceof com.sun.identity.entitlement.xacml3.core.Policy
+            ) {
+                String dn = getPolicyDistinguishedName(realm, name);
+                createParentNode(dsameUserToken, realm);
+                SMSEntry s = new SMSEntry(dsameUserToken, dn);
                 Map<String, Set<String>> map = new
                     HashMap<String, Set<String>>();
 
@@ -98,23 +116,44 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
                 setValue.add(POLICY_XML + "=" +
                     PrivilegeUtils.policyToXML(policy));
                 s.setAttributes(map);
+
+                String[] logParams = {DNMapper.orgNameToRealmName(realm),
+                    name};
+                OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                    "ATTEMPT_ADD_PRIVILEGE", logParams, subject);
+
                 s.save();
 
+                OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                    "SUCCEEDED_ADD_PRIVILEGE", logParams, subject);
+
                 PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                    adminSubject, realm);
+                    dsameUserSubject, realm);
                 pis.add(PrivilegeUtils.policyObjectToPrivileges(policy));
-            } catch (PolicyException e) {
-                Object[] params = {name};
-                throw new EntitlementException(202, params, e);
-            } catch (SSOException e) {
-                Object[] params = {name};
-                throw new EntitlementException(202, params, e);
-            } catch (SMSException e) {
-                Object[] params = {name};
-                throw new EntitlementException(202, params, e);
+            } else {
+                //TODO: log error, unsupported policy type
             }
-        } else {
-            //TODO: log error, unsupported policy type
+        } catch (PolicyException e) {
+            String[] logParams = {DNMapper.orgNameToRealmName(realm),
+                name, e.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_ADD_PRIVILEGE", logParams, subject);
+            Object[] params = {name};
+            throw new EntitlementException(202, params, e);
+        } catch (SSOException e) {
+            String[] logParams = {DNMapper.orgNameToRealmName(realm),
+                name, e.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_ADD_PRIVILEGE", logParams, subject);
+            Object[] params = {name};
+            throw new EntitlementException(202, params, e);
+        } catch (SMSException e) {
+            String[] logParams = {DNMapper.orgNameToRealmName(realm),
+                name, e.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_ADD_PRIVILEGE", logParams, subject);
+            Object[] params = {name};
+            throw new EntitlementException(202, params, e);
         }
     }
 
@@ -243,31 +282,56 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         return policy;
     }
 
-    public void removePolicy(Subject adminSubject, String realm, String name)
+    public void removePrivilege(Subject subject, String realm,
+        Privilege privilege)
         throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        SSOToken adminToken = SubjectUtils.getSSOToken(subject);
+        String name = privilege.getName();
 
         if (adminToken == null) {
             Object[] params = {name};
             throw new EntitlementException(211, params);
         }
+
+        ApplicationPrivilegeManager applPrivilegeMgr =
+            ApplicationPrivilegeManager.getInstance(realm, subject);
+
+        if (!applPrivilegeMgr.hasPrivilege(privilege,
+            ApplicationPrivilege.Action.MODIFY)) {
+            throw new EntitlementException(326);
+        }
         
         String dn = getPolicyDistinguishedName(realm, name);
 
-        if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
+        if (!SMSEntry.checkIfEntryExists(dn, dsameUserToken)) {
             Object[] params = {name};
             throw new EntitlementException(203, params);
         }
         try {
-            SMSEntry s = new SMSEntry(adminToken, dn);
+            String[] logParams = {DNMapper.orgNameToRealmName(realm),
+                name};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                "ATTEMPT_REMOVE_PRIVILEGE", logParams, subject);
+            SMSEntry s = new SMSEntry(dsameUserToken, dn);
             s.delete();
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                "SUCCEEDED_REMOVE_PRIVILEGE", logParams, subject);
+
             PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                adminSubject, realm);
+                dsameUserSubject, realm);
             pis.delete(name);
         } catch (SSOException ex) {
+            String[] logParams = {DNMapper.orgNameToRealmName(realm),
+                name, ex.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_REMOVE_PRIVILEGE", logParams, subject);
             Object[] params = {name};
             throw new EntitlementException(205, params, ex);
         } catch (SMSException ex) {
+            String[] logParams = {DNMapper.orgNameToRealmName(realm),
+                name, ex.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_REMOVE_PRIVILEGE", logParams, subject);
             Object[] params = {name};
             throw new EntitlementException(205, params, ex);
         }
@@ -283,72 +347,32 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         return MessageFormat.format(REALM_DN_TEMPLATE, args);
     }
 
-    public void modifyPolicy(Subject adminSubject, String realm, Object policy)
-        throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
-
-
-        if (policy instanceof Policy ||
-                policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
-            String name = PrivilegeUtils.getPolicyName(policy);
-            String dn = getPolicyDistinguishedName(realm, name);
-
-            if (adminToken == null) {
-                Object[] params = {name};
-                throw new EntitlementException(208, params);
-            }
-
-            try {
-                SMSEntry s = new SMSEntry(adminToken, dn);
-                Map<String, Set<String>> map = new
-                    HashMap<String, Set<String>>();
-
-                Set<String> setObjectClass = new HashSet<String>(4);
-                map.put(SMSEntry.ATTR_OBJECTCLASS, setObjectClass);
-                setObjectClass.add(SMSEntry.OC_TOP);
-                setObjectClass.add(SMSEntry.OC_SERVICE_COMP);
-
-                Set<String> setValue = new HashSet<String>(2);
-                map.put(SMSEntry.ATTR_KEYVAL, setValue);
-                setValue.add(PrivilegeUtils.policyToXML(policy));
-                s.setAttributes(map);
-                s.save();
-
-                PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                    adminSubject, realm);
-                pis.delete(name);
-                pis.add(PrivilegeUtils.policyToPrivileges(policy));
-            } catch (SSOException e) {
-                Object[] params = {name};
-                throw new EntitlementException(206, params, e);
-            } catch (SMSException e) {
-                Object[] params = {name};
-                throw new EntitlementException(206, params, e);
-            } catch (PolicyException e) {
-                Object[] params = {name};
-                throw new EntitlementException(206, params, e);
-            }
-        }
-    }
-
     public void addReferral(
-        Subject adminSubject,
+        Subject subject,
         String realm,
         ReferralPrivilege referral)
         throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
-
         String name = referral.getName();
         String dn = getPolicyDistinguishedName(realm, name);
 
+        SSOToken adminToken = SubjectUtils.getSSOToken(subject);
         if (adminToken == null) {
             Object[] params = {name};
             throw new EntitlementException(260, params);
         }
-        try {
-            createParentNode(adminToken, realm);
+        
+        ApplicationPrivilegeManager applPrivilegeMgr =
+            ApplicationPrivilegeManager.getInstance(realm, subject);
 
-            SMSEntry s = new SMSEntry(adminToken, dn);
+        if (!applPrivilegeMgr.hasPrivilege(referral,
+            ApplicationPrivilege.Action.MODIFY)) {
+            throw new EntitlementException(326);
+        }
+
+        try {
+            createParentNode(dsameUserToken, realm);
+
+            SMSEntry s = new SMSEntry(dsameUserToken, dn);
             Map<String, Set<String>> map = new HashMap<String, Set<String>>();
 
             Set<String> setServiceID = new HashSet<String>(2);
@@ -366,95 +390,96 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
                 realm, referral);
             setValue.add(POLICY_XML + "=" +p.toXML());
             s.setAttributes(map);
+
+            String[] logParams = {DNMapper.orgNameToRealmName(realm), name};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                "ATTEMPT_ADD_REFERRAL", logParams, subject);
             s.save();
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                "SUCCEEDED_ADD_REFERRAL", logParams, subject);
 
             PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                adminSubject, realm);
+                dsameUserSubject, realm);
             Set<IPrivilege> tmp = new HashSet<IPrivilege>();
             tmp.add(referral);
             pis.add(tmp);
         } catch (PolicyException e) {
+            String[] logParams = {DNMapper.orgNameToRealmName(realm), name,
+                e.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_ADD_REFERRAL", logParams, subject);
             Object[] params = {name};
             throw new EntitlementException(261, params, e);
         } catch (SSOException e) {
+            String[] logParams = {DNMapper.orgNameToRealmName(realm), name,
+                e.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_ADD_REFERRAL", logParams, subject);
             Object[] params = {name};
             throw new EntitlementException(261, params, e);
         } catch (SMSException e) {
+            String[] logParams = {DNMapper.orgNameToRealmName(realm), name,
+                e.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_ADD_REFERRAL", logParams, subject);
             Object[] params = {name};
             throw new EntitlementException(261, params, e);
         }
     }
 
-    public void modifyReferral(
-        Subject adminSubject,
+    public void removeReferral(
+        Subject subject,
         String realm,
         ReferralPrivilege referral
     ) throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        SSOToken adminToken = SubjectUtils.getSSOToken(subject);
         String name = referral.getName();
-        String dn = getPolicyDistinguishedName(realm, name);
-
-        if (adminToken == null) {
-            Object[] params = {name};
-            throw new EntitlementException(264, params);
-        }
-
-        try {
-            SMSEntry s = new SMSEntry(adminToken, dn);
-            Map<String, Set<String>> map = new HashMap<String, Set<String>>();
-
-            Set<String> setObjectClass = new HashSet<String>(4);
-            map.put(SMSEntry.ATTR_OBJECTCLASS, setObjectClass);
-            setObjectClass.add(SMSEntry.OC_TOP);
-            setObjectClass.add(SMSEntry.OC_SERVICE_COMP);
-
-            Set<String> setValue = new HashSet<String>(2);
-            map.put(SMSEntry.ATTR_KEYVAL, setValue);
-            setValue.add(referral.toJSON());
-            s.setAttributes(map);
-            s.save();
-
-            PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                adminSubject, realm);
-            pis.deleteReferral(name);
-
-            Set<IPrivilege> tmp = new HashSet<IPrivilege>();
-            tmp.add(referral);
-            pis.add(tmp);
-        } catch (SSOException e) {
-            Object[] params = {name};
-            throw new EntitlementException(265, params, e);
-        } catch (SMSException e) {
-            Object[] params = {name};
-            throw new EntitlementException(265, params, e);
-        }
-    }
-
-    public void removeReferral(Subject adminSubject, String realm, String name)
-        throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
 
         if (adminToken == null) {
             Object[] params = {name};
             throw new EntitlementException(266, params);
         }
+        ApplicationPrivilegeManager applPrivilegeMgr =
+            ApplicationPrivilegeManager.getInstance(realm, subject);
+
+        if (!applPrivilegeMgr.hasPrivilege(referral,
+            ApplicationPrivilege.Action.MODIFY)) {
+            throw new EntitlementException(326);
+        }
 
         String dn = getPolicyDistinguishedName(realm, name);
 
-        if (!SMSEntry.checkIfEntryExists(dn, adminToken)) {
+        if (!SMSEntry.checkIfEntryExists(dn, dsameUserToken)) {
             Object[] params = {name};
             throw new EntitlementException(263, params);
         }
         try {
-            SMSEntry s = new SMSEntry(adminToken, dn);
+            String[] logParams = {DNMapper.orgNameToRealmName(realm),
+                name};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                "ATTEMPT_REMOVE_REFERRAL", logParams, subject);
+
+            SMSEntry s = new SMSEntry(dsameUserToken, dn);
             s.delete();
+
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
+                "SUCCEEDED_REMOVE_REFERRAL", logParams, subject);
+
             PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-                adminSubject, realm);
+                dsameUserSubject, realm);
             pis.deleteReferral(name);
         } catch (SSOException ex) {
+            String[] logParams = {DNMapper.orgNameToRealmName(realm),
+                name, ex.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_REMOVE_REFERRAL", logParams, subject);
             Object[] params = {name};
             throw new EntitlementException(205, params, ex);
         } catch (SMSException ex) {
+            String[] logParams = {DNMapper.orgNameToRealmName(realm),
+                name, ex.getMessage()};
+            OpenSSOLogger.log(OpenSSOLogger.LogLevel.ERROR, Level.INFO,
+                "FAILED_REMOVE_REFERRAL", logParams, subject);
             Object[] params = {name};
             throw new EntitlementException(205, params, ex);
         }
