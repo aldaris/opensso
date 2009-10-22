@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCServlet.java,v 1.11 2009-09-21 16:45:30 ericow Exp $
+ * $Id: CDCServlet.java,v 1.12 2009-10-22 00:06:05 qcheng Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import com.iplanet.dpro.session.TokenRestriction;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.federation.common.FSException;
 import com.sun.identity.federation.common.FSUtils;
@@ -147,6 +148,7 @@ public class CDCServlet extends HttpServlet {
         adviceParams.add("realm");
         adviceParams.add("org");
         adviceParams.add("sunamcompositeadvice");
+        adviceParams.add("resource");
         String invalidStrings = SystemPropertiesManager.get(
             Constants.INVALID_GOTO_STRINGS);
         if (invalidSet.isEmpty()) {
@@ -559,6 +561,28 @@ public class CDCServlet extends HttpServlet {
                 
                     // Construct the login URL
                     redirectURL.append(AUTHURI).append("?");
+                    // check if this is resource based auth case
+                    String resourceAuth = request.getParameter(
+                        ISAuthConstants.IP_RESOURCE_ENV_PARAM);
+                    if ((resourceAuth != null) && 
+                        resourceAuth.equalsIgnoreCase("true")) {
+                        // this is the resource based authentication case,
+                        // append resourceURL since original goto is modified
+                        redirectURL.append(ISAuthConstants.RESOURCE_URL_PARAM)
+                                .append("=");
+                        // check if resourceURL is present : J2EE agent case
+                        String resourceUrl = request.getParameter(
+                            ISAuthConstants.RESOURCE_URL_PARAM);
+                        if (resourceUrl == null) {
+                            // not presnet, use goto/TARGET as the resource URL
+                            redirectURL.append(URLEncDec.encode(finalURL))
+                                .append("&");
+                        } else {
+                            // resourceURL present in request
+                            redirectURL.append(URLEncDec.encode(resourceUrl))
+                                .append("&");
+                        }
+                    }
                     if (policyAdviceList != null) {
                         redirectURL.append(policyAdviceList).append("&");
                     }
@@ -569,6 +593,10 @@ public class CDCServlet extends HttpServlet {
                     // Check for policy advices
                     if (policyAdviceList != null) {
                         redirectURL.append("&").append(policyAdviceList);
+                    }
+                    if (debug.messageEnabled()) {
+                        debug.message("CDCServlet.redirectForAuthentication:" +
+                            " final forward URL=" + redirectURL.toString());
                     }
                     RequestDispatcher dispatcher =
                         request.getRequestDispatcher(redirectURL.toString());
