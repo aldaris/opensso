@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StsManageWizardHandler.java,v 1.5 2009-10-21 16:46:06 ggennaro Exp $
+ * $Id: StsManageWizardHandler.java,v 1.6 2009-10-22 23:31:09 ggennaro Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -30,11 +30,15 @@ package com.sun.identity.admin.handler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.iplanet.sso.SSOException;
 import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.dao.WssProfileDao;
 import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.NextPopupBean;
 import com.sun.identity.admin.model.SecurityMechanismPanelBean;
@@ -44,6 +48,8 @@ import com.sun.identity.admin.model.StsManageWizardStep1Validator;
 import com.sun.identity.admin.model.StsManageWizardStep2Validator;
 import com.sun.identity.admin.model.StsManageWizardStep4Validator;
 import com.sun.identity.admin.model.StsProfileBean;
+import com.sun.identity.admin.model.WscCreateWizardStep;
+import com.sun.identity.sm.SMSException;
 
 public class StsManageWizardHandler 
         extends WssWizardHandler 
@@ -76,6 +82,7 @@ public class StsManageWizardHandler
         List<LinkBean> lbs = new ArrayList<LinkBean>();
         lbs.add(LinkBean.HOME);
         lbs.add(LinkBean.WSS);
+        lbs.add(LinkBean.STS_MANAGE);
         return lbs;
     }
 
@@ -174,6 +181,25 @@ public class StsManageWizardHandler
 
     
     private boolean save() {
+
+        try {
+            StsManageWizardBean wizardBean 
+                = (StsManageWizardBean) getWizardBean();
+            
+            WssProfileDao.updateHostedSts(wizardBean.getStsProfileBean());
+
+        } catch (SSOException e) {
+            showErrorMessage("saveErrorSummary", "saveErrorDetail");
+            getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
+            Logger.getLogger(StsManageWizardHandler.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        } catch (SMSException e) {
+            showErrorMessage("saveErrorSummary", "saveErrorDetail");
+            getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
+            Logger.getLogger(StsManageWizardHandler.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+        
         return true;
     }
 

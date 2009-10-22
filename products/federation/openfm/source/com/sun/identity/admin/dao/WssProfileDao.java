@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WssProfileDao.java,v 1.6 2009-10-21 16:46:06 ggennaro Exp $
+ * $Id: WssProfileDao.java,v 1.7 2009-10-22 23:31:09 ggennaro Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -90,7 +90,8 @@ public class WssProfileDao {
     private static final String RESERVED_WSP = "wsp";
 
     // WSCAgent
-    private static final String KERBEROS_TICKET_CACHE_DIR = "KerberosTicketCacheDir";
+    private static final String KERBEROS_TICKET_CACHE_DIR 
+        = "KerberosTicketCacheDir";
     
     // WSPAgent
     private static final String KERBEROS_KEY_TAB_FILE = "KerberosKeyTabFile";
@@ -104,36 +105,44 @@ public class WssProfileDao {
     // hosted sts schema
     private static final String SERVICE_NAME_STS = "sunFAMSTSService";
     private static final String HOSTED_STS_ENDPOINT = "stsEndPoint";
+    private static final String HOSTED_STS_AUTHENTICATION_CHAIN 
+        = "AuthenticationChain";
     private static final String STS_ISSUER = "stsIssuer";
     private static final String STS_TOKEN_LIFETIME = "stsLifetime";
     private static final String STS_CERT_ALIAS = "stsCertAlias";
-    private static final String STS_END_USER_TOKEN_PLUGIN_CLASS = "com.sun.identity.wss.sts.clientusertoken";
+    private static final String STS_END_USER_TOKEN_PLUGIN_CLASS 
+        = "com.sun.identity.wss.sts.clientusertoken";
     private static final String TRUSTED_ISSUERS = "trustedIssuers";
     private static final String TRUSTED_IP_ADDRESSES = "trustedIPAddresses";
     
     // common
     private static final String SECURITY_MECH = "SecurityMech";
-    private static final String STS_CLIENT_PROFILE_NAME = "STS";
-    private static final String USERNAME_CREDENTIALS = "UserCredential";
     private static final String KERBEROS_DOMAIN = "KerberosDomain";
     private static final String KERBEROS_DOMAIN_SERVER = "KerberosDomainServer";
-    private static final String KERBEROS_SERVICE_PRINCIPAL = "KerberosServicePrincipal";
+    private static final String KERBEROS_SERVICE_PRINCIPAL 
+        = "KerberosServicePrincipal";
     private static final String SIGNING_REF_TYPE = "SigningRefType";
+    private static final String STS_CLIENT_PROFILE_NAME = "STS";
+    private static final String USERNAME_CREDENTIALS = "UserCredential";
+
+    private static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
+    private static final String ENCRYPTION_ALGORITHM = "EncryptionAlgorithm";
     private static final String ENCRYPTION_ALGORITHM_AES = "AES";
     private static final String ENCRYPTION_ALGORITHM_DESEDE = "DESede";
     private static final String IS_REQUEST_SIGN = "isRequestSign";
-    private static final String IS_REQUEST_HEADER_ENCRYPT  = "isRequestHeaderEncrypt";
+    private static final String IS_REQUEST_HEADER_ENCRYPT 
+        = "isRequestHeaderEncrypt";
     private static final String IS_REQUEST_ENCRYPT = "isRequestEncrypt";
     private static final String IS_RESPONSE_SIGN = "isResponseSign";
     private static final String IS_RESPONSE_ENCRYPT = "isResponseEncrypt";
-    private static final String ENCRYPTION_ALGORITHM = "EncryptionAlgorithm";
-    private static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
     private static final String PRIVATE_KEY_ALIAS = "privateKeyAlias";
     private static final String PUBLIC_KEY_ALIAS = "publicKeyAlias";
+
     private static final String SAML_ATTRIBUTE_MAPPING = "SAMLAttributeMapping";
     private static final String NAME_ID_MAPPER = "NameIDMapper";
     private static final String ATTRIBUTE_NAMESPACE = "AttributeNamespace";
     private static final String INCLUDE_MEMBERSHIPS = "includeMemberships";
+
     private static final String WSP_ENDPOINT = "WSPEndpoint";
     
     private static final Comparator<WspProfileBean> WSP_PROFILE_COMPARATOR =
@@ -158,11 +167,10 @@ public class WssProfileDao {
     //--------------------------------------------------------------------------
 
     WssProfileDao() {
-        // do nothing to force use of static methods
     }
 
-    //--------------------------------------------------------------------------
-
+    // get/set from map for primitives -----------------------------------------
+    
     @SuppressWarnings("unchecked")
     private static boolean getBooleanValue(Map map, String keyName) {
         String value = getStringValue(map, keyName);
@@ -170,11 +178,29 @@ public class WssProfileDao {
     }
 
     @SuppressWarnings("unchecked")
+    private static void setBooleanValue(Map map, String keyName, boolean value) {
+        setStringValue(map, keyName, String.valueOf(value));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void setSetValue(Map map, String keyName, Set set) {
+        
+        if( map != null && keyName != null ) {
+            map.put(keyName, set);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
     private static int getIntValue(Map map, String keyName) {
         String value = getStringValue(map, keyName);
         return value == null ? -1 : Integer.valueOf(value);
     }
-    
+
+    @SuppressWarnings("unchecked")
+    private static void setIntValue(Map map, String keyName, int value) {
+        setStringValue(map, keyName, String.valueOf(value));
+    }
+
     @SuppressWarnings("unchecked")
     private static ArrayList<String> getListValue(Map map, String keyName) {
         ArrayList<String> a = new ArrayList<String>();
@@ -187,12 +213,26 @@ public class WssProfileDao {
         }
         return a;
     }
+   
+    @SuppressWarnings("unchecked")
+    private static void setListValue(Map map, String keyName, List list) {
+
+        if( map != null && keyName != null ) {
+            HashSet<String> values = new HashSet<String>();
+            
+            if( list != null ) {
+                values.addAll(list);
+            }
+            
+            map.put(keyName, values);
+        }
+    }
     
     @SuppressWarnings("unchecked")
     private static String getStringValue(Map map, String keyName) {
-        
+
         if( map != null && map.get(keyName) instanceof Set ) {
-            
+
             Set<String> values = (Set<String>) map.get(keyName);
             if( values != null && !values.isEmpty() )
                 return (String)values.iterator().next();
@@ -200,28 +240,25 @@ public class WssProfileDao {
         return null;
     }
 
-    //--------------------------------------------------------------------------
-    
-    
     @SuppressWarnings("unchecked")
-    private static String getTokenConversionTypeValue(Map map) {
-        String configValue = getStringValue(map, TOKEN_CONVERSION_TYPE);
-        String value = null;
-        
-        if( configValue != null ) {
-            TokenConversionType tct 
-                = TokenConversionType.valueOfConfig(configValue);
-            if( tct != null ) {
-                value = tct.toString();
+    private static void setStringValue(Map map, String keyName, String value) {
+
+        if( map != null && keyName != null ) {
+
+            HashSet<String> values = new HashSet<String>();
+            
+            if( value != null ) {
+                values.add(value);
             }
+            
+            map.put(keyName, values);
         }
-        
-        return value;
     }
-    
-    
+
+    // get from map for complex types ------------------------------------------
+
     @SuppressWarnings("unchecked")
-    private static String getEncryptionAlgorithmValue(Map map) {
+    private static String getEncryptionAlgorithm(Map map) {
         String algorithm = getStringValue(map, ENCRYPTION_ALGORITHM);
         int strength = getIntValue(map, ENCRYPTION_STRENGTH);
         EncryptionAlgorithm ea;
@@ -251,10 +288,10 @@ public class WssProfileDao {
                     break;
             }
         }
-       
+
         return ea.toString();
     }
-   
+    
     @SuppressWarnings("unchecked")
     private static PasswordCredential getPasswordCredential(Map map) {
         ArrayList<PasswordCredential> pcList = getPasswordCredentials(map);
@@ -272,7 +309,7 @@ public class WssProfileDao {
         if(map != null && map.get(USERNAME_CREDENTIALS) != null ) {
             Set<String> values = (Set<String>)map.get(USERNAME_CREDENTIALS);
             Pattern p = Pattern.compile("UserName:(.+?)\\|UserPassword:(.+?)");
-            
+
             for(String v : values) {
                 StringTokenizer st = new StringTokenizer(v, ",");
                 while( st.hasMoreTokens() ) {
@@ -282,7 +319,7 @@ public class WssProfileDao {
                         String username = m.group(1);
                         String password = m.group(2);
                         if( username != null && password != null ) {
-                            PasswordCredential pc 
+                            PasswordCredential pc
                                 = new PasswordCredential(username, password);
                             a.add(pc);
                         }
@@ -297,13 +334,13 @@ public class WssProfileDao {
     private static SamlAttributesTableBean getSamlAttributesTable(Map map) {
         ArrayList<String> mapPairs = getListValue(map, SAML_ATTRIBUTE_MAPPING);
         Hashtable<String, String> configValues = new Hashtable<String, String>();
-        
+
         if( mapPairs != null ) {
             for(String s : mapPairs) {
                 if( s != null && s.contains("=") ) {
                     String assertionAttrName = s.substring(0, s.indexOf("="));
                     String localAttrName = s.substring(s.indexOf("=") + 1);
-                    
+
                     if( assertionAttrName.length() > 0
                             && localAttrName.length() > 0 ) {
                         configValues.put(localAttrName, assertionAttrName);
@@ -311,7 +348,7 @@ public class WssProfileDao {
                 }
             }
         }
-        
+
         ArrayList<String> defaultValues = new ArrayList<String>();
         defaultValues.add("cn");
         defaultValues.add("employeenumber");
@@ -325,12 +362,12 @@ public class WssProfileDao {
 
         ArrayList<SamlAttributeMapItem> attributeMapItems
             = new ArrayList<SamlAttributeMapItem>();
-        
+
         for(String s : defaultValues) {
             SamlAttributeMapItem item = new SamlAttributeMapItem();
             item.setCustom(false);
             item.setLocalAttributeName(s);
-            
+
             if( configValues.containsKey(s) ) {
                 item.setAssertionAttributeName(configValues.get(s));
                 configValues.remove(s);
@@ -347,38 +384,38 @@ public class WssProfileDao {
             item.setAssertionAttributeName(configValues.get(s));
             attributeMapItems.add(item);
         }
-        
+
         SamlAttributesTableBean table = new SamlAttributesTableBean();
         table.setAttributeMapItems(attributeMapItems);
 
         return table;
     }
-      
+    
     @SuppressWarnings("unchecked")
-    private static String getSecurityMechanismValue(Map map) {
+    private static String getSecurityMechanism(Map map) {
         ArrayList<String> smList = getListValue(map, SECURITY_MECH);
         String value = null;
-        
+
         if( smList.size() > 0 ) {
             SecurityMechanism sm = SecurityMechanism.valueOfConfig(smList.get(0));
             if( sm != null ) {
                 value = sm.toString();
             }
         }
-        
+
         return value;
     }
-
+    
     @SuppressWarnings("unchecked")
-    private static ArrayList<SecurityMechanismPanelBean> getSecurityMechanismPanels(Map map) 
+    private static ArrayList<SecurityMechanismPanelBean> getSecurityMechanismPanels(Map map)
     {
         ArrayList<SecurityMechanismPanelBean> panels
              = new ArrayList<SecurityMechanismPanelBean>();
-        
+
         if( map != null && map.get(SECURITY_MECH) != null ) {
             ArrayList<String> configValues = getListValue(map, SECURITY_MECH);
-            ArrayList<SecurityMechanism> supported 
-                = new ArrayList<SecurityMechanism>();    
+            ArrayList<SecurityMechanism> supported
+                = new ArrayList<SecurityMechanism>();
 
             for(SecurityMechanism sm : SecurityMechanism.values()) {
                 if( sm != SecurityMechanism.STS_SECURITY ) {
@@ -387,65 +424,54 @@ public class WssProfileDao {
             }
 
             for(SecurityMechanism sm : supported) {
-                SecurityMechanismPanelBean panel 
+                SecurityMechanismPanelBean panel
                     = new SecurityMechanismPanelBean();
-                
+
                 panel.setExpanded(false);
                 panel.setSecurityMechanism(sm);
 
-                if( configValues != null && 
+                if( configValues != null &&
                         configValues.contains(sm.toConfigString()) ) {
                     panel.setChecked(true);
                 } else {
                     panel.setChecked(false);
                 }
-                
+
                 panels.add(panel);
             }
-            
+
         }
-        
+
         return panels;
     }
     
     @SuppressWarnings("unchecked")
-    private static UserCredentialsTableBean getUserCredentialsTable(Map map) {
-        ArrayList<PasswordCredential> configValues 
-            = getPasswordCredentials(map);
-        UserCredentialsTableBean table = new UserCredentialsTableBean();
-
-        if( configValues.size() > 0 ) {
-            ArrayList<UserCredentialItem> items 
-                = new ArrayList<UserCredentialItem>();
-
-            for(PasswordCredential pc : configValues) {
-                UserCredentialItem item = new UserCredentialItem();
-                item.setUserName(pc.getUserName());
-                item.setPassword(pc.getPassword());
-                item.setEditing(false);
-                item.setNewUserName(null);
-                item.setNewPassword(null);
-
-                items.add(item);
-            }
-            
-            table.setUserCredentialItems(items);
+    private static String getSigningRefType(Map map) {
+        String configValue = getStringValue(map, SIGNING_REF_TYPE);
+        String value = null;
+        
+        if( configValue != null ) {
+            X509SigningRefType signingRefType 
+                = X509SigningRefType.valueOfConfig(configValue);
+            value = signingRefType.toString();
         }
         
-        return table;
+        return value;
     }
-    
+
     @SuppressWarnings("unchecked")
-    private static String getX509SigningRefTypeValue(Map map) {
-        String value = getStringValue(map, SIGNING_REF_TYPE);
-        
-        if( value != null ) {
-            X509SigningRefType x = X509SigningRefType.valueOfConfig(value);
-            if( x != null ) {
-                value = x.toString();
+    private static String getTokenConversionType(Map map) {
+        String configValue = getStringValue(map, TOKEN_CONVERSION_TYPE);
+        String value = null;
+
+        if( configValue != null ) {
+            TokenConversionType tct
+                = TokenConversionType.valueOfConfig(configValue);
+            if( tct != null ) {
+                value = tct.toString();
             }
         }
-        
+
         return value;
     }
     
@@ -459,7 +485,7 @@ public class WssProfileDao {
 
         return esmb;
     }
-    
+
     @SuppressWarnings("unchecked")
     private static EditableSelectOneBean getTrustedIssuers(Map map) {
         EditableSelectOneBean esmb = new EditableSelectOneBean();
@@ -467,121 +493,148 @@ public class WssProfileDao {
         return esmb;
     }
     
-    //--------------------------------------------------------------------------
-    
-    private static String getEncryptionAlgorithm(WssProfileBean bean) {
-        String value = null;
-        
-        if( bean != null && bean.getEncryptionAlgorithm() != null ) {
-            EncryptionAlgorithm encryptionAlgorithm 
-                = EncryptionAlgorithm.valueOf(bean.getEncryptionAlgorithm());
-            
-            switch(encryptionAlgorithm) {
-                case AES_128:
-                case AES_192:
-                case AES_256:
-                    value = ENCRYPTION_ALGORITHM_AES;
-                    break;
-                case TRIPLEDES_0:
-                case TRIPLEDES_112:
-                case TRIPLEDES_168:
-                    value = ENCRYPTION_ALGORITHM_DESEDE;
-                    break;
-            }
-        }        
-        
-        return value;
-    }
-    
-    private static int getEncryptionStrength(WssProfileBean bean) {
-        int value = 0;
-        
-        if( bean != null && bean.getEncryptionAlgorithm() != null ) {
-            EncryptionAlgorithm encryptionAlgorithm 
-                = EncryptionAlgorithm.valueOf(bean.getEncryptionAlgorithm());
-            
-            switch(encryptionAlgorithm) {
-                case AES_128:
-                    value = 128;
-                    break;
-                case AES_192:
-                    value = 192;
-                    break;
-                case AES_256:
-                    value = 256;
-                    break;
-                case TRIPLEDES_0:
-                    value = 0;
-                    break;
-                case TRIPLEDES_112:
-                    value = 112;
-                    break;
-                case TRIPLEDES_168:
-                    value = 168;
-                    break;
-            }
-        }        
-        
-        return value;
-    }
-    
     @SuppressWarnings("unchecked")
-    private static Set getSamlAttributeMapping(WssProfileBean bean) {
-        HashSet<String> attributeMap = new HashSet<String>();
-        
-        if( bean != null && bean.getSamlAttributesTable() != null) {
-            SamlAttributesTableBean table = bean.getSamlAttributesTable();
+    private static UserCredentialsTableBean getUserCredentialsTable(Map map) {
+        ArrayList<PasswordCredential> configValues
+            = getPasswordCredentials(map);
+        UserCredentialsTableBean table = new UserCredentialsTableBean();
+
+        if( configValues.size() > 0 ) {
+            ArrayList<UserCredentialItem> items
+                = new ArrayList<UserCredentialItem>();
+
+            for(PasswordCredential pc : configValues) {
+                UserCredentialItem item = new UserCredentialItem();
+                item.setUserName(pc.getUserName());
+                item.setPassword(pc.getPassword());
+                item.setEditing(false);
+                item.setNewUserName(null);
+                item.setNewPassword(null);
+
+                items.add(item);
+            }
+
+            table.setUserCredentialItems(items);
+        }
+
+        return table;
+    }
+
+    // get from bean for complex types -----------------------------------------
+    
+    private static String getAlgorithm(WssProfileBean bean) {
+        String value = null;
+
+        if( bean != null ) {
+            String encryptionAlgorithm = bean.getEncryptionAlgorithm();
             
-            for(SamlAttributeMapItem item : table.getAttributeMapItems()) {
-                String assertionName = item.getAssertionAttributeName();
-                String localName = item.getLocalAttributeName();
+            if( encryptionAlgorithm != null ) {
+                EncryptionAlgorithm ea
+                    = EncryptionAlgorithm.valueOf(encryptionAlgorithm);
                 
-                if( assertionName != null && localName != null ) {
-                    String entry = assertionName + "=" + localName;
-                    attributeMap.add(entry);
+                switch(ea) {
+                    case AES_128:
+                    case AES_192:
+                    case AES_256:
+                        value = ENCRYPTION_ALGORITHM_AES;
+                        break;
+                    case TRIPLEDES_0:
+                    case TRIPLEDES_112:
+                    case TRIPLEDES_168:
+                        value = ENCRYPTION_ALGORITHM_DESEDE;
+                        break;
                 }
             }
         }
-        
-        return attributeMap;
+
+        return value;
     }
     
-    private static String getSigningRef(WssProfileBean bean) {
-        String value = null;
-        
-        if( bean != null && bean.getX509SigningRefType() != null ) {
-            X509SigningRefType signingRef
-                = X509SigningRefType.valueOf(bean.getX509SigningRefType());
+    private static int getStrength(WssProfileBean bean) {
+        int value = -1;
 
-            if( signingRef != null ) {
-                value = signingRef.toConfigString();
+        if( bean != null ) {
+            String encryptionAlgorithm = bean.getEncryptionAlgorithm();
+            
+            if( encryptionAlgorithm != null ) {
+                EncryptionAlgorithm ea
+                    = EncryptionAlgorithm.valueOf(encryptionAlgorithm);
+
+                switch(ea) {
+                    case AES_128:
+                        value = 128;
+                        break;
+                    case AES_192:
+                        value = 192;
+                        break;
+                    case AES_256:
+                        value = 256;
+                        break;
+                    case TRIPLEDES_0:
+                        value = 0;
+                        break;
+                    case TRIPLEDES_112:
+                        value = 112;
+                        break;
+                    case TRIPLEDES_168:
+                        value = 168;
+                        break;
+                }
             }
         }
 
         return value;
+    }
+    
+    private static HashSet<String> getSamlAttributes(WssProfileBean bean) {
+        HashSet<String> attributeMap = new HashSet<String>();
+
+        if( bean != null ) {
+            SamlAttributesTableBean table = bean.getSamlAttributesTable();
+            
+            if( table != null ) {
+                for(SamlAttributeMapItem item : table.getAttributeMapItems()) {
+                    String assertionName = item.getAssertionAttributeName();
+                    String localName = item.getLocalAttributeName();
+
+                    if( assertionName != null && localName != null ) {
+                        String entry = assertionName + "=" + localName;
+                        attributeMap.add(entry);
+                    }
+                }
+            }
+            
+        }
+
+        return attributeMap;
     }
     
     private static String getTokenConversion(WspProfileBean bean) {
         String value = null;
         
-        if( bean != null && bean.getTokenConversionType() != null ) {
-            TokenConversionType tct 
-                = TokenConversionType.valueOf(bean.getTokenConversionType());
+        if( bean != null ) {
+            String enumValue = bean.getTokenConversionType();
             
-            if( tct != null ) {
-                value = tct.toConfigString();
+            if( enumValue != null ) {
+                TokenConversionType tokenConversionType 
+                    = TokenConversionType.valueOf(enumValue);
+                
+                if( tokenConversionType != null ) {
+                    value = tokenConversionType.toConfigString();
+                }
             }
+            
         }
         
         return value;
     }
-
+    
     @SuppressWarnings("unchecked")
     private static STSConfig getTrustAuthorityConfig(WscProfileBean bean) {
         STSConfig stsConfig = null;
-        
-        if( bean != null && bean.getStsClientProfileName() != null ) {
-            
+
+        if( bean != null ) {
+
             List stsConfigs = ProviderUtils.getAllSTSConfig();
             Iterator i = stsConfigs.iterator();
             while( i.hasNext() ) {
@@ -596,17 +649,17 @@ public class WssProfileDao {
                 }
             }
         }
-        
+
         return stsConfig;
     }
     
-    private static ArrayList<PasswordCredential> getUserCredentialsList(WscProfileBean bean) {
+    private static List<PasswordCredential> getUserCred(WscProfileBean bean) {
         ArrayList<PasswordCredential> a = new ArrayList<PasswordCredential>();
-        
+
         if( bean != null ) {
             String uname = bean.getUserNameTokenUserName();
             String pword = bean.getUserNameTokenPassword();
-            
+
             if( uname != null && pword != null ) {
                 PasswordCredential pc = new PasswordCredential(uname, pword);
                 a.add(pc);
@@ -616,12 +669,12 @@ public class WssProfileDao {
         return a;
     }
     
-    private static ArrayList<PasswordCredential> getUserCredentialsList(WspProfileBean bean) {
+    private static List<PasswordCredential> getUserCreds(WspProfileBean bean) {
         ArrayList<PasswordCredential> a = new ArrayList<PasswordCredential>();
-        
+
         if( bean != null ) {
             UserCredentialsTableBean table = bean.getUserCredentialsTable();
-
+            
             if( table != null ) {
                 ArrayList<UserCredentialItem> items 
                     = table.getUserCredentialItems();
@@ -629,18 +682,73 @@ public class WssProfileDao {
                 for(UserCredentialItem item : items) {
                     String uname = item.getUserName();
                     String pword = item.getPassword();
-                    
+
                     if( uname != null && pword != null ) {
-                        PasswordCredential pc 
-                            = new PasswordCredential(uname, pword);
+                        PasswordCredential pc = new PasswordCredential(uname, pword);
                         a.add(pc);
                     }
                 }
             }
         }
-        
+
         return a;
-    }    
+
+    }
+    
+    private static HashSet<String> getUserCreds(UserCredentialsTableBean table) {
+        HashSet<String> set = new HashSet<String>();
+        
+        if( table != null && table.getUserCredentialItems() != null ) {
+            Iterator<UserCredentialItem> i
+                = table.getUserCredentialItems().iterator();
+            StringBuilder userCreds = new StringBuilder();
+
+            while( i.hasNext() ) {
+                UserCredentialItem item = i.next();
+                userCreds
+                    .append("UserName:")
+                    .append(item.getUserName())
+                    .append("|")
+                    .append("UserPassword:")
+                    .append(item.getPassword());
+
+                if( !i.hasNext() ) {
+                    break;
+                }
+
+                userCreds.append(",");
+            }
+
+            if( userCreds.length() > 0 ) {
+                HashSet<String> values = new HashSet<String>();
+                values.add(userCreds.toString());
+                set.add(userCreds.toString());
+            }
+        }
+        
+        return set;
+    }
+    
+    private static String getSigningRefType(WssProfileBean bean) {
+        String value = null;
+        
+        if( bean != null ) {
+            String enumValue = bean.getX509SigningRefType();
+            
+            if( enumValue != null ) {
+                X509SigningRefType signingRefType 
+                    = X509SigningRefType.valueOf(enumValue);
+                
+                if( signingRefType != null ) {
+                    value = signingRefType.toConfigString();
+                }
+            }
+            
+        }
+        
+        return value;
+    }
+    
     //--------------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
@@ -663,6 +771,7 @@ public class WssProfileDao {
         }
     }
     
+    
     @SuppressWarnings("unchecked")
     private static Map getServiceAttributeDefaults(String subSchema) {
 
@@ -684,6 +793,7 @@ public class WssProfileDao {
         }
     
     }
+    
 
     @SuppressWarnings("unchecked")
     private static WscProfileBean getWscProfileBeanFromMap(Map map) {
@@ -693,9 +803,9 @@ public class WssProfileDao {
         bean.setEndPoint(getStringValue(map, WSP_ENDPOINT));
         bean.setUsingMexEndPoint(false);
         bean.setMexEndPoint(null);
-        bean.setSecurityMechanism(getSecurityMechanismValue(map));
+        bean.setSecurityMechanism(getSecurityMechanism(map));
         bean.setStsClientProfileName(getStringValue(map, STS_CLIENT_PROFILE_NAME));
-        bean.setX509SigningRefType(getX509SigningRefTypeValue(map));
+        bean.setX509SigningRefType(getSigningRefType(map));
         
         PasswordCredential pc = getPasswordCredential(map);
         if( pc != null ) {
@@ -712,7 +822,7 @@ public class WssProfileDao {
         bean.setRequestEncrypted(getBooleanValue(map, IS_REQUEST_ENCRYPT));
         bean.setResponseSignatureVerified(getBooleanValue(map, IS_RESPONSE_SIGN));
         bean.setResponseDecrypted(getBooleanValue(map, IS_RESPONSE_ENCRYPT));
-        bean.setEncryptionAlgorithm(getEncryptionAlgorithmValue(map));
+        bean.setEncryptionAlgorithm(getEncryptionAlgorithm(map));
         bean.setPublicKeyAlias(getStringValue(map, PUBLIC_KEY_ALIAS));
         bean.setPrivateKeyAlias(getStringValue(map, PRIVATE_KEY_ALIAS));
         bean.setAttributeNamespace(getStringValue(map, ATTRIBUTE_NAMESPACE));
@@ -734,15 +844,15 @@ public class WssProfileDao {
         bean.setKerberosServicePrincipal(getStringValue(map, KERBEROS_SERVICE_PRINCIPAL));
         bean.setKerberosKeyTabFile(getStringValue(map, KERBEROS_KEY_TAB_FILE));
         bean.setUserCredentialsTable(getUserCredentialsTable(map));
-        bean.setX509SigningRefType(getX509SigningRefTypeValue(map));
+        bean.setX509SigningRefType(getSigningRefType(map));
         bean.setAuthenticationChain(getStringValue(map, AUTHENTICATION_CHAIN));
-        bean.setTokenConversionType(getTokenConversionTypeValue(map));
+        bean.setTokenConversionType(getTokenConversionType(map));
         bean.setRequestSigned(getBooleanValue(map, IS_REQUEST_SIGN));
         bean.setRequestHeaderEncrypted(getBooleanValue(map, IS_REQUEST_HEADER_ENCRYPT));
         bean.setRequestEncrypted(getBooleanValue(map, IS_REQUEST_ENCRYPT));
         bean.setResponseSignatureVerified(getBooleanValue(map, IS_RESPONSE_SIGN));
         bean.setResponseDecrypted(getBooleanValue(map, IS_RESPONSE_ENCRYPT));
-        bean.setEncryptionAlgorithm(getEncryptionAlgorithmValue(map));
+        bean.setEncryptionAlgorithm(getEncryptionAlgorithm(map));
         bean.setPrivateKeyAlias(getStringValue(map, PRIVATE_KEY_ALIAS));
         bean.setPublicKeyAlias(getStringValue(map, PUBLIC_KEY_ALIAS));
         bean.setAttributeNamespace(getStringValue(map, ATTRIBUTE_NAMESPACE));
@@ -765,9 +875,9 @@ public class WssProfileDao {
         } else {
             bean.setUsingMexEndPoint(false);
         }
-        bean.setSecurityMechanism(getSecurityMechanismValue(map));
+        bean.setSecurityMechanism(getSecurityMechanism(map));
         bean.setStsClientProfileName(getStringValue(map, STS_CLIENT_PROFILE_NAME));
-        bean.setX509SigningRefType(getX509SigningRefTypeValue(map));
+        bean.setX509SigningRefType(getSigningRefType(map));
 
         PasswordCredential pc = getPasswordCredential(map);
         if( pc != null ) {
@@ -784,7 +894,7 @@ public class WssProfileDao {
         bean.setRequestEncrypted(getBooleanValue(map, IS_REQUEST_ENCRYPT));
         bean.setResponseSignatureVerified(getBooleanValue(map, IS_RESPONSE_SIGN));
         bean.setResponseDecrypted(getBooleanValue(map, IS_RESPONSE_ENCRYPT));
-        bean.setEncryptionAlgorithm(getEncryptionAlgorithmValue(map));
+        bean.setEncryptionAlgorithm(getEncryptionAlgorithm(map));
         bean.setPublicKeyAlias(getStringValue(map, PUBLIC_KEY_ALIAS));
         bean.setPrivateKeyAlias(getStringValue(map, PRIVATE_KEY_ALIAS));
         bean.setAttributeNamespace(getStringValue(map, ATTRIBUTE_NAMESPACE));
@@ -794,6 +904,7 @@ public class WssProfileDao {
         
         return bean;
     }    
+    
     @SuppressWarnings("unchecked")
     private static StsProfileBean getStsProfileBeanFromMap(Map map) {
         StsProfileBean bean = new StsProfileBean();
@@ -817,15 +928,15 @@ public class WssProfileDao {
         bean.setKerberosServicePrincipal(getStringValue(map, KERBEROS_SERVICE_PRINCIPAL));
         bean.setKerberosKeyTabFile(getStringValue(map, KERBEROS_KEY_TAB_FILE));
         bean.setUserCredentialsTable(getUserCredentialsTable(map));
-        bean.setX509SigningRefType(getX509SigningRefTypeValue(map));
-        bean.setAuthenticationChain(getStringValue(map, AUTHENTICATION_CHAIN));
+        bean.setX509SigningRefType(getSigningRefType(map));
+        bean.setAuthenticationChain(getStringValue(map, HOSTED_STS_AUTHENTICATION_CHAIN));
 
         bean.setRequestSigned(getBooleanValue(map, IS_REQUEST_SIGN));
         bean.setRequestHeaderEncrypted(getBooleanValue(map, IS_REQUEST_HEADER_ENCRYPT));
         bean.setRequestEncrypted(getBooleanValue(map, IS_REQUEST_ENCRYPT));
         bean.setResponseSignatureVerified(getBooleanValue(map, IS_RESPONSE_SIGN));
         bean.setResponseDecrypted(getBooleanValue(map, IS_RESPONSE_ENCRYPT));
-        bean.setEncryptionAlgorithm(getEncryptionAlgorithmValue(map));
+        bean.setEncryptionAlgorithm(getEncryptionAlgorithm(map));
         bean.setPrivateKeyAlias(getStringValue(map, PRIVATE_KEY_ALIAS));
         bean.setPublicKeyAlias(getStringValue(map, PUBLIC_KEY_ALIAS));
 
@@ -849,17 +960,19 @@ public class WssProfileDao {
         return bean;
     }
     
+    
     @SuppressWarnings("unchecked")
     public static WscProfileBean getDefaultWscProfileBean() {
         Map defaults = getServiceAttributeDefaults(AGENT_TYPE_WSC);
         WscProfileBean wscProfileBean = getWscProfileBeanFromMap(defaults);
         
+        // for ease of use, preset saml attributes
         SamlAttributesTableBean table = wscProfileBean.getSamlAttributesTable();
         if( table != null ) {
             for(SamlAttributeMapItem item : table.getAttributeMapItems()) {
                 if( !item.isCustom() 
                         && item.getAssertionAttributeName() == null) {
-                    item.setAssertionAttributeName(item.getLocalAttributeName());
+                   item.setAssertionAttributeName(item.getLocalAttributeName());
                 }
             }
         }
@@ -867,23 +980,26 @@ public class WssProfileDao {
         return wscProfileBean;
     }
     
+    
     @SuppressWarnings("unchecked")
     public static WspProfileBean getDefaultWspProfileBean() {
         Map defaults = getServiceAttributeDefaults(AGENT_TYPE_WSP);
         WspProfileBean wspProfileBean = getWspProfileBeanFromMap(defaults);
         
+        // for ease of use, preset saml attributes
         SamlAttributesTableBean table = wspProfileBean.getSamlAttributesTable();
         if( table != null ) {
             for(SamlAttributeMapItem item : table.getAttributeMapItems()) {
                 if( !item.isCustom() 
                         && item.getAssertionAttributeName() == null) {
-                    item.setAssertionAttributeName(item.getLocalAttributeName());
+                   item.setAssertionAttributeName(item.getLocalAttributeName());
                 }
             }
         }
         
         return wspProfileBean;
     }
+    
     
     @SuppressWarnings("unchecked")
     public static StsProfileBean getHostedStsProfileBean() {
@@ -897,6 +1013,7 @@ public class WssProfileDao {
         
         return bean;
     }
+    
 
     @SuppressWarnings("unchecked")
     public static WspProfileBean getWspProfileBeanByEndPoint(String endPoint) {
@@ -949,13 +1066,15 @@ public class WssProfileDao {
         return wspProfileBean;    
     }
     
+    
     /**
      * Performs a partial match, based on provided end point, of WSP profiles.
-     * @param endPoint
+     * @param ep - End point
      * @return ArrayList of WspProfileBean objects.
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<WspProfileBean> getMatchingWspProfiles(String endPoint) {
+    public static ArrayList<WspProfileBean> getMatchingWspProfiles(String ep) {
+        
        ArrayList<WspProfileBean> matches = new ArrayList<WspProfileBean>();
        SSOToken adminToken = WSSUtils.getAdminToken();
 
@@ -986,7 +1105,7 @@ public class WssProfileDao {
                WspProfileBean wspProfile = getWspProfileBeanFromMap(map);
                
                if( wspProfile.getEndPoint() != null
-                       && wspProfile.getEndPoint().startsWith(endPoint)
+                       && wspProfile.getEndPoint().startsWith(ep)
                        && !wspAgent.getName().equalsIgnoreCase(RESERVED_WSP)) {
                    
                    wspProfile.setProfileName(wspAgent.getName());
@@ -1004,7 +1123,6 @@ public class WssProfileDao {
    
        return matches;
     }
-
     
 
     @SuppressWarnings("unchecked")
@@ -1022,6 +1140,7 @@ public class WssProfileDao {
         return false;
     }
     
+    
     public static STSAgent getStsAgent(StsClientProfileBean bean) 
         throws ProviderException 
     {
@@ -1031,16 +1150,13 @@ public class WssProfileDao {
             stsClient = new STSAgent();
             SSOToken adminToken = WSSUtils.getAdminToken();
 
-            stsClient.init(bean.getProfileName(), 
-                           TrustAuthorityConfig.STS_TRUST_AUTHORITY, 
-                           adminToken);
+            stsClient.init(bean.getProfileName(), TrustAuthorityConfig.STS_TRUST_AUTHORITY, adminToken);
             
             stsClient.setEndpoint(bean.getEndPoint());
             stsClient.setMexEndpoint(bean.getMexEndPoint());
             
             if( bean.getSecurityMechanism() != null ) {
-                SecurityMechanism securityMechanism
-                    = SecurityMechanism.valueOf(bean.getSecurityMechanism());
+                SecurityMechanism securityMechanism = SecurityMechanism.valueOf(bean.getSecurityMechanism());
 
                 ArrayList<String> secMech = new ArrayList<String>();
                 secMech.add(securityMechanism.toConfigString());
@@ -1058,10 +1174,10 @@ public class WssProfileDao {
                         break;
                     case USERNAME_TOKEN:
                     case USERNAME_TOKEN_PLAIN:
-                        stsClient.setUsers(getUserCredentialsList(bean));
+                        stsClient.setUsers(getUserCred(bean));
                         break;
                     case X509_TOKEN:
-                        stsClient.setSigningRefType(getSigningRef(bean));
+                        stsClient.setSigningRefType(getSigningRefType(bean));
                         break;
                 }
             }
@@ -1073,10 +1189,10 @@ public class WssProfileDao {
             stsClient.setResponseEncryptEnabled(bean.isResponseDecrypted());
             stsClient.setKeyAlias(bean.getPrivateKeyAlias());
             stsClient.setPublicKeyAlias(bean.getPublicKeyAlias());
-            stsClient.setEncryptionAlgorithm(getEncryptionAlgorithm(bean));
-            stsClient.setEncryptionStrength(getEncryptionStrength(bean));
+            stsClient.setEncryptionAlgorithm(getAlgorithm(bean));
+            stsClient.setEncryptionStrength(getStrength(bean));
             
-            stsClient.setSAMLAttributeMapping(getSamlAttributeMapping(bean));
+            stsClient.setSAMLAttributeMapping(getSamlAttributes(bean));
             stsClient.setNameIDMapper(bean.getNameIdMapper());
             stsClient.setSAMLAttributeNamespace(bean.getAttributeNamespace());
             stsClient.setIncludeMemberships(bean.isIncludeMemberships());
@@ -1094,17 +1210,13 @@ public class WssProfileDao {
             wsc = new AgentProvider();
             SSOToken adminToken = WSSUtils.getAdminToken();
 
-            wsc.init(bean.getProfileName(), 
-                     ProviderConfig.WSC, 
-                     adminToken, 
-                     false);
+            wsc.init(bean.getProfileName(), ProviderConfig.WSC, adminToken, false);
             
             // TODO: what about mex end point?
             wsc.setWSPEndpoint(bean.getEndPoint());
             
             if( bean.getSecurityMechanism() != null ) {
-                SecurityMechanism securityMechanism
-                    = SecurityMechanism.valueOf(bean.getSecurityMechanism());
+                SecurityMechanism securityMechanism = SecurityMechanism.valueOf(bean.getSecurityMechanism());
 
                 ArrayList<String> secMech = new ArrayList<String>();
                 secMech.add(securityMechanism.toConfigString());
@@ -1122,10 +1234,10 @@ public class WssProfileDao {
                         break;
                     case USERNAME_TOKEN:
                     case USERNAME_TOKEN_PLAIN:
-                        wsc.setUsers(getUserCredentialsList(bean));
+                        wsc.setUsers(getUserCred(bean));
                         break;
                     case X509_TOKEN:
-                        wsc.setSigningRefType(getSigningRef(bean));
+                        wsc.setSigningRefType(getSigningRefType(bean));
                         break;
                 }
             }
@@ -1138,10 +1250,10 @@ public class WssProfileDao {
             wsc.setDefaultKeyStore(true);
             wsc.setKeyAlias(bean.getPrivateKeyAlias());
             wsc.setPublicKeyAlias(bean.getPublicKeyAlias());
-            wsc.setEncryptionAlgorithm(getEncryptionAlgorithm(bean));
-            wsc.setEncryptionStrength(getEncryptionStrength(bean));
+            wsc.setEncryptionAlgorithm(getAlgorithm(bean));
+            wsc.setEncryptionStrength(getStrength(bean));
             
-            wsc.setSAMLAttributeMapping(getSamlAttributeMapping(bean));
+            wsc.setSAMLAttributeMapping(getSamlAttributes(bean));
             wsc.setNameIDMapper(bean.getNameIdMapper());
             wsc.setSAMLAttributeNamespace(bean.getAttributeNamespace());
             wsc.setIncludeMemberships(bean.isIncludeMemberships());
@@ -1159,10 +1271,7 @@ public class WssProfileDao {
             wsp = new AgentProvider();
             SSOToken adminToken = WSSUtils.getAdminToken();
             
-            wsp.init(bean.getProfileName(), 
-                     ProviderConfig.WSP, 
-                     adminToken, 
-                     false);
+            wsp.init(bean.getProfileName(), ProviderConfig.WSP, adminToken, false);
 
             // TODO: what about mex end point here as well?
             wsp.setWSPEndpoint(bean.getEndPoint());
@@ -1170,12 +1279,10 @@ public class WssProfileDao {
             if( bean.getSecurityMechanismPanels() != null ) {
                 
                 ArrayList<String> secMech = new ArrayList<String>();
-                ArrayList<SecurityMechanismPanelBean> panels
-                     = bean.getSecurityMechanismPanels();
+                ArrayList<SecurityMechanismPanelBean> panels  = bean.getSecurityMechanismPanels();
                 
                 for(SecurityMechanismPanelBean panel : panels ) {
-                    SecurityMechanism securityMechanism 
-                        = panel.getSecurityMechanism();
+                    SecurityMechanism securityMechanism  = panel.getSecurityMechanism();
 
                     if( panel.isChecked() && securityMechanism != null ) {
                         
@@ -1190,10 +1297,10 @@ public class WssProfileDao {
                                 break;
                             case USERNAME_TOKEN:
                             case USERNAME_TOKEN_PLAIN:
-                                wsp.setUsers(getUserCredentialsList(bean));
+                                wsp.setUsers(getUserCreds(bean));
                                 break;
                             case X509_TOKEN:
-                                wsp.setSigningRefType(getSigningRef(bean));
+                                wsp.setSigningRefType(getSigningRefType(bean));
                                 break;
                         }
                     }
@@ -1210,10 +1317,10 @@ public class WssProfileDao {
                 wsp.setDefaultKeyStore(true);
                 wsp.setKeyAlias(bean.getPrivateKeyAlias());
                 wsp.setPublicKeyAlias(bean.getPublicKeyAlias());
-                wsp.setEncryptionAlgorithm(getEncryptionAlgorithm(bean));
-                wsp.setEncryptionStrength(getEncryptionStrength(bean));
+                wsp.setEncryptionAlgorithm(getAlgorithm(bean));
+                wsp.setEncryptionStrength(getStrength(bean));
                 
-                wsp.setSAMLAttributeMapping(getSamlAttributeMapping(bean));
+                wsp.setSAMLAttributeMapping(getSamlAttributes(bean));
                 wsp.setNameIDMapper(bean.getNameIdMapper());
                 wsp.setSAMLAttributeNamespace(bean.getAttributeNamespace());
                 wsp.setIncludeMemberships(bean.isIncludeMemberships());
@@ -1223,4 +1330,65 @@ public class WssProfileDao {
         return wsp;
     }
 
+    public static void updateHostedSts(StsProfileBean bean) 
+        throws SSOException, SMSException 
+    {
+
+        if( bean == null ) {
+            return;
+        }
+
+        SSOToken adminToken = WSSUtils.getAdminToken();
+        ServiceSchemaManager scm = new ServiceSchemaManager(SERVICE_NAME_STS, adminToken);
+        ServiceSchema globalSchema = scm.getGlobalSchema();
+        HashMap<String, HashSet<Object>> attrs = new HashMap<String, HashSet<Object>>();
+        
+        setStringValue(attrs, STS_ISSUER, bean.getIssuer());
+        setIntValue(attrs, STS_TOKEN_LIFETIME, bean.getTokenLifetime() * 1000);
+        setStringValue(attrs, STS_CERT_ALIAS, bean.getCertAlias());
+        setStringValue(attrs, STS_END_USER_TOKEN_PLUGIN_CLASS, bean.getTokenPluginClass());
+        
+        if( bean.getSecurityMechanismPanels() != null ) {
+            ArrayList<String> secMechs = new ArrayList<String>();
+            ArrayList<SecurityMechanismPanelBean> panels = bean.getSecurityMechanismPanels();
+            
+            for(SecurityMechanismPanelBean panel : panels) {
+                if( panel.isChecked() ) {
+                    SecurityMechanism sm = panel.getSecurityMechanism();
+                    secMechs.add(sm.toConfigString());
+                }
+            }
+
+            setListValue(attrs, SECURITY_MECH, secMechs);
+            setStringValue(attrs, KERBEROS_DOMAIN, bean.getKerberosDomain());
+            setStringValue(attrs, KERBEROS_DOMAIN_SERVER, bean.getKerberosDomainServer());
+            setStringValue(attrs, KERBEROS_SERVICE_PRINCIPAL, bean.getKerberosServicePrincipal());
+            setStringValue(attrs, KERBEROS_KEY_TAB_FILE, bean.getKerberosKeyTabFile());
+            
+            setSetValue(attrs, USERNAME_CREDENTIALS, getUserCreds(bean.getUserCredentialsTable()));
+            setStringValue(attrs, SIGNING_REF_TYPE, getSigningRefType(bean));
+        }
+        
+        setStringValue(attrs, HOSTED_STS_AUTHENTICATION_CHAIN,  bean.getAuthenticationChain());
+        setBooleanValue(attrs, IS_REQUEST_SIGN, bean.isRequestSigned());
+        setBooleanValue(attrs, IS_REQUEST_HEADER_ENCRYPT, bean.isRequestHeaderEncrypted());
+        setBooleanValue(attrs, IS_REQUEST_ENCRYPT, bean.isRequestEncrypted());
+        setBooleanValue(attrs, IS_RESPONSE_SIGN, bean.isResponseSignatureVerified());
+        setBooleanValue(attrs, IS_RESPONSE_ENCRYPT, bean.isResponseDecrypted());
+        setStringValue(attrs, ENCRYPTION_ALGORITHM, getAlgorithm(bean));
+        setIntValue(attrs, ENCRYPTION_STRENGTH, getStrength(bean));
+        setStringValue(attrs, PRIVATE_KEY_ALIAS, bean.getPrivateKeyAlias());
+        setStringValue(attrs, PUBLIC_KEY_ALIAS, bean.getPublicKeyAlias());
+        
+        setSetValue(attrs, SAML_ATTRIBUTE_MAPPING, getSamlAttributes(bean));
+        setStringValue(attrs, NAME_ID_MAPPER, bean.getNameIdMapper());
+        setStringValue(attrs, ATTRIBUTE_NAMESPACE, bean.getAttributeNamespace());
+        setBooleanValue(attrs, INCLUDE_MEMBERSHIPS, bean.isIncludeMemberships());
+        
+        setListValue(attrs, TRUSTED_IP_ADDRESSES, bean.getTrustedAddresses().getItems());
+        setListValue(attrs, TRUSTED_ISSUERS,  bean.getTrustedIssuers().getItems());
+        
+        globalSchema.setAttributeDefaults(attrs);
+    }
+    
 }

@@ -183,7 +183,7 @@ public class WspCreateWizardHandler
             // problem with initialization
             showErrorMessage("saveErrorSummary", "saveErrorDetailInit");
             getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
-            Logger.getLogger(WscCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(WspCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
             return false;
         }
         
@@ -192,7 +192,6 @@ public class WspCreateWizardHandler
             getWizardBean().gotoStep(WscCreateWizardStep.WSC_PROFILE.toInt());
             return false;
         }
-
         
         try {
             wsp.store();
@@ -200,11 +199,9 @@ public class WspCreateWizardHandler
             // problem with persistence
             showErrorMessage("saveErrorSummary", "saveErrorDetailStore");
             getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
-            Logger.getLogger(WscCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(WspCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
             return false;
         }
-        
-        
         
         return true;
     }
