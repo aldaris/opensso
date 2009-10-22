@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SjsceAuthFilter.java,v 1.1 2009-10-20 23:56:06 pbryan Exp $
+ * $Id: SjsceAuthFilter.java,v 1.2 2009-10-22 01:18:21 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,6 +81,7 @@ public class SjsceAuthFilter extends Filter
         login.uri = URIUtil.newPath(exchange.request.uri, "/login.wcap");
         login.principal = exchange.request.principal;
         login.session = exchange.request.session;
+        login.attributes = exchange.request.attributes;
         login.headers.put("Host", exchange.request.headers.first("Host"));
 
         // login form fields

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SjsmeAuthFilter.java,v 1.3 2009-10-21 00:03:21 pbryan Exp $
+ * $Id: SjsmeAuthFilter.java,v 1.4 2009-10-22 01:18:21 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,6 +81,7 @@ public class SjsmeAuthFilter extends Filter
         login.uri = URIUtil.newPath(exchange.request.uri, "/login.msc");
         login.principal = exchange.request.principal;
         login.session = exchange.request.session;
+        login.attributes = exchange.request.attributes;
         login.headers.put("Host", exchange.request.headers.first("Host"));
 
         // login form fields

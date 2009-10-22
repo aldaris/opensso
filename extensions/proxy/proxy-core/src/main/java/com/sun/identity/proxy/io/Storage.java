@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Storage.java,v 1.1 2009-10-15 07:07:58 pbryan Exp $
+ * $Id: Storage.java,v 1.2 2009-10-22 01:18:24 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,10 +36,23 @@ public interface Storage
     /**
      * Allocates a new empty record, and returns its identifier.
      *
-     * @return an identifier unique to the store for the newly created record.
+     * @return an identifier unique to the storage for the newly created record.
      * @throws IOException if an I/O exception occurs.
      */
     public String create() throws IOException;
+
+    /**
+     * Allocates a new empty record, specifying a key that may be used in the
+     * creation of the identifier.
+     * <p>
+     * The key provides a cue to the storage class about the desire to include
+     * a value in the identifier, though the storage class has no obligation to
+     * do so.
+     *
+     * @param qualifier cue to storage on what identifier to assign to record.
+     * @return an identifier unique to the storage for the newly created record.
+     */
+    public String create(String key) throws IOException;
 
     /**
      * Opens a record with the specified identifier. A record is closed by

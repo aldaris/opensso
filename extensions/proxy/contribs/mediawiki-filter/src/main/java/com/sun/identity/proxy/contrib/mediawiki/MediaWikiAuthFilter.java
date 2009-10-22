@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MediaWikiAuthFilter.java,v 1.3 2009-10-17 09:08:39 pbryan Exp $
+ * $Id: MediaWikiAuthFilter.java,v 1.4 2009-10-22 01:18:20 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,6 +112,7 @@ public class MediaWikiAuthFilter extends Filter
         login.uri = exchange.request.uri; // query params will be overwritten below
         login.principal = exchange.request.principal;
         login.session = exchange.request.session;
+        login.attributes.putAll(exchange.request.attributes);
         login.headers.put("Host", exchange.request.headers.first("Host"));
         login.headers.put("User-Agent", exchange.request.headers.first("User-Agent"));
 

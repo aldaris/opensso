@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedRequest.java,v 1.2 2009-10-17 05:08:13 pbryan Exp $
+ * $Id: CachedRequest.java,v 1.3 2009-10-22 01:18:22 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.proxy.http;
 
-import com.sun.identity.proxy.io.CachedStream;
+import com.sun.identity.proxy.io.CachedInputStream;
 import com.sun.identity.proxy.io.TemporaryStorage;
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ import java.io.IOException;
 public class CachedRequest extends Request
 {
     /** Contains the entity cached stream to support replay. */
-    private CachedStream cachedStream = null;
+    private CachedInputStream cachedStream = null;
 
     /** The request to wrap and cache. */
     private Request original;
@@ -52,7 +52,7 @@ public class CachedRequest extends Request
     public CachedRequest(Request original, TemporaryStorage storage) throws IOException {
         this.original = original; // FIXME: should really be cloned to avoid anything else writing after the fact?
         if (original.entity != null) {
-            cachedStream = new CachedStream(original.entity, storage.open(storage.create()));
+            cachedStream = new CachedInputStream(original.entity, storage.open(storage.create()));
         }
         rewind();
     }

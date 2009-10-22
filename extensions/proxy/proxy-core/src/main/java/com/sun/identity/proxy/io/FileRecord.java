@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FileRecord.java,v 1.3 2009-10-15 07:07:57 pbryan Exp $
+ * $Id: FileRecord.java,v 1.4 2009-10-22 01:18:23 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,7 +128,7 @@ public class FileRecord implements Record
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
         raf();
-        if (raf.getFilePointer() + len > limit) {
+        if (limit >= 0 && raf.getFilePointer() + len > limit) {
             throw new OverflowException();
         }
         raf.write(b, off, len);

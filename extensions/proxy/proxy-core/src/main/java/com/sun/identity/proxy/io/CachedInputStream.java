@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedStream.java,v 1.8 2009-10-21 00:00:36 pbryan Exp $
+ * $Id: CachedInputStream.java,v 1.1 2009-10-22 01:18:23 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,7 +42,7 @@ import java.io.IOException;
  *
  * @author Paul C. Bryan
  */
-public class CachedStream extends InputStream
+public class CachedInputStream extends InputStream
 {
     /** Indicates whether this object is (still) caching content. */
     private boolean caching = true;
@@ -53,16 +53,21 @@ public class CachedStream extends InputStream
     /** The input stream to wrap and cache. */
     private InputStream in;
 
+    /** The position in the record of the start of cached input. */
+    private int start;
+
     /**
      * Creates a new cached stream, wrapping the specified input stream and
      * storing cached data in the specified record.
      *
      * @param in the input stream to wrap and cache.
      * @param record the record to store cached data in.
+     * @throws IOException if an I/O exception occurs.
      */
-    public CachedStream(InputStream in, Record record) {
+    public CachedInputStream(InputStream in, Record record) throws IOException {
         this.in = in;
         this.record = record;
+        this.start = record.position();
     }
 
     /**
@@ -167,11 +172,11 @@ public class CachedStream extends InputStream
      * @return a reference to this object.
      * @throws IOException if an I/O exception occurs.
      */
-    public CachedStream rewind() throws IOException {
+    public CachedInputStream rewind() throws IOException {
         if (!caching) {
             throw new IOException("caching has been stopped");
         }
-        record.seek(0);
+        record.seek(start);
         return this;
     }
 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.7 2009-10-20 23:59:54 pbryan Exp $
+ * $Id: Request.java,v 1.8 2009-10-22 01:18:22 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,8 +55,8 @@ public class Request extends Message
     public Session session = null;
 
     /** Allows information to be attached to the request for downstream handlers. */
-    public final Map<String, Object> attributes = new HashMap<String, Object>();
-    
+    public Map<String, Object> attributes = new HashMap<String, Object>();
+
     /**
      * Resolves the request URI based on the request URI variable and optional
      * Host header. This allows the request URI to contain a raw IP address,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TemporaryStorage.java,v 1.1 2009-10-15 07:08:28 pbryan Exp $
+ * $Id: TemporaryStorage.java,v 1.2 2009-10-22 01:18:24 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -71,6 +71,11 @@ public class TemporaryStorage implements Storage
     }
 
     @Override
+    public String create(String key) throws IOException {
+        return create(); // identifiers are irrelevant for temporary records
+    }
+
+    @Override
     public Record open(String id) throws IOException {
         return new TemporaryRecord(directory, recordLimit, arrayLimit);
     }
@@ -82,7 +87,6 @@ public class TemporaryStorage implements Storage
 
     @Override
     public void remove(String id) throws IOException {
-        // temporary records are automatically removed at close
+        // temporary records are automatically removed when closed
     }
 }
-
