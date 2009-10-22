@@ -23,7 +23,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: HTTPBasic.xml,v 1.9 2009-07-16 04:12:00 cbasha Exp $
+    $Id: HTTPBasic.xml,v 1.10 2009-10-22 20:16:26 qcheng Exp $
 
 -->
 
@@ -35,7 +35,7 @@
     <Callbacks length="1" order="1" timeout="120" header="Auf diesem Server kommt die HTTPBasic-Authentifizierung zum Einsatz.">
         <HttpCallback>
             <HttpHeader>Authorization</HttpHeader>
-            <Negotiation>WWW-Authentifizierung:BASIC-Bereich=&quot;basic_realm&quot;</Negotiation>
+            <Negotiation>WWW-Authenticate:BASIC realm=&quot;basic_realm&quot;</Negotiation>
             <HttpErrorCode>401</HttpErrorCode>
         </HttpCallback>
     </Callbacks>
