@@ -50,6 +50,8 @@ import com.sun.identity.agents.policy.AmWebPolicyResult;
 import com.sun.identity.agents.util.IUtilConstants;
 import com.sun.identity.agents.util.NameValuePair;
 import com.sun.identity.agents.util.SAMLUtils;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 /**
@@ -101,10 +103,18 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
             cxt.getBaseURL() + getCDSSORedirectURI());
         buff.append(encodedCDSSORedirectURL);
 
+        /* if resource based authN is enabled, append the original
+         * requested URL as query parameter to the redirect URL.
+         */
+        String requestURL = null;
+        if (isResourceBasedAuthN(cdcServletURL)) {
+            requestURL = cxt.populateGotoParameterValue();
+        }
+
         // Now add the Policy Advice Query parameters
         buff = addPolicyQueryParams(buff, policyResult);
         buff = addCDSSOQueryParams(buff, cxt, encodedCDSSORedirectURL,
-            authnRequestID);
+                requestURL, authnRequestID);
         String redirectURL = buff.toString();
 
         if(isLogMessageEnabled()) {
@@ -144,6 +154,7 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
     private StringBuffer addCDSSOQueryParams(StringBuffer buff,
                                              AmFilterRequestContext cxt,
                                              String encodedCDSSORedirectURL,
+                                             String requestURL,
                                              String authnRequestID)
     {
         HttpServletRequest request = cxt.getHttpServletRequest();
@@ -188,6 +199,14 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
         buff.append("=");
         buff.append(CDSSO_AUTHNREQUEST_FEDERATE_VALUE);
 
+        if (requestURL != null && requestURL.length() > 0) {
+            buff.append("&");
+            buff.append(CDSSO_RESOURCE_URL_IDENTIFIER);
+            buff.append("=");
+            buff.append(URLEncoder.encode(requestURL));
+        }
+
+
         return buff;
     }
 
@@ -215,6 +234,35 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
             }
         }
         return issueInstant;
+    }
+
+    /**
+     * check if resource based authN is enabled for CDC Servlet.
+     * @param cdcServletURL
+     * @return true if resource based authN is enabled, false if it is not
+     *         enabled.
+     */
+    private boolean isResourceBasedAuthN(String cdcServletURL)
+            throws AgentException {
+
+        boolean result = false;
+
+        try {
+            URL url = new URL(cdcServletURL);
+            String queryStr = url.getQuery();
+            if (queryStr != null && 
+                    (queryStr.toLowerCase().indexOf(
+                    CDSSO_RESOURCE_BASED_AUTHN_ENABLED) >= 0)) {
+
+                result = true;
+            }
+        } catch (MalformedURLException ex) {
+                throw new AgentException (
+                        "CDC Servlet URL is malformed: " + cdcServletURL,
+                        ex);
+        }
+
+        return result;
     }
 
     public Cookie createCDSSOCookie(String gotoURL,

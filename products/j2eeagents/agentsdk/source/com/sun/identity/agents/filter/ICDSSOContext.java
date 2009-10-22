@@ -129,4 +129,10 @@ public interface ICDSSOContext extends ISSOContext {
     
     public static final String CDSSO_AUTHNREQUEST_PROVIDER_ID_REALM_PARAMETER = 
         "Realm";
+
+    public static final String CDSSO_RESOURCE_BASED_AUTHN_ENABLED =
+            "resource=true";
+
+    public static final String CDSSO_RESOURCE_URL_IDENTIFIER =
+        "resourceURL";
 }
