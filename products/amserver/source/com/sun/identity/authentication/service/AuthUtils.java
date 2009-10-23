@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.26 2009-08-12 23:06:47 ericow Exp $
+ * $Id: AuthUtils.java,v 1.27 2009-10-23 18:51:24 bhavnab Exp $
  *
  */
 
@@ -58,6 +58,7 @@ import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
 
 import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.iplanet.am.util.Misc;
 import com.sun.identity.common.Constants;
 
@@ -317,10 +318,37 @@ public class AuthUtils extends AuthClientUtils {
                 throw new AuthException(AMAuthErrorCode.AUTH_ERROR, null);
             }
         } else {
-            if (authContext.submittedRequirements()) {
-                ad.debug.error("Currently processing submit Requirements");
-                throw new AuthException(
-                         AMAuthErrorCode.AUTH_TOO_MANY_ATTEMPTS, null);
+            boolean multipleTabsUsed =
+                Boolean.valueOf(SystemPropertiesManager.get(
+                     Constants.MULTIPLE_TABS_USED, "false")).booleanValue();
+            if (ad.debug.messageEnabled()) {
+                ad.debug.message("AuthUtils .processAuthContext()."
+                    + Constants.MULTIPLE_TABS_USED+"="+multipleTabsUsed);
+            }
+            /**
+             * This flag indicates that the same user is running the auth login
+             * process in mutiple tabs of the same browser and if the auth
+             * is zero user intervention custom auth module using Redirect
+             * Callback, then there would be a situation that the same 
+             * authContext is being used by mutiple threads running the
+             * auth process, so avoid this mutiple thread interference keep 
+             * the process in this while loop until all the submit requirements
+             * have been met. This is a specific customer use case.
+             */
+            if (multipleTabsUsed) {
+                 while (authContext.submittedRequirements()) {
+                     ad.debug.error("Currently processing submit Requirements");
+                     if (ad.debug.messageEnabled()) {
+                        ad.debug.message("watiting for submittedRequirements() "
+                        +"to complete.");
+                     }
+                 }
+            } else {
+                if (authContext.submittedRequirements()) {
+                    ad.debug.error("Currently processing submit Requirements");
+                    throw new AuthException(
+                             AMAuthErrorCode.AUTH_TOO_MANY_ATTEMPTS, null);
+                }
             }
             // update loginState - requestHash , sess
             utilDebug.message("new session arg does not exist");

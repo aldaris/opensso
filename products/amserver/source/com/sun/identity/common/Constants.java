@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.17 2009-09-01 23:25:07 qcheng Exp $
+ * $Id: Constants.java,v 1.18 2009-10-23 18:51:24 bhavnab Exp $
  *
  */
 
@@ -976,9 +976,14 @@ public interface Constants {
         "com.sun.identity.sm.notification.threadpool.size";
 
     /**
+     * Key to indicate if the customer is performing auths via mutiple tabs
+     * of the same browser.
+     */
+    public static final String MULTIPLE_TABS_USED =
+        "com.sun.identity.authentication.multiple.tabs.used";
+    /**
      * Property string for client IP address header.
      */
     String CLIENT_IP_ADDR_HEADER = 
         "com.sun.identity.authentication.client.ipAddressHeader";
 }
-
