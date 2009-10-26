@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines.mk,v 1.10 2009-05-19 21:24:57 dknab Exp $
+# $Id: defines.mk,v 1.11 2009-10-26 06:19:51 rajasundarik Exp $
 #
 #
 
@@ -53,11 +53,11 @@ AGENT_VER := $(AGENT_MAJOR_VER).$(AGENT_MINOR_VER)$(AGENT_PATCH_VER)
 # If RELEASE_TYPE is set to ER, update AGENT_ER_VER.
 # If RELEASE_TYPE is set to FVB, update AGENT_FVB_MARKER.
 #
-RELEASE_TYPE = 
+RELEASE_TYPE = ER
 
 # For ER set AGENT_ER_VER (ex: AGENT_ER_VER := ER 1)
 ifeq ($(RELEASE_TYPE), ER)
-AGENT_ER_VER := 
+AGENT_ER_VER := ER 1
 AGENT_ER_TEXT := Exception Release: $(AGENT_ER_VER)
 ADD_README := YES
 else
