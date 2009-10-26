@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationBean.java,v 1.3 2009-10-19 17:54:05 farble1670 Exp $
+ * $Id: DelegationBean.java,v 1.4 2009-10-26 22:15:46 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class DelegationBean {
@@ -292,6 +293,27 @@ public class DelegationBean {
         return rp;
     }
     */
+
+    public String getResourcesToFormattedString() {
+        StringBuffer b = new StringBuffer();
+        for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
+            ApplicationResource rr = (ApplicationResource) i.next();
+            List<Resource> rs = rr.getViewEntitlement().getResources();
+
+            b.append(rr.getTitle());
+            b.append("\n");
+            if (rs != null) {
+                for (Resource r : rs) {
+                    b.append("    ");
+                    b.append(r.getTitle());
+                    b.append("\n");
+                }
+            }
+        }
+
+        return b.toString();
+    }
+
 
     public Date getBirth() {
         return birth;

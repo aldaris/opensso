@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardBean.java,v 1.6 2009-10-20 20:18:41 farble1670 Exp $
+ * $Id: DelegationWizardBean.java,v 1.7 2009-10-26 22:15:46 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -53,6 +53,9 @@ public abstract class DelegationWizardBean extends WizardBean {
     private List<ViewSubject> selectedAvailableViewSubjects;
     private List<ViewSubject> selectedSelectedViewSubjects;
     private PossibleAction action = PossibleAction.READ;
+
+    private DelegationSummary nameSummary = new NameDelegationSummary(this);
+    private DelegationSummary resourcesSummary = new ResourcesDelegationSummary(this);
 
     @Override
     public void reset() {
@@ -324,5 +327,13 @@ public abstract class DelegationWizardBean extends WizardBean {
 
     public void setAction(PossibleAction action) {
         this.action = action;
+    }
+
+    public DelegationSummary getNameSummary() {
+        return nameSummary;
+    }
+
+    public DelegationSummary getResourcesSummary() {
+        return resourcesSummary;
     }
 }
