@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: fedletapplication.aspx,v 1.3 2009-06-11 18:38:00 ggennaro Exp $
+ * $Id: fedletapplication.aspx,v 1.4 2009-10-26 18:55:36 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" MasterPageFile="~/site.master" %>
@@ -135,13 +135,28 @@
             <td>authnResponse.Attributes</td>
             <td>System.Collections.Hashtable</td>
             <td>
+                <table class="samlAttributes">
+                <tr>
+                  <th>key</th>
+                  <th>value(s)</th>
+                </tr>
                 <%
                     foreach (string key in authnResponse.Attributes.Keys)
                     {
-                        string value = authnResponse.Attributes[key].ToString();
-                        Response.Write(Server.HtmlEncode(key) + " = " + Server.HtmlEncode(value) + "<br/>");
+                        ArrayList values = (ArrayList)authnResponse.Attributes[key];
+
+                        Response.Write("<tr>\n");
+                        Response.Write("<td>" + Server.HtmlEncode(key) + "</td>\n");
+                        Response.Write("<td>\n");
+                        foreach (string value in values)
+                        {
+                            Response.Write(Server.HtmlEncode(value) + "<br/>\n");
+                        }
+                        Response.Write("</td>\n");
+                        Response.Write("</tr>\n");
                     }
                 %>
+                </table>
             </td>
         </tr>
         </table>

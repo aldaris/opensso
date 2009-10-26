@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: AuthnResponse.cs,v 1.3 2009-06-17 16:32:02 ggennaro Exp $
+ * $Id: AuthnResponse.cs,v 1.4 2009-10-26 18:55:19 ggennaro Exp $
  */
 
 using System;
@@ -328,10 +328,14 @@ namespace Sun.Identity.Saml2
                     XmlNode samlAttribute = (XmlNode)nodes.Current;
                     string name = samlAttribute.Attributes["Name"].Value.Trim();
 
-                    XmlNode samlAttributeValue = samlAttribute.SelectSingleNode("descendant::saml:AttributeValue", this.nsMgr);
-                    string value = samlAttributeValue.InnerText.Trim();
-
-                    attributes.Add(name, value);
+                    XmlNodeList samlAttributeValues = samlAttribute.SelectNodes("descendant::saml:AttributeValue", this.nsMgr);
+                    ArrayList values = new ArrayList();
+                    foreach (XmlNode node in samlAttributeValues)
+                    {
+                        string value = node.InnerText.Trim();
+                        values.Add(value);
+                    }
+                    attributes.Add(name, values);
                 }
 
                 return attributes;

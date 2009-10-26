@@ -36,6 +36,8 @@ table.output tr { vertical-align: top; }
 table.output th { background-color: #999; color: #eee; font-style: italic; padding: 3px 20px 3px 3px; text-align: left; }
 table.output td { border-color: #eee; border-style: solid; border-width: 1px 0px 0px 0px; padding: 3px 20px 3px 3px; text-align: left; }
 
-
-
+table.samlAttributes    { border-collapse: collapse; }
+table.samlAttributes tr { vertical-align: top; }
+table.samlAttributes th { background: #eee; border: solid 1px #eee; color: #999; font-size: smaller; font-weight: normal; }
+table.samlAttributes td { background: #fff; border: solid 1px #eee; color: #000; }
 
