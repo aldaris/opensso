@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.17 2009-07-21 19:00:19 mrudul_uchil Exp $
+   $Id: famSTS.xml,v 1.18 2009-10-27 17:23:57 asyhuang Exp $
                                                                                 
 -->
 
@@ -254,7 +254,7 @@
                          <ChoiceValue>256</ChoiceValue>
                      </ChoiceValues>
                      <DefaultValues>
-                         <Value>256</Value>
+                         <Value>128</Value>
                      </DefaultValues>
                </AttributeSchema>
 

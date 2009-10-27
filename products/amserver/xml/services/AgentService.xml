@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.84 2009-10-15 23:42:18 leiming Exp $
+   $Id: AgentService.xml,v 1.85 2009-10-27 17:23:29 asyhuang Exp $
 
 -->
 
@@ -2845,7 +2845,7 @@
                              <ChoiceValue>256</ChoiceValue>
                          </ChoiceValues>
                          <DefaultValues>
-                             <Value>256</Value>
+                             <Value>128</Value>
                          </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
@@ -3233,7 +3233,7 @@
                              <ChoiceValue>256</ChoiceValue>
                          </ChoiceValues>
                          <DefaultValues>
-                             <Value>256</Value>
+                             <Value>128</Value>
                          </DefaultValues>
                     </AttributeSchema>
 
@@ -3566,7 +3566,7 @@
                              <ChoiceValue>256</ChoiceValue>
                          </ChoiceValues>
                          <DefaultValues>
-                             <Value>256</Value>
+                             <Value>128</Value>
                          </DefaultValues>
                     </AttributeSchema>
 
