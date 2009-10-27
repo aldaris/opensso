@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.68 2009-09-17 00:46:28 ericow Exp $
+ * $Id: LDAPv3Repo.java,v 1.69 2009-10-27 05:32:47 hengming Exp $
  *
  */
 
@@ -295,6 +295,12 @@ public class LDAPv3Repo extends IdRepo {
 
     private static final String LDAPv3Config_LDAPV3ADAM =
         "sun-idrepo-ldapv3-ldapv3ADAM";
+
+    private static final String LDAPv3Config_LDAPV3OpenDS =
+        "sun-idrepo-ldapv3-ldapv3OpenDS";
+
+    private static final String LDAPv3Config_LDAPV3Tivoli =
+        "sun-idrepo-ldapv3-ldapv3Tivoli";
 
     private static final String LDAPv3Config_LDAP_SERVER = 
         "sun-idrepo-ldapv3-config-ldap-server";
@@ -2474,7 +2480,7 @@ public class LDAPv3Repo extends IdRepo {
                 String memberDNStr = (String) enumVals.nextElement();
                 resultSet.add(memberDNStr);
             }
-        } else { // see if this is a dynamic group.
+        } else if (memberURLAttr != null) { // see if this is a dynamic group.
             attribute = groupEntry.getAttribute(memberURLAttr);
             if (attribute != null) {
                 Enumeration enumVals = attribute.getStringValues();
@@ -5600,6 +5606,10 @@ public class LDAPv3Repo extends IdRepo {
             dsType = LDAPv3Config_LDAPV3ADAM;
         } else if (configParams.containsKey(LDAPv3Config_LDAPV3AMDS)) {
             dsType = LDAPv3Config_LDAPV3AMDS;
+        } else if (configParams.containsKey(LDAPv3Config_LDAPV3OpenDS)) {
+            dsType = LDAPv3Config_LDAPV3OpenDS;
+        } else if (configParams.containsKey(LDAPv3Config_LDAPV3Tivoli)) {
+            dsType = LDAPv3Config_LDAPV3Tivoli;
         } else {
             dsType = LDAPv3Config_LDAPV3GENERIC;
         }

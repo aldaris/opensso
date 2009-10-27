@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.25 2009-06-12 05:55:39 goodearth Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.26 2009-10-27 05:33:39 hengming Exp $
  *
  */
 
@@ -1040,10 +1040,6 @@ public class EmbeddedOpenDS {
             "sunOrganizationAlias",
             "--index",
             "memberof",
-            "--index",
-            "iplanet-am-static-group-dn",
-            "--index",
-            "iplanet-am-modifiable-by",
             "--index",
             "iplanet-am-user-federation-info-key",
             "--index",

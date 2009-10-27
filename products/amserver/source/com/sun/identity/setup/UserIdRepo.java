@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.19 2009-08-05 20:35:17 hengming Exp $
+ * $Id: UserIdRepo.java,v 1.20 2009-10-27 05:33:39 hengming Exp $
  *
  */
 
@@ -60,8 +60,13 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.ServletContext;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.ldap.LDAPAttribute;
 import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPEntry;
 import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPv2;
+
 
 /**
  * This class does Directory Server related tasks for 
@@ -100,26 +105,30 @@ class UserIdRepo {
 
         ResourceBundle rb = ResourceBundle.getBundle(
             SetupConstants.SCHEMA_PROPERTY_FILENAME);
+        String configName = "";
         String strFiles = rb.getString(SetupConstants.SUNDS_LDIF);
-        if (type.equals(SetupConstants.UM_LDAPv3ForSUNDS)) {
-            loadSchema(userRepo, basedir, servletCtx, strFiles);
-        } else if (type.equals(SetupConstants.UM_LDAPv3ForOpenDS)) {
+        if (type.equals(SetupConstants.UM_LDAPv3ForOpenDS)) {
             strFiles = rb.getString(SetupConstants.OpenDS_LDIF);
-            loadSchema(userRepo, basedir, servletCtx, strFiles);
+            configName = "OpenDS";
         } else if (type.equals(SetupConstants.UM_LDAPv3ForAD)) {
             strFiles = rb.getString(SetupConstants.AD_LDIF);
-            loadSchema(userRepo, basedir, servletCtx, strFiles);
+            configName = "Active Directory";
+        } else if (type.equals(SetupConstants.UM_LDAPv3ForADAM)) {
+            strFiles = rb.getString(SetupConstants.ADAM_LDIF);
+            configName = "Active Directory Application Mode";
         } else if (type.equals(SetupConstants.UM_LDAPv3ForTivoli)) {
             strFiles = rb.getString(SetupConstants.TIVOLI_LDIF);
-            loadSchema(userRepo, basedir, servletCtx, strFiles);
+            configName = "Tivoli Directory Server";
         }
 
-        addSubConfig(userRepo, type, adminToken);
+        loadSchema(userRepo, basedir, servletCtx, strFiles, type);
+        addSubConfig(userRepo, type, configName, adminToken);
     }
 
     private void addSubConfig(
         Map userRepo, 
-        String type, 
+        String type,
+        String configName,
         SSOToken adminToken
     ) throws SMSException, SSOException, IOException {
         String xml = null;
@@ -151,6 +160,9 @@ class UserIdRepo {
             String s = (String) userRepo.get(SetupConstants.USER_STORE_SSL);
             String ssl = ((s != null) && s.equals("SSL")) ? "true" : "false";
             xml = StringUtils.strReplaceAll(xml, "@UM_SSL@", ssl);
+            xml = StringUtils.strReplaceAll(xml, "@CONFIG_NAME@", configName);
+            xml = StringUtils.strReplaceAll(xml, "@CONFIG_ID@", type);
+
             registerService(xml, adminToken);
         }
     }
@@ -210,18 +222,45 @@ class UserIdRepo {
         return (String) userRepo.get(SetupConstants.USER_STORE_LOGIN_PWD);
     }
     
+    private String getADAMInstanceGUID(Map userRepo) throws Exception {
+        LDAPConnection ld = null;
+        try {
+            ld = getLDAPConnection(userRepo);
+            String attrName = "schemaNamingContext";
+            String[] attrs = { attrName };
+            LDAPSearchResults res = ld.search("", LDAPv2.SCOPE_BASE,
+                "(objectclass=*)", null, false );
+            if (res.hasMoreElements()) {
+                LDAPEntry entry = (LDAPEntry)res.nextElement();
+                LDAPAttribute ldapAttr = entry.getAttribute(attrName);
+                if (ldapAttr != null) {
+                    String value = ldapAttr.getStringValueArray()[0];
+                    int index = value.lastIndexOf("=");
+                    if (index != -1) {
+                        return value.substring(index + 1).trim();
+                    }
+                }
+            }
+        } finally {
+            disconnectDServer(ld);
+        }
+
+        return null;
+    }
+
     private void loadSchema(
         Map userRepo, 
         String basedir,
         ServletContext servletCtx,
-        String strFiles
+        String strFiles,
+        String type
     ) throws Exception {
         LDAPConnection ld = null;
         try {
             ld = getLDAPConnection(userRepo);
             String dbName = getDBName(userRepo, ld);
             List schemas = writeSchemaFiles(basedir, dbName, 
-                servletCtx, strFiles, userRepo);
+                servletCtx, strFiles, userRepo, type);
             for (Iterator i = schemas.iterator(); i.hasNext(); ) {
                 String file = (String)i.next();
                 Object[] params = {file};
@@ -242,8 +281,9 @@ class UserIdRepo {
         String dbName,
         ServletContext servletCtx,
         String strFiles,
-        Map userRepo
-    ) throws IOException {
+        Map userRepo,
+        String type
+    ) throws Exception {
         List files = new ArrayList();
 
         StringTokenizer st = new StringTokenizer(strFiles);
@@ -272,6 +312,13 @@ class UserIdRepo {
                 if (suffix != null) {
                     inpStr = StringUtils.strReplaceAll(inpStr, 
                         "@userStoreRootSuffix@", suffix);
+                }
+                if (type.equals(SetupConstants.UM_LDAPv3ForADAM)) {
+                    String adamInstanceGUID = getADAMInstanceGUID(userRepo);
+                    if (adamInstanceGUID != null) {
+                        inpStr = StringUtils.strReplaceAll(inpStr, 
+                            "@INSTANCE_GUID@", adamInstanceGUID);
+                    }
                 }
                 fout.write(ServicesDefaultValues.tagSwap(inpStr));
                 files.add(outfile);

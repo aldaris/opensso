@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdServicesImpl.java,v 1.57 2009-07-02 20:33:31 hengming Exp $
+* $Id: IdServicesImpl.java,v 1.58 2009-10-27 05:32:48 hengming Exp $
 *
 */
 
@@ -2244,8 +2244,15 @@ public class IdServicesImpl implements IdServices {
                type);
 
        // First get the list of plugins that support the create operation.
+       // use IdOperation.READ insteadof IdOperation.SERVICE. IdRepo for
+       // AD doesn't support SERVICE because service object classes can't
+       // exist in user entry. So IdRepo.getServiceAttributes won't get
+       // user attributes. But IdRepo.getServiceAttributes will also read
+       // realm service attributes. We should move the code that reads
+       // ealm service attributes in IdRepo.getServiceAttributes to this class
+       // later. Only after that we can use IdOperation.SERVICE.
        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
-           IdOperation.SERVICE, type);
+           IdOperation.READ, type);
        if (configuredPluginClasses == null
                || configuredPluginClasses.isEmpty()) {
            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
@@ -2431,6 +2438,9 @@ public class IdServicesImpl implements IdServices {
        Iterator it = configuredPluginClasses.iterator();
        while (it.hasNext()) {
            IdRepo repo = (IdRepo) it.next();
+           if (repo instanceof SpecialRepo) {
+               continue;
+           }
            Set supportedOps = repo.getSupportedOperations(type);
            if (supportedOps != null && !supportedOps.isEmpty()) {
                unionSupportedOps.addAll(supportedOps);

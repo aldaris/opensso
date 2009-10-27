@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.64 2009-08-19 05:40:38 veiming Exp $
+   $Id: build.xml,v 1.65 2009-10-27 05:35:24 hengming Exp $
 
 -->
 
@@ -212,6 +212,9 @@
             <zipfileset dir="${amserver.warbase.dir}/ldif/ad" prefix="WEB-INF/template/ldif/ad">
                 <include name="ad_config_schema.ldif" />
                 <include name="ad_user_schema.ldif" />
+            </zipfileset>
+            <zipfileset dir="${amserver.warbase.dir}/ldif/adam" prefix="WEB-INF/template/ldif/adam">
+                <include name="adam_user_schema.ldif" />
             </zipfileset>
             <zipfileset dir="${amserver.warbase.dir}/ldif/tivoli" prefix="WEB-INF/template/ldif/tivoli">
                 <include name="tivoli_user_schema.ldif" />

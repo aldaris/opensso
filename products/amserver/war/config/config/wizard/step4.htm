@@ -198,6 +198,10 @@
         setType(document.getElementById("ldapv3ad").value);
     }
 
+    function setADAM() {
+        setType(document.getElementById("ldapv3adam").value);
+    }
+
     function setSUNDS() {
         setType(document.getElementById("ldapv3sunds").value);
     }
@@ -290,6 +294,7 @@
                             <input type="radio" id="ldapv3opends" name="userStoreType" style="margin-left:2em" value="LDAPv3ForOpenDS" $selectLDAPv3opends onclick="setOpenDS();"/>&nbsp;$page.getLocalizedString("opends.ldap.schema")<br>
                             <input type="radio" id="ldapv3ad" name="userStoreType" style="margin-left:1em" value="LDAPv3ForAD" $selectLDAPv3ad onclick="setAD();"/>&nbsp;$page.getLocalizedString("activedirectory.ldap.schema")
                             <input type="radio" id="ldapv3adforDomainName" name="userStoreType" style="margin-left:1em" value="LDAPv3ForADDC" $selectLDAPv3addc onclick="setADforDomainName();"/>&nbsp;$page.getLocalizedString("activedirectoryfordomainname.ldap.schema")<br>
+                            <input type="radio" id="ldapv3adam" name="userStoreType" style="margin-left:1em" value="LDAPv3ForADAM" $selectLDAPv3adam onclick="setADAM();"/>&nbsp;$page.getLocalizedString("adam.ldap.schema")
                             <input type="radio" id="ldapv3tivoli" name="userStoreType" style="margin-left:1em" value="LDAPv3ForTivoli" $selectLDAPv3tivoli onclick="setTivoli();"/>&nbsp;$page.getLocalizedString("tivoli.ldap.schema")
                         </td>
                     </tr>            

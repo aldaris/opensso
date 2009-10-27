@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDIFTemplates.java,v 1.4 2009-06-20 06:30:18 hengming Exp $
+ * $Id: LDIFTemplates.java,v 1.5 2009-10-27 05:33:39 hengming Exp $
  */
 
 
@@ -45,8 +45,8 @@ public class LDIFTemplates {
     
     static {
         templates = new ArrayList();
-	templates.add("ad/ad_config_schema.ldif");
 	templates.add("ad/ad_user_schema.ldif");
+        templates.add("adam/adam_user_schema.ldif");
 	templates.add("opends/opends_config_schema.ldif");
 	templates.add("opends/opends_user_schema.ldif");
 	templates.add("opends/opends_embinit.ldif");

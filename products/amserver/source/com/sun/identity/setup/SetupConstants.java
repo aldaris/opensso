@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.43 2009-08-04 18:47:45 goodearth Exp $
+ * $Id: SetupConstants.java,v 1.44 2009-10-27 05:33:39 hengming Exp $
  *
  */
 
@@ -163,6 +163,12 @@ public interface SetupConstants {
 
     /**
      * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
+     * Active Directory Application Mode Schema File for user management data.
+     */
+    String ADAM_LDIF = "adamUserSchema";
+
+    /**
+     * Property keys in <code>SCHEMA_PROPERTY_FILENAME</code> file.
      * IBM Tivoli Directory Schema File for user management data.
      */
     String TIVOLI_LDIF = "tivoliUserSchema";
@@ -186,6 +192,11 @@ public interface SetupConstants {
      * User Management datastore option - AD.
      */
     String UM_LDAPv3ForAD = "LDAPv3ForAD";
+
+    /**
+     * User Management datastore option - ADAM.
+     */
+    String UM_LDAPv3ForADAM = "LDAPv3ForADAM";
 
     /**
      * User Management datastore option - IBM Tivoli DS.

@@ -3,15 +3,6 @@ changetype: modify
 add: attributeTypes
 attributetypes: ( 1.2.840.113556.1.2.102 NAME 'memberOf' DESC 'Group that the entry belongs to' SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
 
-dn: cn=schema
-changetype: modify
-add: attributeTypes
-attributetypes: ( 2.16.840.1.113730.3.1.601 NAME 'adminRole' DESC 'Administrative role' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
-dn: cn=schema
-changetype: modify
-add: attributeTypes
-attributeTypes: ( 1.3.6.1.4.1.1466.101.120.41 NAME 'parentOrganization' EQUALITY distinguishedNameMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 SINGLE-VALUE )
 
 dn: cn=schema
 changetype: modify
@@ -22,11 +13,6 @@ dn: cn=schema
 changetype: modify
 add: attributeTypes
 attributeTypes: ( 1.3.6.1.4.1.1466.101.120.43 NAME 'preferredTimeZone' DESC 'preferred time zone for a person' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
-
-dn: cn=schema
-changetype: modify
-add: attributeTypes
-attributeTypes: ( 2.16.840.1.113730.3.1.691 NAME 'inetDomainStatus' DESC '"active", "inactive", or "deleted" status of a domain' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
 
 dn: cn=schema
 changetype: modify
@@ -106,16 +92,6 @@ attributeTypes: ( 2.16.840.1.113730.3.1.976 NAME 'iplanet-am-user-account-life' 
 dn: cn=schema
 changetype: modify
 add: attributeTypes
-attributeTypes: ( 2.16.840.1.113730.3.1.1094 NAME 'iplanet-am-modifiable-by' DESC 'Attribute Modified by' SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
-
-dn: cn=schema
-changetype: modify
-add: attributeTypes
-attributeTypes: ( 2.16.840.1.113730.3.1.1096 NAME 'iplanet-am-static-group-dn' DESC 'Static group DN' SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
-
-dn: cn=schema
-changetype: modify
-add: attributeTypes
 attributeTypes: ( 1.3.6.1.4.1.42.2.27.9.1.58 NAME 'iplanet-am-user-auth-config' DESC 'User Authentication Configuration' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 dn: cn=schema
@@ -180,32 +156,6 @@ attributeTypes: ( 1.3.6.1.4.1.42.2.27.9.1.823 NAME 'sunIdentityMSISDNNumber' DES
 
 dn: cn=schema
 changetype: modify
-add: attributeTypes
-attributeTypes: ( 1.3.6.1.4.1.42.2.27.9.1.843 NAME 'sunIdentityServerDeviceVersion' DESC 'Device Version' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
-
-dn: cn=schema
-changetype: modify
-add: attributeTypes
-attributeTypes: ( 1.3.6.1.4.1.42.2.27.9.1.844 NAME 'sunIdentityServerDeviceType' DESC 'Device Type' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
-
-dn: cn=schema
-changetype: modify
-add: attributeTypes
-attributeTypes: ( 1.3.6.1.4.1.42.2.27.9.1.845 NAME 'sunIdentityServerDeviceKeyValue' DESC 'Device Key Value Pair' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
-dn: cn=schema
-changetype: modify
-add: attributeTypes
-attributeTypes: ( 1.3.6.1.4.1.42.2.27.9.1.846 NAME 'sunIdentityServerDeviceStatus' DESC 'Device Status' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
-
-dn: cn=schema
-changetype: modify
-add: attributeTypes
-attributeTypes: ( 1.3.6.1.4.1.42.2.27.9.1.84 NAME ( 'sunxmlkeyvalue' ) DESC 'Attribute to store the key values in xml form at' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
-
-dn: cn=schema
-changetype: modify
 add: objectClasses
 objectClasses: ( 2.16.840.1.113730.3.2.130 NAME 'inetUser' DESC 'Auxiliary class which has to be present in an entry for delivery of subscriber services' SUP top AUXILIARY MAY ( uid $ inetUserStatus $ inetUserHTTPURL $ userPassword $ memberOf ) )
 
@@ -213,11 +163,6 @@ dn: cn=schema
 changetype: modify
 add: objectClasses
 objectClasses: ( 1.3.6.1.4.1.1466.101.120.142 NAME 'iPlanetPreferences' AUXILIARY MAY ( preferredLanguage $ preferredLocale $ preferredTimeZone ) )
-
-dn: cn=schema
-changetype: modify
-add: objectClasses
-objectclasses: ( 2.16.840.1.113730.3.2.112 NAME 'inetAdmin' DESC 'Marker for an administrative group or user' SUP top AUXILIARY MUST ( objectclass )  MAY ( aci $ memberof $ adminrole ) )
 
 dn: cn=schema
 changetype: modify
@@ -242,12 +187,7 @@ objectClasses: ( 1.3.6.1.4.1.42.2.27.9.2.118 NAME 'sunAMAuthAccountLockout' DESC
 dn: cn=schema
 changetype: modify
 add: objectClasses
-objectClasses: ( 1.3.6.1.4.1.42.2.27.9.2.128 NAME 'sunIdentityServerDevice' DESC 'Device OC' SUP top STRUCTURAL MAY ( cn $ uid $ sunIdentityServerDeviceVersion $ sunIdentityServerDeviceType $ userpassword $ sunIdentityServerDeviceKeyValue $ sunxmlkeyvalue $ description $ sunIdentityServerDeviceStatus ) )
-
-dn: cn=schema
-changetype: modify
-add: objectClasses
-objectClasses: ( 2.16.840.1.113730.3.2.184 NAME 'iplanet-am-managed-person' DESC 'Managed Person OC' SUP top AUXILIARY MAY ( iplanet-am-modifiable-by $ iplanet-am-static-group-dn $ iplanet-am-user-account-life ) )
+objectClasses: ( 2.16.840.1.113730.3.2.184 NAME 'iplanet-am-managed-person' DESC 'Managed Person OC' SUP top AUXILIARY MAY ( iplanet-am-user-account-life ) )
 
 dn: CN=schema
 changetype: modify
@@ -262,7 +202,7 @@ attributeTypes: ( 1.3.6.1.4.1.42.2.27.9.1.74 NAME 'iplanet-am-user-federation-in
 dn: CN=schema
 changetype: modify
 add: attributeTypes
-attributeTypes: ( 1.3.6.1.4.1.42.2.27.9.1.821 NAME 'sunIdentityServerDiscoEntries' DESC 'User DiscoEntries' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.3.6.1.4.1.42.2.27.9.1.821 NAME 'sunIdentityServerDiscoEntries' DESC 'User DiscoEntries' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{5000} )
 
 dn: CN=schema
 changetype: modify

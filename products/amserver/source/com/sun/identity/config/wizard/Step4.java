@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.19 2009-06-17 21:47:00 goodearth Exp $
+ * $Id: Step4.java,v 1.20 2009-10-27 05:31:45 hengming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -164,12 +164,21 @@ public class Step4 extends AjaxPage {
         if (val.equals("LDAPv3ForAD")) {
             addModel("selectLDAPv3ad", "checked=\"checked\"");
             addModel("selectLDAPv3addc", "");
+            addModel("selectLDAPv3adam", "");
             addModel("selectLDAPv3sunds", "");
             addModel("selectLDAPv3opends", "");
             addModel("selectLDAPv3tivoli", "");
         } else if (val.equals("LDAPv3ForADDC")) {
             addModel("selectLDAPv3addc", "checked=\"checked\"");
             addModel("selectLDAPv3ad", "");
+            addModel("selectLDAPv3adam", "");
+            addModel("selectLDAPv3sunds", "");
+            addModel("selectLDAPv3opends", "");
+            addModel("selectLDAPv3tivoli", "");
+        } else if (val.equals("LDAPv3ForADAM")) {
+            addModel("selectLDAPv3adam", "checked=\"checked\"");
+            addModel("selectLDAPv3ad", "");
+            addModel("selectLDAPv3addc", "");
             addModel("selectLDAPv3sunds", "");
             addModel("selectLDAPv3opends", "");
             addModel("selectLDAPv3tivoli", "");
@@ -177,18 +186,21 @@ public class Step4 extends AjaxPage {
             addModel("selectLDAPv3sunds", "checked=\"checked\"");
             addModel("selectLDAPv3ad", "");
             addModel("selectLDAPv3addc", "");
+            addModel("selectLDAPv3adam", "");
             addModel("selectLDAPv3opends", "");
             addModel("selectLDAPv3tivoli", "");
         } else if (val.equals("LDAPv3ForOpenDS")) {
             addModel("selectLDAPv3opends", "checked=\"checked\"");
             addModel("selectLDAPv3ad", "");
             addModel("selectLDAPv3addc", "");
+            addModel("selectLDAPv3adam", "");
             addModel("selectLDAPv3sunds", "");
             addModel("selectLDAPv3tivoli", "");
         } else {
             addModel("selectLDAPv3tivoli", "checked=\"checked\"");
             addModel("selectLDAPv3ad", "");
             addModel("selectLDAPv3addc", "");
+            addModel("selectLDAPv3adam", "");
             addModel("selectLDAPv3sunds", "");
             addModel("selectLDAPv3opends", "");
         }

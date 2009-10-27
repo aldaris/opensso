@@ -6,6 +6,4 @@ ds-cfg-enabled: true
 dn: cn=Referential Integrity, cn=Plugins, cn=config
 changetype: modify
 add: ds-cfg-attribute-type
-ds-cfg-attribute-type: iplanet-am-modifiable-by
-ds-cfg-attribute-type: iplanet-am-static-group-dn
 ds-cfg-attribute-type: memberof

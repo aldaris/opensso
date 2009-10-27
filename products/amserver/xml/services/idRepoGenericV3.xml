@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoGenericV3.xml,v 1.5 2008-06-25 05:46:13 qcheng Exp $
+   $Id: idRepoGenericV3.xml,v 1.6 2009-10-27 05:39:38 hengming Exp $
   
 -->
 
@@ -35,7 +35,7 @@
   <Service name="sunIdentityRepositoryService" version="1.0">
     <Configuration>
       <OrganizationConfiguration name="@SM_CONFIG_ROOT_SUFFIX@">
-        <SubConfiguration name="generic ldapv3" id="LDAPv3">
+        <SubConfiguration name="@CONFIG_NAME@" id="@CONFIG_ID@">
           <AttributeValuePair>
             <Attribute name="sun-idrepo-ldapv3-config-ldap-server"/>
             <Value>@UM_DIRECTORY_SERVER@:@UM_DIRECTORY_PORT@</Value>
@@ -57,96 +57,9 @@
             <Value>@UM_SSL@</Value>
           </AttributeValuePair>
           <AttributeValuePair>
-            <Attribute name="sunIdRepoSupportedOperations"/>
-            <Value>realm=read,create,edit,delete,service</Value>
-            <Value>user=read,create,edit,delete,service</Value>
-            <Value>group=read,create,edit,delete</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-            <Attribute name="sun-idrepo-ldapv3-config-search-scope"/>
-            <Value>SCOPE_ONE</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-            <Attribute name="sun-idrepo-ldapv3-config-users-search-attribute"/>
-            <Value>uid</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-            <Attribute name="sun-idrepo-ldapv3-config-user-objectclass"/>
-            <Value>organizationalPerson</Value>
-            <Value>inetorgperson</Value>
-            <Value>person</Value>
-            <Value>top</Value>
-            <Value>inetUser</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-            <Attribute name="sun-idrepo-ldapv3-config-user-attributes"/>
-            <Value>adminRole</Value>
-            <Value>authorityRevocationList</Value>
-            <Value>caCertificate</Value>
-            <Value>cn</Value>
-            <Value>dn</Value>
-            <Value>distinguishedName</Value>
-            <Value>employeenumber</Value>
-            <Value>givenname</Value>
-            <Value>inetUserStatus</Value>
-            <Value>mail</Value>
-            <Value>manager</Value>
-            <Value>memberOf</Value>
-            <Value>objectClass</Value>
-            <Value>postaladdress</Value>
-            <Value>preferredlanguage</Value>
-            <Value>sn</Value>
-            <Value>telephonenumber</Value>
-            <Value>uid</Value>
-            <Value>userCertificate</Value>
-            <Value>userpassword</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-            <Attribute name="sun-idrepo-ldapv3-config-group-objectclass"/>
-              <Value>groupofuniquenames</Value>
-              <Value>top</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-group-attributes"/>
-             <Value>cn</Value>
-             <Value>description</Value>
-             <Value>dn</Value>
-             <Value>memberUrl</Value>
-             <Value>objectClass</Value>
-             <Value>uniqueMember</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-memberof"/>
-             <Value>memberOf</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-authenticatable-type"/>
-             <Value>User</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-auth-naming-attr"/>
-             <Value>uid</Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
              <Attribute name="sun-idrepo-ldapv3-config-psearchbase"/>
              <Value>@UM_CONFIG_ROOT_SUFFIX@</Value>
           </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-people-container-name"/>
-             <Value></Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-people-container-value"/>
-             <Value></Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-group-container-name"/>
-             <Value></Value>
-          </AttributeValuePair>
-          <AttributeValuePair>
-             <Attribute name="sun-idrepo-ldapv3-config-group-container-value"/>
-             <Value></Value>
-          </AttributeValuePair> 
         </SubConfiguration>
       </OrganizationConfiguration>
     </Configuration>
