@@ -112,6 +112,7 @@ DS_DIRMGRPASSWD=11111111
 ### 'LDAPv3ForSUNDS'  - Sun Java System Directory Server.
 ### 'LDAPv3ForAD'     - Active Directory Server with Host and Port.
 ### 'LDAPv3ForADDC'   - Active Directory with Domain Name.
+### 'LDAPv3ForADAM'   - Active Directory Application Mode.
 ### 'LDAPv3ForOpenDS' - Sun OpenDS Server.
 ### 'LDAPv3ForTivoli' - IBM Tivoli Directory Server.
 ###
