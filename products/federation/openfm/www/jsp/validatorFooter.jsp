@@ -22,13 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validatorFooter.jsp,v 1.6 2009-01-05 23:23:25 veiming Exp $
+   $Id: validatorFooter.jsp,v 1.7 2009-10-27 17:57:38 asyhuang Exp $
 
 --%>
 
 <%@ page import="com.sun.identity.common.SystemConfigurationUtil" %>
 <%@ page import="com.sun.identity.shared.Constants" %>
 <%@ page import="com.sun.identity.workflow.ValidateSAML2" %>
+<%@ page import="org.owasp.esapi.ESAPI" %>
 <%@ page contentType="text/html; charset=utf-8" language="java" %>
 
 <%
@@ -40,6 +41,8 @@
         "button.backtoLogin", locale);
     String message = ((msg != null) && (msg.length() > 0)) ?
         ValidateSAML2.getMessage(msg, locale) : null;
+    org.owasp.esapi.Encoder enc = ESAPI.encoder();
+    message=enc.encodeForHTML(message);
 %>
 <html>
 <head>
