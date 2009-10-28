@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.44 2009-10-27 05:33:39 hengming Exp $
+ * $Id: SetupConstants.java,v 1.45 2009-10-28 20:24:54 goodearth Exp $
  *
  */
 
@@ -81,6 +81,11 @@ public interface SetupConstants {
      * Hash Admin password.
      */
     String HASH_ADMIN_PWD = "HASHADMINPASSWD";
+
+    /**
+     * Userstore password.
+     */
+    String USERSTORE_PWD = "USERSTORE_PASSWD";
 
     /**
      * LDAP user password.

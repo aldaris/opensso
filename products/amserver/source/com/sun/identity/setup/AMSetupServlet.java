@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.112 2009-10-27 17:22:54 asyhuang Exp $
+ * $Id: AMSetupServlet.java,v 1.113 2009-10-28 20:24:54 goodearth Exp $
  *
  */
 
@@ -159,6 +159,7 @@ public class AMSetupServlet extends HttpServlet {
         passwordParams.add(SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM);
         passwordParams.add(SetupConstants.USER_STORE_LOGIN_PWD);
         passwordParams.add(SetupConstants.CONFIG_VAR_ENCRYPTION_KEY);
+        passwordParams.add(SetupConstants.USERSTORE_PWD);
     }
 
     /*
@@ -377,6 +378,7 @@ public class AMSetupServlet extends HttpServlet {
             store.put(SetupConstants.USER_STORE_LOGIN_ID, tmp);      
             tmp = (String)request.getParameter("USERSTORE_PASSWD"); 
             store.put(SetupConstants.USER_STORE_LOGIN_PWD, tmp);      
+            store.put(SetupConstants.USERSTORE_PWD, tmp);      
             store.put(SetupConstants.USER_STORE_TYPE, userStoreType);
 
             req.addParameter("UserStore", store);
