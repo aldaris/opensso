@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationLogoutHandler.java,v 1.12 2009-10-15 23:54:16 leiming Exp $
+ * $Id: ApplicationLogoutHandler.java,v 1.13 2009-10-28 18:50:15 leiming Exp $
  *
  */
 
@@ -39,6 +39,8 @@ import javax.servlet.http.HttpSession;
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.common.ICookieResetHelper;
+import com.iplanet.dpro.session.Session;
+import com.iplanet.dpro.session.SessionID;
 
 /**
  * <p>
@@ -97,6 +99,9 @@ implements IApplicationLogoutHandler {
                 invokeApplicationLogoutHandler(ctx);
             }
 
+            // remove the SSO Token from the local caches
+            removeSSOToken(ctx);
+
             // Even if logout handler fails, we will Destroy local session and
             // redirect to AM
             if (isLogMessageEnabled()) {
@@ -151,6 +156,15 @@ implements IApplicationLogoutHandler {
         }
 
         return result;
+    }
+
+    /*
+     * remove SSO Token from local cache during logout.
+     */
+    private void removeSSOToken(AmFilterRequestContext ctx) {
+
+        HttpServletRequest request = ctx.getHttpServletRequest();
+        Session.removeSID(new SessionID(request));
     }
 
     private String getApplicationEntryURL(AmFilterRequestContext ctx) {
