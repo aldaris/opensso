@@ -22,25 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedCommand.java,v 1.10 2009-09-03 17:07:04 veiming Exp $
+ * $Id: AuthenticatedCommand.java,v 1.11 2009-10-28 23:55:26 exu Exp $
  *
  */
 
 package com.sun.identity.cli;
 
 
-import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdType;
-import com.sun.identity.security.AdminTokenAction;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.AccessController;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 
@@ -51,23 +45,8 @@ import java.util.logging.Level;
 public abstract class AuthenticatedCommand extends CLICommandBase {
     private String adminID;
     private String adminPassword;
-    private SSOToken ssoToken;
+    protected SSOToken ssoToken;
     
-    private static String amadminUUID;
-
-    static {
-        String adminUser = SystemProperties.get(
-            "com.sun.identity.authentication.super.user");
-        if (adminUser != null) {
-            SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-            AMIdentity adminUserId = new AMIdentity(adminToken, adminUser,
-                IdType.USER, "/", null);
-            amadminUUID = adminUserId.getUniversalId();
-        }
-
-    }
-
     /**
      * Authenticates the administrator. Dervived classes needs to
      * call this method from the dervived method,
@@ -162,25 +141,6 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
                 throw new CLIException(e, ExitCodes.SESSION_EXPIRED);
             }
         }
-    }
-
-    protected void superAdminUserValidation()
-        throws CLIException {
-        if (ssoToken != null) {
-            try {
-                AMIdentity user = new AMIdentity(ssoToken);
-                if (user.getUniversalId().equalsIgnoreCase(amadminUUID)) {
-                    return;
-                }
-            } catch (SSOException ex) {
-                debugError("AuthenticatedCommand.isSuperAdminUser", ex);
-            } catch (IdRepoException ex) {
-                debugError("AuthenticatedCommand.isSuperAdminUser", ex);
-            }
-        }
-        throw new CLIException(
-            getResourceString("error-message-no-privilege"),
-            ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
     }
 
     @Override
