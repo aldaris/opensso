@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_policy.cpp,v 1.10 2009-10-13 01:34:17 robertis Exp $
+ * $Id: am_policy.cpp,v 1.11 2009-10-28 21:56:20 subbae Exp $
  *
  */ 
 
@@ -294,7 +294,9 @@ am_policy_evaluate_ignore_url_notenforced(am_policy_t policy_handle,
 	Log::Level lvl = Log::LOG_ERROR;
 	if(ie.getStatusCode() == AM_INVALID_SESSION) {
 	    lvl = Log::LOG_INFO;
-	}
+	} else  if(ie.getStatusCode() == AM_NO_POLICY) {
+            lvl = Log::LOG_WARNING;
+        }
 
 	Log::log(enginePtr->getModuleID(), lvl,
 		 "am_policy_evaluate: InternalException in %s with error message:%s and code:%d",

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_main.cpp,v 1.10 2009-06-09 00:22:24 subbae Exp $
+ * $Id: am_main.cpp,v 1.11 2009-10-28 21:56:20 subbae Exp $
  *
  */
 
@@ -347,6 +347,10 @@ void get_status_info(am_status_t status, const char ** name, const char ** msg)
         case AM_REDIRECT_LOGOUT:
             if (name) *name = "AM_REDIRECT_LOGOUT";
 	    if (msg) *msg = "redirect to logout";
+	    break;
+        case AM_AGENT_TIME_NOT_SYNC:
+            if (name) *name = "AM_AGENT_TIME_NOT_SYNC";
+	    if (msg) *msg = "time synchronization issue between agent and server.";
 	    break;
 	default:
 	    if (name) *name = "unrecognized status code";

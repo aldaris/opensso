@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.33 2009-08-07 21:08:24 subbae Exp $
+ * $Id: service.cpp,v 1.34 2009-10-28 21:56:20 subbae Exp $
  *
  */
 
@@ -387,6 +387,12 @@ Service::initialize() {
 				  advicesMap);
 	KeyValueMap::const_iterator result = advicesMap.find(SERVER_HANDLED_ADVICES);
 	const std::vector<std::string> adviceNames = (*result).second;
+        if (!serverHandledAdvicesList.empty()) {
+            serverHandledAdvicesList.clear();
+            Log::log(logID, Log::LOG_MAX_DEBUG, 
+                "Server handled Advice list not empty, so cleared ");
+        }
+
 	serverHandledAdvicesList.insert(serverHandledAdvicesList.begin(),
 				       adviceNames.begin(), adviceNames.end());
     }
@@ -1370,7 +1376,7 @@ Service::getPolicyResult(const char *userSSOToken,
     if (policyRequestCount == 3) {
 	string msg("Time on the Agent machine and the Server machine are "
                    "not synchronized");
-	throw InternalException(func, msg, AM_NO_POLICY);
+	throw InternalException(func, msg, AM_AGENT_TIME_NOT_SYNC);
     }
 
     // now set remote user and ldap attributes if any.
@@ -1435,7 +1441,7 @@ Service::getPolicyResult(const char *userSSOToken,
 	    return;
 	} else {
 	if (!ignorePolicyResult) {
-	    string msg("No Policy or Action decisions found "
+	    string msg("No Policy or Action decisions "
 		       "found for resource: ");
 	    msg.append(resName);
 	    throw InternalException(func, msg, AM_NO_POLICY);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_types.h,v 1.11 2009-08-27 21:41:30 subbae Exp $
+ * $Id: am_types.h,v 1.12 2009-10-28 21:56:20 subbae Exp $
  *
  * Abstract:
  *
@@ -132,6 +132,7 @@ typedef enum {
     AM_REPOSITORY_TYPE_INVALID, /* error code 34, valid values: local, centralized */
     AM_INVALID_APP_SSOTOKEN,
     AM_REDIRECT_LOGOUT, /* error code 36, used for redirecting to logout page*/
+    AM_AGENT_TIME_NOT_SYNC, /* error code 37, indicate time synchronization issue between AM and Agent m/cs*/
     AM_NUM_ERROR_CODES	/* This should always be the last. */
 } am_status_t;
 
