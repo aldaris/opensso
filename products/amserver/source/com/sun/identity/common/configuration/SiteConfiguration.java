@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteConfiguration.java,v 1.10 2009-07-07 06:14:12 veiming Exp $
+ * $Id: SiteConfiguration.java,v 1.11 2009-10-28 23:33:16 veiming Exp $
  *
  */
 
@@ -50,6 +50,46 @@ import java.util.Set;
  * This manages site configuration information.
  */
 public class SiteConfiguration extends ConfigurationBase {
+
+    private static Set<Character> specialCharacters = new HashSet<Character>();
+    private static String specialChars = "";
+
+    static {
+        specialCharacters.add('~');
+        specialCharacters.add('!');
+        specialCharacters.add('@');
+        specialCharacters.add('#');
+        specialCharacters.add('$');
+        specialCharacters.add('%');
+        specialCharacters.add('^');
+        specialCharacters.add('&');
+        specialCharacters.add('*');
+        specialCharacters.add('(');
+        specialCharacters.add(')');
+        specialCharacters.add('_');
+        specialCharacters.add('-');
+        specialCharacters.add('+');
+        specialCharacters.add('=');
+        specialCharacters.add('{');
+        specialCharacters.add('}');
+        specialCharacters.add('|');
+        specialCharacters.add('\\');
+        specialCharacters.add('\'');
+        specialCharacters.add('"');
+        specialCharacters.add(':');
+        specialCharacters.add(';');
+        specialCharacters.add('<');
+        specialCharacters.add('>');
+        specialCharacters.add(',');
+        specialCharacters.add('.');
+        specialCharacters.add('/');
+        specialCharacters.add('?');
+
+        for (Character c : specialCharacters) {
+            specialChars += c;
+        }
+
+    }
 
     // prevent instantiation of this class.
     private SiteConfiguration() {
@@ -224,6 +264,18 @@ public class SiteConfiguration extends ConfigurationBase {
         Collection secondaryURLs    
     ) throws SMSException, SSOException, ConfigurationException {
         boolean created = false;
+
+        if ((siteName == null) || (siteName.trim().length() == 0)) {
+            throw new ConfigurationException("site.name.empty", null);
+        }
+
+        for (int i = 0; i < siteName.length(); i++) {
+            char c = siteName.charAt(i);
+            if (specialCharacters.contains(c)) {
+                String[] params = {siteName, specialChars};
+                throw new ConfigurationException("invalid,site.name", params);
+            }
+        }
 
         if (isLegacy(ssoToken)) {
             ServiceSchemaManager sm = new ServiceSchemaManager(

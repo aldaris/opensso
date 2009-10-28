@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationException.java,v 1.2 2008-06-25 05:42:27 qcheng Exp $
+ * $Id: ConfigurationException.java,v 1.3 2009-10-28 23:33:16 veiming Exp $
  *
  */
 
 package com.sun.identity.common.configuration;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.L10NMessage;
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -106,6 +105,7 @@ public class ConfigurationException
         return args;
      }
 
+    @Override
      public String getMessage() {
          if (message != null) {
             // messgae is set only if l10n resource bundle is specified
