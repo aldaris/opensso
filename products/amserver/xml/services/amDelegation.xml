@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amDelegation.xml,v 1.9 2009-08-05 20:43:34 hengming Exp $
+   $Id: amDelegation.xml,v 1.10 2009-10-28 23:56:12 exu Exp $
   
 -->
 
@@ -206,6 +206,50 @@
                             <Value>DELEGATE</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
+                    <SubConfiguration name="SAML2Admin" id="Permission">
+                        <AttributeValuePair>
+                            <Attribute name="resource" />
+                            <Value>*REALM/sunFMSAML2MetadataService/*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="actions" />
+                            <Value>READ</Value>
+                            <Value>MODIFY</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="IDFFAdmin" id="Permission">
+                        <AttributeValuePair>
+                            <Attribute name="resource" />
+                            <Value>*REALM/sunFMIDFFMetadataService/*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="actions" />
+                            <Value>READ</Value>
+                            <Value>MODIFY</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="WSFederationAdmin" id="Permission">
+                        <AttributeValuePair>
+                            <Attribute name="resource" />
+                            <Value>*REALM/sunFMWSFederationMetadataService/*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="actions" />
+                            <Value>READ</Value>
+                            <Value>MODIFY</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="COTAdmin" id="Permission">
+                        <AttributeValuePair>
+                            <Attribute name="resource" />
+                            <Value>*REALM/sunFMCOTConfigService/*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="actions" />
+                            <Value>READ</Value>
+                            <Value>MODIFY</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
                 </SubConfiguration>
                 <SubConfiguration name="Privileges">
                     <SubConfiguration name="RealmAdmin" id="Privilege">
@@ -254,6 +298,15 @@
                             <Attribute name="listOfPermissions" />
                             <Value>RealmReadOnly</Value>
                             <Value>AgentsReadWrite</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="FederationAdmin" id="Privilege">
+                        <AttributeValuePair>
+                            <Attribute name="listOfPermissions" />
+                            <Value>COTAdmin</Value>
+                            <Value>IDFFAdmin</Value>
+                            <Value>SAML2Admin</Value>
+                            <Value>WSFederationAdmin</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>
