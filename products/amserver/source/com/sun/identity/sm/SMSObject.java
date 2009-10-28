@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObject.java,v 1.8 2009-04-02 19:40:59 veiming Exp $
+ * $Id: SMSObject.java,v 1.9 2009-10-28 04:24:26 hengming Exp $
  *
  */
 
@@ -128,18 +128,16 @@ public abstract class SMSObject {
     /**
      * Searchs the data store for objects that match the filter
      */
-    public abstract Set search(SSOToken token, String startDN, String filter)
-            throws SMSException, SSOException;
+    public abstract Set search(SSOToken token, String startDN, String filter,
+            int numOfEntries, int timeLimit, boolean sortResults,
+            boolean ascendingOrder) throws SMSException, SSOException;
 
     /**
      * Searchs the data store for objects that match the filter
      */
-    public abstract Iterator search(
-        SSOToken token,
-        String startDN,
-        String filter,
-        Set excludes
-    ) throws SMSException, SSOException;
+    public abstract Iterator search(SSOToken token, String startDN,
+        String filter, int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder, Set excludes) throws SMSException, SSOException;
 
     /**
      * Checks if the provided DN exists. Used by PolicyManager.

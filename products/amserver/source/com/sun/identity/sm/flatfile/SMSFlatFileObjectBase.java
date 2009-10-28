@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.12 2009-04-02 19:41:00 veiming Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.13 2009-10-28 04:24:26 hengming Exp $
  *
  */
 
@@ -563,6 +563,12 @@ public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
      * expected to be a dn.
      * @param filter Filter of service name and version. Expected to be in 
      * SMSEntry.FILTER_PATTERN_SERVICE format.
+     * @param numOfEntries number of max entries, 0 means unlimited
+     * @param timeLimit maximum number of seconds for the search to spend, 0
+     * means unlimited
+     * @param sortResults <code>true</code> to have result sorted.
+     * @param ascendingOrder <code>true</code> to have result sorted in
+     * ascending order.
      * @param excludes Set of DNs to excluded.
      * @return a Map of entries (dn's) that match the given filter.
      *
@@ -570,7 +576,8 @@ public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
      * or if filter is not in the expected format.
      */
     public Iterator search(SSOToken token, String objName, String filter,
-        Set excludes)
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder, Set excludes)
         throws SSOException, SMSException {
         return null;
     }
@@ -588,13 +595,20 @@ public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
      * expected to be a dn.
      * @param filter Filter of service name and version. Expected to be in 
      * SMSEntry.FILTER_PATTERN_SERVICE format.
+     * @param numOfEntries number of max entries, 0 means unlimited
+     * @param timeLimit maximum number of seconds for the search to spend, 0
+     * means unlimited
+     * @param sortResults <code>true</code> to have result sorted.
+     * @param ascendingOrder <code>true</code> to have result sorted in
+     * ascending order.
      * @return a Set of entries (dn's) that match the given filter.
      *
      * @throws IllegalArgumentException if objName or filter is null or empty, 
      * or if filter is not in the expected format.
      */
-    public Set search(SSOToken token, String objName, String filter)
-        throws SSOException, SMSException {
+    public Set search(SSOToken token, String objName, String filter,
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder) throws SSOException, SMSException {
 
         if (objName == null || objName.length() == 0 ||
             filter == null || filter.length() == 0) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.21 2009-03-06 05:36:33 222713 Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.22 2009-10-28 04:24:27 hengming Exp $
  *
  */
 
@@ -328,9 +328,9 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
         return (ce.getSchemaSubEntries(getToken(tokenID), filter, sidFilter));
     }
 
-    /**
-     * Searchs the data store for objects that match the filter
-     */
+      /**
+       * Searchs the data store for objects that match the filter
+       */
     public Set search(String tokenID, String startDN, String filter)
             throws SMSException, SSOException, RemoteException {
         initialize();
@@ -338,7 +338,24 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
             debug.message("SMSJAXRPCObjectImpl::search dn: " + startDN
                     + " filter: " + filter);
         }
-        return (SMSEntry.search(getToken(tokenID), startDN, filter));
+        return (SMSEntry.search(getToken(tokenID), startDN, filter, 0, 0,
+            false, false));
+    }     
+
+    /**
+     * Searchs the data store for objects that match the filter
+     */
+    public Set search2(String tokenID, String startDN, String filter,
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder)
+            throws SMSException, SSOException, RemoteException {
+        initialize();
+        if (debug.messageEnabled()) {
+            debug.message("SMSJAXRPCObjectImpl::search dn: " + startDN
+                    + " filter: " + filter);
+        }
+        return (SMSEntry.search(getToken(tokenID), startDN, filter,
+            numOfEntries, timeLimit, sortResults, ascendingOrder));
     }
 
     /**

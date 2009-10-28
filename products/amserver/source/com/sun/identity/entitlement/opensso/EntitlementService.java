@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.6 2009-10-22 21:03:33 veiming Exp $
+ * $Id: EntitlementService.java,v 1.7 2009-10-28 04:22:03 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -323,7 +323,7 @@ public class EntitlementService extends EntitlementConfiguration {
 
         try {
             Set<String> dns = SMSEntry.search(token, baseDN,
-                getApplicationSearchFilter(filters));
+                getApplicationSearchFilter(filters), 0, 0, false, false);
             Set<String> results = new HashSet<String>();
 
             for (String dn : dns) {

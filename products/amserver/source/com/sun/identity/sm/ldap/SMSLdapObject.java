@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.25 2009-06-12 18:22:49 hengming Exp $
+ * $Id: SMSLdapObject.java,v 1.26 2009-10-28 04:24:27 hengming Exp $
  *
  */
 
@@ -711,16 +711,17 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
      * in method
      */
     public Iterator search(SSOToken token, String startDN, String filter,
-        Set excludes)
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder, Set excludes)
         throws SSOException, SMSException {
-        LDAPSearchResults results = searchObjectsEx(token, startDN, filter);
+        LDAPSearchResults results = searchObjectsEx(token, startDN, filter,
+            numOfEntries, timeLimit, sortResults, ascendingOrder);
         return new SearchResultIterator(results, excludes);
     }
 
-    private LDAPSearchResults searchObjectsEx(
-        SSOToken token,
-        String startDN,
-        String filter
+    private LDAPSearchResults searchObjectsEx(SSOToken token,
+        String startDN, String filter, int numOfEntries, int timeLimit,
+        boolean sortResults, boolean ascendingOrder
     ) throws SSOException, SMSException {
         LDAPSearchResults results = null;
         int retry = 0;
@@ -733,8 +734,8 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             int errorCode = 0;
             LDAPConnection conn = getConnection(adminPrincipal);
             LDAPSearchConstraints constraints = conn.getSearchConstraints();
-            constraints.setMaxResults(0);
-            constraints.setServerTimeLimit(0);
+            constraints.setMaxResults(numOfEntries);
+            constraints.setServerTimeLimit(timeLimit);
             String[] smsAttrs = { SMSEntry.ATTR_KEYVAL,
                 SMSEntry.ATTR_XML_KEYVAL };
 
@@ -745,6 +746,14 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 break;
             } catch (LDAPException e) {
                 errorCode = e.getLDAPResultCode();
+                if (errorCode == LDAPException.SIZE_LIMIT_EXCEEDED) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("SMSLdapObject.search: size limit " +
+                            numOfEntries + " exceeded");
+                    }
+                    break;
+                }
+
                 if (!retryErrorCodes.contains(Integer.toString(errorCode)) ||
                     (retry >= connNumRetry)
                 ) {
@@ -774,13 +783,15 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
      * Returns LDAP entries that match the filter, using the start DN provided
      * in method
      */
-    public Set search(SSOToken token, String startDN, String filter)
-            throws SSOException, SMSException {
+    public Set search(SSOToken token, String startDN, String filter,
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder) throws SSOException, SMSException {
         if (debug.messageEnabled()) {
             debug.message("SMSLdapObject: search filter: " + filter);
         }
 
-        LDAPSearchResults results = searchObjects(token, startDN, filter);
+        LDAPSearchResults results = searchObjects(token, startDN, filter,
+            numOfEntries, timeLimit, sortResults, ascendingOrder);
 
         // Convert LDAP results to DNs
         Set answer = new OrderedSet();
@@ -789,12 +800,21 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 LDAPEntry entry = results.next();
                 answer.add(entry.getDN());
             } catch (LDAPException ldape) {
-                if (debug.warningEnabled()) {
-                    debug.warning(
-                        "SMSLdapObject.search(): Error in searching for " +
-                        "filter match: " + filter, ldape);
+                int errorCode = ldape.getLDAPResultCode();
+                if (errorCode == LDAPException.SIZE_LIMIT_EXCEEDED) {
+                    if (debug.warningEnabled()) {
+                        debug.warning("SMSLdapObject.search: size limit " +
+                            numOfEntries + " exceeded");
+                    }
+                    break;
+                } else {
+                    if (debug.warningEnabled()) {
+                        debug.warning(
+                            "SMSLdapObject.search(): Error in searching for " +
+                            "filter match: " + filter, ldape);
+                    }
+                    throw new SMSException(ldape, "sms-error-in-searching");
                 }
-                throw new SMSException(ldape, "sms-error-in-searching");
             }
         }
         if (debug.messageEnabled()) {
@@ -808,7 +828,11 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     private LDAPSearchResults searchObjects(
         SSOToken token,
         String startDN,
-        String filter
+        String filter,
+        int numOfEntries,
+        int timeLimit,
+        boolean sortResults,
+        boolean ascendingOrder
     ) throws SSOException, SMSException {
         LDAPSearchResults results = null;
         int retry = 0;
@@ -821,8 +845,8 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             int errorCode = 0;
             LDAPConnection conn = getConnection(adminPrincipal);
             LDAPSearchConstraints constraints = conn.getSearchConstraints();
-            constraints.setMaxResults(0);
-            constraints.setServerTimeLimit(0);
+            constraints.setMaxResults(numOfEntries);
+            constraints.setServerTimeLimit(timeLimit);
 
             try {
                 results = conn.search(getNormalizedName(token, startDN),

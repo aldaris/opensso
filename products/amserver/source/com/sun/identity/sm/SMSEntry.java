@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.50 2009-10-19 19:55:32 veiming Exp $
+ * $Id: SMSEntry.java,v 1.51 2009-10-28 04:24:26 hengming Exp $
  *
  */
 
@@ -1014,11 +1014,19 @@ public class SMSEntry implements Cloneable {
      * @param token Single-Sign On token.
      * @param dn Base DN
      * @param filter Search Filter.
+     * @param numOfEntries number of max entries, 0 means unlimited
+     * @param timeLimit maximum number of seconds for the search to spend, 0
+     * means unlimited
+     * @param sortResults <code>true</code> to have result sorted.
+     * @param ascendingOrder <code>true</code> to have result sorted in
+     * ascending order.
      */
-    public static Set search(SSOToken token, String dn, String filter) 
-        throws SMSException {
+    public static Set search(SSOToken token, String dn, String filter,
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder) throws SMSException {
         try {
-            return smsObject.search(token, dn, filter);
+            return smsObject.search(token, dn, filter, numOfEntries, timeLimit,
+                sortResults, ascendingOrder);
         } catch (SSOException ssoe) {
             debug.error("SMSEntry: Search ERROR: " + filter, ssoe);
             throw new SMSException(bundle.getString("sms-error-in-searching"),
@@ -1034,13 +1042,21 @@ public class SMSEntry implements Cloneable {
      * @param token Single-Sign On token.
      * @param dn Base DN
      * @param filter Search Filter.
+     * @param numOfEntries number of max entries, 0 means unlimited
+     * @param timeLimit maximum number of seconds for the search to spend, 0
+     *     means unlimited
+     * @param sortResults <code>true</code> to have result sorted.
+     * @param ascendingOrder <code>true</code> to have result sorted in
+     *     ascending order.
      * @param excludes List of DN to exclude.
      */
     public static Iterator search(SSOToken token, String dn, String filter,
-        Set exclude)
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder, Set exclude)
         throws SMSException {
         try {
-            return smsObject.search(token, dn, filter, exclude);
+            return smsObject.search(token, dn, filter, numOfEntries, timeLimit,
+                sortResults, ascendingOrder, exclude);
         } catch (SSOException ssoe) {
             debug.error("SMSEntry: Search ERROR: " + filter, ssoe);
             throw new SMSException(bundle.getString("sms-error-in-searching"),
@@ -1054,7 +1070,7 @@ public class SMSEntry implements Cloneable {
      */
     static Set search(String filter) throws SMSException {
         try {
-            return (smsObject.search(null, baseDN, filter));
+            return (smsObject.search(null, baseDN, filter, 0, 0, false, false));
         } catch (SSOException ssoe) {
             debug.error("SMSEntry: Search ERROR: " + filter, ssoe);
             throw new SMSException(bundle.getString("sms-error-in-searching"),

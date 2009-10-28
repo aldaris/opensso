@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObjectIF.java,v 1.4 2008-06-25 05:44:09 qcheng Exp $
+ * $Id: SMSObjectIF.java,v 1.5 2009-10-28 04:24:27 hengming Exp $
  *
  */
 
@@ -64,6 +64,11 @@ public interface SMSObjectIF extends Remote {
             throws SMSException, SSOException, RemoteException;
 
     public Set search(String token, String startDN, String filter)
+            throws SMSException, SSOException, RemoteException;
+
+    public Set search2(String token, String startDN, String filter,
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder)
             throws SMSException, SSOException, RemoteException;
 
     public Set searchSubOrgNames(String token, String dn, String filter,

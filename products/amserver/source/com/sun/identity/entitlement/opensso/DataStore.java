@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.5 2009-10-14 03:18:38 veiming Exp $
+ * $Id: DataStore.java,v 1.6 2009-10-28 04:22:03 hengming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -678,7 +678,8 @@ public class DataStore {
             String baseDN = getSearchBaseDN(realm, null);
 
             if (SMSEntry.checkIfEntryExists(baseDN, token)) {
-                Set<String> dns = SMSEntry.search(token, baseDN, filter);
+                Set<String> dns = SMSEntry.search(token, baseDN, filter,
+                    numOfEntries, 0, sortResults, ascendingOrder);
                 for (String dn : dns) {
                     if (!areDNIdentical(baseDN, dn)) {
                         String rdns[] = LDAPDN.explodeDN(dn, true);
@@ -729,7 +730,8 @@ public class DataStore {
             String baseDN = getSearchBaseDN(realm, REFERRAL_STORE);
 
             if (SMSEntry.checkIfEntryExists(baseDN, token)) {
-                Set<String> dns = SMSEntry.search(token, baseDN, filter);
+                Set<String> dns = SMSEntry.search(token, baseDN, filter,
+                    numOfEntries, 0, sortResults, ascendingOrder);
                 for (String dn : dns) {
                     if (!areDNIdentical(baseDN, dn)) {
                         String rdns[] = LDAPDN.explodeDN(dn, true);
@@ -823,7 +825,7 @@ public class DataStore {
             if (SMSEntry.checkIfEntryExists(baseDN, token)) {
                 try {
                     Iterator i = SMSEntry.search(
-                        token, baseDN, filter, excludeDNs);
+                        token, baseDN, filter, 0, 0, false, false, excludeDNs);
                     while (i.hasNext()) {
                         SMSDataEntry e = (SMSDataEntry) i.next();
                         Privilege privilege = Privilege.getInstance(
@@ -892,7 +894,7 @@ public class DataStore {
             if (SMSEntry.checkIfEntryExists(baseDN, token)) {
                 try {
                     Iterator i = SMSEntry.search(
-                        token, baseDN, filter, excludeDNs);
+                        token, baseDN, filter, 0, 0, false, false, excludeDNs);
                     while (i.hasNext()) {
                         SMSDataEntry e = (SMSDataEntry) i.next();
                         ReferralPrivilege referral = ReferralPrivilege.
@@ -1002,7 +1004,8 @@ public class DataStore {
         if (SMSEntry.checkIfEntryExists(baseDN, adminToken)) {
             try {
                 Iterator i = SMSEntry.search(
-                    adminToken, baseDN, filter, Collections.EMPTY_SET);
+                    adminToken, baseDN, filter, 0, 0, false, false,
+                    Collections.EMPTY_SET);
                 while (i.hasNext()) {
                     SMSDataEntry e = (SMSDataEntry) i.next();
                     ReferralPrivilege referral = ReferralPrivilege.getInstance(

@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: SMSEmbeddedLdapObject.java,v 1.2 2009-06-12 18:22:49 hengming Exp $
+* $Id: SMSEmbeddedLdapObject.java,v 1.3 2009-10-28 04:24:27 hengming Exp $
 */
 package com.sun.identity.sm.ldap;
 
@@ -476,13 +476,21 @@ public class SMSEmbeddedLdapObject extends SMSObjectDB
     }
 
     public Iterator search(SSOToken token, String startDN, String filter,
-        Set excludes) throws SSOException, SMSException {
+        int numOfEntries, int timeLimit, boolean sortResults, 
+        boolean ascendingOrder, Set excludes)
+        throws SSOException, SMSException {
 
         InternalSearchOperation iso = searchObjects(startDN, filter,
-            SearchScope.WHOLE_SUBTREE, 0, false, false);
+            SearchScope.WHOLE_SUBTREE, numOfEntries, sortResults,
+            ascendingOrder);
 
         ResultCode resultCode = iso.getResultCode();
-        if (resultCode != ResultCode.SUCCESS) {
+        if (resultCode == ResultCode.SIZE_LIMIT_EXCEEDED) {
+            if (debug.messageEnabled()) {
+                debug.message("SMSEmbeddedLdapObject.search:" +
+                    " size limit exceeded. numOfEntries = " + numOfEntries);
+            }
+        } else if (resultCode != ResultCode.SUCCESS) {
             if (debug.warningEnabled()) {
                 debug.warning("SMSEmbeddedLdapObject.searchEx: Unable to " +
                     "search. startDN = " + startDN + ", filter = " +
@@ -501,18 +509,25 @@ public class SMSEmbeddedLdapObject extends SMSObjectDB
      * Returns LDAP entries that match the filter, using the start DN provided
      * in method
      */
-    public Set search(SSOToken token, String startDN, String filter)
-            throws SSOException, SMSException {
+    public Set search(SSOToken token, String startDN, String filter,
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder) throws SSOException, SMSException {
         if (debug.messageEnabled()) {
             debug.message("SMSEmbeddedLdapObject.search: startDN = " + 
                 startDN + ", filter: " + filter);
         }
 
         InternalSearchOperation iso = searchObjects(startDN, filter,
-            SearchScope.WHOLE_SUBTREE, 0, false, false);
+            SearchScope.WHOLE_SUBTREE, numOfEntries, sortResults,
+            ascendingOrder);
 
         ResultCode resultCode = iso.getResultCode();
-        if (resultCode != ResultCode.SUCCESS) {
+        if (resultCode == ResultCode.SIZE_LIMIT_EXCEEDED) {
+            if (debug.messageEnabled()) {
+                debug.message("SMSEmbeddedLdapObject.search:" +
+                    " size limit exceeded. numOfEntries = " + numOfEntries);
+            }
+        } else if (resultCode != ResultCode.SUCCESS) {
             if (debug.warningEnabled()) {
                 debug.warning("SMSEmbeddedLdapObject.search: Unable to " +
                     "search. startDN = " + startDN + ", filter = " +

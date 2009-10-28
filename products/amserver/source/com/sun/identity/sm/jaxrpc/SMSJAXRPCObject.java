@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.20 2009-04-02 19:41:00 veiming Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.21 2009-10-28 04:24:26 hengming Exp $
  *
  */
 
@@ -296,7 +296,8 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
      * Searchs the data store for objects that match the filter
      */
     public Iterator search(SSOToken token, String startDN, String filter,
-        Set excludes)
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder, Set excludes)
         throws SMSException, SSOException {
         throw new UnsupportedOperationException("Not supported.");
     }
@@ -304,11 +305,14 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
     /**
      * Searchs the data store for objects that match the filter
      */
-    public Set search(SSOToken token, String startDN, String filter)
-            throws SMSException, SSOException {
+    public Set search(SSOToken token, String startDN, String filter,
+        int numOfEntries, int timeLimit, boolean sortResults,
+        boolean ascendingOrder) throws SMSException, SSOException {
         try {
-            String[] objs = { token.getTokenID().toString(), startDN, filter };
-            return ((Set) client.send(client.encodeMessage("search", objs),
+            Object[] objs = { token.getTokenID().toString(), startDN, filter,
+                new Integer(numOfEntries), new Integer(timeLimit),
+                Boolean.valueOf(sortResults), Boolean.valueOf(ascendingOrder) };
+            return ((Set) client.send(client.encodeMessage("search2", objs),
                     Session.getLBCookie(token.getTokenID().toString()),
                     null));
         } catch (SSOException ssoe) {
