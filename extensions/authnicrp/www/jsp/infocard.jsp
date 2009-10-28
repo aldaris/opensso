@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: infocard.jsp,v 1.3 2009-09-26 20:36:08 ppetitsm Exp $
+   $Id: infocard.jsp,v 1.4 2009-10-28 08:35:26 ppetitsm Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
    Portions Copyrighted 2008 Patrick Petit Consulting
@@ -72,7 +72,7 @@ private static final String[] iCClaims = {"issuer", "issuerPolicy",
             <link rel="stylesheet" href="<%= ServiceURI %>/css/Infocard.css" type="text/css">
             <script type="text/javascript" src="<%= ServiceURI %>/js/browserVersion.js"></script>
             <script type="text/javascript" src="<%= ServiceURI %>/js/auth.js"></script>
-            <script type="text/javascript" src="<%= ServiceURI %>/js/Infocard.js"></script>
+            <script type="text/javascript" src="<%= ServiceURI %>/js/infocard.js"></script>
 
             <title><jato:text name="htmlTitle_Login" /></title>
 
@@ -173,10 +173,10 @@ private static final String[] iCClaims = {"issuer", "issuerPolicy",
                                             <td>
                                                 <div class="InformationCardsSupported">
                                                     <form name="infocardForm" onSubmit="InfocardSubmit(); return false;" method="post">
-                                                        <input type="image" src="<%= ServiceURI %>/images/Infocard_81x57.png"
+                                                        <input type="image" src="<%= ServiceURI %>/images/infocard_81x57.png"
                                                                value="Click me to send your card"
-                                                               onmouseover="this.src='<%= ServiceURI %>/images/Infocard_81x57_on.png';"
-                                                               onmouseout="this.src='<%= ServiceURI %>/images/Infocard_81x57.png';" />
+                                                               onmouseover="this.src='<%= ServiceURI %>/images/infocard_81x57_on.png';"
+                                                               onmouseout="this.src='<%= ServiceURI %>/images/infocard_81x57.png';" />
                                                     </form>
                                                 </div>
                                                 <div class="InformationCardsNotSupported">
@@ -193,7 +193,7 @@ private static final String[] iCClaims = {"issuer", "issuerPolicy",
                                                 <div class="InformationCardsNotSupported">
                                                     Your browser doesn't support Information Cards
                                                     <a href="http://informationcard.net/quick-overview"
-                                                       onclick="openLink(this.href)">
+                                                       onclick="openLink(this.href)"><br>
                                                     What are Information Cards?</a><br>
                                                     <a href="http://informationcard.net/selector-guide"
                                                        onclick="openLink(this.href)">

@@ -22,7 +22,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.txt,v 1.15 2009-09-15 10:45:37 ppetitsm Exp $
+$Id: README.txt,v 1.16 2009-10-28 08:35:27 ppetitsm Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 Portions Copyrighted 2008 Patrick Petit Consulting
@@ -147,12 +147,12 @@ below:
 3-  Install the authentication module in the OpenSSO instance.
     Invoke the following commands in sequence:
 
-    $ ssoadm create-svc -X amAuthInfocard.xml -u amadmin -f password
+    $ ssoadm create-svc -X amAuthInfocard.xml -u amadmin -f <password>
 
     $ ssoadm register-auth-module -a com.identarian.infocard.opensso.rp.Infocard \
-      -u amadmin -f password
+      -u amadmin -f <password>
     
-    Note: The file password (which mode must be read-only for the user
+    Note: The file <password> (which mode must be read-only for the user
     (i.e. -r--------) constains the amAdmin password
 
     Then, you will need to modify the iPlanetAMUserService service in order to enable
@@ -166,8 +166,11 @@ below:
 
     $ ssoadm create-svc -u amadmin -f password -X amUser.xml
 
-4 - Modify the LDAP schema to incorporate the authnicrp.ldif file. There are
-    multiple ways of doing it. Personaly, I have used Apache Directory Studio.
+4 - Modify the LDAP schema to incorporate the authnicrp.ldif attributes and
+    objectclass. There are multiple ways of doing it.
+    Personaly, I use Apache Directory Studio.
+    Another way is to modify the 99-user.ldif file manually to insert the
+    authnicrp's schema extension under <OPENSSO_INSTALL_DIR>/opends/config/schema.
 
 5 - Add the Information Card object class and attributes to the realm's data
     store.

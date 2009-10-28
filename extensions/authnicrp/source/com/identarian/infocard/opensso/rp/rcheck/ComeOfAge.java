@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ComeOfAge.java,v 1.2 2009-10-05 17:42:11 ppetitsm Exp $
+ * $Id: ComeOfAge.java,v 1.3 2009-10-28 08:35:24 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -37,7 +37,7 @@ import java.util.TimeZone;
 public class ComeOfAge implements RoleCheckPlugin {
 
     @Override
-    public boolean isIdentityMatchingRole(InfocardIdentity identity) {
+    public boolean isIdentityMatchingRole(InfocardIdentity identity, String role) {
 
         String claim;
 

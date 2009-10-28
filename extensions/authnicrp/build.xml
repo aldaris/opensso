@@ -77,7 +77,7 @@
         
         <!-- define opensso-root.dir property in this file or in private.properties
              if you build the module from Netbeans -->
-        <property name="opensso-root.dir" value="/Users/Patrick/opensso/" />
+        <property name="opensso-root.dir" value="/export/home/ppetit/domains/opensso/applications/j2ee-modules/opensso" />
         <property name="opensso-lib.dir" value="${opensso-root.dir}/WEB-INF/lib" />
         <property name="opensso-config.dir" value="${opensso-root.dir}/config/auth/" />
         <property name="opensso-images.dir" value="${opensso-root.dir}/images" />
@@ -94,10 +94,11 @@
         <copy file="xml/auth-module/Infocard.xml" todir="${opensso-config.dir}/default_en" />
         <copy file="www/jsp/infocardException.jsp" todir="${opensso-config.dir}/default" />
         <copy file="www/jsp/infocard.jsp" todir="${opensso-config.dir}/default" />
-        <copy file="www/js/Infocard.js" todir="${opensso-root.dir}/js" />
-        <copy file="www/css/Infocard.css" todir="${opensso-root.dir}/css" />
-        <copy file="www/images/Infocard_81x57.png" todir="${opensso-images.dir}" />
-        <copy file="www/images/Infocard_81x57_on.png" todir="${opensso-images.dir}" />
+        <copy file="www/js/infocard.js" todir="${opensso-root.dir}/js" />
+        <copy file="www/css/infocard.css" todir="${opensso-root.dir}/css" />
+        <copy file="www/images/infocard_81x57.png" todir="${opensso-images.dir}" />
+        <copy file="www/images/infocard_81x57_on.png" todir="${opensso-images.dir}" />
+        <copy file="www/images/ic-outline-icon-61x42.png" todir="${opensso-images.dir}" />
         <copy file="www/images/openssoex.gif" todir="${opensso-images.dir}" />
         <copy file="www/PrivacyPolicy.html" todir="${opensso-root.dir}" />
 

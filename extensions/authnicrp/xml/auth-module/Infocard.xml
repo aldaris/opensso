@@ -20,7 +20,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Infocard.xml,v 1.4 2009-10-05 17:42:12 ppetitsm Exp $
+   $Id: Infocard.xml,v 1.5 2009-10-28 08:35:25 ppetitsm Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
    Portions Copyrighted 2008 Patrick Petit Consulting
@@ -39,7 +39,7 @@ PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
             <Prompt> Password : </Prompt>
         </PasswordCallback>
     </Callbacks>
-    <Callbacks length="3" order="2" timeout="120"
+    <Callbacks length="3" order="2" timeout="120" img="/images/openssoex.gif"
                header="Here you can link your Information Card with an existing user account or create a new one.&lt;BR&gt;
                        Please enter a user ID and password and click 'Confirm', or click 'New Account'" >
         <NameCallback isRequired="true">
@@ -62,7 +62,7 @@ PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
             </OptionValues>
         </ConfirmationCallback>
     </Callbacks>
-    <Callbacks length="4" order="3" timeout="300"
+    <Callbacks length="4" order="3" timeout="300" img="/images/openssoex.gif"
             header="You are about to create a new user account using the claims of your Information Card.&lt;BR&gt;
                     Please choose a user ID and password or click 'cancel' to abort.&lt;BR&gt;
                     After you create your account, you will be able to login using your Information Card" >
@@ -89,7 +89,8 @@ PUBLIC "=//iPlanet//Authentication Module Properties XML Interface 1.0 DTD//EN"
             </OptionValues>
         </ConfirmationCallback>
     </Callbacks>
-    <Callbacks length="2" order="4" timeout="120" header="Self Registration" >
+    <Callbacks length="2" order="4" timeout="120" img="/images/openssoex.gif"
+    header="Self Registration" >
         <ChoiceCallback attribute="uid" >
             <Prompt>A user already exists with&lt;BR&gt;the user name you entered.&lt;BR&gt;Please choose
 one&lt;BR&gt;of the following user names,&lt;BR&gt;or create your own:

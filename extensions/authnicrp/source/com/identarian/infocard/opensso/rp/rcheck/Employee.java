@@ -17,21 +17,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleCheckPlugin.java,v 1.2 2009-10-28 08:35:24 ppetitsm Exp $
+ * $Id: Employee.java,v 1.1 2009-10-28 08:35:24 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
  */
-
 package com.identarian.infocard.opensso.rp.rcheck;
 
 import com.identarian.infocard.opensso.rp.InfocardIdentity;
+import com.identarian.infocard.opensso.rp.exception.InfocardIdentityException;
 
 /**
  *
  * @author Patrick
  */
-public interface RoleCheckPlugin {
+public class Employee implements RoleCheckPlugin {
 
-    public boolean isIdentityMatchingRole(InfocardIdentity identity, String role);
+    @Override
+    public boolean isIdentityMatchingRole(InfocardIdentity identity, String role) {
+
+        boolean result = true;
+        return result;
+    }
 }

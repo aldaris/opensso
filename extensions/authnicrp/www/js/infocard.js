@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Infocard.js,v 1.1 2009-07-08 08:59:29 ppetitsm Exp $
+ * $Id: infocard.js,v 1.1 2009-10-28 08:35:25 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
