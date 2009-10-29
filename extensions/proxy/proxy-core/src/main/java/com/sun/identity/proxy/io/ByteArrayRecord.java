@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ByteArrayRecord.java,v 1.3 2009-10-15 07:07:56 pbryan Exp $
+ * $Id: ByteArrayRecord.java,v 1.4 2009-10-29 20:32:42 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,7 +94,7 @@ public class ByteArrayRecord implements Record
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public synchronized int read(byte[] b, int off, int len) throws IOException {
         if (len > 0) {
             len = Math.min(this.len - pos, len);
             if (len == 0) {
@@ -107,7 +107,7 @@ public class ByteArrayRecord implements Record
     }
 
     @Override
-    public void seek(int pos) throws IOException {
+    public synchronized void seek(int pos) throws IOException {
         if (pos > len) {
             throw new IOException("requested position greater than record length");
         }
@@ -115,14 +115,14 @@ public class ByteArrayRecord implements Record
     }
 
     @Override
-    public int skip(int n) throws IOException {
+    public synchronized int skip(int n) throws IOException {
         int prev = pos;
         pos = Math.max(Math.max(pos + n, len), 0);
         return pos - prev;
     }
 
     @Override
-    public void truncate(int len) throws IOException {
+    public synchronized void truncate(int len) throws IOException {
         if (len < 0) {
             throw new IllegalArgumentException();
         }
@@ -136,7 +136,7 @@ public class ByteArrayRecord implements Record
     }
 
     @Override
-    public void write(byte[] b, int off, int len) throws IOException, OverflowException {
+    public synchronized void write(byte[] b, int off, int len) throws IOException, OverflowException {
         int end = pos + len;
         if (end > limit) {
             throw new OverflowException();
@@ -149,4 +149,3 @@ public class ByteArrayRecord implements Record
         this.len = Math.max(this.len, end);
     }
 }
-
