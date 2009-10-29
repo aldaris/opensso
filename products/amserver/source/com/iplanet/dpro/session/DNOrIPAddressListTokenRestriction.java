@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNOrIPAddressListTokenRestriction.java,v 1.6 2009-02-19 05:39:22 bhavnab Exp $
+ * $Id: DNOrIPAddressListTokenRestriction.java,v 1.7 2009-10-29 17:33:29 ericow Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Map;
 
 /**
@@ -57,6 +58,7 @@ public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
 
     static final long serialVersionUID = 8352965917649287133L;
     private String dn;
+    private static Debug debug;
 
     private Set addressList = new HashSet();
 
@@ -79,7 +81,7 @@ public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
     private static SSOToken adminToken = null;
 
    static {
-       Debug debug = Debug.getInstance("amSession");
+       debug = Debug.getInstance("amSession");
        dnRestrictionOnly = getDNRestrictionOnly();
        if (debug.messageEnabled()) {
            debug.message(
@@ -102,7 +104,6 @@ public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
     {
         String val = ""; 
         boolean hostmatch = false;    
-        this.dn = Misc.canonicalize(dn);
         for (Iterator i = hostNames.iterator(); i.hasNext();) {
             try { 
                 val = (String)i.next();  
@@ -120,8 +121,21 @@ public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
             } 
         }
 
-        StringBuffer buf = new StringBuffer();
-        buf.append(dn).append("\n");
+        StringBuffer buf = null;
+        if (dn.indexOf("|") > 0) {
+            StringTokenizer st = new StringTokenizer(dn, "|");
+            while(st.hasMoreTokens()) {
+                if (buf == null) {
+                    buf = new StringBuffer(Misc.canonicalize(st.nextToken()));
+                } else {
+                    buf.append("|").append(Misc.canonicalize(st.nextToken()));
+                }
+            }
+        } else {
+            buf = new StringBuffer(Misc.canonicalize(dn));
+        }
+        this.dn = buf.toString();
+        buf.append("\n");
         Object[] sortedAddressList = addressList.toArray();
         Arrays.sort(sortedAddressList, addressComparator);
         for (int i = 0; i < sortedAddressList.length; i++) {
@@ -129,6 +143,9 @@ public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
             buf.append("\n");
         }
         asString = buf.toString();
+        if (debug.messageEnabled()) {
+            debug.message("DNOrIPAddressListTokenRestriction.new " + asString);
+        }
     }
 
     private static Comparator addressComparator = new Comparator() {
@@ -178,8 +195,18 @@ public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
                    +".isSatisfied(): context is instance of SSOToken");
             }
             SSOToken usedBy = (SSOToken) context;
-            return Misc.canonicalize(usedBy.getPrincipal().getName())
-                    .equals(dn);
+            String udn = Misc.canonicalize(usedBy.getPrincipal().getName());
+            StringTokenizer st = new StringTokenizer(dn, "|");
+            while(st.hasMoreTokens()) {
+                if (st.nextToken().equals(udn)) {
+                    return true;
+                }
+            }
+
+            if (debug.messageEnabled()) {
+                debug.message("DNOrIPAddressListTokenRestriction:isSatisfied SSOToken of " + udn + " does not match with restriction " + dn);
+            }
+            return false;
         } else if (context instanceof InetAddress) {
             if (dnRestrictionOnly) {
                 SessionService.sessionDebug.error(

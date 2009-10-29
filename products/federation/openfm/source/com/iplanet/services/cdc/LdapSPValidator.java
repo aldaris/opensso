@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LdapSPValidator.java,v 1.5 2008-08-28 22:51:08 manish_rustagi Exp $
+ * $Id: LdapSPValidator.java,v 1.6 2009-10-29 17:35:07 ericow Exp $
  *
  */
 
@@ -158,7 +158,7 @@ public class LdapSPValidator implements SPValidator {
             }
 
             // Obtain the DNs and hostlists from the entries
-            String agentDN = null;
+            StringBuffer agentDN = null;
             ArrayList hostnames = new ArrayList();
             boolean gotoUrlValid = false;
             URL gotoUrl = new URL(gotoURL);
@@ -186,7 +186,12 @@ public class LdapSPValidator implements SPValidator {
                             if (validateGotoUrl(attrValues,hostnames, gotoHost, 
                                 gotoProtocol, gotoPort)
                             ) {
-                                agentDN = IdUtils.getDN(amid);
+                                if (agentDN == null) {
+                                    agentDN = new StringBuffer(50);
+                                } else {
+                                    agentDN.append("|");
+                                }
+                                agentDN.append(IdUtils.getDN(amid));
                                 gotoUrlValid = true;
                             }
                         }
@@ -212,8 +217,11 @@ public class LdapSPValidator implements SPValidator {
                     rootPrefix + " is: " + agentDN + " " + hostnames);
             }
 
-            return new DNOrIPAddressListTokenRestriction(agentDN, hostnames);
+            return new DNOrIPAddressListTokenRestriction(agentDN.toString(),
+                    hostnames);
        } catch (Exception ex) {
+            CDCServlet.debug.error(
+                    "Invalid Agent: Could not get agent for the realm", ex);
             throw (new Exception(
                          "Invalid Agent: Could not get agent for the realm"));
        }
