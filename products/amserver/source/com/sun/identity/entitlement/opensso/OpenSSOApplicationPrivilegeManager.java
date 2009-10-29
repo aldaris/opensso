@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.2 2009-10-22 21:03:34 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.3 2009-10-29 19:05:19 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -37,14 +37,17 @@ import com.sun.identity.entitlement.ApplicationPrivilegeManager;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Evaluator;
 import com.sun.identity.entitlement.IPrivilege;
+import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ResourceMatch;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
+import com.sun.identity.entitlement.SubjectImplementation;
 import com.sun.identity.entitlement.TimeCondition;
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.entitlement.util.SearchFilter;
@@ -176,7 +179,16 @@ public class OpenSSOApplicationPrivilegeManager extends
             Entitlement entitlement = new Entitlement(APPL_NAME, res,
                 getActionValues(appPrivilege.getActionValues()));
             p.setEntitlement(entitlement);
-            p.setSubject(appPrivilege.getSubject());
+            
+            Set<SubjectImplementation> subjects = appPrivilege.getSubjects();
+            Set<EntitlementSubject> eSubjects = new 
+                HashSet<EntitlementSubject>();
+            for (SubjectImplementation i : subjects) {
+                eSubjects.add((EntitlementSubject)i);
+            }                        
+            OrSubject orSubject = new OrSubject(eSubjects);
+            p.setSubject(orSubject);
+
             p.setCondition(appPrivilege.getCondition());
             return p;
         } catch (UnsupportedEncodingException ex) {
@@ -244,7 +256,21 @@ public class OpenSSOApplicationPrivilegeManager extends
             getApplicationPrivilegeResourceNames(resourceNames);
         ap.setApplicationResources(mapAppToRes);
         ap.setActionValues(getActionValues(ent.getActionValues()));
-        ap.setSubject(p.getSubject());
+
+        Set<SubjectImplementation> subjects = new
+            HashSet<SubjectImplementation>();
+        if (p.getSubject() instanceof OrSubject) {
+            OrSubject orSubject = (OrSubject)p.getSubject();
+            for (EntitlementSubject es : orSubject.getESubjects()) {
+                if (es instanceof SubjectImplementation) {
+                    subjects.add((SubjectImplementation)es);
+                }
+            }
+        } else if (p.getSubject() instanceof SubjectImplementation) {
+            subjects.add((SubjectImplementation)p.getSubject());
+        }
+
+        ap.setSubject(subjects);
         EntitlementCondition cond = p.getCondition();
         if (cond instanceof TimeCondition) {
             ap.setCondition((TimeCondition)cond);

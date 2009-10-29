@@ -22,10 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementSubjectImpl.java,v 1.1 2009-08-19 05:40:32 veiming Exp $
+ * $Id: EntitlementSubjectImpl.java,v 1.2 2009-10-29 19:05:18 veiming Exp $
  */
 package com.sun.identity.entitlement;
-
 
 import java.security.Principal;
 import java.util.Set;
@@ -36,7 +35,7 @@ import org.json.JSONException;
 /**
  * EntitlementSubject to represent group identity for membership check.
  */
-public abstract class EntitlementSubjectImpl implements EntitlementSubject {
+public abstract class EntitlementSubjectImpl implements SubjectImplementation {
     private String uuid;
     private String pSubjectName;
     private boolean exclusive;

@@ -22,30 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VirtualSubject.java,v 1.2 2009-10-29 19:05:19 veiming Exp $
+ * $Id: SubjectImplementation.java,v 1.1 2009-10-29 19:05:19 veiming Exp $
  */
+
 
 package com.sun.identity.entitlement;
 
+/**
+ * Maker to indicate that the class is a actual entitlement subject
+ * and not a logical operator.
+ */
+public interface SubjectImplementation extends EntitlementSubject {
 
-public abstract class VirtualSubject implements SubjectImplementation {
-    public enum VirtualId {
-        ANY_USER,
-        AUTHENTICATED;
-
-        public VirtualSubject newVirtualSubject() {
-            switch (this) {
-                case ANY_USER:
-                    return new AnyUserSubject();
-
-                case AUTHENTICATED:
-                    return new AuthenticatedESubject();
-
-                default:
-                    throw new AssertionError("undefined virtual ID:" + this);
-            }
-        }
-    }
-
-    public abstract VirtualId getVirtualId();
 }

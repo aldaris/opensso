@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationPrivilege.java,v 1.1 2009-10-14 03:18:37 veiming Exp $
+ * $Id: ApplicationPrivilege.java,v 1.2 2009-10-29 19:05:18 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -44,7 +44,7 @@ public class ApplicationPrivilege {
     private Map<String, Set<String>> applicationResources =
         new HashMap<String, Set<String>>();
     private PossibleAction actions;
-    private EntitlementSubject eSubject;
+    private Set<SubjectImplementation> subjects;
     private EntitlementCondition eCondition;
 
     private String createdBy;
@@ -62,20 +62,14 @@ public class ApplicationPrivilege {
      * @param eSubject Entitlement subject
      * @throws EntitlementException if subject is null.
      */
-    public void setSubject(EntitlementSubject eSubject)
+    public void setSubject(Set<SubjectImplementation> entitlementSubjects)
         throws EntitlementException {
-        validateSubject(eSubject);
-         this.eSubject = eSubject;
-    }
+        subjects = new HashSet<SubjectImplementation>();
 
-    private void validateSubject(EntitlementSubject sbj)
-        throws EntitlementException {
-        if (sbj == null) {
-            sbj = Privilege.NOT_SUBJECT;
-        } else if (!sbj.isIdentity()) {
-            Object[] params = {name};
-            throw new EntitlementException(310, params);
+        if (entitlementSubjects == null) {
+            throw new EntitlementException(327);
         }
+        subjects.addAll(entitlementSubjects);
     }
 
     /**
@@ -109,8 +103,8 @@ public class ApplicationPrivilege {
      * Returns the eSubject the privilege
      * @return eSubject of the privilege.
      */
-    public EntitlementSubject getSubject() {
-        return eSubject;
+    public Set<SubjectImplementation> getSubjects() {
+        return subjects;
     }
 
     /**
