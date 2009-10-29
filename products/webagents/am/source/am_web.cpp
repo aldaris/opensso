@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.53 2009-10-15 22:35:32 krishna_indigo Exp $
+ * $Id: am_web.cpp,v 1.54 2009-10-29 18:59:02 subbae Exp $
  *
  */
 
@@ -4925,52 +4925,6 @@ get_token_from_assertion(
 }
 
 /**
- * Remove all cdsso query parameters from the given argument which can be
- * either a query or url string. The method argument is reserved, currently
- * not used.
- * NOTE that the content of query (*query) will be rewritten with
- * cdsso query parameters removed.
- * Returns AM_SUCCESS if all remove calls returned with AM_SUCCESS.
- * If any remove calls returned failure, the first failure status is returned.
- */
-static am_status_t
-remove_cdsso_params_from_query(char **query,
-                               am_web_req_method_t method,
-                               void* agent_config)
-{
-    const char *thisfunc = "remove_cdsso_params_from_query()";
-    am_status_t sts = AM_SUCCESS;
-    am_status_t remove_sts = AM_SUCCESS;
-    const char *cookieName = am_web_get_cookie_name(agent_config);
-    const char *cdsso_params[] = {
-		    cookieName,
-		    "RequestID",
-		    "MajorVersion",
-		    "MinorVersion",
-		    "ProviderID",
-		    "IssueInstant",
-		    "ForceAuthn",
-		    "IsPassive",
-		    "Federate",
-		    NULL};
-    unsigned int i = 0;
-
-    if (query != NULL && *query != NULL) {
-	for (i = 0; cdsso_params[i] != NULL; i++) {
-	    remove_sts = am_web_remove_parameter_from_query(
-				*query, cdsso_params[i], query);
-	    if (remove_sts != AM_SUCCESS) {
-		am_web_log_debug("%s: Error removing query parameter %s "
-				 "from %s.", thisfunc, cdsso_params[i], *query);
-		if (sts == AM_SUCCESS)
-		    sts = remove_sts;
-	    }
-	}
-    }
-    return sts;
-}
-
-/**
  * If new_cookie_header_val_ptr contains NULL it means nothing was done,
  * i.e. if cookie was not found in header and it has empty value.
  * If new_cookie_header_val_ptr contains the original cookie header's
@@ -5813,19 +5767,6 @@ process_request(am_web_request_params_t *req_params,
                          "checking access.", thisfunc);
         result = AM_WEB_RESULT_ERROR;
     } else {
-        // Now process access check.
-        if (cdsso_enabled == B_TRUE) {
-            // remove any remaining cdsso parameters from url and query
-            // even in non cdsso mode.
-            (void)remove_cdsso_params_from_query(&req_params->url,
-                        req_params->method, agent_config);
-            (void)remove_cdsso_params_from_query(&req_params->query,
-                        req_params->method, agent_config);
-            am_web_log_debug("%s: removed cdsso params from url and query. "
-                        "New values: url [%s] query [%s]",
-                        thisfunc, req_params->url,
-                        req_params->query==NULL ? "NULL" : req_params->query);
-        }
         // set orig_method to the method in the request, if
         // it has not been set to the value of the original method
         // query parameter from CDC servlet.
