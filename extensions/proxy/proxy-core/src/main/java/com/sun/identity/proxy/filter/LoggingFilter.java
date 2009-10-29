@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoggingFilter.java,v 1.1 2009-10-22 01:18:22 pbryan Exp $
+ * $Id: LoggingFilter.java,v 1.2 2009-10-29 20:32:09 pbryan Exp $
  *
  * Copyright 2009 Sun Microsystems Inc. All Rights Reserved
  */
@@ -135,20 +135,18 @@ public class LoggingFilter extends Filter
      * @param id the exchange ID to tag the request in the log.
      * @throws IOException if an I/O exception occurs.
      */
-    private void request(Request request, String id) throws IOException {
+    private synchronized void request(Request request, String id) throws IOException {
         OutputStream out = begin("Request", id);
-        synchronized(out) { // keep threads from overlapping writes
-            out.write(bytes(request.method));
-            out.write(SPACE);
-            out.write(bytes(request.uri != null ? request.uri.toString() : null));
-            out.write(SPACE);
-            out.write(bytes(request.version));
-            out.write(NEWLINE);
-            headers(request, out);
-            out.write(NEWLINE);
-            entity(request, out);
-            end(out);
-        }
+        out.write(bytes(request.method));
+        out.write(SPACE);
+        out.write(bytes(request.uri != null ? request.uri.toString() : null));
+        out.write(SPACE);
+        out.write(bytes(request.version));
+        out.write(NEWLINE);
+        headers(request, out);
+        out.write(NEWLINE);
+        entity(request, out);
+        end(out);
     }
 
     /**
@@ -158,20 +156,18 @@ public class LoggingFilter extends Filter
      * @param id the exchange ID to tag the request in the log.
      * @throws IOException if an I/O exception occurs.
      */
-    private void response(Response response, String id) throws IOException {
+    private synchronized void response(Response response, String id) throws IOException {
         OutputStream out = begin("Response", id);
-        synchronized(out) { // keep threads from overlapping
-            out.write(bytes(response.version));
-            out.write(SPACE);
-            out.write(bytes(Integer.toString(response.status)));
-            out.write(SPACE);
-            out.write(bytes(response.reason));
-            out.write(NEWLINE);
-            headers(response, out);
-            out.write(NEWLINE);
-            entity(response, out);
-            end(out);
-        }
+        out.write(bytes(response.version));
+        out.write(SPACE);
+        out.write(bytes(Integer.toString(response.status)));
+        out.write(SPACE);
+        out.write(bytes(response.reason));
+        out.write(NEWLINE);
+        headers(response, out);
+        out.write(NEWLINE);
+        entity(response, out);
+        end(out);
     }
     
     /**
