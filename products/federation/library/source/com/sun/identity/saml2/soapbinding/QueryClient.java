@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryClient.java,v 1.8 2009-09-22 22:49:28 madan_ranganath Exp $
+ * $Id: QueryClient.java,v 1.9 2009-10-29 00:19:21 madan_ranganath Exp $
  *
  */
 
@@ -83,7 +83,6 @@ import org.w3c.dom.NodeList;
 public class QueryClient {
     public static Debug debug = Debug.getInstance("libSAML2");
     private static SAML2MetaManager saml2MetaManager = null;
-    static KeyProvider keyProvider = KeyUtil.getKeyProviderInstance();
     static {
         try {
             saml2MetaManager =
@@ -826,6 +825,7 @@ public class QueryClient {
         String realm, String pepEntityID, boolean includeCert) throws
         SAML2Exception {
 
+        KeyProvider keyProvider = KeyUtil.getKeyProviderInstance();
         XACMLAuthzDecisionQueryConfigElement pepConfig =
                               getPEPConfig(realm,pepEntityID);
 
