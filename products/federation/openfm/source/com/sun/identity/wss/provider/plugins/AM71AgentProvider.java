@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AM71AgentProvider.java,v 1.1 2008-10-08 22:53:58 mallas Exp $
+ * $Id: AM71AgentProvider.java,v 1.2 2009-10-29 19:33:03 mrudul_uchil Exp $
  *
  */
  
@@ -104,12 +104,27 @@ public class AM71AgentProvider extends ProviderConfig {
         this.providerType = providerType;
         this.token = token;
 
+        if(debug.messageEnabled()) {
+           debug.message("AM71AgentProvider: providerName = " + providerName +
+               " providerType = " + providerType);
+        }
+
+        if (providerType.equals(ProviderConfig.WSP)) {
+            providerName = SystemConfigurationUtil.getProperty(
+                "com.sun.identity.wss.provider.defaultWSP", providerName);
+
+            if(debug.messageEnabled()) {
+                debug.message("AM71AgentProvider: using default WSP providerName = "
+                    + providerName);
+            }
+        }
+
         // Obtain the provider from Agent profile
         try {
             if (idRepo == null) {
                 idRepo = new AMIdentityRepository(token, "/");
             }
-
+ 
             if (agentConfigAttribute == null) {
                 agentConfigAttribute = new HashSet();
                 agentConfigAttribute.add(AGENT_CONFIG_ATTR);
@@ -158,7 +173,8 @@ public class AM71AgentProvider extends ProviderConfig {
 
     private void setConfig(String attr, String value) {
  
-        debug.message("Attribute name: " + attr + "Value: "+ value);
+        debug.message("AM71AgentProvider:Attribute name: " + attr + "Value: "
+            + value);
         this.encryptionAlgorithm = "AES";
         this.encryptionStrength = 128;
         
@@ -378,7 +394,8 @@ public class AM71AgentProvider extends ProviderConfig {
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,
                     providerName + providerType, IdType.AGENT, "/", null);
-                debug.message("Attributes to be stored: " + attributes);
+                debug.message("AM71AgentProvider:Attributes to be stored: "
+                    + attributes);
                 id.setAttributes(attributes);
                 id.store();
             } else {
@@ -390,7 +407,7 @@ public class AM71AgentProvider extends ProviderConfig {
                     providerName + providerType, attributes);
             }
         } catch (Exception e) {
-            debug.error("AgentProvider.store: Unable to get idRepo", e);
+            debug.error("AM71AgentProvider.store: Unable to get idRepo", e);
             throw (new ProviderException("idRepo exception: "
                                          + e.getMessage()));
         }
