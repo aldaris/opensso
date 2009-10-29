@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultADFSPartnerAccountMapper.java,v 1.4 2008-06-25 05:50:03 qcheng Exp $
+ * $Id: DefaultADFSPartnerAccountMapper.java,v 1.5 2009-10-29 00:03:49 exu Exp $
  *
  */
 
@@ -36,9 +36,9 @@ import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.common.WSFederationException;
+import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
-import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,7 +78,8 @@ public class DefaultADFSPartnerAccountMapper
         IDPSSOConfigElement idpConfig = null;
         try {
             idpConfig = 
-                WSFederationMetaManager.getIDPSSOConfig(realm, remoteEntityID);
+                WSFederationUtils.getMetaManager().getIDPSSOConfig(
+                    realm, remoteEntityID);
         } catch (WSFederationMetaException wsfme) {
             throw new WSFederationException(wsfme);
         }

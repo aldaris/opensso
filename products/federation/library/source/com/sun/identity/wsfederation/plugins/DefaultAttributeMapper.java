@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAttributeMapper.java,v 1.3 2008-06-25 05:48:06 qcheng Exp $
+ * $Id: DefaultAttributeMapper.java,v 1.4 2009-10-28 23:58:59 exu Exp $
  *
  */
 
@@ -37,7 +37,6 @@ import com.sun.identity.wsfederation.common.WSFederationException;
 import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
-import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 
 import java.util.List;
@@ -95,13 +94,12 @@ public class DefaultAttributeMapper {
         try {
             BaseConfigType config = null;
             if(role.equals(SP)) {
-               config = WSFederationMetaManager.getSPSSOConfig(realm, 
-                   hostEntityID);
+               config = WSFederationUtils.getMetaManager().getSPSSOConfig(
+                   realm, hostEntityID);
             } else {
-               config = WSFederationMetaManager.getIDPSSOConfig(realm, 
-                   hostEntityID);
+               config = WSFederationUtils.getMetaManager().getIDPSSOConfig(
+                   realm, hostEntityID);
             }
-
 
             if(config == null) {
                if(debug.warningEnabled()) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataModelImpl.java,v 1.4 2008-10-29 00:02:38 veiming Exp $
+ * $Id: CreateMetaDataModelImpl.java,v 1.5 2009-10-29 00:03:51 exu Exp $
  *
  */
 
@@ -151,11 +151,13 @@ public class CreateMetaDataModelImpl extends AMModelBase
             if (federationID == null) {
                 federationID = WSFederationConstants.DEFAULT_FEDERATION_ID;
             }
-            WSFederationMetaManager.createFederation(realm, elt);
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                getUserSSOToken());
+            metaManager.createFederation(realm, elt);
             
             FederationConfigElement cfg = (FederationConfigElement)
                 WSFederationMetaUtils.convertStringToJAXB(extendedData);
-            WSFederationMetaManager.createEntityConfig(realm, cfg);
+            metaManager.createEntityConfig(realm, cfg);
         } catch (WSFederationMetaException ex) {
             throw new AMConsoleException(ex.getMessage());
         } catch (JAXBException ex) {

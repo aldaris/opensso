@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListCircleOfTrusts.java,v 1.7 2009-07-30 05:35:35 veiming Exp $
+ * $Id: ListCircleOfTrusts.java,v 1.8 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -58,7 +58,6 @@ public class ListCircleOfTrusts extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        superAdminUserValidation();
 
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         IOutput outputWriter = getOutputWriter();
@@ -68,7 +67,8 @@ public class ListCircleOfTrusts extends AuthenticatedCommand {
             "ATTEMPT_LIST_COTS", params);
         
         try {
-            CircleOfTrustManager cotManager = new CircleOfTrustManager();
+            CircleOfTrustManager cotManager = new CircleOfTrustManager(
+                ssoToken);
             Set members = cotManager.getAllCirclesOfTrust(realm);
             
             if ((members == null) || members.isEmpty()) {

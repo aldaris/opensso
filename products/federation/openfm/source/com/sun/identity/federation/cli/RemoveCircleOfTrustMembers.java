@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveCircleOfTrustMembers.java,v 1.5 2009-07-30 05:35:35 veiming Exp $
+ * $Id: RemoveCircleOfTrustMembers.java,v 1.6 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -58,7 +58,6 @@ public class RemoveCircleOfTrustMembers extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        superAdminUserValidation();
 
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
@@ -70,7 +69,8 @@ public class RemoveCircleOfTrustMembers extends AuthenticatedCommand {
             "ATTEMPT_REMOVE_COT_MEMBER", params);
         
         try {
-            CircleOfTrustManager cotManager = new CircleOfTrustManager();
+            CircleOfTrustManager cotManager = new CircleOfTrustManager(
+                ssoToken);
             cotManager.removeCircleOfTrustMember(realm,cot,spec,entityID);
             
             Object[] objs = {cot, entityID, realm};

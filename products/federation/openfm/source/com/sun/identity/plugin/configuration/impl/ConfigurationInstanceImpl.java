@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationInstanceImpl.java,v 1.11 2008-08-06 17:29:25 exu Exp $
+ * $Id: ConfigurationInstanceImpl.java,v 1.12 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -65,7 +65,9 @@ public class ConfigurationInstanceImpl implements ConfigurationInstance {
     private boolean hasOrgSchema = false;
     private static final int SUBCONFIG_PRIORITY = 0;
     private static final String RESOURCE_BUNDLE = "fmConfigurationService";
-    static Debug debug = Debug.getInstance("libPlugins");;
+    static Debug debug = Debug.getInstance("libPlugins");
+
+    private SSOToken ssoToken;
 
     static {
         serviceNameMap = new HashMap();
@@ -87,6 +89,12 @@ public class ConfigurationInstanceImpl implements ConfigurationInstance {
         serviceNameMap.put("SAML2_CONFIG", "sunFAMSAML2Configuration"); 
     }
 
+    private SSOToken getSSOToken() {
+        return (ssoToken != null) ? ssoToken :
+            (SSOToken)AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+    }
+
     /**
      * Initializer.
      * @param componentName Name of the components, e.g. SAML1, SAML2, ID-FF
@@ -101,9 +109,12 @@ public class ConfigurationInstanceImpl implements ConfigurationInstance {
             throw new ConfigurationException(RESOURCE_BUNDLE,
                 "componentNameUnsupported", null);
         }
+        if ((session != null) && (session instanceof SSOToken)) {
+            ssoToken = (SSOToken)session;
+        }
+
         try {
-            SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+            SSOToken adminToken = getSSOToken();
             ssm = new ServiceSchemaManager(serviceName, adminToken);
             ServiceSchema oss = ssm.getOrganizationSchema();
             if (oss != null) {
@@ -201,8 +212,7 @@ public class ConfigurationInstanceImpl implements ConfigurationInstance {
 
                 Map retMap = ss.getAttributeDefaults();
                 if (componentName.equals("PLATFORM")) {
-                    SSOToken token = (SSOToken) AccessController.doPrivileged(
-                        AdminTokenAction.getInstance());
+                    SSOToken token = getSSOToken();
                     retMap.put(Constants.PLATFORM_LIST, 
                         ServerConfiguration.getServerInfo(token));
                     retMap.put(Constants.SITE_LIST, 

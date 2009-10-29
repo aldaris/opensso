@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninResponse.java,v 1.6 2008-12-12 01:51:41 superpat7 Exp $
+ * $Id: RPSigninResponse.java,v 1.7 2009-10-28 23:59:00 exu Exp $
  *
  */
 
@@ -120,10 +120,11 @@ public class RPSigninResponse extends WSFederationAction {
         String metaAlias = 
             WSFederationMetaUtils.getMetaAliasByUri(requestURL);
         realm = WSFederationMetaUtils.getRealmByMetaAlias(metaAlias);
+        WSFederationMetaManager metaManager =
+            WSFederationUtils.getMetaManager();
         String spEntityId = null;
         try {
-            spEntityId = 
-                WSFederationMetaManager.getEntityByMetaAlias(metaAlias);
+            spEntityId = metaManager.getEntityByMetaAlias(metaAlias);
         } catch (WSFederationException wsfe) {
             String[] data = {wsfe.getLocalizedMessage(), metaAlias, realm};
             LogUtil.error(Level.INFO,
@@ -140,7 +141,7 @@ public class RPSigninResponse extends WSFederationAction {
         }
         
         SPSSOConfigElement spssoconfig =
-                WSFederationMetaManager.getSPSSOConfig(realm, spEntityId);
+                metaManager.getSPSSOConfig(realm, spEntityId);
 
         int timeskew = SAML2Constants.ASSERTION_TIME_SKEW_DEFAULT;
         String timeskewStr = WSFederationMetaUtils.getAttribute(spssoconfig,
@@ -180,7 +181,7 @@ public class RPSigninResponse extends WSFederationAction {
                 getString("nullUserID"));
         }        
 
-        String idpEntityId = WSFederationMetaManager.getEntityByTokenIssuerName(
+        String idpEntityId = metaManager.getEntityByTokenIssuerName(
             realm, rstr.getRequestedSecurityToken().getIssuer());
         List attrs = rstr.getRequestedSecurityToken().getAttributes();
 

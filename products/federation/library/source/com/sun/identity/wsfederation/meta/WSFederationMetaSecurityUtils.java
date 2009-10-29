@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaSecurityUtils.java,v 1.5 2009-06-09 00:24:30 madan_ranganath Exp $
+ * $Id: WSFederationMetaSecurityUtils.java,v 1.6 2009-10-28 23:58:59 exu Exp $
  *
  */
 
@@ -55,6 +55,7 @@ import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.key.KeyUtil;
 
 import com.sun.identity.wsfederation.jaxb.entityconfig.AttributeType;
 import com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement;
@@ -63,8 +64,6 @@ import com.sun.identity.wsfederation.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.TokenSigningKeyInfoElement;
-import com.sun.identity.saml2.key.KeyUtil;
-import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -354,7 +353,7 @@ public final class WSFederationMetaSecurityUtils {
             } catch (Exception ex) {
                 debug.error(classMethod, ex);
                 throw new WSFederationMetaException(
-                    Locale.getString(WSFederationUtils.bundle,
+                    Locale.getString(WSFederationMetaUtils.bundle,
                     "verify_fail", objs) + "\n" + ex.getMessage());
             }
         }
@@ -464,17 +463,18 @@ public final class WSFederationMetaSecurityUtils {
     public static void updateProviderKeyInfo(String realm,
         String entityID, String certAlias, boolean isIDP)
         throws WSFederationMetaException {
+        WSFederationMetaManager metaManager = new WSFederationMetaManager();
         FederationConfigElement config =
-            WSFederationMetaManager.getEntityConfig(realm, entityID);
+            metaManager.getEntityConfig(realm, entityID);
         if (!config.isHosted()) {
             String[] args = {entityID, realm};
             throw new WSFederationMetaException("entityNotHosted", args);
         }
         FederationElement desp = 
-            WSFederationMetaManager.getEntityDescriptor(realm, entityID);
+            metaManager.getEntityDescriptor(realm, entityID);
         if (isIDP) {
             IDPSSOConfigElement idpConfig =
-                WSFederationMetaManager.getIDPSSOConfig(realm, entityID);
+                metaManager.getIDPSSOConfig(realm, entityID);
             if ((idpConfig == null) || (desp == null)) {
                 String[] args = {entityID, realm};
                 throw new WSFederationMetaException("entityNotIDP", args);
@@ -496,7 +496,7 @@ public final class WSFederationMetaSecurityUtils {
             }
         } else {
             SPSSOConfigElement spConfig =
-                WSFederationMetaManager.getSPSSOConfig(realm, entityID);
+                metaManager.getSPSSOConfig(realm, entityID);
             if ((spConfig == null) || (desp == null)) {
                 String[] args = {entityID, realm};
                 throw new WSFederationMetaException("entityNotSP", args);
@@ -517,8 +517,8 @@ public final class WSFederationMetaSecurityUtils {
                         SAML2Constants.SIGNING_CERT_ALIAS, value);
             }
         }
-        WSFederationMetaManager.setFederation(realm, desp);
-        WSFederationMetaManager.setEntityConfig(realm, config);
+        metaManager.setFederation(realm, desp);
+        metaManager.setEntityConfig(realm, config);
     }
 
     private static void updateKeyDescriptor(FederationElement desp,

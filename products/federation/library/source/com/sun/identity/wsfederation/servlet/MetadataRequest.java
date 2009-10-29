@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MetadataRequest.java,v 1.1 2008-08-27 19:00:07 superpat7 Exp $
+ * $Id: MetadataRequest.java,v 1.2 2009-10-28 23:59:00 exu Exp $
  *
  */
 
@@ -64,9 +64,11 @@ public class MetadataRequest extends WSFederationAction {
             WSFederationConstants.METADATA_URL_PREFIX).length();
         String suffix = request.getRequestURI().substring(prefixLength);
         
+        WSFederationMetaManager metaManager = 
+            WSFederationUtils.getMetaManager();
         if ( suffix.equals(WSFederationConstants.METADATA_URL_SUFFIX) ) {
             // No entity ID in request - return first defined
-            List providers = WSFederationMetaManager.getAllHostedEntities(null);
+            List providers = metaManager.getAllHostedEntities(null);
             
             if ((providers != null) && !providers.isEmpty()) {
                 entityId = (String)providers.iterator().next();
@@ -85,7 +87,7 @@ public class MetadataRequest extends WSFederationAction {
             realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
             
             entityId = 
-                WSFederationMetaManager.getEntityByMetaAlias(metaAlias);        
+                metaManager.getEntityByMetaAlias(metaAlias);        
             
             if ( entityId==null || entityId.length()==0 )
             {
@@ -96,7 +98,7 @@ public class MetadataRequest extends WSFederationAction {
         }
 
         FederationElement fedElem = 
-            WSFederationMetaManager.getEntityDescriptor(realm, entityId);
+            metaManager.getEntityDescriptor(realm, entityId);
 
         String metaXML = null;
         try {

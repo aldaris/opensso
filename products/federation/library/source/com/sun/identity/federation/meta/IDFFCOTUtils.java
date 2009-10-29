@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCOTUtils.java,v 1.5 2008-12-18 20:08:52 qcheng Exp $
+ * $Id: IDFFCOTUtils.java,v 1.6 2009-10-28 23:58:57 exu Exp $
  *
  */
 package com.sun.identity.federation.meta;
@@ -49,10 +49,11 @@ public class IDFFCOTUtils {
     
     static final Debug debug = IDFFMetaUtils.debug;
     static final String COT_LIST = COTConstants.COT_LIST;
-    
+    private Object callerSession = null; 
     
     /** Creates a new instance of IDFFCOTUtils */
-    public IDFFCOTUtils() {
+    public IDFFCOTUtils(Object callerToken) {
+        callerSession = callerToken;
     }
     
     
@@ -72,7 +73,7 @@ public class IDFFCOTUtils {
     public void updateEntityConfig(String realm, String cotName,String entityID)
     throws IDFFMetaException , JAXBException {
         String classMethod = "IDFFCOTUtils.updateEntityConfig: ";
-        IDFFMetaManager idffMetaMgr = new IDFFMetaManager(null);
+        IDFFMetaManager idffMetaMgr = new IDFFMetaManager(callerSession);
         ObjectFactory objFactory = new ObjectFactory();
         // Check whether the entity id existed in the DS
         EntityDescriptorElement entityDesc =
@@ -150,7 +151,7 @@ public class IDFFCOTUtils {
         String realm, String cotName,String entityID)
         throws IDFFMetaException, JAXBException {
         String classMethod = "IDFFCOTUtils.removeFromEntityConfig: ";
-        IDFFMetaManager idffMetaMgr = new IDFFMetaManager(null);
+        IDFFMetaManager idffMetaMgr = new IDFFMetaManager(callerSession);
         // Check whether the entity id existed in the DS
         EntityDescriptorElement entityDesc =
                 idffMetaMgr.getEntityDescriptor(realm, entityID);

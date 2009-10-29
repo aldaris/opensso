@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.14 2009-07-30 05:35:35 veiming Exp $
+ * $Id: ImportMetaData.java,v 1.15 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -93,7 +93,6 @@ public class ImportMetaData extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        superAdminUserValidation();
         
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         metadata = getStringOptionValue(FedCLIConstants.ARGUMENT_METADATA);
@@ -154,7 +153,8 @@ public class ImportMetaData extends AuthenticatedCommand {
         throws CLIException {
         if ((cot != null) && (cot.length() > 0))  {
             try {
-                CircleOfTrustManager cotManager = new CircleOfTrustManager();
+                CircleOfTrustManager cotManager = new CircleOfTrustManager(
+                    ssoToken);
                 if (!cotManager.getAllCirclesOfTrust(realm).contains(cot)) {
                     String[] args = {realm, metadata, extendedData, cot,
                         spec,
@@ -178,7 +178,7 @@ public class ImportMetaData extends AuthenticatedCommand {
     private void handleSAML2Request(RequestContext rc)
         throws CLIException {
         try {
-            SAML2MetaManager metaManager = new SAML2MetaManager();
+            SAML2MetaManager metaManager = new SAML2MetaManager(ssoToken);
             String entityID = null;
             EntityConfigElement configElt = null;
             
@@ -224,7 +224,8 @@ public class ImportMetaData extends AuthenticatedCommand {
 
             if ((cot != null) && (cot.length() > 0) &&
                 (entityID != null) && (entityID.length() > 0)) {
-                CircleOfTrustManager cotManager = new CircleOfTrustManager();
+                CircleOfTrustManager cotManager = new CircleOfTrustManager(
+                    ssoToken);
                 if (!cotManager.isInCircleOfTrust(realm, cot, spec, entityID)) {
                     cotManager.addCircleOfTrustMember(
                         realm, cot, spec, entityID);
@@ -242,8 +243,7 @@ public class ImportMetaData extends AuthenticatedCommand {
     private void handleIDFFRequest(RequestContext rc)
         throws CLIException {
         try {
-            IDFFMetaManager metaManager = new IDFFMetaManager(
-                getAdminSSOToken());
+            IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
             String entityID = null;
             com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement
                 configElt = null;
@@ -285,7 +285,8 @@ public class ImportMetaData extends AuthenticatedCommand {
 
             if ((cot != null) && (cot.length() > 0) &&
                 (entityID != null) && (entityID.length() > 0)) {
-                CircleOfTrustManager cotManager = new CircleOfTrustManager();
+                CircleOfTrustManager cotManager = new CircleOfTrustManager(
+                    ssoToken);
                 if (!cotManager.isInCircleOfTrust(realm, cot, spec, entityID)) {
                     cotManager.addCircleOfTrustMember(realm, cot, spec,
                         entityID);
@@ -327,12 +328,14 @@ public class ImportMetaData extends AuthenticatedCommand {
                 }
             }
             
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                ssoToken);
             if (metadata != null) {
                 federationID = importWSFedMetaData();
             }
             
             if (configElt != null) {
-                WSFederationMetaManager.createEntityConfig(realm, configElt);
+                metaManager.createEntityConfig(realm, configElt);
                 
                 String out = (webAccess) ? "web" : extendedData;
                 Object[] objs = { out };
@@ -342,7 +345,8 @@ public class ImportMetaData extends AuthenticatedCommand {
 
             if ((cot != null) && (cot.length() > 0) &&
                 (federationID != null)) {
-                CircleOfTrustManager cotManager = new CircleOfTrustManager();
+                CircleOfTrustManager cotManager = new CircleOfTrustManager(
+                    ssoToken);
                 if (!cotManager.isInCircleOfTrust(realm, cot, spec, 
                     federationID)
                 ) {
@@ -532,7 +536,9 @@ public class ImportMetaData extends AuthenticatedCommand {
                     federationID = WSFederationConstants.DEFAULT_FEDERATION_ID;
                 }
                 // WSFederationMetaSecurityUtils.verifySignature(doc);
-                WSFederationMetaManager.createFederation(realm, federation);
+                WSFederationMetaManager metaManager = new
+                    WSFederationMetaManager(ssoToken);
+                metaManager.createFederation(realm, federation);
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString("import-entity-succeeded"), objs));
             }

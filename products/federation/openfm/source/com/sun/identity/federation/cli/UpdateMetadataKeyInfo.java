@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateMetadataKeyInfo.java,v 1.4 2009-07-30 05:35:35 veiming Exp $
+ * $Id: UpdateMetadataKeyInfo.java,v 1.5 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -94,7 +94,6 @@ public class UpdateMetadataKeyInfo extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        superAdminUserValidation();
 
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
@@ -196,7 +195,7 @@ public class UpdateMetadataKeyInfo extends AuthenticatedCommand {
 
     private void handleSAML2Request(RequestContext rc) throws CLIException {
         try {
-            SAML2MetaManager metaManager = new SAML2MetaManager();
+            SAML2MetaManager metaManager = new SAML2MetaManager(ssoToken);
             com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement descriptor =
                 metaManager.getEntityDescriptor(realm, entityID);
             if (descriptor == null) {
@@ -259,7 +258,7 @@ public class UpdateMetadataKeyInfo extends AuthenticatedCommand {
     
     private void handleIDFFRequest(RequestContext rc) throws CLIException {
         try {
-            IDFFMetaManager metaManager = FSUtils.getIDFFMetaManager();
+            IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement descriptor =
                 metaManager.getEntityDescriptor(realm, entityID);
             if (descriptor == null) {
@@ -322,8 +321,10 @@ public class UpdateMetadataKeyInfo extends AuthenticatedCommand {
 
     private void handleWSFedRequest(RequestContext rc) throws CLIException {
         try {
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                ssoToken);
             FederationElement descriptor =
-                WSFederationMetaManager.getEntityDescriptor(realm, entityID);
+                metaManager.getEntityDescriptor(realm, entityID);
             if (descriptor == null) {
                 Object[] objs2 = {entityID, realm};
                 throw new CLIException(MessageFormat.format(getResourceString(

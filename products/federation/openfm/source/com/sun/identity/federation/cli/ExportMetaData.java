@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportMetaData.java,v 1.9 2009-07-30 05:35:35 veiming Exp $
+ * $Id: ExportMetaData.java,v 1.10 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -88,7 +88,6 @@ public class ExportMetaData extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        superAdminUserValidation();
 
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
@@ -194,7 +193,7 @@ public class ExportMetaData extends AuthenticatedCommand {
         Object[] objs = {out};
 
         try {
-            SAML2MetaManager metaManager = new SAML2MetaManager();
+            SAML2MetaManager metaManager = new SAML2MetaManager(ssoToken);
             EntityDescriptorElement descriptor =
                 metaManager.getEntityDescriptor(realm, entityID);
             
@@ -258,10 +257,10 @@ public class ExportMetaData extends AuthenticatedCommand {
         Object[] objs = {out};
 
         try {
-            IDFFMetaManager metaManager = new IDFFMetaManager(
-                getAdminSSOToken());
+            IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement
-                descriptor = metaManager.getEntityDescriptor(realm,entityID);
+                descriptor = metaManager.getEntityDescriptor(
+                    realm,entityID);
             
             if (descriptor == null) {
                 Object[] objs2 = {entityID, realm};
@@ -323,8 +322,10 @@ public class ExportMetaData extends AuthenticatedCommand {
         Object[] objs = {out};
 
         try {
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                ssoToken);
             FederationElement descriptor =
-                WSFederationMetaManager.getEntityDescriptor(realm, entityID);
+                metaManager.getEntityDescriptor(realm, entityID);
             
             if (descriptor == null) {
                 Object[] objs2 = {entityID, realm};
@@ -335,10 +336,10 @@ public class ExportMetaData extends AuthenticatedCommand {
             }
             
             com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement 
-                spConfig = WSFederationMetaManager.getSPSSOConfig(realm, 
+                spConfig = metaManager.getSPSSOConfig(realm, 
                 entityID);
             com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement 
-                idpConfig = WSFederationMetaManager.getIDPSSOConfig(realm, 
+                idpConfig = metaManager.getIDPSSOConfig(realm, 
                 entityID);
             Document doc = WSFederationMetaSecurityUtils.sign(
                 descriptor, spConfig, idpConfig);
@@ -388,7 +389,7 @@ public class ExportMetaData extends AuthenticatedCommand {
         Object[] objs2 = {entityID, realm};
         
         try {
-            SAML2MetaManager metaManager = new SAML2MetaManager();
+            SAML2MetaManager metaManager = new SAML2MetaManager(ssoToken);
             EntityDescriptorElement descriptor =
                 metaManager.getEntityDescriptor(realm, entityID);
             if (descriptor == null) {
@@ -448,8 +449,7 @@ public class ExportMetaData extends AuthenticatedCommand {
         Object[] objs2 = {entityID, realm};
         
         try {
-            IDFFMetaManager metaManager = new IDFFMetaManager(
-                getAdminSSOToken());
+            IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
             com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement
                 descriptor = metaManager.getEntityDescriptor(realm, entityID);
             if (descriptor == null) {
@@ -506,8 +506,10 @@ public class ExportMetaData extends AuthenticatedCommand {
         Object[] objs2 = {entityID, realm};
         
         try {
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                ssoToken);
             FederationElement federation =
-                WSFederationMetaManager.getEntityDescriptor(realm, entityID);
+                metaManager.getEntityDescriptor(realm, entityID);
             if (federation == null) {
                 throw new CLIException(MessageFormat.format(getResourceString(
                     "export-entity-exception-entity-descriptor-not-exist"),
@@ -565,8 +567,7 @@ public class ExportMetaData extends AuthenticatedCommand {
         Object[] objs2 = {entityID, realm};
         
         try {
-            SAML2MetaManager metaManager = new SAML2MetaManager();
-            
+            SAML2MetaManager metaManager = new SAML2MetaManager(ssoToken);
             EntityConfigElement config =
                 metaManager.getEntityConfig(realm, entityID);
             if (config == null) {
@@ -626,8 +627,7 @@ public class ExportMetaData extends AuthenticatedCommand {
         Object[] objs2 = {entityID, realm};
         
         try {
-            IDFFMetaManager metaManager = new IDFFMetaManager(
-                getAdminSSOToken());
+            IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
             com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement
                 config = metaManager.getEntityConfig(realm, entityID);
             if (config == null) {
@@ -686,9 +686,10 @@ public class ExportMetaData extends AuthenticatedCommand {
         Object[] objs2 = {entityID, realm};
         
         try {
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                ssoToken);
             com.sun.identity.wsfederation.jaxb.entityconfig.FederationConfigElement 
-                config = WSFederationMetaManager.getEntityConfig(realm, 
-                entityID);
+                config = metaManager.getEntityConfig(realm, entityID);
             if (config == null) {
                 throw new CLIException(MessageFormat.format(getResourceString(
                     "export-entity-exception-entity-config-not-exist"),

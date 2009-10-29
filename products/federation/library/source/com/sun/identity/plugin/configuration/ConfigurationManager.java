@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationManager.java,v 1.2 2008-06-25 05:47:26 qcheng Exp $
+ * $Id: ConfigurationManager.java,v 1.3 2009-10-28 23:58:57 exu Exp $
  *
  */
 
@@ -50,12 +50,23 @@ public final class ConfigurationManager {
      */
     public static ConfigurationInstance getConfigurationInstance(
         String componentName) throws ConfigurationException {
+        return getConfigurationInstance(componentName, null);
+    }
 
-        ConfigurationInstance config = null;
-
+    /**
+     * Gets a configuration instance.
+     * @param componentName Name of the components, e.g. SAML1, SAML2, ID-FF
+     * @return a configuration instance
+     */
+    public static ConfigurationInstance getConfigurationInstance(
+        String componentName,
+        Object callerToken 
+    ) throws ConfigurationException {
         try {
-            config = (ConfigurationInstance)Class.forName(configClass)
-                                                 .newInstance();
+            ConfigurationInstance config = (ConfigurationInstance)
+                Class.forName(configClass).newInstance();
+            config.init(componentName, callerToken);
+            return config;
         } catch (IllegalAccessException iae) {
             Object[] objs = { configClass };
             throw new ConfigurationException(RESOURCE_BUNDLE,
@@ -69,9 +80,6 @@ public final class ConfigurationManager {
             throw new ConfigurationException(RESOURCE_BUNDLE,
                 "ConfigClassNotFound", objs);
         }
-
-        config.init(componentName, null);
-        return config;
     }
 }
 

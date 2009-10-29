@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaUtils.java,v 1.4 2009-05-04 18:21:06 exu Exp $
+ * $Id: WSFederationMetaUtils.java,v 1.5 2009-10-28 23:58:59 exu Exp $
  *
  */
 
@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -51,8 +52,8 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Node;
 
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.wsfederation.common.WSFederationConstants;
-import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.AttributeElement;
 
 /**
@@ -60,7 +61,15 @@ import com.sun.identity.wsfederation.jaxb.entityconfig.AttributeElement;
  * methods.
  */
 public final class WSFederationMetaUtils {
-    public static Debug debug = WSFederationUtils.debug;
+    public static Debug debug = 
+	Debug.getInstance(WSFederationConstants.AM_WSFEDERATION);
+
+    /**
+     * Resource bundle for the WS-Federation implementation.
+     */ 
+    public static ResourceBundle bundle = Locale.
+	getInstallResourceBundle(WSFederationConstants.BUNDLE_NAME);
+
     
     // Need to explicitly list xmldsig, otherwise JAXB doesn't see it, since
     // dsig elements are buried in 'any' elements. Grrr...

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModelImpl.java,v 1.12 2008-10-16 20:44:33 babysunil Exp $
+ * $Id: WSFedPropertiesModelImpl.java,v 1.13 2009-10-29 00:03:51 exu Exp $
  *
  */
 
@@ -68,6 +68,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     private static Map IDPSTD_DATA_MAP = new HashMap(2);
     private static Map IDPEX_DATA_MAP = new HashMap(32);
     
+    private WSFederationMetaManager metaManager = null;
     static {
         GEN_DATA_MAP.put(TF_DISPNAME, Collections.EMPTY_SET);
         GEN_DATA_MAP.put(TFTOKENISSUER_NAME, Collections.EMPTY_SET);
@@ -124,6 +125,15 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         IDPSTD_DATA_MAP.put(TFCLAIM_TYPES, Collections.EMPTY_SET);
     }
     
+    protected WSFederationMetaManager getWSFederationMetaManager() 
+        throws WSFederationMetaException 
+    {
+        if (metaManager == null) {
+            metaManager = new WSFederationMetaManager(getUserSSOToken());
+        }
+        return metaManager;
+    }
+
     /** Creates a new instance of WSFedPropertiesModelImpl */
     public WSFedPropertiesModelImpl(HttpServletRequest req,  Map map) {
         super(req, map);
@@ -143,8 +153,9 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     {
         Map SPAttributes = null;
         try {
+            WSFederationMetaManager metaManager = getWSFederationMetaManager();
             SPSSOConfigElement spconfig = 
-                WSFederationMetaManager.getSPSSOConfig(realm,fedId);
+                metaManager.getSPSSOConfig(realm,fedId);
             if (spconfig != null) {
                 SPAttributes =  WSFederationMetaUtils.getAttributes(spconfig);
             }
@@ -170,8 +181,9 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     {
         Map IDPAttributes = null;
         try {
+            WSFederationMetaManager metaManager = getWSFederationMetaManager();
             IDPSSOConfigElement idpconfig = 
-                WSFederationMetaManager.getIDPSSOConfig(realm,fedId);
+                metaManager.getIDPSSOConfig(realm,fedId);
             if (idpconfig != null) {
                 IDPAttributes = WSFederationMetaUtils.getAttributes(idpconfig);
             }
@@ -200,7 +212,8 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         FederationElement fedElem = null;
         try {
             fedElem =
-                WSFederationMetaManager.getEntityDescriptor(realm, fedId);
+                getWSFederationMetaManager().getEntityDescriptor(
+                    realm, fedId);
             if (fedElem == null) {
                 throw new AMConsoleException("invalid.federation.element");
             }
@@ -219,7 +232,12 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
      */
     public String getTokenName(FederationElement fedElem) {
         String tkname = null;
-        tkname =  WSFederationMetaManager.getTokenIssuerName(fedElem);
+        try {
+            tkname =  getWSFederationMetaManager().getTokenIssuerName(
+                fedElem);
+        } catch (WSFederationMetaException we) {
+            tkname = null;
+        }
         return tkname;
     }
     
@@ -231,7 +249,12 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
      */
     public String getTokenEndpoint(FederationElement fedElem) {
         String tkEndpt = null;
-        tkEndpt =  WSFederationMetaManager.getTokenIssuerEndpoint(fedElem);
+        try {
+            tkEndpt =  getWSFederationMetaManager().getTokenIssuerEndpoint(
+                fedElem);
+        } catch (WSFederationMetaException we) {
+            tkEndpt = null;
+        }
         return tkEndpt;
     }
     
@@ -244,8 +267,13 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     public String getClaimType(FederationElement fedElem) {
         List claimList = null;
         String displayName = null;
-        UriNamedClaimTypesOfferedElement UriNamedclaimTypes =
-                WSFederationMetaManager.getUriNamedClaimTypesOffered(fedElem);
+        UriNamedClaimTypesOfferedElement UriNamedclaimTypes = null;
+        try {
+            UriNamedclaimTypes = getWSFederationMetaManager().
+                getUriNamedClaimTypesOffered(fedElem);
+        } catch (WSFederationMetaException we) {
+            UriNamedclaimTypes = null;
+        }
         
         //assuming there is only 1 claim type object now
         if(UriNamedclaimTypes != null) {
@@ -317,8 +345,9 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         }
         try {
             //fedElem is standard metadata federation element under the realm.
+            WSFederationMetaManager metaManager = getWSFederationMetaManager();
             FederationElement fedElem =
-                WSFederationMetaManager.getEntityDescriptor(realm, fedId);
+                metaManager.getEntityDescriptor(realm, fedId);
             if (fedElem == null) {  
                 if (debug.warningEnabled()) {
                     debug.warning(
@@ -338,7 +367,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
                         ((TokenIssuerNameElement)o).setValue(tknissName);
                     }
                 }
-                WSFederationMetaManager.setFederation(realm, fedElem);
+                metaManager.setFederation(realm, fedElem);
             }
             
         } catch (WSFederationMetaException e) {
@@ -366,13 +395,14 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         try {
             String role = EntityModel.SERVICE_PROVIDER;
             //fed is the extended entity configuration object under the realm
+            WSFederationMetaManager metaManager = getWSFederationMetaManager();
             FederationConfigElement fed =
-                WSFederationMetaManager.getEntityConfig(realm,fedId);
+                metaManager.getEntityConfig(realm,fedId);
             if (fed == null) {
                 SPEX_DATA_MAP.put(TF_DISPNAME, Collections.EMPTY_SET);
                 createExtendedObject(
                     realm, fedId, location, SERVICE_PROVIDER, SPEX_DATA_MAP);
-                fed = WSFederationMetaManager.getEntityConfig(realm,fedId);
+                fed = metaManager.getEntityConfig(realm,fedId);
             }
             SPSSOConfigElement  spsso = getspsso(fed);
             if (spsso != null) {
@@ -380,7 +410,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
                 updateBaseConfig(baseConfig, spExtvalues, role);
             }
             //saves the attributes by passing the new fed object
-            WSFederationMetaManager.setEntityConfig(realm,fed);
+            metaManager.setEntityConfig(realm,fed);
         } catch (JAXBException e) {
             debug.warning("WSFedPropertiesModelImpl.setSPExtAttributeValues",e);
             throw new AMConsoleException(e.getMessage());
@@ -408,13 +438,14 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         try {
             String role = EntityModel.IDENTITY_PROVIDER;
             // fed is the extended entity configuration under the realm
+            WSFederationMetaManager metaManager = getWSFederationMetaManager();
             FederationConfigElement fed =
-                    WSFederationMetaManager.getEntityConfig(realm,fedId);
+                    metaManager.getEntityConfig(realm,fedId);
             if (fed == null) {
                 IDPEX_DATA_MAP.put(TF_DISPNAME, Collections.EMPTY_SET);
                 createExtendedObject(
                    realm, fedId, location, IDENTITY_PROVIDER, IDPEX_DATA_MAP);
-                fed = WSFederationMetaManager.getEntityConfig(realm,fedId);
+                fed = metaManager.getEntityConfig(realm,fedId);
             }
             IDPSSOConfigElement  idpsso = getidpsso(fed);
             if (idpsso != null){
@@ -423,7 +454,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
             }
             
             //saves the new configuration by passing new fed element created
-            WSFederationMetaManager.setEntityConfig(realm,fed);
+            metaManager.setEntityConfig(realm,fed);
         } catch (JAXBException e) {
             debug.warning(
                 "WSFedPropertiesModelImpl.setIDPExtAttributeValues", e);
@@ -458,8 +489,15 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         ClaimType claimType = null;
         DisplayNameType displayName = null;
         String value = null;
-        UriNamedClaimTypesOfferedElement UriNamedclaimTypes =
-                WSFederationMetaManager.getUriNamedClaimTypesOffered(fedElem);
+        UriNamedClaimTypesOfferedElement UriNamedclaimTypes = null;
+        try {
+            UriNamedclaimTypes = 
+                getWSFederationMetaManager().getUriNamedClaimTypesOffered(
+                    fedElem);
+        } catch (WSFederationMetaException we) {
+            UriNamedclaimTypes = null;
+        }        
+
         if(UriNamedclaimTypes != null) {
             int iClaim = 0;
             claimList = UriNamedclaimTypes.getClaimType();
@@ -506,7 +544,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
                 WSFederationMetaSecurityUtils.updateProviderKeyInfo(
                 realm, entityName, idp_certalias, true);
             }
-            WSFederationMetaManager.setFederation(realm, fedElem);
+            getWSFederationMetaManager().setFederation(realm, fedElem);
         } catch (WSFederationMetaException e) {
             debug.warning
                     ("WSFedPropertiesModelImpl.setIDPSTDAttributeValues", e);
@@ -613,8 +651,10 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     ) throws WSFederationMetaException, JAXBException, AMConsoleException {
         try {
             ObjectFactory objFactory = new ObjectFactory();
+            WSFederationMetaManager metaManager = 
+                getWSFederationMetaManager();
             FederationElement edes =
-                WSFederationMetaManager.getEntityDescriptor(realm, fedId);
+                metaManager.getEntityDescriptor(realm, fedId);
             if (edes == null) {
 	        if (debug.warningEnabled()) {
                     debug.warning(
@@ -625,7 +665,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
                 throw new WSFederationMetaException("fedId_invalid", data);
             }
             FederationConfigElement eConfig =
-                WSFederationMetaManager.getEntityConfig(realm, fedId);
+                metaManager.getEntityConfig(realm, fedId);
             if (eConfig == null) {
                 BaseConfigType bctype = null;                
                 FederationConfigElement ele =
@@ -658,7 +698,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
                     bctype = createAttributeElement(keys, bctype);
                     ll.add(bctype);
                 }
-                WSFederationMetaManager.setEntityConfig(realm,ele);
+                metaManager.setEntityConfig(realm,ele);
             }
         } catch (JAXBException e) {
             debug.warning("WSFedPropertiesModelImpl.createExtendedObject", e);

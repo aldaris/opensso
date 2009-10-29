@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityModelImpl.java,v 1.9 2008-06-25 05:49:40 qcheng Exp $
+ * $Id: ImportEntityModelImpl.java,v 1.10 2009-10-29 00:03:51 exu Exp $
  *
  */
 
@@ -155,7 +155,8 @@ public class ImportEntityModelImpl extends AMModelBase
                 }
             }
                         
-            SAML2MetaManager metaManager = new SAML2MetaManager();
+            SAML2MetaManager metaManager = new SAML2MetaManager(
+                getUserSSOToken());
             if (standardMetaData != null) {
                 importSAML2MetaData(metaManager, realm);
             }
@@ -202,7 +203,8 @@ public class ImportEntityModelImpl extends AMModelBase
                 // TBD
                 //Document doc = XMLUtils.toDOMDocument(standardMetadata, debug);
                 // WSFederationMetaSecurityUtils.verifySignature(doc);
-                WSFederationMetaManager.createFederation(realm, federation);
+                (new WSFederationMetaManager(getUserSSOToken())).
+                    createFederation(realm, federation);
             }
         } catch (JAXBException e) {
             debug.error("ImportEntityModel.importWSFedMetaData", e);
@@ -340,7 +342,8 @@ public class ImportEntityModelImpl extends AMModelBase
             }
             
             if (configElt != null) {
-                WSFederationMetaManager.createEntityConfig(realm, configElt);
+                (new WSFederationMetaManager(getUserSSOToken())).createEntityConfig(
+                    realm, configElt);
             }
         } catch (WSFederationMetaException e) {
             debug.error("ImportEntityModel.createWSFedEntity", e);

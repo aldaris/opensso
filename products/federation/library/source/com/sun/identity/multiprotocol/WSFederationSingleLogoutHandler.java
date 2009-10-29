@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationSingleLogoutHandler.java,v 1.3 2008-11-10 22:57:00 veiming Exp $
+ * $Id: WSFederationSingleLogoutHandler.java,v 1.4 2009-10-28 23:58:57 exu Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.wsfederation.common.WSFederationConstants;
+import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import java.net.URLEncoder;
@@ -172,7 +173,9 @@ public class WSFederationSingleLogoutHandler implements SingleLogoutHandler {
     private String findIDPMetaAlias(String idpEntityID, String spEntityID,
             String realm, String protocol) {
         try {
-            List hostedIdps = WSFederationMetaManager.
+            WSFederationMetaManager metaManager = 
+                WSFederationUtils.getMetaManager();
+            List hostedIdps = metaManager.
                 getAllHostedIdentityProviderEntities(realm);
             if (debug.messageEnabled()) {
                 debug.message("WSFedSingleLogoutHandler.findIDPMetaAlias: "
@@ -217,7 +220,7 @@ public class WSFederationSingleLogoutHandler implements SingleLogoutHandler {
                             "found IDP " + idpId + " in COT " + cotName);
                     }
                     IDPSSOConfigElement config =
-                        WSFederationMetaManager.getIDPSSOConfig(realm, idpId);
+                        metaManager.getIDPSSOConfig(realm, idpId);
                     return config.getMetaAlias();
                 }
             }

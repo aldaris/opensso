@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.37 2009-07-30 05:35:35 veiming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.38 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.federation.meta.IDFFMetaException;
+import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
@@ -42,6 +43,8 @@ import com.sun.identity.workflow.CreateIDFFMetaDataTemplate;
 import com.sun.identity.workflow.CreateSAML2HostedProviderTemplate;
 import com.sun.identity.workflow.CreateWSFedMetaDataTemplate;
 import com.sun.identity.workflow.MetaTemplateParameters;
+import com.sun.identity.wsfederation.meta.WSFederationMetaException;
+import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -108,7 +111,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        superAdminUserValidation();
 
         getOptions(rc);
         validateOptions();
@@ -482,6 +484,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
+            // check privilege
+            SAML2MetaManager metaManager = new SAML2MetaManager(ssoToken);
+            metaManager.getEntityDescriptor("/", "");
             boolean writeToFile = !isWebBased && (metadata != null) &&
                 (metadata.length() > 0);
             if (writeToFile) {
@@ -528,6 +533,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         throws CLIException {
         Writer pw = null;
         try {
+            // check privilege
+            SAML2MetaManager metaManager = new SAML2MetaManager(ssoToken);
+            metaManager.getEntityConfig("/", "");
             boolean writeToFile = !isWebBased && (extendedData != null) &&
                 (extendedData.length() > 0);
 
@@ -550,6 +558,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     "create-meta-template-created-configuration-template"),
                     objs));
             }
+        } catch (SAML2MetaException e) {
+            throw new CLIException(e.getMessage(),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IOException ex) {
             Object[] objs = { extendedData };
             throw new CLIException(MessageFormat.format(
@@ -569,6 +580,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
+            // check privilege
+            IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
+            metaManager.getEntityConfig("/", "");
             boolean writeToFile = !isWebBased && (extendedData != null) && 
                 (extendedData.length() > 0);
 
@@ -589,6 +603,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     "create-meta-template-created-configuration-template"),
                     objs));
             }
+        } catch (IDFFMetaException ime) {
+            throw new CLIException(ime.getMessage(),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IOException ex) {
             Object[] objs = { extendedData };
             throw new CLIException(MessageFormat.format(
@@ -608,6 +625,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         throws CLIException {
         Writer pw = null;
         try {
+            // check privilege
+            IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
+            metaManager.getEntityDescriptor("/", "");
             boolean writeToFile = !isWebBased && (metadata != null) &&
                 (metadata.length() > 0);
 
@@ -650,6 +670,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
+            // check privilege
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                ssoToken);
+            metaManager.getEntityDescriptor("/", "");
             boolean writeToFile = !isWebBased && (metadata != null) &&
                 (metadata.length() > 0);
 
@@ -670,6 +694,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     getResourceString(
                     "create-meta-template-created-descriptor-template"), objs));
             }
+        } catch (WSFederationMetaException e) {
+            throw new CLIException(e.getMessage(),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IOException e) {
             Object[] objs = { metadata };
             throw new CLIException(MessageFormat.format(
@@ -695,6 +722,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
+            // check privilege
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                ssoToken);
+            metaManager.getEntityConfig("/", "");
             boolean writeToFile = !isWebBased && (extendedData != null) &&
                 (extendedData.length() > 0);
 
@@ -715,6 +746,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     "create-meta-template-created-configuration-template"),
                     objs));
             }
+        } catch (WSFederationMetaException e) {
+            throw new CLIException(e.getMessage(),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (IOException ex) {
             Object[] objs = { extendedData };
             throw new CLIException(MessageFormat.format(

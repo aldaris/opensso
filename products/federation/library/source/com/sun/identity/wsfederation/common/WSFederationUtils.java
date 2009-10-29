@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationUtils.java,v 1.5 2008-06-25 05:48:04 qcheng Exp $
+ * $Id: WSFederationUtils.java,v 1.6 2009-10-28 23:58:58 exu Exp $
  *
  */
 
@@ -79,6 +79,8 @@ public class WSFederationUtils {
      */
     private static HashMap wctxMap = new HashMap();
     
+    private static WSFederationMetaManager metaManager = null;
+
     public static DataStoreProvider dsProvider;
     
     public static SessionProvider sessionProvider = null;
@@ -101,12 +103,26 @@ public class WSFederationUtils {
             debug.error( classMethod + "Error getting SessionProvider.", se);
             throw new ExceptionInInitializerError(se);
         }                   
+        try {
+            metaManager = new WSFederationMetaManager();
+        } catch (WSFederationMetaException we) {
+            debug.error( classMethod + "Error getting meta service.", we);
+            throw new ExceptionInInitializerError(we);
+        }
     }
     
     /*
      * Private constructor ensure that no instance is ever created
      */
     private WSFederationUtils() {
+    }
+
+    /**
+     * Returns an instance of <code>WSFederationMetaManager</code>.
+     * @return an instance of <code>WSFederationMetaManager</code>.
+     */
+    public static WSFederationMetaManager getMetaManager() {
+        return metaManager;
     }
 
     /**
@@ -243,7 +259,7 @@ public class WSFederationUtils {
         
         try {
             FederationElement idp = 
-                WSFederationMetaManager.getEntityDescriptor(realm, issuer);
+                metaManager.getEntityDescriptor(realm, issuer);
             X509Certificate cert = KeyUtil.getVerificationCert(idp, issuer, 
                 true);
             XMLSignatureManager manager = XMLSignatureManager.getInstance();

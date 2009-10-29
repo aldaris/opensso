@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SAML11RequestedSecurityToken.java,v 1.5 2008-10-22 22:59:54 superpat7 Exp $
+ * $Id: SAML11RequestedSecurityToken.java,v 1.6 2009-10-28 23:58:59 exu Exp $
  * 
  */
 
@@ -191,16 +191,17 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
             Date notBefore = new Date(issueInstant.getTime() - skewPeriod);            
             long period = (long)effectiveTime * 1000L;
             Date notAfter = new Date(issueInstant.getTime() + period);
-
+            WSFederationMetaManager metaManager =
+                WSFederationUtils.getMetaManager();
             FederationElement idp = 
-                WSFederationMetaManager.getEntityDescriptor(realm, idpEntityId);
+                metaManager.getEntityDescriptor(realm, idpEntityId);
             FederationElement sp = 
-                WSFederationMetaManager.getEntityDescriptor(realm, spEntityId);
+                metaManager.getEntityDescriptor(realm, spEntityId);
             
-            String issuer = WSFederationMetaManager.getTokenIssuerName(idp);
+            String issuer = metaManager.getTokenIssuerName(idp);
         
             List<String> targets = new ArrayList<String>();
-            targets.add(WSFederationMetaManager.getTokenIssuerName(sp));
+            targets.add(metaManager.getTokenIssuerName(sp));
             
             AudienceRestrictionCondition arc = 
                 new AudienceRestrictionCondition(targets);
@@ -331,9 +332,11 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
         
         // check that assertion issuer is trusted by the local entity
         String issuer = assertion.getIssuer();
+        WSFederationMetaManager metaManager =
+            WSFederationUtils.getMetaManager();
         String remoteEntityId = 
-            WSFederationMetaManager.getEntityByTokenIssuerName(realm, issuer);
-        if (! WSFederationMetaManager.isTrustedProvider(
+            metaManager.getEntityByTokenIssuerName(realm, issuer);
+        if (! metaManager.isTrustedProvider(
                         realm, hostEntityId, remoteEntityId)) {
             String[] data = 
                 {LogUtil.isErrorLoggable(Level.FINER)? this.toString() : 
@@ -348,7 +351,7 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
         }
 
         SPSSOConfigElement spConfig = 
-            WSFederationMetaManager.getSPSSOConfig(realm, hostEntityId);
+            metaManager.getSPSSOConfig(realm, hostEntityId);
         if ( spConfig == null )
         {
             debug.error(classMethod + "cannot find configuration for SP " 

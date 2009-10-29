@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteMetaData.java,v 1.8 2009-07-30 05:35:35 veiming Exp $
+ * $Id: DeleteMetaData.java,v 1.9 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -64,7 +64,6 @@ public class DeleteMetaData extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        superAdminUserValidation();
         
         extendedOnly = isOptionSet(FedCLIConstants.ARGUMENT_EXTENDED_ONLY);
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM);
@@ -104,8 +103,9 @@ public class DeleteMetaData extends AuthenticatedCommand {
     private void handleSAML2Request(RequestContext rc)
         throws CLIException {
         try {
-            metaManager = new SAML2MetaManager();
-            if (metaManager.getEntityDescriptor(realm, entityID) == null) {
+            metaManager = new SAML2MetaManager(ssoToken);
+            if (metaManager.getEntityDescriptor(realm, entityID) == null)
+            {
                 Object[] param = {entityID};
                 throw new CLIException(MessageFormat.format(
                     getResourceString("delete-entity-entity-not-exist"), param),
@@ -136,9 +136,9 @@ public class DeleteMetaData extends AuthenticatedCommand {
     private void handleIDFFRequest(RequestContext rc)
         throws CLIException {
         try {
-            IDFFMetaManager metaManager = new IDFFMetaManager(
-                getAdminSSOToken());
-            if (metaManager.getEntityDescriptor(realm, entityID) == null) {
+            IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
+            if (metaManager.getEntityDescriptor(realm, entityID) == null)
+            {
                 Object[] param = {entityID, realm};
                 throw new CLIException(MessageFormat.format(
                     getResourceString("delete-entity-entity-not-exist"), param),
@@ -169,8 +169,9 @@ public class DeleteMetaData extends AuthenticatedCommand {
     private void handleWSFedRequest(RequestContext rc)
         throws CLIException {
         try {
-            if (WSFederationMetaManager.getEntityDescriptor(realm, entityID) == 
-                null) {
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                ssoToken);
+            if (metaManager.getEntityDescriptor(realm, entityID) == null) {
                 Object[] param = {entityID};
                 throw new CLIException(MessageFormat.format(
                     getResourceString("delete-entity-entity-not-exist"), param),
@@ -178,14 +179,14 @@ public class DeleteMetaData extends AuthenticatedCommand {
             }
            
             if (extendedOnly) {
-                WSFederationMetaManager.deleteEntityConfig(realm, entityID);
+                metaManager.deleteEntityConfig(realm, entityID);
                 Object[] objs = {entityID};
                 
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString("delete-entity-config-deleted"),
                     objs));
             } else {
-                WSFederationMetaManager.deleteFederation(realm, entityID);
+                metaManager.deleteFederation(realm, entityID);
                 Object[] objs = {entityID};
                 
                 getOutputWriter().printlnMessage(MessageFormat.format(

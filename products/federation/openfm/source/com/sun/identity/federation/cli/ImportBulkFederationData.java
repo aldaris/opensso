@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportBulkFederationData.java,v 1.5 2009-07-30 05:35:35 veiming Exp $
+ * $Id: ImportBulkFederationData.java,v 1.6 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -93,7 +93,6 @@ public class ImportBulkFederationData extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        superAdminUserValidation();
         
         metaAlias = getStringOptionValue(ARGUMENT_METADATA);
         bulkFedData = getStringOptionValue(ARGUMENT_BULK_DATA);
@@ -134,7 +133,7 @@ public class ImportBulkFederationData extends AuthenticatedCommand {
     private void idffGetRoleAndEntityId()
         throws CLIException {
         try {
-            IDFFMetaManager idffMgr = new IDFFMetaManager(getAdminSSOToken());
+            IDFFMetaManager idffMgr = new IDFFMetaManager(ssoToken);
             String role = idffMgr.getProviderRoleByMetaAlias(metaAlias);
             if (role == null) {
                 Object[] param = {metaAlias};
@@ -158,7 +157,7 @@ public class ImportBulkFederationData extends AuthenticatedCommand {
     private void saml2GetRoleAndEntityId()
         throws CLIException {
         try {
-            SAML2MetaManager saml2Mgr = new SAML2MetaManager();
+            SAML2MetaManager saml2Mgr = new SAML2MetaManager(ssoToken);
             String role = saml2Mgr.getRoleByMetaAlias(metaAlias);
             if (role.equals(SAML2Constants.UNKNOWN_ROLE)) {
                 Object[] param = {metaAlias};
@@ -328,9 +327,8 @@ public class ImportBulkFederationData extends AuthenticatedCommand {
     
     private void idffFederateUser(String userId, String nameId) 
         throws CLIException {
-        SSOToken adminSSOToken = getAdminSSOToken();
         try {
-            AMIdentity amid = IdUtils.getIdentity(adminSSOToken, userId);
+            AMIdentity amid = IdUtils.getIdentity(getAdminSSOToken(), userId);
 
             FSAccountFedInfoKey key = (!isIDP) ?
                 new FSAccountFedInfoKey(localEntityId, nameId) :
@@ -396,9 +394,8 @@ public class ImportBulkFederationData extends AuthenticatedCommand {
 
     private void saml2FederateUser(String userId, String nameIdValue)
         throws CLIException {
-        SSOToken adminSSOToken = getAdminSSOToken();
         try {
-            AMIdentity amid = IdUtils.getIdentity(adminSSOToken, userId);
+            AMIdentity amid = IdUtils.getIdentity(getAdminSSOToken(), userId);
             NameID nameId = AssertionFactory.getInstance().createNameID();
             nameId.setFormat(
                 "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: realmSelection.jsp,v 1.9 2008-08-28 14:47:44 superpat7 Exp $
+   $Id: realmSelection.jsp,v 1.10 2009-10-29 00:00:00 exu Exp $
 
 --%>
 
@@ -54,12 +54,14 @@
         return;
     }
     
+    WSFederationMetaManager metaManager =
+        WSFederationUtils.getMetaManager();
     String spEntityId = 
-        WSFederationMetaManager.getEntityByMetaAlias(spMetaAlias);
+        metaManager.getEntityByMetaAlias(spMetaAlias);
     String spRealm = WSFederationMetaUtils.getRealmByMetaAlias(spMetaAlias);
     Map<String,List<String>> spConfig = 
         WSFederationMetaUtils.getAttributes(
-        WSFederationMetaManager.getSPSSOConfig(spRealm,spEntityId));
+        metaManager.getSPSSOConfig(spRealm,spEntityId));
     String accountRealmCookieName = 
         spConfig.get(WSFederationConstants.ACCOUNT_REALM_COOKIE_NAME).get(0);
                 
@@ -197,18 +199,18 @@
             }
 
             for (String idpEntityId : 
-                WSFederationMetaManager.getAllRemoteIdentityProviderEntities(spRealm))
+                metaManager.getAllRemoteIdentityProviderEntities(spRealm))
             { 
                 FederationElement idp = 
-                    WSFederationMetaManager.getEntityDescriptor(spRealm, 
+                    metaManager.getEntityDescriptor(spRealm, 
                     idpEntityId);
                 IDPSSOConfigElement idpconfig = 
-                    WSFederationMetaManager.getIDPSSOConfig(spRealm, 
+                    metaManager.getIDPSSOConfig(spRealm, 
                     idpEntityId);
                 
-                if ( WSFederationMetaManager.isTrustedProvider(spRealm, 
+                if ( metaManager.isTrustedProvider(spRealm, 
                     spEntityId, idpEntityId) ) {
-                    String issuerName = WSFederationMetaManager.
+                    String issuerName = metaManager.
                         getTokenIssuerName(idp);
 
                     String displayName = 

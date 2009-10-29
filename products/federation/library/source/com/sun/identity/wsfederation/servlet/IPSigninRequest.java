@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPSigninRequest.java,v 1.7 2008-08-28 20:49:23 superpat7 Exp $
+ * $Id: IPSigninRequest.java,v 1.8 2009-10-28 23:59:00 exu Exp $
  *
  */
 
@@ -116,9 +116,10 @@ public class IPSigninRequest extends WSFederationAction {
                 WSFederationUtils.bundle.getString("IDPMetaAliasNotFound"));
         }
 
+        WSFederationMetaManager metaManager =
+            WSFederationUtils.getMetaManager();
         // retrieve IDP entity id from meta alias            
-        String idpEntityID = 
-            WSFederationMetaManager.getEntityByMetaAlias(idpMetaAlias);
+        String idpEntityID = metaManager.getEntityByMetaAlias(idpMetaAlias);
         if ((idpEntityID == null) 
             || (idpEntityID.trim().length() == 0)) {
             debug.error(classMethod +
@@ -131,7 +132,7 @@ public class IPSigninRequest extends WSFederationAction {
             WSFederationMetaUtils.getRealmByMetaAlias(idpMetaAlias);
 
         String spEntityID = 
-            WSFederationMetaManager.getEntityByTokenIssuerName(realm,
+            metaManager.getEntityByTokenIssuerName(realm,
             wtrealm);
         if ((spEntityID == null) 
             || (spEntityID.trim().length() == 0)) {
@@ -142,7 +143,7 @@ public class IPSigninRequest extends WSFederationAction {
         }
         
         // check if the remote provider is valid
-        if (!WSFederationMetaManager.isTrustedProvider(realm, idpEntityID, 
+        if (!metaManager.isTrustedProvider(realm, idpEntityID, 
             spEntityID)) {
             debug.error(classMethod +
                 "The remote provider is not valid.");
@@ -272,9 +273,10 @@ public class IPSigninRequest extends WSFederationAction {
             throw new WSFederationException(
                 WSFederationUtils.bundle.getString("unableTofindACSURL"));
         }
-
+        WSFederationMetaManager metaManager =
+            WSFederationUtils.getMetaManager();
         IDPSSOConfigElement idpConfig = 
-            WSFederationMetaManager.getIDPSSOConfig(realm, idpEntityId);
+            metaManager.getIDPSSOConfig(realm, idpEntityId);
         if ( idpConfig == null )
         {
             debug.error(classMethod + "cannot find configuration for IdP " 
@@ -285,7 +287,7 @@ public class IPSigninRequest extends WSFederationAction {
         }
 
         SPSSOConfigElement spConfig = 
-            WSFederationMetaManager.getSPSSOConfig(realm, spEntityId);
+            metaManager.getSPSSOConfig(realm, spEntityId);
         if ( spConfig == null )
         {
             debug.error(classMethod + "cannot find configuration for SP " 

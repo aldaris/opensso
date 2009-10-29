@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAuthenticationMethodMapper.java,v 1.3 2008-06-25 05:48:06 qcheng Exp $
+ * $Id: DefaultIDPAuthenticationMethodMapper.java,v 1.4 2009-10-28 23:58:59 exu Exp $
  *
  */
 
@@ -35,7 +35,6 @@ import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.common.WSFederationException;
 import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
-import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.util.HashSet;
 import java.util.List;
@@ -89,7 +88,8 @@ public class DefaultIDPAuthenticationMethodMapper
 
         try {
             IDPSSOConfigElement config = 
-                WSFederationMetaManager.getIDPSSOConfig(realm, idpEntityID);
+                WSFederationUtils.getMetaManager().getIDPSSOConfig(
+                    realm, idpEntityID);
             attrs = WSFederationMetaUtils.getAttributes(config);
         } catch (WSFederationMetaException sme) {
             debug.error(classMethod +

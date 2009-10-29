@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationCOTUtils.java,v 1.4 2008-08-28 23:24:53 superpat7 Exp $
+ * $Id: WSFederationCOTUtils.java,v 1.5 2009-10-28 23:58:59 exu Exp $
  *
  */
 
@@ -48,12 +48,14 @@ import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 public class WSFederationCOTUtils {
     
     private static Debug debug = WSFederationMetaUtils.debug;
+    private Object callerSession = null;
     
     /*
-     * Private constructor ensure that no instance is ever created
+     * Constructor.
+     * @param callerToken session token of the caller.
      */
-    private WSFederationCOTUtils()  {
-        
+    public WSFederationCOTUtils(Object callerToken)  {
+       callerSession = callerToken; 
     }
     
     /**
@@ -69,13 +71,19 @@ public class WSFederationCOTUtils {
      * @throws JAXBException is there is an error updating the entity
      *          configuration.
      */
-    public static void updateEntityConfig(String realm, String name, 
+    public void updateEntityConfig(String realm, String name, 
         String entityId)
     throws WSFederationMetaException, JAXBException {
         String classMethod = "WSFederationCOTUtils.updateEntityConfig: ";
+        WSFederationMetaManager metaManager = null;
+        if (callerSession != null) {
+            metaManager = new WSFederationMetaManager(callerSession);
+        } else {
+            metaManager = new WSFederationMetaManager();
+        }
         ObjectFactory objFactory = new ObjectFactory();
         // Check whether the entity id existed in the DS
-        FederationElement edes = WSFederationMetaManager.getEntityDescriptor(
+        FederationElement edes = metaManager.getEntityDescriptor(
                 realm, entityId);
         if (edes == null) {
             debug.error(classMethod +"No such entity: " + entityId);
@@ -83,7 +91,7 @@ public class WSFederationCOTUtils {
             throw new WSFederationMetaException("entityid_invalid", data);
         }
         FederationConfigElement eConfig = 
-            WSFederationMetaManager.getEntityConfig(realm, entityId);
+            metaManager.getEntityConfig(realm, entityId);
         if (eConfig == null) {
             BaseConfigType bctype = null;
             AttributeType atype = objFactory.createAttributeType();
@@ -99,7 +107,7 @@ public class WSFederationCOTUtils {
             // Decide which role EntityDescriptorElement includes
             // Right now, it is either an SP or an IdP
             // IdP will have UriNamedClaimTypesOffered
-            if (WSFederationMetaManager.getUriNamedClaimTypesOffered(edes) != 
+            if (metaManager.getUriNamedClaimTypesOffered(edes) != 
                 null) {
                 bctype = objFactory.createIDPSSOConfigElement();
                 bctype.getAttribute().add(atype);
@@ -109,7 +117,7 @@ public class WSFederationCOTUtils {
                 bctype.getAttribute().add(atype);
                 ll.add(bctype);
             }
-            WSFederationMetaManager.setEntityConfig(realm,ele);
+            metaManager.setEntityConfig(realm,ele);
         } else {
             List elist = eConfig.
                     getIDPSSOConfigOrSPSSOConfig();
@@ -125,7 +133,7 @@ public class WSFederationCOTUtils {
                         List avpl = avp.getValue();
                         if (avpl.isEmpty() ||!containsValue(avpl,name)) {
                             avpl.add(name);
-                            WSFederationMetaManager.setEntityConfig(realm,
+                            metaManager.setEntityConfig(realm,
                                 eConfig);
                             break;
                         }
@@ -137,7 +145,7 @@ public class WSFederationCOTUtils {
                     atype.setName(SAML2Constants.COT_LIST);
                     atype.getValue().add(name);
                     list.add(atype);
-                    WSFederationMetaManager.setEntityConfig(realm, eConfig);
+                    metaManager.setEntityConfig(realm, eConfig);
                 }
             }
         }
@@ -164,12 +172,18 @@ public class WSFederationCOTUtils {
      * entity config.
      * @throws JAXBException if there is an error updating the entity config.
      */
-    public static void removeFromEntityConfig(String realm, String name,
+    public void removeFromEntityConfig(String realm, String name,
         String entityId)
     throws WSFederationMetaException, JAXBException {
         String classMethod = "WSFederationCOTUtils.removeFromEntityConfig: ";
+        WSFederationMetaManager metaManager = null;
+        if (callerSession != null) {
+            metaManager = new WSFederationMetaManager(callerSession);
+        } else {
+            metaManager = new WSFederationMetaManager();
+        }
         // Check whether the entity id existed in the DS
-        FederationElement edes = WSFederationMetaManager.getEntityDescriptor(
+        FederationElement edes = metaManager.getEntityDescriptor(
                 realm, entityId);
         if (edes == null) {
             debug.error(classMethod +"No such entity: " + entityId);
@@ -177,7 +191,7 @@ public class WSFederationCOTUtils {
             throw new WSFederationMetaException("entityid_invalid", data);
         }
         FederationConfigElement eConfig = 
-            WSFederationMetaManager.getEntityConfig(realm, entityId);
+            metaManager.getEntityConfig(realm, entityId);
         if (eConfig != null) {
             List elist = eConfig.
                     getIDPSSOConfigOrSPSSOConfig();
@@ -192,7 +206,7 @@ public class WSFederationCOTUtils {
                         if (avpl != null && !avpl.isEmpty() &&
                                 containsValue(avpl,name)) {
                             avpl.remove(name);
-                            WSFederationMetaManager.setEntityConfig(realm,
+                            metaManager.setEntityConfig(realm,
                                 eConfig);
                             break;
                         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.2 2008-06-25 05:48:08 qcheng Exp $
+ * $Id: IDPSSOUtil.java,v 1.3 2009-10-28 23:58:59 exu Exp $
  *
  */
 
@@ -82,7 +82,8 @@ public class IDPSSOUtil {
             // try to get it from IDP config
             try {
                 IDPSSOConfigElement config = 
-                    WSFederationMetaManager.getIDPSSOConfig(realm, hostEntityId);
+                    WSFederationUtils.getMetaManager().getIDPSSOConfig(
+                        realm, hostEntityId);
                 authUrl = WSFederationMetaUtils.getAttribute(config, 
                     SAML2Constants.AUTH_URL);
             } catch (WSFederationMetaException sme) {
@@ -128,12 +129,14 @@ public class IDPSSOUtil {
     public static String getACSurl(String entityId, String realm, 
         String wreply) throws WSFederationMetaException
     {
+        WSFederationMetaManager metaManager = 
+            WSFederationUtils.getMetaManager();
         FederationElement sp = 
-            WSFederationMetaManager.getEntityDescriptor(realm, entityId);
+            metaManager.getEntityDescriptor(realm, entityId);
         if ( wreply == null )
         {
             // Get first ACS URL for this SP
-            return WSFederationMetaManager.getTokenIssuerEndpoint(sp);
+            return metaManager.getTokenIssuerEndpoint(sp);
         }
         else
         {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaManager.java,v 1.8 2008-12-18 20:08:52 qcheng Exp $
+ * $Id: IDFFMetaManager.java,v 1.9 2009-10-28 23:58:57 exu Exp $
  *
  */
 
@@ -72,9 +72,11 @@ public class IDFFMetaManager {
     private static String ROOT_REALM = "/";
     private static String IDFF_METADATA_ATTR="sun-fm-idff-metadata";
     private static String IDFF_ENTITY_CONFIG_ATTR="sun-fm-idff-entityconfig";
-    private static CircleOfTrustManager cotManager = null;
-    ConfigurationInstance idffMetaConfigInstance = null;
-    Object session = null;
+    private static CircleOfTrustManager cotManagerStatic = null;
+    private static ConfigurationInstance idffMetaConfigInstanceStatic = null;
+    private CircleOfTrustManager cotManager = null;
+    private ConfigurationInstance idffMetaConfigInstance = null;
+    private Object callerSession = null;
     
     /**
      * Constant used to identify meta alias.
@@ -83,7 +85,24 @@ public class IDFFMetaManager {
 
     static {
         try {
-            cotManager = new CircleOfTrustManager();
+            idffMetaConfigInstanceStatic = 
+                ConfigurationManager.getConfigurationInstance(
+                IDFFMetaUtils.IDFF_META_SERVICE);
+        } catch (ConfigurationException ce) {
+            debug.error("IDFFMetaManager constructor:", ce);
+        }
+        if (idffMetaConfigInstanceStatic != null) {
+            try {
+                idffMetaConfigInstanceStatic.addListener(
+                    new IDFFMetaServiceListener());
+            } catch (ConfigurationException ce) {
+                debug.error("IDFFMetaManager.static: Unable to register "
+                        + "ConfigurationListener for IDFF Meta service",ce);
+            }
+        }
+
+        try {
+            cotManagerStatic = new CircleOfTrustManager();
         } catch (COTException ce) {
             debug.error("IDFFMetaManager:static:Error initializing COTManager");
         }
@@ -97,16 +116,23 @@ public class IDFFMetaManager {
      */
     public IDFFMetaManager(Object session) throws IDFFMetaException {
         String classMethod = "IDFFMetaManger:Constructor : " ;
-        this.session = session;
-        try {
-            //TODO - pass the session to Configuration Manager
-            // need method signature change in ConfigurationManager
-            idffMetaConfigInstance =
+        if (session == null) {
+            idffMetaConfigInstance = idffMetaConfigInstanceStatic;
+            cotManager = cotManagerStatic;
+        } else {
+            try {
+                idffMetaConfigInstance =
                     ConfigurationManager.getConfigurationInstance(
-                    IDFFMetaUtils.IDFF_META_SERVICE);
-        } catch (ConfigurationException ce) {
-            debug.error("IDFFManager:Constructor : ", ce);
-            throw new IDFFMetaException(ce);
+                    IDFFMetaUtils.IDFF_META_SERVICE, session);
+                cotManager = new CircleOfTrustManager(session);
+            } catch (ConfigurationException ce) {
+                debug.error("IDFFManager:Constructor : ", ce);
+                throw new IDFFMetaException(ce);
+            } catch (COTException cex) {
+                debug.error("IDFFManager:Constructor : ", cex);
+                throw new IDFFMetaException(cex);
+            }
+            callerSession = session;
         }
         
         if (idffMetaConfigInstance == null) {
@@ -115,14 +141,6 @@ public class IDFFMetaManager {
             LogUtil.error(Level.INFO,
                     LogUtil.ERROR_GET_IDFF_META_INSTANCE, null);
             throw new IDFFMetaException("nullConfig",null);
-        } else {
-            try {
-                idffMetaConfigInstance.addListener(
-                        new IDFFMetaServiceListener());
-            } catch (ConfigurationException ce) {
-                debug.error(classMethod + "Unable to register "
-                        + "ConfigurationListener for IDFF Meta service",ce);
-            }
         }
     }
     
@@ -232,8 +250,10 @@ public class IDFFMetaManager {
             }
             String[] args = { entityID, realm };
             // retrieve from cache
-            entityDescriptor = IDFFMetaCache.getEntityDescriptor(
-                realm, entityID);
+            if (callerSession == null) {
+                entityDescriptor = IDFFMetaCache.getEntityDescriptor(
+                    realm, entityID);
+            }
             if (entityDescriptor == null)  {
                 try {
                     Map attrs = idffMetaConfigInstance.getConfiguration(
@@ -592,8 +612,10 @@ public class IDFFMetaManager {
                 realm = ROOT_REALM;
             }
             String[] args = { entityID, realm };
-            // retrieve config from cache
-            entityConfig = IDFFMetaCache.getEntityConfig(realm, entityID);
+            if (callerSession == null) {
+                // retrieve config from cache
+                entityConfig = IDFFMetaCache.getEntityConfig(realm, entityID);
+            }
             if (entityConfig == null) {
                 try {
                     Map attrs = idffMetaConfigInstance.getConfiguration(

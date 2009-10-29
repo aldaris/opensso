@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.5 2008-11-10 22:57:04 veiming Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.6 2009-10-28 23:58:59 exu Exp $
  *
  */
 
@@ -49,7 +49,7 @@ import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml2.common.SAML2Constants;
 
 import com.sun.identity.wsfederation.common.WSFederationException;
-import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
+import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.profile.RequestSecurityTokenResponse;
 import com.sun.identity.wsfederation.profile.SAML11RequestedSecurityToken;
 
@@ -130,8 +130,8 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
         String format = nameID.getFormat();
         
         String remoteEntityID = 
-            WSFederationMetaManager.getEntityByTokenIssuerName(realm, 
-            assertion.getIssuer());
+            WSFederationUtils.getMetaManager().getEntityByTokenIssuerName(
+                realm, assertion.getIssuer());
         if(debug.messageEnabled()) {
             debug.message(
                 "DefaultLibrarySPAccountMapper.getIdentity(Assertion):" +

@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaCache.java,v 1.3 2008-06-25 05:48:05 qcheng Exp $
+ * $Id: WSFederationMetaCache.java,v 1.4 2009-10-28 23:58:59 exu Exp $
  *
  */
 
 package com.sun.identity.wsfederation.meta;
 
-import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 import java.util.Hashtable;
 
@@ -43,7 +42,7 @@ import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
  */
 class WSFederationMetaCache
 {
-    private static Debug debug = WSFederationUtils.debug;
+    private static Debug debug = WSFederationMetaUtils.debug;
     private static Hashtable federationCache = new Hashtable();
     private static Hashtable configCache = new Hashtable();
 

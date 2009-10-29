@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2COTUtils.java,v 1.7 2008-12-18 20:08:08 qcheng Exp $
+ * $Id: SAML2COTUtils.java,v 1.8 2009-10-28 23:58:58 exu Exp $
  *
  */
 
@@ -62,14 +62,21 @@ import java.util.ArrayList;
 public class SAML2COTUtils {
     
     private static Debug debug = SAML2MetaUtils.debug;
-    
+    private Object callerSession = null;    
     /**
      * Default Constructor.
      */
     public SAML2COTUtils()  {
-        
     }
     
+    /**
+     * Constructor.
+     * @param callerToken session token of the caller.
+     */
+    public SAML2COTUtils(Object callerToken) {
+        callerSession = callerToken;
+    }
+
     /**
      * Updates the entity config to add the circle of turst name to the
      * <code>cotlist</code> attribute. The Service Provider and Identity
@@ -86,7 +93,12 @@ public class SAML2COTUtils {
     public void updateEntityConfig(String realm, String name, String entityId)
     throws SAML2MetaException, JAXBException {
         String classMethod = "SAML2COTUtils.updateEntityConfig: ";
-        SAML2MetaManager metaManager = new SAML2MetaManager();
+        SAML2MetaManager metaManager = null;
+        if (callerSession == null) {
+            metaManager = new SAML2MetaManager();
+        } else {
+            metaManager = new SAML2MetaManager(callerSession);
+        } 
         ObjectFactory objFactory = new ObjectFactory();
         // Check whether the entity id existed in the DS
         EntityDescriptorElement edes = metaManager.getEntityDescriptor(
@@ -234,7 +246,12 @@ public class SAML2COTUtils {
     public void removeFromEntityConfig(String realm,String name,String entityId)
     throws SAML2MetaException, JAXBException {
         String classMethod = "SAML2COTUtils.removeFromEntityConfig: ";
-        SAML2MetaManager metaManager = new SAML2MetaManager();
+        SAML2MetaManager metaManager = null;
+        if (callerSession == null) {
+            metaManager = new SAML2MetaManager();
+        } else {
+            metaManager = new SAML2MetaManager(callerSession);
+        }
         // Check whether the entity id existed in the DS
         EntityDescriptorElement edes = metaManager.getEntityDescriptor(
                 realm, entityId);

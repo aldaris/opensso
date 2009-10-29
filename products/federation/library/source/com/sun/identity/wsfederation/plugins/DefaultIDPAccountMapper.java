@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAccountMapper.java,v 1.6 2008-11-10 22:57:04 veiming Exp $
+ * $Id: DefaultIDPAccountMapper.java,v 1.7 2009-10-28 23:58:59 exu Exp $
  *
  */
 
@@ -41,7 +41,6 @@ import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.common.WSFederationException;
 import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.IDPSSOConfigElement;
-import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 
 import java.util.Set;
@@ -95,7 +94,8 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
         }
         
         IDPSSOConfigElement idpConfig = 
-            WSFederationMetaManager.getIDPSSOConfig(realm, hostEntityID);
+            WSFederationUtils.getMetaManager().getIDPSSOConfig(
+                realm, hostEntityID);
 
         String name2 = null;
         String attrName = WSFederationMetaUtils.getAttribute(idpConfig,

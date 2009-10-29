@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.42 2009-05-22 06:16:14 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.43 2009-10-29 00:03:51 exu Exp $
  *
  */
 
@@ -433,7 +433,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = new HashMap();
         IDPSSODescriptorElement idpssoDescriptor = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             idpssoDescriptor =
                     samlManager.getIDPSSODescriptor(realm,entityName);
             if (idpssoDescriptor != null) {
@@ -619,7 +619,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = null;
         IDPSSOConfigElement idpssoConfig = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             idpssoConfig = samlManager.getIDPSSOConfig(realm,entityName);
             if (idpssoConfig != null) {
                 BaseConfigType baseConfig = (BaseConfigType)idpssoConfig;
@@ -659,7 +659,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         IDPSSOConfigElement idpssoConfig = null;
         SPSSOConfigElement spssoConfig = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             if (role.equals(EntityModel.IDENTITY_PROVIDER)) {
                 idpssoConfig = samlManager.getIDPSSOConfig(realm,entityName);
                 if (idpssoConfig != null) {
@@ -705,7 +705,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = new HashMap();
         SPSSODescriptorElement spssoDescriptor = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             spssoDescriptor = samlManager.getSPSSODescriptor(realm,entityName);
             if (spssoDescriptor != null) {
                 
@@ -839,7 +839,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         SPSSODescriptorElement spssoDescriptor = null;
         
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             spssoDescriptor = samlManager.getSPSSODescriptor(realm,entityName);
             if (spssoDescriptor != null) {
                 asconsServiceList =
@@ -896,7 +896,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = null;
         SPSSOConfigElement spssoConfig = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             spssoConfig = samlManager.getSPSSOConfig(realm,entityName);
             if (spssoConfig != null) {
                 BaseConfigType baseConfig = (BaseConfigType)spssoConfig;
@@ -935,7 +935,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact = new 
                 com.sun.identity.saml2.jaxb.metadata.ObjectFactory();
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
                     samlManager.getEntityDescriptor(realm,entityName);
             idpssoDescriptor =
@@ -1215,7 +1215,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         String role = EntityModel.IDENTITY_PROVIDER;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             
             //entityConfig is the extended entity configuration object
             EntityConfigElement entityConfig =
@@ -1281,7 +1281,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact = new 
                 com.sun.identity.saml2.jaxb.metadata.ObjectFactory(); 
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
                     samlManager.getEntityDescriptor(realm,entityName);
             spssoDescriptor =
@@ -1476,7 +1476,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         String role = EntityModel.SERVICE_PROVIDER;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             
             //entityConfig is the extended entity configuration object
             EntityConfigElement entityConfig =
@@ -1721,7 +1721,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             String location,
             String role
             ) throws SAML2MetaException, JAXBException, AMConsoleException {
-        SAML2MetaManager samlManager = new SAML2MetaManager();
+        SAML2MetaManager samlManager = getSAML2MetaManager();
         EntityDescriptorElement entityDescriptor =
                 samlManager.getEntityDescriptor(realm, entityName);
         ObjectFactory objFactory = new ObjectFactory();
@@ -2499,7 +2499,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = new HashMap();
         AttributeAuthorityDescriptorElement attrauthDescriptor = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             attrauthDescriptor =
                 samlManager.getAttributeAuthorityDescriptor(realm,entityName);
             map.put(ATTR_SEFVICE_DEFAULT_LOCATION, Collections.EMPTY_SET);
@@ -2585,7 +2585,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = null;
         AttributeAuthorityConfigElement attributeAuthorityConfig = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             attributeAuthorityConfig =
                     samlManager.getAttributeAuthorityConfig(
                     realm,entityName);
@@ -2626,7 +2626,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = new HashMap();
         AuthnAuthorityDescriptorElement authnauthDescriptor = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             authnauthDescriptor =
                     samlManager.getAuthnAuthorityDescriptor(realm,entityName);
             if (authnauthDescriptor != null) {                
@@ -2690,7 +2690,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = null;
         AuthnAuthorityConfigElement authnAuthorityConfig = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             authnAuthorityConfig = samlManager.getAuthnAuthorityConfig(
                     realm,entityName);
             if (authnAuthorityConfig != null) {
@@ -2730,7 +2730,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = new HashMap();
         AttributeQueryDescriptorElement attrQueryDescriptor = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             attrQueryDescriptor =
                     samlManager.getAttributeQueryDescriptor(realm,entityName);            
             map.put(ATTR_NAMEID_FORMAT, (OrderedSet) convertListToSet(
@@ -2769,7 +2769,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = null;
         AttributeQueryConfigElement attrQueryConfig = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             attrQueryConfig = samlManager.getAttributeQueryConfig(
                     realm,entityName);
             if (attrQueryConfig != null) {
@@ -2811,7 +2811,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = new HashMap();
         AttributeAuthorityDescriptorElement attrauthDescriptor = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
                     samlManager.getEntityDescriptor(realm,entityName);
             attrauthDescriptor =
@@ -2929,7 +2929,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         logEvent("ATTEMPT_MODIFY_ATTR_AUTH_ATTR_VALUES", params);
         String role = EntityModel.SAML_ATTRAUTHORITY;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             EntityConfigElement entityConfig =
                     samlManager.getEntityConfig(realm,entityName);
                         
@@ -2994,7 +2994,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = new HashMap();
         AuthnAuthorityDescriptorElement authnauthDescriptor = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
                     samlManager.getEntityDescriptor(realm,entityName);
             authnauthDescriptor =
@@ -3083,7 +3083,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         logEvent("ATTEMPT_MODIFY_AUTHN_AUTH_ATTR_VALUES", params);
         String role = EntityModel.SAML_AUTHNAUTHORITY;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             
             //entityConfig is the extended entity configuration object
             EntityConfigElement entityConfig =
@@ -3148,7 +3148,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = new HashMap();
         AttributeQueryDescriptorElement attrQueryDescriptor = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
                     samlManager.getEntityDescriptor(realm,entityName);
             attrQueryDescriptor =
@@ -3204,7 +3204,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         logEvent("ATTEMPT_MODIFY_ATTR_QUERY_VALUES", params);
         String role = EntityModel.SAML_ATTRQUERY;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             
             //entityConfig is the extended entity configuration object
             EntityConfigElement entityConfig =
@@ -3268,7 +3268,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = new HashMap();
         AffiliationDescriptorType affiliationDescriptor = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             affiliationDescriptor =
                     samlManager.getAffiliationDescriptor(realm,entityName);
             if (affiliationDescriptor != null) {
@@ -3314,7 +3314,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = null;
         AffiliationConfigElement atffilConfig = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             atffilConfig = samlManager.getAffiliationConfig(
                     realm,entityName);
             if (atffilConfig != null) {
@@ -3366,7 +3366,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         Map map = new HashMap();
         AffiliationDescriptorType affiliationDescriptor = null;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             EntityDescriptorElement entityDescriptor =
                     samlManager.getEntityDescriptor(realm,entityName);
             affiliationDescriptor =
@@ -3416,7 +3416,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     public Set getallSPEntities(String realm) throws AMConsoleException {
         Set allSPEntities = Collections.EMPTY_SET;
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = getSAML2MetaManager();
             allSPEntities = convertListToSet(
                     samlManager.getAllHostedServiceProviderEntities(realm));
             Set remoteSPEntities = convertListToSet(
@@ -3600,7 +3600,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     
     protected SAML2MetaManager getSAML2MetaManager() throws SAML2MetaException {
         if (metaManager == null) {
-            metaManager = new SAML2MetaManager();
+            metaManager = new SAML2MetaManager(getUserSSOToken());
         }
         return metaManager;
     }

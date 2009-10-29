@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListEntities.java,v 1.7 2009-07-30 05:35:35 veiming Exp $
+ * $Id: ListEntities.java,v 1.8 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -62,7 +62,6 @@ public class ListEntities extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        superAdminUserValidation();
 
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         
@@ -99,7 +98,7 @@ public class ListEntities extends AuthenticatedCommand {
         IOutput outputWriter = getOutputWriter();
         Object[] objs = {realm};
         try {
-            SAML2MetaManager metaManager = new SAML2MetaManager();
+            SAML2MetaManager metaManager = new SAML2MetaManager(ssoToken);
             Set entities = metaManager.getAllEntities(realm);
             
             if ((entities == null) || entities.isEmpty()) {
@@ -128,8 +127,7 @@ public class ListEntities extends AuthenticatedCommand {
         IOutput outputWriter = getOutputWriter();
         Object[] objs = {realm};
         try {
-            IDFFMetaManager metaManager = new IDFFMetaManager(
-                getAdminSSOToken());
+            IDFFMetaManager metaManager = new IDFFMetaManager(ssoToken);
             Set entities = metaManager.getAllEntities(realm);
             
             if ((entities == null) || entities.isEmpty()) {
@@ -158,7 +156,9 @@ public class ListEntities extends AuthenticatedCommand {
         IOutput outputWriter = getOutputWriter();
         Object[] objs = {realm};
         try {
-            Set entities = WSFederationMetaManager.getAllEntities(realm);
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                ssoToken);
+            Set entities = metaManager.getAllEntities(realm);
             
             if ((entities == null) || entities.isEmpty()) {
                 outputWriter.printlnMessage(MessageFormat.format(

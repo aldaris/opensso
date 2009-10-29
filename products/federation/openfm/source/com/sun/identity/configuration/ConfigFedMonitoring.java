@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigFedMonitoring.java,v 1.1 2009-06-19 02:42:24 bigfatrat Exp $
+ * $Id: ConfigFedMonitoring.java,v 1.2 2009-10-29 00:03:51 exu Exp $
  *
  */
 
@@ -335,17 +335,18 @@ public class ConfigFedMonitoring {
         boolean isSP = true;
         int cnt = 0;
         try {
-            if (WSFederationMetaManager.getIDPSSOConfig(realm,entity) != null) {
+            WSFederationMetaManager metaManager = new WSFederationMetaManager();
+            if (metaManager.getIDPSSOConfig(realm,entity) != null) {
                 roles.add(IDENTITY_PROVIDER);
             }
-            if (WSFederationMetaManager.getSPSSOConfig(realm, entity) != null) {
+            if (metaManager.getSPSSOConfig(realm, entity) != null) {
                 roles.add(SERVICE_PROVIDER);
             }
             
             //to handle dual roles specifically for WSFED
             if (roles.isEmpty()) {
                 FederationElement fedElem =
-                    WSFederationMetaManager.getEntityDescriptor(realm, entity);
+                    metaManager.getEntityDescriptor(realm, entity);
                 if (fedElem != null) {
                     for (Iterator iter = fedElem.getAny().iterator(); 
                         iter.hasNext(); ) 
@@ -592,8 +593,9 @@ public class ConfigFedMonitoring {
         // wsentMap: entity name => Map of ("location", "roles") -> values
         Map wsentMap = new HashMap();
         try {
-            wsEnts = WSFederationMetaManager.getAllEntities(realm);
-            List hosted = WSFederationMetaManager.getAllHostedEntities(realm);
+            WSFederationMetaManager metaManager = new WSFederationMetaManager();
+            wsEnts = metaManager.getAllEntities(realm);
+            List hosted = metaManager.getAllHostedEntities(realm);
             for (Iterator it = wsEnts.iterator(); it.hasNext(); ) {
                 Map wse = new HashMap();
                 String entId = (String)it.next();

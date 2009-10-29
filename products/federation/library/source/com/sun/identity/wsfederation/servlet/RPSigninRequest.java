@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninRequest.java,v 1.7 2008-08-28 14:47:45 superpat7 Exp $
+ * $Id: RPSigninRequest.java,v 1.8 2009-10-28 23:59:00 exu Exp $
  *
  */
 
@@ -107,8 +107,10 @@ public class RPSigninRequest extends WSFederationAction {
 
         String spRealm = SAML2MetaUtils.getRealmByMetaAlias(spMetaAlias);
         
+        WSFederationMetaManager metaManager = 
+            WSFederationUtils.getMetaManager();
         String spEntityId = 
-            WSFederationMetaManager.getEntityByMetaAlias(spMetaAlias);        
+            metaManager.getEntityByMetaAlias(spMetaAlias);        
         if ( spEntityId==null || spEntityId.length()==0 )
         {
             String[] args = {spMetaAlias, spRealm};
@@ -117,7 +119,7 @@ public class RPSigninRequest extends WSFederationAction {
         }
 
         SPSSOConfigElement spConfig = 
-            WSFederationMetaManager.getSPSSOConfig(spRealm,spEntityId);
+            metaManager.getSPSSOConfig(spRealm,spEntityId);
         if ( spConfig==null ) {
             String[] args = {spEntityId, spRealm};
             throw new WSFederationException(WSFederationConstants.BUNDLE_NAME,
@@ -202,9 +204,9 @@ public class RPSigninRequest extends WSFederationAction {
         }
 
         FederationElement sp = 
-            WSFederationMetaManager.getEntityDescriptor(spRealm,spEntityId);
+            metaManager.getEntityDescriptor(spRealm,spEntityId);
         String spIssuerName = 
-            WSFederationMetaManager.getTokenIssuerName(sp);
+            metaManager.getTokenIssuerName(sp);
         if (debug.messageEnabled()) {
             debug.message(classMethod+"SP issuer name:" + spIssuerName);
         }
@@ -215,20 +217,19 @@ public class RPSigninRequest extends WSFederationAction {
             // Got the issuer name from the cookie/UA string - let's see if 
             // we know the entity ID
             idpEntityId = 
-                WSFederationMetaManager.getEntityByTokenIssuerName(null, 
+                metaManager.getEntityByTokenIssuerName(null, 
                 idpIssuerName);
         }
 
         if (idpEntityId == null) {
             // See if there is only one trusted IdP configured...
             List<String> allRemoteIdPs = 
-                WSFederationMetaManager.
-                getAllRemoteIdentityProviderEntities(spRealm);
+                metaManager.getAllRemoteIdentityProviderEntities(spRealm);
             ArrayList<String> trustedRemoteIdPs = new ArrayList<String>();
             
             for ( String idp : allRemoteIdPs )
             {
-                if ( WSFederationMetaManager.isTrustedProvider(spRealm, 
+                if ( metaManager.isTrustedProvider(spRealm, 
                     spEntityId, idp) ) {
                     trustedRemoteIdPs.add(idp);
                 }
@@ -249,7 +250,7 @@ public class RPSigninRequest extends WSFederationAction {
         FederationElement idp = null;
         if ( idpEntityId != null )
         {
-            idp = WSFederationMetaManager.getEntityDescriptor(null,
+            idp = metaManager.getEntityDescriptor(null,
                 idpEntityId);
         }
         
@@ -278,12 +279,12 @@ public class RPSigninRequest extends WSFederationAction {
         }
 
         String endpoint = 
-            WSFederationMetaManager.getTokenIssuerEndpoint(idp);
+            metaManager.getTokenIssuerEndpoint(idp);
         if (debug.messageEnabled()) {
             debug.message(classMethod+"endpoint:" + endpoint);
         }
         String replyURL = 
-            WSFederationMetaManager.getTokenIssuerEndpoint(sp);
+            metaManager.getTokenIssuerEndpoint(sp);
         if (debug.messageEnabled()) {
             debug.message(classMethod+"replyURL:" + replyURL);
         }

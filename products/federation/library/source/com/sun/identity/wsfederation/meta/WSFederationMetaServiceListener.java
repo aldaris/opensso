@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaServiceListener.java,v 1.4 2008-06-25 05:48:06 qcheng Exp $
+ * $Id: WSFederationMetaServiceListener.java,v 1.5 2009-10-28 23:58:59 exu Exp $
  *
  */
 
@@ -30,7 +30,6 @@
 package com.sun.identity.wsfederation.meta;
 
 import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.meta.WSFederationMetaCache;
 import com.sun.identity.wsfederation.profile.SPCache;
 import com.sun.identity.plugin.configuration.ConfigurationListener;
@@ -43,7 +42,7 @@ import com.sun.identity.plugin.configuration.ConfigurationActionEvent;
  */
 class WSFederationMetaServiceListener implements ConfigurationListener
 {
-    private static Debug debug = WSFederationUtils.debug;
+    private static Debug debug = WSFederationMetaUtils.debug;
 
     WSFederationMetaServiceListener() {
     }

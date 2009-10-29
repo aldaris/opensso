@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPRPSignoutRequest.java,v 1.6 2008-11-10 22:57:04 veiming Exp $
+ * $Id: IPRPSignoutRequest.java,v 1.7 2009-10-28 23:59:00 exu Exp $
  *
  */
 
@@ -94,9 +94,10 @@ public class IPRPSignoutRequest extends WSFederationAction {
                 WSFederationUtils.bundle.getString("nullRealm"));
         }
         
+        WSFederationMetaManager metaManager = 
+            WSFederationUtils.getMetaManager();
         // retrieve entity id from meta alias            
-        String entityId = 
-            WSFederationMetaManager.getEntityByMetaAlias(metaAlias);
+        String entityId = metaManager.getEntityByMetaAlias(metaAlias);
         if ((entityId == null) || (entityId.trim().length() == 0)) {
             debug.error(classMethod + "Unable to get Entity ID from metaAlias" + 
                 metaAlias);
@@ -121,7 +122,7 @@ public class IPRPSignoutRequest extends WSFederationAction {
             // Strategy here is to do logouts in parallel via iframes, provide a
             // link to wreply, if any
             BaseConfigType config = 
-                WSFederationMetaManager.getBaseConfig(realm,entityId);
+                metaManager.getBaseConfig(realm,entityId);
             String displayName = 
                 WSFederationMetaUtils.getAttribute(config,
                 WSFederationConstants.DISPLAY_NAME);
@@ -149,15 +150,15 @@ public class IPRPSignoutRequest extends WSFederationAction {
                     && idpList[0] != null && idpList[0].length()>0 )
                 {
                     FederationElement fed = 
-                        WSFederationMetaManager.getEntityDescriptor(realm, 
+                        metaManager.getEntityDescriptor(realm, 
                         idpList[0]);
                     String endpoint = 
-                        WSFederationMetaManager.getTokenIssuerEndpoint(fed);
+                        metaManager.getTokenIssuerEndpoint(fed);
                     String url = endpoint + "?wa=" + 
                         WSFederationConstants.WSIGNOUT10;
 
                     config = 
-                        WSFederationMetaManager.getBaseConfig(realm,idpList[0]);
+                        metaManager.getBaseConfig(realm,idpList[0]);
                     displayName = 
                         WSFederationMetaUtils.getAttribute(config,
                         WSFederationConstants.DISPLAY_NAME);
@@ -181,7 +182,7 @@ public class IPRPSignoutRequest extends WSFederationAction {
                     for ( int i = 0; i < spList.length; i++ )
                     {
                         config = 
-                            WSFederationMetaManager.
+                            metaManager.
                             getBaseConfig(realm,spList[i]);
                         displayName = WSFederationMetaUtils.getAttribute(config,
                             WSFederationConstants.DISPLAY_NAME);
@@ -190,10 +191,10 @@ public class IPRPSignoutRequest extends WSFederationAction {
                             displayName = spList[i];
                         }
                         FederationElement fed = 
-                            WSFederationMetaManager.getEntityDescriptor(realm, 
+                            metaManager.getEntityDescriptor(realm, 
                             spList[i]);
                         String endpoint = 
-                            WSFederationMetaManager.getTokenIssuerEndpoint(fed);
+                            metaManager.getTokenIssuerEndpoint(fed);
                         String url = 
                             endpoint + "?wa=" + 
                             WSFederationConstants.WSIGNOUT10;

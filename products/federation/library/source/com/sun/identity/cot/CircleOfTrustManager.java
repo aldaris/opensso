@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.12 2008-12-11 22:36:29 veiming Exp $
+ * $Id: CircleOfTrustManager.java,v 1.13 2009-10-28 23:58:56 exu Exp $
  *
  */
 package com.sun.identity.cot;
@@ -44,6 +44,9 @@ import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.saml2.meta.SAML2COTUtils;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
+import com.sun.identity.wsfederation.meta.WSFederationCOTUtils;
+import com.sun.identity.wsfederation.meta.WSFederationMetaException;
+import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,21 +60,24 @@ public class CircleOfTrustManager {
     private static final String SUBCONFIG_ID = "cot";
     private static final int SUBCONFIG_PRIORITY = 0;
     
-    private static ConfigurationInstance configInst;
+    private static ConfigurationInstance configInstStatic;
     private static Debug debug = COTUtils.debug;
     
+    private ConfigurationInstance configInst;
+    private Object callerSession = null;
+
     static {
         try {
-            configInst = ConfigurationManager.getConfigurationInstance(
+            configInstStatic = ConfigurationManager.getConfigurationInstance(
                     COTConstants.COT_CONFIG_NAME);
         } catch (ConfigurationException ce) {
             debug.error(
                     "COTManager.static: Unable to get COT service config",ce);
-            configInst = null;
+            configInstStatic = null;
         }
-        if (configInst != null) {
+        if (configInstStatic != null) {
             try {
-                configInst.addListener(new COTServiceListener());
+                configInstStatic.addListener(new COTServiceListener());
             } catch (ConfigurationException ce) {
                 debug.error("COTManager.static: Unable to add " +
                         "ConfigurationListener for COT service.",ce);
@@ -85,11 +91,27 @@ public class CircleOfTrustManager {
      * @throws COTException if unable to construct <code>COTManager</code>.
      */
     public CircleOfTrustManager() throws COTException {
+        configInst = configInstStatic;
         if (configInst == null) {
             throw new COTException("nullConfig", null);
         }
     }
     
+    /**
+     * Constructor for <code>COTManager</code>.
+     *
+     * @param callerToken session token of the caller
+     * @throws COTException if unable to construct <code>COTManager</code>.
+     */
+    public CircleOfTrustManager(Object callerToken) throws COTException {
+        try {
+            configInst = ConfigurationManager.getConfigurationInstance(
+                COTConstants.COT_CONFIG_NAME, callerToken);
+            callerSession = callerToken;
+        } catch (ConfigurationException ce) {
+            throw new COTException("nullConfig", null);
+        }
+    }
     
     /**
      * Creates a circle of trust.
@@ -170,7 +192,7 @@ public class CircleOfTrustManager {
             map = COTUtils.trustedProviderSetToProtocolMap(tp, realm);
             retainValidEntityIDs(map, COTConstants.SAML2, realm);
             retainValidEntityIDs(map, COTConstants.IDFF, realm);
-            //retrinValidEntityID(map, COTConstants.WS_FED, realm);
+            retainValidEntityIDs(map, COTConstants.WS_FED, realm);
         }
         return map;
     }
@@ -292,7 +314,7 @@ public class CircleOfTrustManager {
     
     /**
      * Returns a set of entity identities based on the circle of
-     * trust type IDFF or SAML2
+     * trust type IDFF or SAML2, or WS_FED
      *
      * @param realm the realm name.
      * @param type the protocol type.
@@ -305,6 +327,8 @@ public class CircleOfTrustManager {
                 entityIds = getIDFFEntities(realm);
             } else if (type.equalsIgnoreCase(COTConstants.SAML2)) {
                 entityIds = getSAML2Entities(realm);
+            } else if (type.equalsIgnoreCase(COTConstants.WS_FED)) {
+                entityIds = getWSFedEntities(realm);
             } else {
                 String[] data = { type };
                 throw new COTException("invalidProtocolType",data);
@@ -318,7 +342,7 @@ public class CircleOfTrustManager {
      */
     Set getIDFFEntities(String realm) throws COTException  {
         try {
-            IDFFMetaManager idffMetaMgr = new IDFFMetaManager(null);
+            IDFFMetaManager idffMetaMgr = new IDFFMetaManager(callerSession);
             return idffMetaMgr.getAllEntities(realm);
         } catch (IDFFMetaException idffe) {
             throw new COTException(idffe);
@@ -330,13 +354,35 @@ public class CircleOfTrustManager {
      */
     Set getSAML2Entities(String realm) throws COTException {
         try {
-            SAML2MetaManager saml2MetaMgr = new SAML2MetaManager();
+            SAML2MetaManager saml2MetaMgr = null;
+            if (callerSession != null) {
+                saml2MetaMgr = new SAML2MetaManager(callerSession);
+            } else {
+                saml2MetaMgr = new SAML2MetaManager();
+            }
             return saml2MetaMgr.getAllEntities(realm);
         } catch (SAML2MetaException sme) {
             throw new COTException(sme);
         }
     }
     
+    /**
+     * Returns a set of all WSFED identifiers
+     */
+    Set getWSFedEntities(String realm) throws COTException {
+        try {
+            WSFederationMetaManager wsfedMetaMgr = null;
+            if (callerSession != null) {
+                wsfedMetaMgr = new WSFederationMetaManager(callerSession);
+            } else {
+                wsfedMetaMgr = new WSFederationMetaManager();
+            }
+            return wsfedMetaMgr.getAllEntities(realm);
+        } catch (WSFederationMetaException sme) {
+            throw new COTException(sme);
+        }
+    }
+
     /**
      * Updates the trusted providers list in the entity configuration.
      * The Circle of Trust type determines whether the entiry is an
@@ -380,35 +426,23 @@ public class CircleOfTrustManager {
         String entityID) throws COTException,JAXBException {
         if (protocolType.equalsIgnoreCase(COTConstants.IDFF)) {
             try {
-                new IDFFCOTUtils().updateEntityConfig(realm,cotName,entityID);
+                (new IDFFCOTUtils(callerSession)).updateEntityConfig(
+                    realm,cotName,entityID);
             } catch (IDFFMetaException idffe) {
                 throw new COTException(idffe);
             }
         } else if (protocolType.equalsIgnoreCase(COTConstants.SAML2)) {
             try {
-                new SAML2COTUtils().updateEntityConfig(realm,cotName,entityID);
+                (new SAML2COTUtils(callerSession)).updateEntityConfig(
+                    realm,cotName,entityID);
             } catch (SAML2MetaException idffe) {
                 throw new COTException(idffe);
             }
         } else if (protocolType.equalsIgnoreCase(COTConstants.WS_FED)) {
             try {
-                checkIfWSFedEntityExists(realm, entityID);
-
-                Class clazz = Class.forName(
-                    "com.sun.identity.wsfederation.meta.WSFederationCOTUtils");
-                Class[] formalParams = {String.class, String.class,
-                    String.class};
-                Method updateEntity = clazz.getDeclaredMethod(
-                    "updateEntityConfig", formalParams);
-                Object[] params = {realm, cotName, entityID};
-                updateEntity.invoke(null, params);
-            } catch (NoSuchMethodException e) {
-                String[] args = { protocolType };
-                throw new COTException("invalidProtocolType", args);
-            } catch (ClassNotFoundException e) {
-                String[] args = { protocolType };
-                throw new COTException("invalidProtocolType", args);
-            } catch (Exception e) {
+                (new WSFederationCOTUtils(callerSession)).updateEntityConfig(
+                    realm,cotName, entityID);
+            } catch (WSFederationMetaException e) {
                 throw new COTException(e);
             }
         } else {
@@ -417,35 +451,8 @@ public class CircleOfTrustManager {
         }
     }
     
-    private void checkIfWSFedEntityExists(String realm, String entityID) 
-        throws COTException {
-        try {
-            Class clazz = Class.forName(
-                "com.sun.identity.wsfederation.meta.WSFederationMetaManager");
-            Class[] formalParams = {String.class, String.class};
-            Method method = clazz.getDeclaredMethod(
-                "getEntityDescriptor", formalParams);
-            Object[] params = {realm, entityID};
-            Object result = method.invoke(null, params);
-            if (result == null) {
-                String[] args = {entityID};
-                throw new COTException("invalidEntityID", args);
-            }
-        } catch (NoSuchMethodException e) {
-            throw new COTException(e);
-        } catch (IllegalArgumentException e) {
-            throw new COTException(e);
-        } catch (IllegalAccessException e) {
-            throw new COTException(e);
-        } catch (InvocationTargetException e) {
-            throw new COTException(e);
-        } catch (ClassNotFoundException e) {
-            throw new COTException(e);
-        }
-    }
-    
     /**
-     * Remove circle of trust from teh entity configuration.
+     * Remove circle of trust from the entity configuration.
      *
      * @param realm the realm name.
      * @param cotName the circle of trust name.
@@ -462,35 +469,23 @@ public class CircleOfTrustManager {
     ) throws COTException, JAXBException {
         if (protocolType.equalsIgnoreCase(COTConstants.IDFF)) {
             try {
-                new IDFFCOTUtils().removeFromEntityConfig(
+                (new IDFFCOTUtils(callerSession)).removeFromEntityConfig(
                     realm, cotName,entityID);
             } catch (IDFFMetaException idme) {
                 throw new COTException(idme);
             }
         } else if (protocolType.equalsIgnoreCase(COTConstants.SAML2)) {
             try {
-                new SAML2COTUtils().removeFromEntityConfig(realm,cotName,
-                        entityID);
+                (new SAML2COTUtils(callerSession)).removeFromEntityConfig(
+                    realm,cotName, entityID);
             } catch (SAML2MetaException sme) {
                 throw new COTException(sme);
             }
         } else if (protocolType.equalsIgnoreCase(COTConstants.WS_FED)) {
             try {
-                Class clazz = Class.forName(
-                    "com.sun.identity.wsfederation.meta.WSFederationCOTUtils");
-                Class[] formalParams = {String.class, String.class,
-                    String.class};
-                Method removeFromEntityConfig = clazz.getDeclaredMethod(
-                    "removeFromEntityConfig", formalParams);
-                Object[] params = {realm, cotName, entityID};
-                removeFromEntityConfig.invoke(null, params);
-            } catch (NoSuchMethodException e) {
-                String[] data = { protocolType };
-                throw new COTException("invalidProtocolType", data);
-            } catch (ClassNotFoundException e) {
-                String[] data = { protocolType };
-                throw new COTException("invalidProtocolType", data);
-            } catch (Exception e) {
+                (new WSFederationCOTUtils(callerSession)).removeFromEntityConfig
+                    (realm, cotName, entityID);
+            } catch (WSFederationMetaException e) {
                 throw new COTException(e);
             }
         } else {
@@ -510,7 +505,7 @@ public class CircleOfTrustManager {
     void updateIDFFEntityConfig(String realm,String cotName,
             Set trustedProviders) throws COTException {
         String classMethod = "COTManager:updateIDFFEntityConfig";
-        IDFFCOTUtils idffCotUtils = new IDFFCOTUtils();
+        IDFFCOTUtils idffCotUtils = new IDFFCOTUtils(callerSession);
         String entityId = null;
         if (trustedProviders != null && !trustedProviders.isEmpty()) {
             for (Iterator iter =
@@ -545,7 +540,7 @@ public class CircleOfTrustManager {
             Set trustedProviders) throws COTException {
         String classMethod = "COTManager:updateSAML2EntityConfig";
         String entityId = null;
-        SAML2COTUtils saml2CotUtils= new SAML2COTUtils();
+        SAML2COTUtils saml2CotUtils= new SAML2COTUtils(callerSession);
         if (trustedProviders != null && !trustedProviders.isEmpty()) {
             for (Iterator iter = trustedProviders.iterator();
             iter.hasNext();) {
@@ -568,7 +563,7 @@ public class CircleOfTrustManager {
     }
     
     /**
-     * Updates the SAML2 Entity Configuration.
+     * Updates the WSFederation Entity Configuration.
      *
      * @param realm the realm name.
      * @param cotName the circle of trust name.
@@ -578,28 +573,24 @@ public class CircleOfTrustManager {
     void updateWSFedEntityConfig(String realm,String cotName,
             Set trustedProviders) throws COTException {
         String classMethod = "COTManager:updateWSFedEntityConfig";
-        Method updateEntity = null;
         String entityId = null;
-            try {
-                Class clazz = Class.forName(
-                    "com.sun.identity.wsfederation.meta.WSFederationCOTUtils");
-                Class[] formalParams = {String.class, String.class,
-                    String.class};
-                updateEntity = clazz.getDeclaredMethod("updateEntityConfig", 
-                    formalParams);
-            } catch (NoSuchMethodException e) {
-                throw new COTException(e);
-            } catch (ClassNotFoundException e) {
-                throw new COTException(e);
-            }
+        WSFederationCOTUtils wsfedCotUtils= new WSFederationCOTUtils(
+            callerSession);
         if (trustedProviders != null && !trustedProviders.isEmpty()) {
             for (Iterator iter = trustedProviders.iterator();
             iter.hasNext();) {
                 entityId = (String) iter.next();
                 try {
-                    Object[] params = {realm, cotName, entityId};
-                    updateEntity.invoke(null, params);
-                } catch (Exception e) {
+                    wsfedCotUtils.updateEntityConfig(realm,cotName,
+                            entityId);
+                } catch (WSFederationMetaException sme) {
+                    throw new COTException(sme);
+                } catch (JAXBException e) {
+                    debug.error(classMethod, e);
+                    String[] data = {e.getMessage(),cotName,entityId,realm};
+                    LogUtil.error(Level.INFO,
+                            LogUtil.CONFIG_ERROR_CREATE_COT_DESCRIPTOR,
+                            data);
                     throw new COTException(e);
                 }
             }

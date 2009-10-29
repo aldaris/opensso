@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.3 2008-06-25 05:48:05 qcheng Exp $
+ * $Id: KeyUtil.java,v 1.4 2009-10-28 23:58:58 exu Exp $
  *
  */
 
@@ -45,7 +45,6 @@ import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.wsfederation.common.WSFederationUtils;
 import com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
-import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 
 /**
@@ -202,7 +201,9 @@ public class KeyUtil {
         FederationElement fed ) {
         String classMethod = "KeyUtil.getCert: ";
         
-        byte[] bt = WSFederationMetaManager.getTokenSigningCertificate(fed);
+        byte[] bt = WSFederationUtils.getMetaManager().
+            getTokenSigningCertificate(fed);
+
         CertificateFactory cf = null;
         try {
             cf = CertificateFactory.getInstance("X.509");

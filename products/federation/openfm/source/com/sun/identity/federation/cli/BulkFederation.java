@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BulkFederation.java,v 1.4 2009-07-30 05:35:35 veiming Exp $
+ * $Id: BulkFederation.java,v 1.5 2009-10-29 00:03:50 exu Exp $
  *
  */
 
@@ -118,7 +118,6 @@ public class BulkFederation extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        superAdminUserValidation();
 
         metaAlias = getStringOptionValue(ARGUMENT_METADATA);
         remoteEntityId = getStringOptionValue(ARGUMENT_REMOTE_ID);
@@ -350,7 +349,7 @@ public class BulkFederation extends AuthenticatedCommand {
     private void getEntityRoleAndIdIDFF() 
         throws CLIException {
         try {
-            IDFFMetaManager idffMgr = new IDFFMetaManager(getAdminSSOToken());
+            IDFFMetaManager idffMgr = new IDFFMetaManager(ssoToken);
             String role = idffMgr.getProviderRoleByMetaAlias(metaAlias);
             if (role == null) {
                 Object[] param = {metaAlias};
@@ -372,7 +371,7 @@ public class BulkFederation extends AuthenticatedCommand {
     private void getEntityRoleAndIdSAML2() 
         throws CLIException {
         try {
-            SAML2MetaManager saml2Mgr = new SAML2MetaManager();
+            SAML2MetaManager saml2Mgr = new SAML2MetaManager(ssoToken);
             String role = saml2Mgr.getRoleByMetaAlias(metaAlias);
             if (role.equals(SAML2Constants.UNKNOWN_ROLE)) {
                 Object[] param = {metaAlias};

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAccountMapper.java,v 1.4 2008-06-25 05:48:06 qcheng Exp $
+ * $Id: DefaultAccountMapper.java,v 1.5 2009-10-28 23:58:59 exu Exp $
  *
  */
 
@@ -36,7 +36,6 @@ import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.wsfederation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.wsfederation.key.KeyUtil;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
-import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import com.sun.identity.wsfederation.common.AccountUtils;
 import java.util.ResourceBundle;
@@ -148,12 +147,12 @@ public class DefaultAccountMapper {
 
 	try {
             BaseConfigType config = null;
-
             if(role.equals(IDP)) {
-               config = WSFederationMetaManager.getIDPSSOConfig(realm, 
-                   entityID);
+               config = WSFederationUtils.getMetaManager().getIDPSSOConfig(
+                   realm, entityID);
             } else {
-               config = WSFederationMetaManager.getSPSSOConfig(realm, entityID);
+               config = WSFederationUtils.getMetaManager().getSPSSOConfig(
+                   realm, entityID);
             }
             Map attributes  = WSFederationMetaUtils.getAttributes(config);
 

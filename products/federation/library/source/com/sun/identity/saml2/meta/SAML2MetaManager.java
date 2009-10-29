@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.17 2009-08-28 23:39:40 exu Exp $
+ * $Id: SAML2MetaManager.java,v 1.18 2009-10-28 23:58:58 exu Exp $
  *
  */
 
@@ -31,7 +31,6 @@ package com.sun.identity.saml2.meta;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -81,9 +80,13 @@ public class SAML2MetaManager {
     private static final int SUBCONFIG_PRIORITY = 0;
 
     private static Debug debug = SAML2MetaUtils.debug;
-    private static CircleOfTrustManager cotm;
-    private static ConfigurationInstance configInst;
+    private static CircleOfTrustManager cotmStatic;
+    private static ConfigurationInstance configInstStatic;
     private static final String SAML2 = "SAML2";
+
+    private CircleOfTrustManager cotm;
+    private ConfigurationInstance configInst;
+    private Object callerSession = null;
 
     /**
      * Constant used to identify meta alias.
@@ -92,13 +95,14 @@ public class SAML2MetaManager {
 
     static {
         try {
-            configInst = ConfigurationManager.getConfigurationInstance(SAML2);
+            configInstStatic = ConfigurationManager.getConfigurationInstance(
+                SAML2);
         } catch (ConfigurationException ce) {
             debug.error("SAML2MetaManager constructor:", ce);
         }
-        if (configInst != null) {
+        if (configInstStatic != null) {
             try {
-                configInst.addListener(new SAML2MetaServiceListener());
+                configInstStatic.addListener(new SAML2MetaServiceListener());
             } catch (ConfigurationException ce) {
                 debug.error(
                     "SAML2MetaManager.static: Unable to add " +
@@ -107,7 +111,7 @@ public class SAML2MetaManager {
             }
         }
         try {
-            cotm = new CircleOfTrustManager();
+            cotmStatic = new CircleOfTrustManager();
         } catch (COTException se) {
             debug.error("SAML2MetaManager constructor:", se);
         }
@@ -119,9 +123,30 @@ public class SAML2MetaManager {
      *                            <code>SAML2MetaManager</code>
      */
     public SAML2MetaManager() throws SAML2MetaException {
+        configInst = configInstStatic;
         if (configInst == null) {
             throw new SAML2MetaException("null_config", null);
         }
+        cotm = cotmStatic;
+    }
+
+    /**
+     * Constructor for <code>SAML2MetaManager</code>.
+     * @param callerToken session token for the caller.
+     * @throws SAML2MetaException if unable to construct
+     *                            <code>SAML2MetaManager</code>
+     */
+    public SAML2MetaManager(Object callerToken) throws SAML2MetaException {
+        try {
+            configInst = ConfigurationManager.getConfigurationInstance(
+                SAML2, callerToken);
+            cotm = new CircleOfTrustManager(callerToken);
+        } catch (ConfigurationException ex) {
+            throw new SAML2MetaException("null_config", null);
+        } catch (COTException cx) {
+            throw new SAML2MetaException("null_config", null);
+        }
+        callerSession = callerToken;
     }
 
     /**
@@ -145,16 +170,18 @@ public class SAML2MetaManager {
 
         String[] objs = { entityId, realm };
 
-        EntityDescriptorElement descriptor =
-            SAML2MetaCache.getEntityDescriptor(realm, entityId);
-        if (descriptor != null) {
-            if (debug.messageEnabled()) {
-                debug.message("SAML2MetaManager.getEntityDescriptor: got "
-                    + "descriptor from SAML2MetaCache " + entityId);
+        EntityDescriptorElement descriptor = null;
+        if (callerSession == null) {
+             descriptor = SAML2MetaCache.getEntityDescriptor(realm, entityId);
+            if (descriptor != null) {
+                if (debug.messageEnabled()) {
+                    debug.message("SAML2MetaManager.getEntityDescriptor: got "
+                        + "descriptor from SAML2MetaCache " + entityId);
+                }
+                LogUtil.access(Level.FINE, LogUtil.GOT_ENTITY_DESCRIPTOR,
+                    objs, null);
+                return descriptor;
             }
-            LogUtil.access(Level.FINE, LogUtil.GOT_ENTITY_DESCRIPTOR,
-                objs, null);
-            return descriptor;
         }
 
         try {
@@ -693,7 +720,6 @@ public class SAML2MetaManager {
      */
     public EntityConfigElement getEntityConfig(String realm, String entityId)
         throws SAML2MetaException {
-
         if (entityId == null) {
             return null;
         }
@@ -702,18 +728,20 @@ public class SAML2MetaManager {
         }
         String[] objs = { entityId, realm };
 
-        EntityConfigElement config =
-                   SAML2MetaCache.getEntityConfig(realm, entityId);
-        if (config != null) {
-            if (debug.messageEnabled()) {
-                debug.message("SAML2MetaManager.getEntityConfig: got entity "
-                    + "config from SAML2MetaCache: " + entityId);
-            }
-            LogUtil.access(Level.FINE,
+        EntityConfigElement config = null;
+        if (callerSession == null) {
+            config = SAML2MetaCache.getEntityConfig(realm, entityId);
+            if (config != null) {
+                if (debug.messageEnabled()) {
+                    debug.message("SAML2MetaManager.getEntityConfig: got entity"
+                        + " config from SAML2MetaCache: " + entityId);
+                }
+                LogUtil.access(Level.FINE,
                            LogUtil.GOT_ENTITY_CONFIG,
                            objs,
                            null);
-            return config;
+                return config;
+            }
         }
 
         try {

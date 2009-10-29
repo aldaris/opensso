@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.17 2008-06-25 05:49:39 qcheng Exp $
+ * $Id: EntityModelImpl.java,v 1.18 2009-10-29 00:03:51 exu Exp $
  *
  */
 
@@ -99,7 +99,8 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         Map samlv2Map = new HashMap();
         
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = new SAML2MetaManager(
+                getUserSSOToken());
             for (Iterator i = realms.iterator(); i.hasNext(); ) {
                 String realmName = (String)i.next();
                 
@@ -201,10 +202,12 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
             String realm = (String)i.next();
             
             try {
+                WSFederationMetaManager metaManager = 
+                    new WSFederationMetaManager(getUserSSOToken());
                 Set wsfedEntities =
-                    WSFederationMetaManager.getAllEntities(realm);
+                    metaManager.getAllEntities(realm);
                 List hosted =
-                    WSFederationMetaManager.getAllHostedEntities(realm);
+                    metaManager.getAllHostedEntities(realm);
                 for (Iterator j = wsfedEntities.iterator(); j.hasNext(); ) {
                     String entity = (String)j.next();
                     Map data = new HashMap(8);
@@ -308,7 +311,8 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         throws AMConsoleException 
     {
         try {
-            SAML2MetaManager metaManager = new SAML2MetaManager();
+            SAML2MetaManager metaManager = new SAML2MetaManager(
+                getUserSSOToken());
             metaManager.deleteEntityDescriptor(realm, entityID);
         } catch (SAML2MetaException e) {
             throw new AMConsoleException("delete.entity.exists.error");
@@ -333,7 +337,8 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         throws AMConsoleException 
     {
         try {
-            WSFederationMetaManager.deleteFederation(realm, entityID); 
+            (new WSFederationMetaManager(getUserSSOToken())).deleteFederation(
+                realm, entityID); 
         } catch (WSFederationMetaException w) {
             debug.warning("EntityModel.deleteWSFedEntity", w);
             throw new AMConsoleException(w.getMessage());
@@ -377,17 +382,19 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         boolean isSP = true;
         int cnt = 0;
         try {
-            if (WSFederationMetaManager.getIDPSSOConfig(realm,entity) != null) {
+            WSFederationMetaManager metaManager = new WSFederationMetaManager(
+                getUserSSOToken());
+            if (metaManager.getIDPSSOConfig(realm,entity) != null) {
                 roles.add(IDENTITY_PROVIDER);
             }
-            if (WSFederationMetaManager.getSPSSOConfig(realm, entity) != null) {
+            if (metaManager.getSPSSOConfig(realm, entity) != null) {
                 roles.add(SERVICE_PROVIDER);
             }
             
             //to handle dual roles specifically for WSFED
             if (roles.isEmpty()) {
                 FederationElement fedElem =
-                    WSFederationMetaManager.getEntityDescriptor(realm, entity);
+                    metaManager.getEntityDescriptor(realm, entity);
                 if (fedElem != null) {
                     for (Iterator iter = fedElem.getAny().iterator(); 
                         iter.hasNext(); ) 
@@ -420,7 +427,8 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
         List roles = new ArrayList();
         
         try {
-            SAML2MetaManager samlManager = new SAML2MetaManager();
+            SAML2MetaManager samlManager = new SAML2MetaManager(
+                getUserSSOToken());
             EntityDescriptorElement d =
                 samlManager.getEntityDescriptor(realm, entity);
             
@@ -530,7 +538,8 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                 com.sun.identity.liberty.ws.meta.jaxb.AffiliationDescriptorType)
                     idffManager.getAffiliationDescriptor(realm, name);                
             } else if (protocol.equals(SAMLV2)) {
-                SAML2MetaManager samlManager = new SAML2MetaManager();
+                SAML2MetaManager samlManager = new SAML2MetaManager(
+                    getUserSSOToken());
                 samlv2_sd = (
                 com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType)
                     samlManager.getAffiliationDescriptor(realm, name);
