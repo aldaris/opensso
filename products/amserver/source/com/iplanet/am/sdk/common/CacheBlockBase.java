@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheBlockBase.java,v 1.5 2009-05-08 00:48:08 hengming Exp $
+ * $Id: CacheBlockBase.java,v 1.6 2009-10-29 00:28:46 hengming Exp $
  *
  */
 
@@ -377,20 +377,12 @@ public abstract class CacheBlockBase {
 
     public synchronized void replaceAttributes(String principalDN,
             Map sAttributes, Map bAttributes) {
-        CacheEntry ce = (CacheEntry) cacheEntries.get(principalDN);
-        Set attrNames = Collections.EMPTY_SET;
+
         if (sAttributes != null && !sAttributes.isEmpty()) {
-            attrNames = sAttributes.keySet();
+            putAttributes(principalDN, sAttributes, null, false, false);
         } else if (bAttributes != null && !bAttributes.isEmpty()) {
-            attrNames = bAttributes.keySet();
+            putAttributes(principalDN, bAttributes, null, false, true);
         }
-        if (ce != null) {
-            if (attrNames != null && !attrNames.isEmpty()) {
-                ce.removeAttributeNames(attrNames);
-            }
-        }
-        stringAttributes.copy(sAttributes);
-        byteAttributes.copy(bAttributes);
     }
 
     /**
@@ -510,6 +502,7 @@ public abstract class CacheBlockBase {
                 while (it.hasNext()) {
                     String name = ((String) it.next()).toLowerCase();
                     readableAttrNames.add(name);
+                    inAccessibleAttrNames.remove(name);
                 }
             }
             if (invalidAttrs != null && !invalidAttrs.isEmpty()) {
@@ -518,6 +511,7 @@ public abstract class CacheBlockBase {
                 while (it.hasNext()) {
                     String name = ((String) it.next()).toLowerCase();
                     inAccessibleAttrNames.add(name);
+                    readableAttrNames.remove(name);
                 }
             }
         }
