@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.20 2009-10-19 17:54:08 farble1670 Exp $
+  $Id: faces-config.xml,v 1.21 2009-10-30 17:33:54 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -60,6 +60,10 @@
     <converter>
         <converter-id>applicationResourceConverter</converter-id>
         <converter-class>com.sun.identity.admin.model.ApplicationResourceConverter</converter-class>
+    </converter>
+    <converter>
+        <converter-id>delegationActionConverter</converter-id>
+        <converter-class>com.sun.identity.admin.model.DelegaitonActionConverter</converter-class>
     </converter>
 
     <managed-bean>

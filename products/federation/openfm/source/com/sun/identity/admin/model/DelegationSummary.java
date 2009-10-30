@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationSummary.java,v 1.1 2009-10-26 22:15:46 farble1670 Exp $
+ * $Id: DelegationSummary.java,v 1.2 2009-10-30 17:33:54 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -41,7 +41,9 @@ public abstract class DelegationSummary extends Summary {
 
     public abstract String getValue();
 
-    public abstract String getTemplate();
+    public String getTemplate() {
+        return null;
+    }
 
     public abstract String getIcon();
 

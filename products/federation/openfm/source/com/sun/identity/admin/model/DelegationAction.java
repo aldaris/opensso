@@ -22,54 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourcesDelegationSummary.java,v 1.2 2009-10-30 17:33:54 farble1670 Exp $
+ * $Id: DelegationAction.java,v 1.1 2009-10-30 17:33:54 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
-import java.util.List;
 
-public class ResourcesDelegationSummary extends DelegationSummary {
+public enum DelegationAction {
+    READ, READ_MODIFY, READ_MODIFY_DELEGATE, READ_DELEGATE;
 
-    public ResourcesDelegationSummary(DelegationWizardBean wizardBean) {
-        super(wizardBean);
-    }
-
-    public String getLabel() {
+    public String getTitle() {
         Resources r = new Resources();
-        String label = r.getString(this, "label");
-        return label;
-    }
-
-    private int getSize() {
-        List<Resource> resources = getDelegationWizardBean().getDelegationBean().getResources();
-        if (resources == null) {
-            return 0;
+        String title = r.getString(this, toString() + ".title");
+        if (title == null) {
+            title = toString();
         }
-
-        return resources.size();
+        return title;
     }
-
-    public String getValue() {
-        return Integer.toString(getSize());
-    }
-
-    public boolean isExpandable() {
-        return getSize() > 0;
-
-    }
-    public String getIcon() {
-        return "../image/application.png";
-    }
-
-    @Override
-    public String getTemplate() {
-        return "/admin/facelet/template/delegation-summary-resources.xhtml";
-    }
-
-    public int getGotoStep() {
-        return DelegationWizardStep.RESOURCES.toInt();
-    }
-
 }

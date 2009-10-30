@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: delegation-action.xhtml,v 1.1 2009-10-20 20:18:43 farble1670 Exp $
+   $Id: delegation-action.xhtml,v 1.2 2009-10-30 17:33:55 farble1670 Exp $
 -->
 
 <span
@@ -49,7 +49,8 @@
                 id="action-select"
                 layout="spread"
                 partialSubmit="true"
-                value="#{delegationWizardBean.action}">
+                converterId="delegationActionConverter"
+                value="#{delegationWizardBean.delegationBean.action}">
                 <f:selectItems
                     value="#{delegationWizardBean.actionItems}"/>
             </ice:selectOneRadio>

@@ -22,14 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationBean.java,v 1.4 2009-10-26 22:15:46 farble1670 Exp $
+ * $Id: DelegationBean.java,v 1.5 2009-10-30 17:33:54 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.ListFormatter;
+import com.sun.identity.admin.ManagedBeanResolver;
+import com.sun.identity.entitlement.ApplicationPrivilege;
+import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.ReferralPrivilege;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DelegationBean {
 
@@ -47,6 +55,14 @@ public class DelegationBean {
 
     public void setViewSubjects(List<ViewSubject> viewSubjects) {
         this.viewSubjects = viewSubjects;
+    }
+
+    public DelegationAction getAction() {
+        return action;
+    }
+
+    public void setAction(DelegationAction action) {
+        this.action = action;
     }
 
     public static class NameComparator extends TableColumnComparator {
@@ -167,41 +183,42 @@ public class DelegationBean {
     private boolean selected;
     private List<Resource> resources;
     private List<ViewSubject> viewSubjects = new ArrayList<ViewSubject>();
+    private DelegationAction action = DelegationAction.READ;
 
     public DelegationBean() {
         // nothing
     }
 
-    /*
+   
     public DelegationBean(
-            ReferralPrivilege rp,
+            ApplicationPrivilege ap,
             Map<String, ViewApplication> viewApplications) {
 
         // name
-        name = rp.getName();
+        name = ap.getName();
 
         // description
-        description = rp.getDescription();
+        description = ap.getDescription();
 
         // birth
-        birth = new Date(rp.getCreationDate());
+        birth = new Date(ap.getCreationDate());
 
         // author
-        author = rp.getCreatedBy();
+        author = ap.getCreatedBy();
 
         // modified
-        modified = new Date(rp.getLastModifiedDate());
+        modified = new Date(ap.getLastModifiedDate());
 
         // modifier
-        modifier = rp.getLastModifiedBy();
+        modifier = ap.getLastModifiedBy();
 
         // applications, resources
         resources = new ArrayList<Resource>();
-        for (String applicationName : rp.getMapApplNameToResources().keySet()) {
-            ReferralResource rr = new ReferralResource();
-            rr.setName(applicationName);
+        for (String applicationName : ap.getApplicationNames()) {
+            ApplicationResource ar = new ApplicationResource();
+            ar.setName(applicationName);
 
-            String resourceClassName = rr.getViewEntitlement().getViewApplication().getViewApplicationType().getResourceClassName();
+            String resourceClassName = ar.getViewEntitlement().getViewApplication().getViewApplicationType().getResourceClassName();
             Class resourceClass;
             try {
                 resourceClass = Class.forName(resourceClassName);
@@ -211,7 +228,7 @@ public class DelegationBean {
 
             ManagedBeanResolver mbr = new ManagedBeanResolver();
             Map<String, ResourceDecorator> resourceDecorators = (Map<String, ResourceDecorator>) mbr.resolve("resourceDecorators");
-            Set<String> resourceNames = rp.getMapApplNameToResources().get(applicationName);
+            Set<String> resourceNames = ap.getResourceNames(applicationName);
             for (String resourceName : resourceNames) {
                 try {
                     Resource r = (Resource) resourceClass.newInstance();
@@ -223,7 +240,7 @@ public class DelegationBean {
                         rd.decorate(r);
                     }
 
-                    rr.getViewEntitlement().getResources().add(r);
+                    ar.getViewEntitlement().getResources().add(r);
                 } catch (InstantiationException ie) {
                     throw new RuntimeException(ie);
                 } catch (IllegalAccessException iae) {
@@ -231,17 +248,15 @@ public class DelegationBean {
                 }
             }
 
-            resources.add(rr);
+            resources.add(ar);
         }
 
-        // subjects, realms
-        for (String realmName : rp.getRealms()) {
-            RealmBean rb = new RealmBean();
-            rb.setName(realmName);
-            realmBeans.add(rb);
-        }
+        // subjects
+        // TODO
+        
+        // action
+        action = DelegationAction.valueOf(ap.getActionValues().toString());
     }
-    */
 
     public String getName() {
         return name;
@@ -259,40 +274,31 @@ public class DelegationBean {
         this.description = description;
     }
 
-
-    /*
-    public ReferralPrivilege toReferrealPrivilege() {
-        // applications, resources
-        Map<String, Set<String>> applicationNames = new HashMap<String, Set<String>>();
-        for (Resource r : resources) {
-            ReferralResource rr = (ReferralResource) r;
-            String an = rr.getViewEntitlement().getViewApplication().getName();
-            Set<String> rs = new HashSet<String>();
-            for (Resource ar : rr.getViewEntitlement().getResources()) {
-                rs.add(ar.getName());
-            }
-            applicationNames.put(an, rs);
-        }
-
-        // subjects (realms)
-        Set<String> realmNames = new HashSet<String>();
-        for (RealmBean rb : realmBeans) {
-            realmNames.add(rb.getName());
-        }
-
-        ReferralPrivilege rp;
-        try {
-            rp = new ReferralPrivilege(name, applicationNames, realmNames);
-        } catch (EntitlementException ee) {
-            throw new RuntimeException(ee);
-        }
+    public ApplicationPrivilege toApplicationPrivilege() {
+        ApplicationPrivilege ap = new ApplicationPrivilege(name);
 
         // description
-        rp.setDescription(description);
+        ap.setDescription(description);
 
-        return rp;
+        // applications, resources
+        for (Resource r : resources) {
+            ApplicationResource ar = (ApplicationResource) r;
+            String an = ar.getViewEntitlement().getViewApplication().getName();
+            Set<String> rrs = new HashSet<String>();
+            for (Resource rr : ar.getViewEntitlement().getResources()) {
+                rrs.add(rr.getName());
+            }
+            ap.addApplicationResource(an, rrs);
+        }
+
+        // subjects
+        // TODO
+
+        // action
+        ap.setActionValues(ApplicationPrivilege.PossibleAction.valueOf(action.toString()));
+
+        return ap;
     }
-    */
 
     public String getResourcesToFormattedString() {
         StringBuffer b = new StringBuffer();
@@ -312,6 +318,11 @@ public class DelegationBean {
         }
 
         return b.toString();
+    }
+
+    public String getViewSubjectsToFormattedString() {
+        ListFormatter lf = new ListFormatter(viewSubjects);
+        return lf.toFormattedString();
     }
 
 

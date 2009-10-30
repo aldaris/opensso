@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourcesDelegationSummary.java,v 1.2 2009-10-30 17:33:54 farble1670 Exp $
+ * $Id: ActionDelegationSummary.java,v 1.1 2009-10-30 17:33:54 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -30,9 +30,9 @@ package com.sun.identity.admin.model;
 import com.sun.identity.admin.Resources;
 import java.util.List;
 
-public class ResourcesDelegationSummary extends DelegationSummary {
+public class ActionDelegationSummary extends DelegationSummary {
 
-    public ResourcesDelegationSummary(DelegationWizardBean wizardBean) {
+    public ActionDelegationSummary(DelegationWizardBean wizardBean) {
         super(wizardBean);
     }
 
@@ -42,34 +42,20 @@ public class ResourcesDelegationSummary extends DelegationSummary {
         return label;
     }
 
-    private int getSize() {
-        List<Resource> resources = getDelegationWizardBean().getDelegationBean().getResources();
-        if (resources == null) {
-            return 0;
-        }
-
-        return resources.size();
-    }
-
     public String getValue() {
-        return Integer.toString(getSize());
+        return getDelegationWizardBean().getDelegationBean().getAction().getTitle();
     }
 
     public boolean isExpandable() {
-        return getSize() > 0;
-
+        return false;
     }
+
     public String getIcon() {
-        return "../image/application.png";
-    }
-
-    @Override
-    public String getTemplate() {
-        return "/admin/facelet/template/delegation-summary-resources.xhtml";
+        return "../image/action.png";
     }
 
     public int getGotoStep() {
-        return DelegationWizardStep.RESOURCES.toInt();
+        return DelegationWizardStep.ACTION.toInt();
     }
 
 }

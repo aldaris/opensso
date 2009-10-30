@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardBean.java,v 1.7 2009-10-26 22:15:46 farble1670 Exp $
+ * $Id: DelegationWizardBean.java,v 1.8 2009-10-30 17:33:54 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -52,10 +52,11 @@ public abstract class DelegationWizardBean extends WizardBean {
     private Map<SubjectType, SubjectContainer> subjectTypeToSubjectContainerMap;
     private List<ViewSubject> selectedAvailableViewSubjects;
     private List<ViewSubject> selectedSelectedViewSubjects;
-    private PossibleAction action = PossibleAction.READ;
 
     private DelegationSummary nameSummary = new NameDelegationSummary(this);
     private DelegationSummary resourcesSummary = new ResourcesDelegationSummary(this);
+    private DelegationSummary subjectsSummary = new SubjectsDelegationSummary(this);
+    private DelegationSummary actionSummary = new ActionDelegationSummary(this);
 
     @Override
     public void reset() {
@@ -75,25 +76,16 @@ public abstract class DelegationWizardBean extends WizardBean {
         }
     }
 
-    public List<PossibleAction> getActions() {
-        return Arrays.asList(ApplicationPrivilege.PossibleAction.values());
+    public List<DelegationAction> getActions() {
+        return Arrays.asList(DelegationAction.values());
     }
 
     public List<SelectItem> getActionItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-        for (PossibleAction pa : PossibleAction.values()) {
-            items.add(new SelectItem(pa, getActionTitle(pa)));
+        for (DelegationAction da : DelegationAction.values()) {
+            items.add(new SelectItem(da, da.getTitle()));
         }
         return items;
-    }
-
-    private String getActionTitle(PossibleAction pa) {
-        Resources r = new Resources();
-        String title = r.getString(this, pa.toString() + ".title");
-        if (title == null) {
-            title = pa.toString();
-        }
-        return title;
     }
 
     public List<ViewSubject> getAvailableViewSubjects() {
@@ -321,19 +313,19 @@ public abstract class DelegationWizardBean extends WizardBean {
         sc.setFilter(viewSubjectFilter);
     }
 
-    public PossibleAction getAction() {
-        return action;
-    }
-
-    public void setAction(PossibleAction action) {
-        this.action = action;
-    }
-
     public DelegationSummary getNameSummary() {
         return nameSummary;
     }
 
     public DelegationSummary getResourcesSummary() {
         return resourcesSummary;
+    }
+
+    public DelegationSummary getSubjectsSummary() {
+        return subjectsSummary;
+    }
+
+    public DelegationSummary getActionSummary() {
+        return actionSummary;
     }
 }

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: delegation-summary.xhtml,v 1.2 2009-10-30 17:33:55 farble1670 Exp $
+   $Id: delegation-summary-subjects.xhtml,v 1.1 2009-10-30 17:33:55 farble1670 Exp $
 
 -->
 
@@ -31,29 +31,16 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <o:section>
-        <ui:define name="section-title">
+    <ice:panelGroup>
+        <ice:panelGrid
+            styleClass="summary-strings">
+            <pre>
             <ice:outputText
-                value="#{resources['delegation-summary.sectionTitle']}"/>
-        </ui:define>
-        <ui:define name="section-details">
-            <ice:outputText
-                value="#{resources['delegation-summary.sectionDescription']}"/>
-        </ui:define>
-        <ui:define name="section-body">
-            <o:summarypanel
-                summary="#{delegationWizardBean.nameSummary}"/>
-            <o:summarypanel
-                summary="#{delegationWizardBean.resourcesSummary}"/>
-            <o:summarypanel
-                summary="#{delegationWizardBean.subjectsSummary}"/>
-            <o:summarypanel
-                summary="#{delegationWizardBean.actionSummary}"/>
-        </ui:define>
-    </o:section>
-</span>
+                value="#{summary.delegationWizardBean.delegationBean.viewSubjectsToFormattedString}"/>
+            </pre>
+        </ice:panelGrid>
+    </ice:panelGroup></span>
