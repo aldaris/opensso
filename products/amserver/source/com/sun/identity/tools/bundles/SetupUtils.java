@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupUtils.java,v 1.6 2008-09-24 23:45:38 ww203982 Exp $
+ * $Id: SetupUtils.java,v 1.7 2009-10-30 21:10:21 weisun2 Exp $
  *
  */
 
@@ -245,8 +245,12 @@ public class SetupUtils implements SetupConstants{
                     return LINUX;
                 }
             }
-        } else {
-            return SOLARIS;
+        } else { 
+            if (OS_NAME.toLowerCase().indexOf(AIX) >= 0) {
+                return AIX; 
+            } else {
+                return SOLARIS;
+            }
         }
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.4 2008-09-24 23:45:38 ww203982 Exp $
+ * $Id: SetupConstants.java,v 1.5 2009-10-30 21:10:10 weisun2 Exp $
  *
  */
 
@@ -35,6 +35,7 @@ public interface SetupConstants {
     String SOLARIS = "solaris";
     String X86SOLARIS = "x86solaris";
     String LINUX = "linux";
+    String AIX = "aix"; 
     String DEFAULT_PROPERTIES_FILE = "com.sun.identity.tools.bundles." +
         "amadmtoolssetup";
     String DEFAULT_SESSION_PROPERTIES_FILE = "com.sun.identity.tools.bundles." +
