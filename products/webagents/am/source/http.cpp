@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2006 Sun Microsystems Inc. All Rights reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: http.cpp,v 1.4 2008-06-25 08:14:32 qcheng Exp $
+ * $Id: http.cpp,v 1.5 2009-10-30 00:34:00 robertis Exp $
  *
  */ 
 #include <cstdio>
@@ -539,7 +539,7 @@ am_status_t Http::Response::readAndParse(Log::ModuleId logModule,
     am_status_t status;
     LineBuffer buffer(conn);
     const char *linePtr;
-    std::size_t contentLength = 0;
+    PRInt32 contentLength = 0;
     bool contentLengthHdrSeen = false;
 
     status = buffer.getLine(linePtr);
@@ -581,7 +581,8 @@ am_status_t Http::Response::readAndParse(Log::ModuleId logModule,
 	    if (0 < len) {
 		if (hasPrefixIgnoringCase(linePtr, CONTENT_LENGTH_HDR)) {
 		    linePtr += sizeof(CONTENT_LENGTH_HDR) - 1;
-		    if (std::sscanf(linePtr, "%d", &contentLength) == 1) {
+		    linePtr = skipWhitespace(linePtr);
+		    if (PR_sscanf(linePtr, "%u", &contentLength) == 1) {
 			contentLengthHdrSeen = true;
 		    }
 		} else if (hasPrefixIgnoringCase(linePtr, SET_COOKIE_HDR)) {

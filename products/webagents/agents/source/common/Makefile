@@ -208,12 +208,12 @@ $(ZIP_FILE): $(DEST_PACKAGE_SCRATCH_DIR) $(EXPORTED_HEADERS) $(EXPORTED_LIBS) $(
 all: $(ZIP_FILE)
 endif
 
-#RPM := $(RPM_DIR)/$(DSAME_DROP_FILE).rpm
+RPM := $(RPM_DIR)/$(DSAME_DROP_FILE).rpm
 
 BUILDROOT_SAMPLES_DIR := $(BUILDROOT)/$(INSTALL_DIR)/samples
 
 ifeq ($(OS_ARCH), Linux)
-#all: $(RPM)
+all: $(RPM)
 endif
 
 $(RPM): 
