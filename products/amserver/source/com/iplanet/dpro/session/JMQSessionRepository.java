@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JMQSessionRepository.java,v 1.5 2009-03-06 05:33:28 222713 Exp $
+ * $Id: JMQSessionRepository.java,v 1.6 2009-10-30 21:01:44 weisun2 Exp $
  *
  */
 
@@ -319,7 +319,10 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
             byte[] blob = SessionUtils.encode(is);
             long expirationTime = is.getExpirationTime() + gracePeriod;
             String uuid = is.getUUID();
-
+            if (debug.messageEnabled()) {
+                debug.message("JMQSessionRepository.save(): " + 
+                    "session size=" + blob.length + " bytes");
+            }   
             FAMRecord famRec = new FAMRecord (
                 SESSION, FAMRecord.WRITE, key, expirationTime, uuid,
                 is.getState(), sid.toString(), blob);
@@ -363,7 +366,9 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
                 SESSION, FAMRecord.GET_RECORD_COUNT,
                 null, 0, uuid, 0, null, null);
             FAMRecord retRec = pSession.send(famRec);
-            sessions = retRec.getExtraStringAttributes(); 
+            if (retRec != null) {
+                sessions = retRec.getExtraStringAttributes();
+            } 
         } catch (IllegalStateException e) {
             isDatabaseUp = false;
             FAMPersisterManager.clearInstance();
