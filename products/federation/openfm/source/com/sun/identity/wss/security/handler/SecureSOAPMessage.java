@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.26 2009-09-24 19:01:42 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.27 2009-11-02 04:34:27 mallas Exp $
  *
  */
 
@@ -942,10 +942,14 @@ public class SecureSOAPMessage {
                Element assertionE = securityToken.toDocumentElement();
                Document document = XMLUtils.newDocument();
                document.appendChild(document.importNode(assertionE, true));
+               if(WSSUtils.debug.messageEnabled()) {
+                  WSSUtils.debug.message("SecureSOAPMessage.verifySignature "+
+                     " Assertion to be verified" + XMLUtils.print(assertionE));
+               }
                if(!sigManager.verifyXMLSignature(document, issuerAlias)){
                   if(WSSUtils.debug.messageEnabled()) {
                      WSSUtils.debug.message("SecureSOAPMessage.verifySignature:"
-                             + " Signature verification for the assertion"); 
+                         + " Signature verification for the assertion failed"); 
                   }
                   return false; 
                } else {
@@ -1179,6 +1183,17 @@ public class SecureSOAPMessage {
                  (soapMessage.getSOAPPart()).importNode(encryptedKeyElem, 
                                                         true);
              wsseHeader.appendChild(encKeyNode);
+             soapMessage.saveChanges();
+             // Append some how does not work for webshpere SOAP runtime
+             // So, if it's not added for whatever reason, get the enveloped
+             // and add it.
+             NodeList nodeList = soapMessage.getSOAPPart().
+                      getElementsByTagNameNS(EncryptionConstants.ENC_XML_NS,
+                      "EncryptedKey");
+             if(nodeList == null || nodeList.getLength() == 0) {
+                soapMessage.getSOAPPart().getEnvelope().getHeader().
+                        appendChild(encKeyNode);
+             }
 
              if(debug.messageEnabled()) {
                  debug.message("SecureSOAPMessage.encrypt:: wsseHeader: " 
@@ -1328,12 +1343,20 @@ public class SecureSOAPMessage {
                  // first child of Decrypted Body element
                  Node decDataNode = 
                      (soapMessage.getSOAPPart()).importNode(decryptedBodyElem, 
-                                                        true);
-                 Node firstNodeInsideBody = 
+                                                        true);                 
+                 NodeList nl = soapMessage.getSOAPPart().getEnvelope().
+                         getBody().getChildNodes();
+                 for (int i=0; i < nl.getLength(); i++) {
+                     Node node = nl.item(i);
+                     if(node.getNodeType() != Node.ELEMENT_NODE) {
+                        continue;
+                     }
                      soapMessage.getSOAPPart().getEnvelope().getBody().
-                     getFirstChild();
-                 soapMessage.getSOAPPart().getEnvelope().getBody().
-                     replaceChild(decDataNode.getFirstChild(),firstNodeInsideBody);
+                             removeChild(node);
+                     soapMessage.getSOAPPart().getEnvelope().getBody().
+                             appendChild(decDataNode.getFirstChild());
+                     break;
+                 }
              }
 
              // Decrypted Security token element replacement

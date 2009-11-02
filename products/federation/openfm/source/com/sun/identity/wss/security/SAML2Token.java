@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Token.java,v 1.9 2009-08-29 03:05:57 mallas Exp $
+ * $Id: SAML2Token.java,v 1.10 2009-11-02 04:34:27 mallas Exp $
  *
  */
 
@@ -259,8 +259,10 @@ public class SAML2Token implements SecurityToken {
               if(confirmationMethod.equals(                      
                    SAML2Constants.SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY)) {
                  subConfirmation.setMethod(confirmationMethod);
-                confirmationData.setContentType(
-                        WSSConstants.KEY_INFO_DATA_TYPE);
+                 /** Websphere does not like the xsi type.
+                  **/
+                  //confirmationData.setContentType(
+                   //     WSSConstants.KEY_INFO_DATA_TYPE);
                  confirmationData.getContent().add(createKeyInfo()); 
                  subConfirmation.setSubjectConfirmationData(confirmationData);
  
