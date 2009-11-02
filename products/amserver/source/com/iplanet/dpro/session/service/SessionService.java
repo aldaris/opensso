@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.34 2009-06-19 02:25:39 bigfatrat Exp $
+ * $Id: SessionService.java,v 1.35 2009-11-02 20:08:40 hvijay Exp $
  *
  */
 
@@ -638,6 +638,13 @@ public class SessionService {
         session.setSessionHandle(sessionHandle);
         session.setHttpSession(httpSession);
         sessionTable.put(sid, session);
+        if (SystemProperties.isServerMode()) {
+            if (Agent.isRunning()) {
+                SsoServerSessSvcImpl sessImpl =
+                    (SsoServerSessSvcImpl)Agent.getSessSvcMBean();
+                sessImpl.incCreatedSessionCount();
+            }
+        }
         sessionHandleTable.put(sessionHandle, session);
 
         session.setCreationTime();
@@ -1107,7 +1114,6 @@ public class SessionService {
             SsoServerSessSvcImpl sessImpl =
                 (SsoServerSessSvcImpl)Agent.getSessSvcMBean();
             sessImpl.decSessionActiveCount();
-            sessImpl.setSessNotifCount((long)getNotificationQueueSize());
         }
     }
 
@@ -1121,7 +1127,6 @@ public class SessionService {
                 SsoServerSessSvcImpl sessImpl =
                     (SsoServerSessSvcImpl)Agent.getSessSvcMBean();
                 sessImpl.incSessionActiveCount();
-                sessImpl.setSessNotifCount((long)getNotificationQueueSize());
             }
         }
     }
