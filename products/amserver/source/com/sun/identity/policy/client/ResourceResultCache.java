@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.17 2009-10-21 23:50:46 dillidorai Exp $
+ * $Id: ResourceResultCache.java,v 1.18 2009-11-02 23:52:02 dillidorai Exp $
  *
  */
 
@@ -608,11 +608,12 @@ class ResourceResultCache implements SSOTokenListener {
         Set<ResourceResult> resourceResults = null;
         try {        
             AMIdentity userIdentity  = IdUtils.getIdentity(token);
-            //FIXME: need to be able to handle non uuid, for example ssoTokenId
+            // FIXME: need to be able to handle non uuid, for example ssoTokenId
             String subjectUuid = userIdentity.getUniversalId();
             String restUrl = getRESTPolicyServiceURL(token, scope);
+            String admin = appToken.getTokenID().toString(); 
             String queryString = buildEntitlementRequestQueryString(
-                    "/", serviceName, subjectUuid,
+                    admin, "/", serviceName, subjectUuid,
                     resourceName, actionNames, env);
             restUrl = restUrl + "?" + queryString;
             if (debug.messageEnabled()) {
@@ -1734,6 +1735,25 @@ class ResourceResultCache implements SSOTokenListener {
             throws JSONException, PolicyException {
         Set<ResourceResult> resourceResults = null;
         JSONObject jsonObject = new JSONObject(jsonResourceContent);
+        int statusCode = jsonObject.optInt("statusCode");
+        if (statusCode != 200) {
+            debug.error("ResourceResultCache.jsonResourceContentToResourceResults():"
+                    + "statusCode=" + statusCode + ", error response");
+            throw new PolicyEvaluationException(
+                    ResBundleUtils.rbName,
+                    "error_rest_reponse", 
+                    null, null);
+        }
+
+        jsonObject = jsonObject.optJSONObject("body");
+        if (jsonObject == null) {
+            debug.error("ResourceResultCache.jsonResourceContentToResourceResults():"
+                    + "does not have decisions object");
+            throw new PolicyEvaluationException(
+                    ResBundleUtils.rbName,
+                    "error_rest_reponse", 
+                    null, null);
+        }
         JSONArray jsonArray = jsonObject.optJSONArray("results");
         if (jsonArray != null) {
                 ResourceName resourceComparator =
@@ -1760,7 +1780,12 @@ class ResourceResultCache implements SSOTokenListener {
                 resourceResults = new HashSet<ResourceResult>();
                 resourceResults.add(resourceResult);
             } else {
-                //FIXME: throw exception with the message from JSONObject
+                debug.error("ResourceResultCache.jsonResourceContentToResourceResults():"
+                        + "does not have results or resourceName object");
+                throw new PolicyEvaluationException(
+                        ResBundleUtils.rbName,
+                        "error_rest_reponse", 
+                        null, null);
             }
         }
 
@@ -1868,16 +1893,16 @@ class ResourceResultCache implements SSOTokenListener {
                 String queryString = buildRegisterListenerQueryString(
                         admin, serviceName, resourceNames);
                 String resourceContent = postForm(restUrl, queryString);
+                // FIXME: what do we check in the content?
+                // FIXME: check the response, detect error conditions?
                 if (debug.messageEnabled()) {
                     debug.message("ResourceResultCache."
                             + "addRESTRemotePolicyListener():"
                             + ":resourceContent=" + resourceContent
                             );
                 } 
-                //FIXME: check the response, detect error conditions
                 status = true;
                 remotePolicyListeners.add(serviceName);
-                // FIXME: what do we check in the content
             } catch (SSOException se) {
                 debug.error("ResourceResultCache.addRESTRemotePolicyListener():"
                         + "Can not add policy listner", se);
@@ -1939,7 +1964,7 @@ class ResourceResultCache implements SSOTokenListener {
                 sb.append(buildRegisterListenerQueryString(admin, serviceName, resourceNames));
                 String restUrl = sb.toString();
                 String resourceContent = deleteRESTResourceContent(restUrl);
-                //FIXME: what do we check in the content
+                // FIXME: what do we check in the content
                 if (debug.messageEnabled()) {
                     debug.message("ResourceResultCache."
                             + "removeRESTRemotePolicyListener():"
@@ -1980,8 +2005,9 @@ class ResourceResultCache implements SSOTokenListener {
                         + pn);
             }
             ResourceResultCache cache = ResourceResultCache.getInstance();
-            String serviceName = "iPlanetAMWebAgentService"; //FIXME
-            Set<String> affectedResourceNames = null;  //FIXME
+            // FIXME after servre side is fixed to provide serviceName in notification
+            String serviceName = "iPlanetAMWebAgentService"; 
+            Set<String> affectedResourceNames = null;  
             try {
                 JSONObject jo = new JSONObject(pn);
                 JSONArray jsonArray = jo.optJSONArray("resources");
@@ -2249,7 +2275,7 @@ class ResourceResultCache implements SSOTokenListener {
                             + "admin is null");
                 }
                 throw new PolicyException(ResBundleUtils.rbName,
-                        "admin_can_not_be_null", null, null); // FIXME: add l10n
+                        "admin_can_not_be_null", null, null); 
             } else {
                 sb.append(REST_QUERY_ADMIN).append("=");
                 sb.append(URLEncoder.encode(admin, "UTF-8"));
@@ -2293,6 +2319,7 @@ class ResourceResultCache implements SSOTokenListener {
     }
 
     static String buildEntitlementRequestQueryString(
+            String admin, 
             String realm, 
             String serviceName, 
             String subjectUuid,
@@ -2306,6 +2333,20 @@ class ResourceResultCache implements SSOTokenListener {
             realm = URLEncoder.encode(realm, "UTF-8");
             sb.append(REST_QUERY_REALM).append("=");
             sb.append(realm);
+
+            if ((admin == null) || (admin.length() == 0)) {
+                if (debug.warningEnabled()) {
+                    debug.warning("ResourceResultCache."
+                            + "buildEntitlementRequestQueryString():"
+                            + "adminCookie can not be null");
+                }
+                throw new PolicyException(ResBundleUtils.rbName,
+                        "admin_can_not_be_null", null, null); //FIXME: add i18n
+            } else {
+                sb.append("&").append(REST_QUERY_ADMIN).append("=");
+                sb.append(URLEncoder.encode(admin, "UTF-8"));
+            }
+
             if ((serviceName == null) || (serviceName.length() == 0)) {
                 if (debug.warningEnabled()) {
                     debug.warning("ResourceResultCache."
@@ -2318,6 +2359,7 @@ class ResourceResultCache implements SSOTokenListener {
                 sb.append("&").append(REST_QUERY_APPLICATION).append("=");
                 sb.append(URLEncoder.encode(serviceName, "UTF-8"));
             }
+
             if ((subjectUuid == null) || (subjectUuid.trim().length() == 0)) {
                 if (debug.warningEnabled()) {
                     debug.warning("ResourceResultCache."

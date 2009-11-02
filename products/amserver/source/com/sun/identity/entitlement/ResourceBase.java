@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceBase.java,v 1.2 2009-10-21 01:11:05 veiming Exp $
+ * $Id: ResourceBase.java,v 1.3 2009-11-02 23:52:02 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -32,15 +32,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import org.json.JSONObject;
 import org.json.JSONException;
 
 public abstract class ResourceBase {
+
+    public static final String STATUS_CODE = "statusCode";
+    public static final String STATUS_MESSAGE = "statusMessage";
+    public static final String BODY = "body";
+
+    public enum MimeType {PLAIN, JSON};
+
+    private static final String RES_BUNDLE_NAME = "entitlement";
+
     protected Subject getCaller(HttpServletRequest req)
         throws EntitlementException {
         Principal p = req.getUserPrincipal();
@@ -100,20 +112,49 @@ public abstract class ResourceBase {
     }
 
     protected WebApplicationException getWebApplicationException(
-        HttpHeaders headers,
-        EntitlementException e) {
-        throw new WebApplicationException(
-              Response.status(e.getErrorCode())
-              .entity(e.getLocalizedMessage(getUserLocale(headers)))
-              .type("text/plain; charset=UTF-8").build());
+            HttpHeaders headers,
+            EntitlementException e, MimeType mimeType) {
+        if (MimeType.JSON == mimeType) {
+            int statusCode = e.getErrorCode();
+            String statusMessage =  e.getLocalizedMessage(getUserLocale(headers));
+            String responseJsonString = createResponseJSONString(statusCode, statusMessage, 
+                    null);
+            ResponseBuilder responseBuilder =  Response.status(statusCode);
+            responseBuilder.status(statusCode);
+            responseBuilder.entity(responseJsonString);
+            responseBuilder.type("applicaton/json; charset=UTF-8");
+            throw new WebApplicationException(responseBuilder.build());
+        } else {
+            throw new WebApplicationException(
+                  Response.status(e.getErrorCode())
+                  .entity(e.getLocalizedMessage(getUserLocale(headers)))
+                  .type("text/plain; charset=UTF-8").build());
+        }
     }
 
     protected WebApplicationException getWebApplicationException(
-        JSONException e) {
-        throw new WebApplicationException(
-              Response.status(425)
-              .entity(e.getLocalizedMessage())
-              .type("text/plain; charset=UTF-8").build());
+            JSONException e, MimeType mimeType) {
+        return getWebApplicationException(425, e, mimeType);
+    }
+
+    protected WebApplicationException getWebApplicationException(
+            int statusCode,
+            Exception e, MimeType mimeType) {
+        if (MimeType.JSON == mimeType) {
+            String statusMessage =  e.getLocalizedMessage();
+            String responseJsonString = createResponseJSONString(statusCode, statusMessage, 
+                    null);
+            ResponseBuilder responseBuilder =  Response.status(statusCode);
+            responseBuilder.status(statusCode);
+            responseBuilder.entity(responseJsonString);
+            responseBuilder.type("applicaton/json; charset=UTF-8");
+            throw new WebApplicationException(responseBuilder.build());
+        } else {
+            throw new WebApplicationException(
+                  Response.status(statusCode)
+                  .entity(e.getLocalizedMessage())
+                  .type("text/plain; charset=UTF-8").build());
+        }
     }
     
     protected Locale getUserLocale(HttpHeaders headers) {
@@ -121,5 +162,39 @@ public abstract class ResourceBase {
         return ((locales == null) || locales.isEmpty()) ? Locale.getDefault() :
             locales.get(0);
     }
+
+    protected String createResponseJSONString(int statusCode, String statusMessage, 
+            JSONObject body) {
+        JSONObject jo = null;
+        try {
+            jo = new JSONObject();
+            jo.put(STATUS_CODE, statusCode);
+            if (statusMessage != null) {
+                jo.put(STATUS_MESSAGE, statusMessage);
+            }
+            if (body != null) {
+                jo.put(BODY, body);
+            }
+        } catch (JSONException je) {
+            PrivilegeManager.debug.error("ResourceBase.createeResponseJSONString():"
+                    + "hit JSONException", je);
+        }
+        return (jo != null) ? jo.toString(): "{}";
+    }
+
+     /**
+     * Returns localized exception message.
+     *
+     * @param locale Locale of the message.
+     * @param statusCode statusCode of the message
+     * @return localized exception message.
+     */
+    protected String getLocalizedMessage(Locale locale, int statusCode) {
+        ResourceBundle rb = ResourceBundle.getBundle(RES_BUNDLE_NAME, locale);
+        String msg = rb.getString(Integer.toString(statusCode));
+        return msg;
+    }
+
 }
+
 

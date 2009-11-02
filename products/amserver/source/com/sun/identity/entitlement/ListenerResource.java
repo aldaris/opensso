@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerResource.java,v 1.2 2009-10-21 01:11:05 veiming Exp $
+ * $Id: ListenerResource.java,v 1.3 2009-11-02 23:52:02 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -66,12 +66,9 @@ public class ListenerResource extends ResourceBase {
             ListenerManager.getInstance().addListener(caller, l);
             return "OK";
         } catch (EntitlementException e) {
-            throw getWebApplicationException(headers, e);
+            throw getWebApplicationException(headers, e, MimeType.PLAIN);
         } catch (MalformedURLException e) {
-            throw new WebApplicationException(
-              Response.status(426)
-              .entity(e.getLocalizedMessage())
-              .type("text/plain; charset=UTF-8").build());
+            throw getWebApplicationException(426, e, MimeType.PLAIN);
         }
     }
 
@@ -88,12 +85,9 @@ public class ListenerResource extends ResourceBase {
             ListenerManager.getInstance().removeListener(caller, urlObj);
             return "OK";
         } catch (EntitlementException e) {
-            throw getWebApplicationException(headers, e);
+            throw getWebApplicationException(headers, e, MimeType.PLAIN);
         } catch (MalformedURLException e) {
-            throw new WebApplicationException(
-              Response.status(426)
-              .entity(e.getLocalizedMessage())
-              .type("text/plain; charset=UTF-8").build());
+            throw getWebApplicationException(426, e, MimeType.PLAIN);
         }
     }
 
@@ -114,16 +108,15 @@ public class ListenerResource extends ResourceBase {
                 String[] param = {url.toString()};
                 throw new EntitlementException(427, param);
             }
-            return listener.toJSON().toString();
+            return createResponseJSONString(200, 
+                    getLocalizedMessage(getUserLocale(headers), 200), 
+                    listener.toJSON()); 
         } catch (JSONException e) {
-            throw getWebApplicationException(e);
+            throw getWebApplicationException(e, MimeType.JSON);
         } catch (EntitlementException e) {
-            throw getWebApplicationException(headers, e);
+            throw getWebApplicationException(headers, e, MimeType.JSON);
         } catch (MalformedURLException e) {
-            throw new WebApplicationException(
-              Response.status(426)
-              .entity(e.getLocalizedMessage())
-              .type("text/plain; charset=UTF-8").build());
+            throw getWebApplicationException(426, e, MimeType.JSON);
         }
     }
 }
