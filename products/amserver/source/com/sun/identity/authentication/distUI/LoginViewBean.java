@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.34 2009-09-10 04:27:05 bina Exp $
+ * $Id: LoginViewBean.java,v 1.35 2009-11-02 07:19:42 222713 Exp $
  *
  */
 
@@ -373,12 +373,13 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 newRequest = true;
             }
             
+            ISLocaleContext localeContext = new ISLocaleContext();
+            localeContext.setLocale(request);
+            locale = localeContext.getLocale();
+
             if (newRequest) {
                 loginDebug.message("New request / New AuthContext created");
                 client_type = AuthClientUtils.getClientType(request);
-                ISLocaleContext localeContext = new ISLocaleContext();
-                localeContext.setLocale(request);
-                locale = localeContext.getLocale();                
                 session.setAttribute("Client_Type", client_type);
                 session.setAttribute("Locale", locale);
                 session.setAttribute("LoginURL", loginURL);
@@ -395,7 +396,6 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                     (!authCookieValue.equalsIgnoreCase("LOGOUT")) ) {
                 loginDebug.message("Existing request");
                 client_type = (String) session.getAttribute("Client_Type");
-                locale = (java.util.Locale) session.getAttribute("Locale");
                 loginURL = getLoginURL();
                 ac = (AuthContext) session.getAttribute("AuthContext");
                 orgName = (String) session.getAttribute("OrgName");
@@ -408,10 +408,6 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                         cookieSupported = false;
                     }
                 }
-            } else {
-                ISLocaleContext localeContext = new ISLocaleContext();
-                localeContext.setLocale(request);
-                locale = localeContext.getLocale();   
             }
             
             if (loginDebug.messageEnabled()) {

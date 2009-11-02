@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequestParser.java,v 1.11 2009-04-29 18:07:03 qcheng Exp $
+ * $Id: AuthXMLRequestParser.java,v 1.12 2009-11-02 07:20:23 222713 Exp $
  *
  */
 
@@ -235,6 +235,9 @@ public class AuthXMLRequestParser {
                         authContext);
                     parseSubmitReqElements(
                         submitReqNode, authXMLRequest, callbacks);
+		    String localeStr = authXMLRequest.getLocale();
+                    LoginState loginState = authContext.getLoginState();
+                    loginState.setRemoteLocale(localeStr);
                 }
 
                 // get  logout node
@@ -382,6 +385,17 @@ public class AuthXMLRequestParser {
         Callback[] submittedCallbacks = 
                 AuthXMLUtils.getCallbacks(callbacksNode,true,recdCallbacks);
         authXMLRequest.setSubmittedCallbacks(submittedCallbacks);
+
+        Node localeNode =
+            XMLUtils.getChildNode(submitReqNode, "Locale");
+        if (localeNode != null) {
+            String localeValue =
+                XMLUtils.getValueOfValueNode(localeNode);
+            if (debug.messageEnabled()) {
+               debug.message("locale is .. : " + localeValue);
+            }
+            authXMLRequest.setLocale(localeValue);
+        }
         return;
     }
 }

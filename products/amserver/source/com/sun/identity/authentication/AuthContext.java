@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.23 2009-08-17 21:17:48 mrudul_uchil Exp $
+ * $Id: AuthContext.java,v 1.24 2009-11-02 07:19:10 222713 Exp $
  *
  */
 
@@ -1139,9 +1139,19 @@ public class AuthContext extends Object implements java.io.Serializable {
                         append(AuthXMLTags.APPSSOTOKEN_END);
                 }
                 xml.append(AuthXMLTags.SUBMIT_REQS_BEGIN)
-                .append(AuthXMLUtils.getXMLForCallbacks(info))
-                .append(AuthXMLTags.SUBMIT_REQS_END)
-                .append(AuthXMLTags.XML_REQUEST_SUFFIX);
+                .append(AuthXMLUtils.getXMLForCallbacks(info));
+
+                if (clientLocale != null) {
+                    String localeStr = clientLocale.toString();
+                    if ((localeStr != null) && (localeStr.length() > 0)) {
+                        xml.append(AuthXMLTags.LOCALE_BEGIN)
+                        .append(XMLUtils.escapeSpecialCharacters(localeStr))
+                        .append(AuthXMLTags.LOCALE_END);
+                    }
+                }
+
+                xml.append(AuthXMLTags.SUBMIT_REQS_END)
+                   .append(AuthXMLTags.XML_REQUEST_SUFFIX);
                 
                 // Send the request to be processes
                 receivedDocument = processRequest(xml.toString());
