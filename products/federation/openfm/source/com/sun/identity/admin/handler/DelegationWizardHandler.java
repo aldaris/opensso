@@ -22,11 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardHandler.java,v 1.2 2009-10-19 17:54:04 farble1670 Exp $
+ * $Id: DelegationWizardHandler.java,v 1.3 2009-11-02 22:30:50 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
 
+import com.sun.identity.admin.dao.DelegationDao;
+import com.sun.identity.admin.model.DelegationBean;
 import com.sun.identity.admin.model.DelegationWizardBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.QueuedActionBean;
@@ -37,6 +39,9 @@ import javax.faces.event.ActionEvent;
 public abstract class DelegationWizardHandler extends WizardHandler {
     private QueuedActionBean queuedActionBean;
     private MessagesBean messagesBean;
+
+    public abstract void doFinishNext();
+    public abstract void doCancelNext();
 
     public void setQueuedActionBean(QueuedActionBean queuedActionBean) {
         this.queuedActionBean = queuedActionBean;
@@ -67,4 +72,20 @@ public abstract class DelegationWizardHandler extends WizardHandler {
         selected.removeAll(selectedValue);
     }
 
+    @Override
+    public void finishListener(ActionEvent event) {
+        if (!validateFinish(event)) {
+            return;
+        }
+
+        DelegationBean db = getDelegationWizardBean().getDelegationBean();
+        DelegationDao.getInstance().set(db);
+
+        doFinishNext();
+    }
+
+    @Override
+    public void cancelListener(ActionEvent event) {
+        doCancelNext();
+    }
 }

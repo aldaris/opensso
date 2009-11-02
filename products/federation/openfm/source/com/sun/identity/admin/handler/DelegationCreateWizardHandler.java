@@ -22,13 +22,58 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationCreateWizardHandler.java,v 1.1 2009-10-02 18:57:25 farble1670 Exp $
+ * $Id: DelegationCreateWizardHandler.java,v 1.2 2009-11-02 22:30:50 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
 
+import com.sun.identity.admin.Resources;
+import com.sun.identity.admin.model.LinkBean;
+import com.sun.identity.admin.model.NextPopupBean;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DelegationCreateWizardHandler extends DelegationWizardHandler {
     @Override
     public void initWizardStepValidators() {
+        // TODO
     }
+
+    public void doFinishNext() {
+        NextPopupBean npb = NextPopupBean.getInstance();
+        npb.setVisible(true);
+        Resources r = new Resources();
+        npb.setTitle(r.getString(this, "finishTitle"));
+        npb.setMessage(r.getString(this, "finishMessage"));
+        npb.setLinkBeans(getFinishLinkBeans());
+
+    }
+
+    public void doCancelNext() {
+        NextPopupBean npb = NextPopupBean.getInstance();
+        npb.setVisible(true);
+        Resources r = new Resources();
+        npb.setTitle(r.getString(this, "cancelTitle"));
+        npb.setMessage(r.getString(this, "cancelMessage"));
+        npb.setLinkBeans(getCancelLinkBeans());
+
+    }
+
+    private List<LinkBean> getFinishLinkBeans() {
+        List<LinkBean> lbs = new ArrayList<LinkBean>();
+        lbs.add(LinkBean.HOME);
+        lbs.add(LinkBean.DELEGATION_CREATE);
+
+        return lbs;
+    }
+
+    private List<LinkBean> getCancelLinkBeans() {
+        List<LinkBean> lbs = new ArrayList<LinkBean>();
+        lbs.add(LinkBean.HOME);
+        lbs.add(LinkBean.DELEGATION_CREATE);
+
+        return lbs;
+    }
+
+
 }

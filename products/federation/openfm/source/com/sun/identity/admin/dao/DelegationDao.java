@@ -22,19 +22,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationDao.java,v 1.1 2009-10-19 17:54:04 farble1670 Exp $
+ * $Id: DelegationDao.java,v 1.2 2009-11-02 22:30:50 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
+import com.sun.identity.admin.model.DelegationBean;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.SubjectType;
-import com.sun.identity.admin.model.ViewApplication;
-import com.sun.identity.admin.model.ViewApplicationType;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
+import com.sun.identity.entitlement.ApplicationPrivilege;
+import com.sun.identity.entitlement.ApplicationPrivilegeManager;
+import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
@@ -63,6 +67,59 @@ public class DelegationDao implements Serializable {
         }
 
         return subjectTypes;
+    }
+
+
+    private ApplicationPrivilegeManager getApplicationPrivilegeManager() {
+        SSOToken t = new Token().getSSOToken();
+        Subject s = SubjectUtils.createSubject(t);
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        ApplicationPrivilegeManager apm = ApplicationPrivilegeManager.getInstance(realmBean.getName(), s);
+
+        return apm;
+    }
+
+    public void set(DelegationBean db) {
+        if (exists(db)) {
+            modify(db);
+        } else {
+            add(db);
+        }
+    }
+
+    public boolean exists(DelegationBean db) {
+        return exists(db.getName());
+    }
+
+    public boolean exists(String name) {
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
+
+        try {
+            return (apm.getPrivilege(name) != null);
+        } catch (EntitlementException ee) {
+            return false;
+        }
+    }
+
+    public void add(DelegationBean db) {
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
+
+        try {
+            apm.addPrivilege(db.toApplicationPrivilege());
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+    }
+
+
+    public void modify(DelegationBean db) {
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
+
+        try {
+            apm.replacePrivilege(db.toApplicationPrivilege());
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
     }
 
     public static DelegationDao getInstance() {

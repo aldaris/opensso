@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationBean.java,v 1.5 2009-10-30 17:33:54 farble1670 Exp $
+ * $Id: DelegationBean.java,v 1.6 2009-11-02 22:30:51 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -30,7 +30,7 @@ import com.sun.identity.admin.ListFormatter;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.entitlement.ApplicationPrivilege;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.ReferralPrivilege;
+import com.sun.identity.entitlement.SubjectImplementation;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -172,8 +172,6 @@ public class DelegationBean {
             }
         }
     }
-
-
     private String name;
     private String description;
     private Date birth;
@@ -189,7 +187,6 @@ public class DelegationBean {
         // nothing
     }
 
-   
     public DelegationBean(
             ApplicationPrivilege ap,
             Map<String, ViewApplication> viewApplications) {
@@ -252,8 +249,10 @@ public class DelegationBean {
         }
 
         // subjects
-        // TODO
-        
+        for (SubjectImplementation si : ap.getSubjects()) {
+            viewSubjects.add(SubjectFactory.getInstance().getViewSubject(si));
+        }
+
         // action
         action = DelegationAction.valueOf(ap.getActionValues().toString());
     }
@@ -292,8 +291,16 @@ public class DelegationBean {
         }
 
         // subjects
-        // TODO
-
+        Set<SubjectImplementation> eSubjects = new HashSet<SubjectImplementation>();
+        for (ViewSubject vs : viewSubjects) {
+            eSubjects.add((SubjectImplementation) vs.getEntitlementSubject());
+        }
+        try {
+            ap.setSubject(eSubjects);
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+        
         // action
         ap.setActionValues(ApplicationPrivilege.PossibleAction.valueOf(action.toString()));
 
@@ -324,7 +331,6 @@ public class DelegationBean {
         ListFormatter lf = new ListFormatter(viewSubjects);
         return lf.toFormattedString();
     }
-
 
     public Date getBirth() {
         return birth;
