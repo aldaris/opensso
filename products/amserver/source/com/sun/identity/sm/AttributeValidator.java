@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValidator.java,v 1.9 2009-01-07 22:28:51 lakshman_abburi Exp $
+ * $Id: AttributeValidator.java,v 1.10 2009-11-03 00:06:31 hengming Exp $
  *
  */
 
@@ -390,6 +390,11 @@ class AttributeValidator {
      */
     boolean validate(Set attrVals, String i18nFileName, boolean encodePassword,
             Map envParam) throws SMSException {
+        // removing old values, no need to validate
+        if ((attrVals == null) || (attrVals.isEmpty())){
+            return true;
+        }
+
         if (!validateType(attrVals, envParam)
                 || !validateSyntax(attrVals, encodePassword)) {
             if (debug.messageEnabled()) {

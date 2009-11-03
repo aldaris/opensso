@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMHashMap.java,v 1.6 2008-06-25 05:41:20 qcheng Exp $
+ * $Id: AMHashMap.java,v 1.7 2009-11-03 00:06:31 hengming Exp $
  *
  */
 
@@ -306,11 +306,11 @@ public class AMHashMap extends CaseInsensitiveHashMap {
             while (itr.hasNext()) {
                 String name = (String) itr.next();
                 Set values = (Set) map.get(name);
-                if (!values.isEmpty()) {
-                    this.put(name, getSetCopy(values));
+                if ((values == null) || (values.isEmpty())) {
+                    this.put(name, Collections.EMPTY_SET);
                     attrsWithValues.add(name);
                 } else {
-                    this.put(name, Collections.EMPTY_SET);
+                    this.put(name, getSetCopy(values));
                     attrsWithValues.add(name);
                 }
             }
@@ -475,6 +475,9 @@ public class AMHashMap extends CaseInsensitiveHashMap {
     }
 
     private Set getSetCopy(Set values) {
+        if (values == null) {
+            return null;
+        }
         Set copyValues = new HashSet(values.size());
         if (!values.isEmpty()) {
             Iterator itr = values.iterator();
