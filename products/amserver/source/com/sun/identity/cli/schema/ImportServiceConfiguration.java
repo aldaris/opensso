@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportServiceConfiguration.java,v 1.8 2009-01-28 05:34:55 ww203982 Exp $
+ * $Id: ImportServiceConfiguration.java,v 1.9 2009-11-03 22:14:13 hengming Exp $
  *
  */
 
@@ -212,16 +212,7 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
     ) throws SSOException, SMSException {
         CachedSubEntries smsEntry = CachedSubEntries.getInstance(
             ssoToken, ouServices);
-        Set children = smsEntry.getSubEntries(ssoToken, "*");
-
-        for (Iterator i = children.iterator(); i.hasNext();) {
-            String child = (String) i.next();
-            child = "ou=" + child + "," + ouServices;
-            SMSEntry s = new SMSEntry(ssoToken, child);
-            s.delete();
-        }
-
-        children = smsEntry.searchSubOrgNames(ssoToken, "*", false);
+        Set children = smsEntry.searchSubOrgNames(ssoToken, "*", false);
         for (Iterator i = children.iterator(); i.hasNext();) {
             String child = (String) i.next();
             child = "o=" + child + "," + ouServices;
@@ -233,6 +224,15 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
             SMSEntry s = new SMSEntry(ssoToken,
                 "o=sunamhiddenrealmdelegationservicepermissions," +
                 ouServices);
+            s.delete();
+        }
+
+        children = smsEntry.getSubEntries(ssoToken, "*");
+
+        for (Iterator i = children.iterator(); i.hasNext();) {
+            String child = (String) i.next();
+            child = "ou=" + child + "," + ouServices;
+            SMSEntry s = new SMSEntry(ssoToken, child);
             s.delete();
         }
 
