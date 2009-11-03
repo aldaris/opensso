@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSUtils.java,v 1.8 2009-09-02 09:21:52 mchlbgs Exp $
+ * $Id: FSUtils.java,v 1.9 2009-11-03 00:50:05 madan_ranganath Exp $
  *
  */
 
@@ -680,12 +680,12 @@ public class FSUtils {
                     String domain = (String)it.next();
                     cookie = CookieUtils.newCookie(cookieName, cookieValue,
                         "/", domain);
-                    response.addCookie(cookie);
+		    CookieUtils.addCookieToResponse(response, cookie);
                 }
             } else {
                 cookie = CookieUtils.newCookie(cookieName, cookieValue, "/",
                     null);
-                response.addCookie(cookie);
+		CookieUtils.addCookieToResponse(response, cookie);
             }
         }
     }

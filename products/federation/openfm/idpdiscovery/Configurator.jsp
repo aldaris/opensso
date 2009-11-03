@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.3 2008-08-15 01:05:34 veiming Exp $
+   $Id: Configurator.jsp,v 1.4 2009-11-03 00:51:42 madan_ranganath Exp $
 
 --%>
 
@@ -54,6 +54,7 @@ java.util.Properties"
     String cookieDomain = null;
     String secureCookie = null;
     String encodeCookie = null;
+    String httpOnlyCookie = null;
 
     File configF = new File(configFile);
     if (configF.exists()) {
@@ -69,6 +70,7 @@ java.util.Properties"
         secureCookie = request.getParameter("secureCookie");
         debugDir = request.getParameter("debugDir");
         encodeCookie = request.getParameter("encodeCookie");
+        httpOnlyCookie = request.getParameter("httpOnlyCookie");
         String submit = request.getParameter("submit");
         String servletPath = request.getServletPath();
 
@@ -77,7 +79,8 @@ java.util.Properties"
                 (cookieType != null) && !cookieType.equals("") && 
                 (secureCookie != null) && !secureCookie.equals("") && 
                 (debugDir != null) && !debugDir.equals("") &&
-                (encodeCookie != null) && !encodeCookie.equals("")) {
+                (encodeCookie != null) && !encodeCookie.equals("") &&
+                (httpOnlyCookie != null) && !httpOnlyCookie.equals("")) {
                 if (cookieDomain == null) {
                     cookieDomain = "";
                 }
@@ -88,6 +91,7 @@ java.util.Properties"
                 props.setProperty("COOKIE_DOMAIN", cookieDomain);
                 props.setProperty("SECURE_COOKIE", secureCookie);
                 props.setProperty("ENCODE_COOKIE", encodeCookie);
+                props.setProperty("HTTP_ONLY_COOKIE", httpOnlyCookie);
                 try {
                     IDPDiscoveryWARConfigurator configurator = 
                         new IDPDiscoveryWARConfigurator(
@@ -197,6 +201,13 @@ java.util.Properties"
     </tr>
     <tr>
         <td>  </td>
+    </tr>
+    <tr>
+    <td>HTTP-Only Cookie:</td>
+    <td>
+        <input type="radio" name="httpOnlyCookie" value="true" >True
+        <input type="radio" name="httpOnlyCookie" value="false" CHECKED>False
+    </td>
     </tr>
     <tr>
     <td colspan="2" align="center">

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.21 2009-06-24 00:24:45 sean_brydon Exp $
+ * $Id: FMSessionProvider.java,v 1.22 2009-11-03 00:53:02 madan_ranganath Exp $
  *
  */
 
@@ -308,7 +308,7 @@ public class FMSessionProvider implements SessionProvider {
             if (cookieDomains.size() == 0) {
                 Cookie cookie =
                     CookieUtils.newCookie(cookieName, value, "/");
-                response.addCookie(cookie);
+		CookieUtils.addCookieToResponse(response, cookie);
             } else {
                 Iterator it = cookieDomains.iterator();
                 Cookie cookie = null;
@@ -323,7 +323,7 @@ public class FMSessionProvider implements SessionProvider {
                     cookie = CookieUtils.newCookie(
                         cookieName, value,
                         "/", cookieDomain);
-                    response.addCookie(cookie);
+		    CookieUtils.addCookieToResponse(response, cookie);
                 }
             }
             if (urlRewriteEnabled && targetApplication != null) {

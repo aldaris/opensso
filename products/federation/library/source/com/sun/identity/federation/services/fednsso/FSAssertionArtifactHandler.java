@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.13 2008-12-19 06:50:46 exu Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.14 2009-11-03 00:49:49 madan_ranganath Exp $
  *
  */
 
@@ -1321,14 +1321,14 @@ public class FSAssertionArtifactHandler {
                                         fedCookieValue,
                                         IFSConstants.PERSISTENT_COOKIE_AGE,
                                         "/",(String)iter.next());
-                    response.addCookie(fedCookie);
+		    CookieUtils.addCookieToResponse(response, fedCookie);
                 }
             } else {
                 fedCookie = CookieUtils.newCookie(fedCookieName,
                                         fedCookieValue,
                                         IFSConstants.PERSISTENT_COOKIE_AGE,
                                         "/",null);
-                response.addCookie(fedCookie);
+		CookieUtils.addCookieToResponse(response, fedCookie);
             }
             
             //keep local session ref
@@ -1701,7 +1701,7 @@ public class FSAssertionArtifactHandler {
                         IFSConstants.PERSISTENT_COOKIE_AGE,
                         "/",
                         (String)iter.next());
-                    response.addCookie(fedCookie);
+		    CookieUtils.addCookieToResponse(response, fedCookie);
                 }
             } else {
                 fedCookie = CookieUtils.newCookie(
@@ -1710,7 +1710,7 @@ public class FSAssertionArtifactHandler {
                     IFSConstants.PERSISTENT_COOKIE_AGE,
                     "/",
                     null);
-                response.addCookie(fedCookie);
+		CookieUtils.addCookieToResponse(response, fedCookie);
             }
         }
         

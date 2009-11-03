@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieWriterServlet.java,v 1.6 2009-03-26 19:41:29 madan_ranganath Exp $
+ * $Id: CookieWriterServlet.java,v 1.7 2009-11-03 00:50:34 madan_ranganath Exp $
  *
  */
 
@@ -276,7 +276,7 @@ public class CookieWriterServlet extends HttpServlet {
                     "/",
                     domain
                 );
-            response.addCookie(idpListCookie);
+	    CookieUtils.addCookieToResponse(response,idpListCookie);
             if(isValidReturn) {
                 if (CookieUtils.debug.messageEnabled()) {
                     CookieUtils.debug.message(

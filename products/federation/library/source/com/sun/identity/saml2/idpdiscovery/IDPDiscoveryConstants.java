@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPDiscoveryConstants.java,v 1.4 2009-03-03 01:52:44 qcheng Exp $
+ * $Id: IDPDiscoveryConstants.java,v 1.5 2009-11-03 00:50:34 madan_ranganath Exp $
  *
  */
 
@@ -65,6 +65,8 @@ public interface IDPDiscoveryConstants {
                         "com.iplanet.am.cookie.secure";
     public static final String AM_COOKIE_ENCODE = 
                         "com.iplanet.am.cookie.encode";
+    public static final String AM_COOKIE_HTTPONLY = 
+                        "com.sun.identity.cookie.httponly";
     public static final String SAML2_WRITER_URI = "/saml2writer"; 
     public static final String IDFF_WRITER_URI = "/idffwriter";
     public static final String SAML2_READER_URI = "/saml2reader"; 

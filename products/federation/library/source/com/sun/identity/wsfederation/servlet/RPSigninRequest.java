@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninRequest.java,v 1.8 2009-10-28 23:59:00 exu Exp $
+ * $Id: RPSigninRequest.java,v 1.9 2009-11-03 00:48:54 madan_ranganath Exp $
  *
  */
 
@@ -31,7 +31,9 @@ package com.sun.identity.wsfederation.servlet;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.shared.DateUtils;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.encode.URLEncDec;
+
 import com.sun.identity.wsfederation.common.WSFederationConstants;
 import com.sun.identity.wsfederation.common.WSFederationException;
 import java.io.IOException;
@@ -167,7 +169,7 @@ public class RPSigninRequest extends WSFederationAction {
                 Cookie cookie = new Cookie(accountRealmCookieName,whr);
                 // Set cookie to persist for a year
                 cookie.setMaxAge(60*60*24*365);
-                response.addCookie(cookie);
+		CookieUtils.addCookieToResponse(response, cookie);
             }
         }
         else

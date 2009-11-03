@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSFedTerminationHandler.java,v 1.6 2008-12-19 06:50:47 exu Exp $
+ * $Id: FSFedTerminationHandler.java,v 1.7 2009-11-03 00:49:26 madan_ranganath Exp $
  *
  */
 
@@ -625,14 +625,14 @@ public class FSFedTerminationHandler {
                                         cookieValue, 
                                         IFSConstants.PERSISTENT_COOKIE_AGE,
                                         "/", (String) iter.next());
-                        response.addCookie(fedCookie);
+                        CookieUtils.addCookieToResponse(response, fedCookie);
                     } 
                 } else  {
                     fedCookie = CookieUtils.newCookie(FEDERATE_COOKIE_NAME,
                                         cookieValue, 
                                         IFSConstants.PERSISTENT_COOKIE_AGE,
                                         "/",null);
-                    response.addCookie(fedCookie);
+		    CookieUtils.addCookieToResponse(response, fedCookie);
                 }
             }
         } catch (FSAccountMgmtException e) {
