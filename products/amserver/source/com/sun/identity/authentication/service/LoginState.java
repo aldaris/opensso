@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.52 2009-08-27 08:39:52 si224302 Exp $
+ * $Id: LoginState.java,v 1.53 2009-11-04 22:55:25 manish_rustagi Exp $
  *
  */
 
@@ -46,6 +46,8 @@ import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.util.AMAuthUtils;
 import com.sun.identity.authentication.config.AMAuthConfigUtils;
 import com.sun.identity.authentication.config.AMAuthenticationManager;
+import com.sun.identity.authentication.config.AMAuthenticationInstance;
+import com.sun.identity.authentication.config.AMConfigurationException;
 import com.sun.identity.authentication.server.AuthContextLocal;
 import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
 import com.sun.identity.authentication.spi.AuthenticationException;
@@ -99,6 +101,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.security.AdminTokenAction;
 
 /**
  * This class maintains the User's login state information from the time user 
@@ -1186,9 +1189,12 @@ public class LoginState {
         
         AMIdentity newAMIdentity = null;
         String oldUserDN = null;
+        String oldAuthenticationModuleInstanceName = null;
         AMIdentity oldAMIdentity = null;
         if (oldSession != null) {
             oldUserDN = oldSession.getProperty(ISAuthConstants.PRINCIPAL);
+            oldAuthenticationModuleInstanceName =oldSession.getProperty(
+                ISAuthConstants.AUTH_TYPE); 
             if(!ignoreUserProfile){
                 newAMIdentity = 
                     ad.getIdentity(IdType.USER,userDN,getOrgDN());          
@@ -1213,7 +1219,34 @@ public class LoginState {
         }
         
         if (sessionUpgrade){
-            if(!ignoreUserProfile){
+            String oldAuthenticationModuleClassName = null;
+            if((oldAuthenticationModuleInstanceName != null) &&
+                (oldAuthenticationModuleInstanceName.indexOf("|") == -1)){
+                try{
+                    SSOToken adminToken = 
+                        (SSOToken) AccessController.doPrivileged(
+                            AdminTokenAction.getInstance());
+                    AMAuthenticationManager authManager =
+                        new AMAuthenticationManager(adminToken,orgName);
+                    AMAuthenticationInstance authInstance =
+                        authManager.getAuthenticationInstance(
+                            oldAuthenticationModuleInstanceName);
+                    oldAuthenticationModuleClassName = 
+                        authInstance.getType();
+                }catch (AMConfigurationException ace) {
+                    if (messageEnabled) {
+                        debug.message("LoginState.setSessionProperties()" 
+                        + ":Unable to create AMAuthenticationManager"
+                        + "Instance:"
+                        + ace.getMessage());
+                    }
+                    throw new AuthException(ace);
+                }
+        	}
+        	
+            if("Anonymous".equalsIgnoreCase(oldAuthenticationModuleClassName)){
+                sessionUpgrade();
+            } else if(!ignoreUserProfile){
                 if((oldAMIdentity != null) && 
                         oldAMIdentity.equals(newAMIdentity)){
                     sessionUpgrade();
@@ -1223,7 +1256,7 @@ public class LoginState {
                         "Resetting session upgrade to false " +
                         "since oldAMIdentity and newAMIdentity doesn't match");
                     }                	
-                	throw new AuthException(
+                    throw new AuthException(
                         AMAuthErrorCode.SESSION_UPGRADE_FAILED, null);
                 }
             } else {
@@ -6358,6 +6391,5 @@ public class LoginState {
             }
         }
         return authValid;
-    }
-
+    }  
 }
