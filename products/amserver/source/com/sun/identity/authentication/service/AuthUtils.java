@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.27 2009-10-23 18:51:24 bhavnab Exp $
+ * $Id: AuthUtils.java,v 1.28 2009-11-04 22:51:38 manish_rustagi Exp $
  *
  */
 
@@ -57,7 +57,7 @@ import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.iplanet.am.util.Misc;
 import com.sun.identity.common.Constants;
@@ -76,7 +76,6 @@ import com.sun.identity.authentication.util.AMAuthUtils;
 import com.sun.identity.authentication.client.AuthClientUtils;
 
 import com.sun.identity.common.ResourceLookup;
-import com.sun.identity.common.Constants;
 
 import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.encode.URLEncDec;

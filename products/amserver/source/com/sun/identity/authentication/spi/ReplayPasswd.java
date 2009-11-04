@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReplayPasswd.java,v 1.5 2008-06-25 05:42:06 qcheng Exp $
+ * $Id: ReplayPasswd.java,v 1.6 2009-11-04 22:50:35 manish_rustagi Exp $
  *
  */
 
 package com.sun.identity.authentication.spi;
 
-import com.iplanet.am.util.Debug;
 import com.iplanet.am.util.Misc;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
@@ -38,6 +37,7 @@ import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.shared.debug.Debug;
 import java.io.IOException;
 import java.lang.System;
 import java.security.Provider;
