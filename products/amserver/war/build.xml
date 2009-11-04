@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.65 2009-10-27 05:35:24 hengming Exp $
+   $Id: build.xml,v 1.66 2009-11-04 21:10:43 veiming Exp $
 
 -->
 
@@ -99,6 +99,9 @@
             <zipfileset dir="${lockhart.dir}/js" prefix="js">
                 <include name="browserVersion.js" />
             </zipfileset>
+            <zipfileset dir="${lockhart.dir}" prefix="com_sun_web_ui">
+                <include name="index.html" />
+            </zipfileset>
             <zipfileset dir="${lockhart.dir}/css" prefix="com_sun_web_ui/css">
                 <exclude name="css_generic.css" />
                 <exclude name="styles.css" />
@@ -111,6 +114,8 @@
                 <include name="*.jpg" />
                 <include name="*.gif" />
                 <include name="button/primary*.gif" />
+                <include name="button/index.html" />
+                <include name="index.html" />
             </zipfileset>
             <zipfileset dir="${lockhart.dir}/js" prefix="com_sun_web_ui/js" />
             <zipfileset dir="${lockhart.dir}/jsp" excludes="help2/*.jsp,version/*.jsp" prefix="com_sun_web_ui/jsp" />
@@ -124,35 +129,35 @@
                  <include name="*.htm" />
             </zipfileset>
             <zipfileset dir="${amserver.authmodule.xml.dir}" prefix="config/auth/default">
-				<include name="*.xml" />
-	    	</zipfileset>
-			<zipfileset dir="${amserver.authmodule.xml.dir}" prefix="config/auth/default_en">
-				<include name="*.xml" />
-			</zipfileset>
-			<zipfileset dir="${amserver.authmodule.xml.dir}/ja_JP" prefix="config/auth/default_ja">
-				<include name="*.xml" />
-			</zipfileset>
-			<zipfileset dir="${amserver.authmodule.xml.dir}/ko_KR" prefix="config/auth/default_ko">
-				<include name="*.xml" />
-			</zipfileset>
-			<zipfileset dir="${amserver.authmodule.xml.dir}/zh_CN" prefix="config/auth/default_zh">
-				<include name="*.xml" />
-			</zipfileset>
-			<zipfileset dir="${amserver.authmodule.xml.dir}/zh_CN" prefix="config/auth/default_zh_CN">
-				<include name="*.xml" />
-			</zipfileset>
-			<zipfileset dir="${amserver.authmodule.xml.dir}/zh_TW" prefix="config/auth/default_zh_TW">
-				<include name="*.xml" />
-			</zipfileset>
-			<zipfileset dir="${amserver.authmodule.xml.dir}/de_DE" prefix="config/auth/default_de">
-				<include name="*.xml" />
-			</zipfileset>
-			<zipfileset dir="${amserver.authmodule.xml.dir}/fr_FR" prefix="config/auth/default_fr">
-				<include name="*.xml" />
-			</zipfileset>
-			<zipfileset dir="${amserver.authmodule.xml.dir}/es_ES" prefix="config/auth/default_es">
-				<include name="*.xml" />
-			</zipfileset>
+                <include name="*.xml" />
+            </zipfileset>
+            <zipfileset dir="${amserver.authmodule.xml.dir}" prefix="config/auth/default_en">
+                <include name="*.xml" />
+            </zipfileset>
+            <zipfileset dir="${amserver.authmodule.xml.dir}/ja_JP" prefix="config/auth/default_ja">
+                <include name="*.xml" />
+            </zipfileset>
+            <zipfileset dir="${amserver.authmodule.xml.dir}/ko_KR" prefix="config/auth/default_ko">
+                <include name="*.xml" />
+            </zipfileset>
+            <zipfileset dir="${amserver.authmodule.xml.dir}/zh_CN" prefix="config/auth/default_zh">
+                <include name="*.xml" />
+            </zipfileset>
+            <zipfileset dir="${amserver.authmodule.xml.dir}/zh_CN" prefix="config/auth/default_zh_CN">
+                <include name="*.xml" />
+            </zipfileset>
+            <zipfileset dir="${amserver.authmodule.xml.dir}/zh_TW" prefix="config/auth/default_zh_TW">
+                <include name="*.xml" />
+            </zipfileset>
+            <zipfileset dir="${amserver.authmodule.xml.dir}/de_DE" prefix="config/auth/default_de">
+                <include name="*.xml" />
+            </zipfileset>
+            <zipfileset dir="${amserver.authmodule.xml.dir}/fr_FR" prefix="config/auth/default_fr">
+                <include name="*.xml" />
+            </zipfileset>
+            <zipfileset dir="${amserver.authmodule.xml.dir}/es_ES" prefix="config/auth/default_es">
+                <include name="*.xml" />
+            </zipfileset>
             <zipfileset dir="${amserver.built.war.dir}/xml/services" prefix="WEB-INF/classes" />
             <zipfileset dir="${amserver.built.war.dir}/xml" prefix="WEB-INF/template/sms">
                 <include name="serverconfig.xml" />
@@ -269,19 +274,29 @@
                 <exclude name="html/*" />
             </zipfileset>
             <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/authentication" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/base" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/css" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/delegation" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/idm" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/images" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/js" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/css" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/policy" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/realm" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/service" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/session" />
-            <zipfileset dir="${amserver.www.dir}/console/html/level1" prefix="console/user" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/authentication" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/base" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/css" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/delegation" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/idm" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/images" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/js" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/css" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/policy" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/realm" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/service" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/session" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/user" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/html" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/version" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/ajax" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/webservices" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/task" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/agentconfig" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/help" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/federation" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level2" prefix="console/dm" />
+            <zipfileset dir="${amserver.www.dir}/console/html/level3" prefix="console/images/tasks" />
             <zipfileset dir="${lockhart.dir}/css" prefix="css">
                 <exclude name="css_generic.css" />
             </zipfileset>
@@ -289,6 +304,13 @@
                 <include name="app.hs" />
                 <include name="map.jhm" />
                 <include name="version.html" />
+                <include name="index.html" />
+            </zipfileset>
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html">
+                <include name="index.html" />
+            </zipfileset>
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/en">
+                <include name="index.html" />
             </zipfileset>
             <zipfileset dir="${amserver.docs.dir}/console/javahelp/en" prefix="html/en/help" />
             <zipfileset dir="${javahelp.dir}/css" prefix="html/en/help/css" />
@@ -300,11 +322,17 @@
                 <include name="map.jhm" />
                 <include name="version.html" />
             </zipfileset>
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/de">
+                <include name="index.html" />
+            </zipfileset>
             <zipfileset dir="${amserver.docs.dir}/console/javahelp/de_DE" prefix="html/de/help" />
             <zipfileset dir="${javahelp.dir}/css" prefix="html/de/help/css" />
             <zipfileset dir="${javahelp.dir}/ents" prefix="html/de/help/ents" />
             <zipfileset dir="${javahelp.dir}/graphics" prefix="html/de/help/graphics" />
             
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/fr">
+                <include name="index.html" />
+            </zipfileset>
             <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/fr/help">
                 <include name="app.hs" />
                 <include name="map.jhm" />
@@ -315,6 +343,9 @@
             <zipfileset dir="${javahelp.dir}/ents" prefix="html/fr/help/ents" />
             <zipfileset dir="${javahelp.dir}/graphics" prefix="html/fr/help/graphics" />
             
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/es">
+                <include name="index.html" />
+            </zipfileset>
             <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/es/help">
                 <include name="app.hs" />
                 <include name="map.jhm" />
@@ -325,6 +356,9 @@
             <zipfileset dir="${javahelp.dir}/ents" prefix="html/es/help/ents" />
             <zipfileset dir="${javahelp.dir}/graphics" prefix="html/es/help/graphics" />
             
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/ja">
+                <include name="index.html" />
+            </zipfileset>
             <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/ja/help">
                 <include name="app.hs" />
                 <include name="map.jhm" />
@@ -340,6 +374,9 @@
                 <include name="map.jhm" />
                 <include name="version.html" />
             </zipfileset>
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/ko">
+                <include name="index.html" />
+            </zipfileset>
             <zipfileset dir="${amserver.docs.dir}/console/javahelp/ko_KR" prefix="html/ko/help" />
             <zipfileset dir="${javahelp.dir}/css" prefix="html/ko/help/css" />
             <zipfileset dir="${javahelp.dir}/ents" prefix="html/ko/help/ents" />
@@ -349,6 +386,9 @@
                 <include name="app.hs" />
                 <include name="map.jhm" />
                 <include name="version.html" />
+            </zipfileset>
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/zh">
+                <include name="index.html" />
             </zipfileset>
             <zipfileset dir="${amserver.docs.dir}/console/javahelp/zh" prefix="html/zh/help" />
             <zipfileset dir="${javahelp.dir}/css" prefix="html/zh/help/css" />
@@ -360,6 +400,9 @@
                 <include name="map.jhm" />
                 <include name="version.html" />
             </zipfileset>
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/zh_CN">
+                <include name="index.html" />
+            </zipfileset>
             <zipfileset dir="${amserver.docs.dir}/console/javahelp/zh_CN" prefix="html/zh_CN/help" />
             <zipfileset dir="${javahelp.dir}/css" prefix="html/zh_CN/help/css" />
             <zipfileset dir="${javahelp.dir}/ents" prefix="html/zh_CN/help/ents" />
@@ -369,6 +412,9 @@
                 <include name="app.hs" />
                 <include name="map.jhm" />
                 <include name="version.html" />
+            </zipfileset>
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/zh_TW">
+                <include name="index.html" />
             </zipfileset>
             <zipfileset dir="${amserver.docs.dir}/console/javahelp/zh_TW" prefix="html/zh_TW/help" />
             <zipfileset dir="${javahelp.dir}/css" prefix="html/zh_TW/help/css" />
@@ -386,6 +432,7 @@
             </zipfileset>
             <zipfileset dir="${amserver.passwordreset.dir}/css" prefix="password/css">
                 <include name="*.css" />
+                <include name="index.html" />
             </zipfileset>
             <zipfileset dir="${amserver.passwordreset.dir}/images"
                 prefix="password/images">
@@ -397,6 +444,7 @@
             </zipfileset>
             <zipfileset dir="${amserver.passwordreset.dir}/js" prefix="password/js">
                 <include name="*.js" />
+                <include name="index.html" />
             </zipfileset>
         </war>
 
