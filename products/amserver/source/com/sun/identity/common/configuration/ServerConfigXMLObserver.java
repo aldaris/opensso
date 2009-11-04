@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigXMLObserver.java,v 1.1 2008-07-29 20:11:29 veiming Exp $
+ * $Id: ServerConfigXMLObserver.java,v 1.2 2009-11-04 19:25:35 veiming Exp $
  */
 
 package com.sun.identity.common.configuration;
@@ -93,12 +93,21 @@ public class ServerConfigXMLObserver implements ConfigurationListener {
         try {
             String xml = ServerConfiguration.getServerConfigXML(adminToken,
                 SystemProperties.getServerInstanceName());
-            if (bForce) {
-                currentXML = null;
-            }
-            if ((currentXML == null) || !currentXML.equals(xml)) {
-                BootstrapCreator.updateBootstrap();
-                currentXML = xml;
+
+             /*
+              * xml can be null for the following reasons
+              * 1. old DIT
+              * 2. new DIT but the serverconfig.xml is not stored in centralized
+              *    configuration
+              */
+            if ((xml != null) && (xml.trim().length() > 0)){ 
+                if (bForce) {
+                    currentXML = null;
+                }
+                if ((currentXML == null) || !currentXML.equals(xml)) {
+                    BootstrapCreator.updateBootstrap();
+                    currentXML = xml;
+                }
             }
         } catch (ConfigurationException e) {
             debug.error("ServerConfigXMLObserver.notifyChanges", e);

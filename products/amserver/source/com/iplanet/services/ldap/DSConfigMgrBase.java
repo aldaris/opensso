@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgrBase.java,v 1.2 2008-06-25 05:41:36 qcheng Exp $
+ * $Id: DSConfigMgrBase.java,v 1.3 2009-11-04 19:25:35 veiming Exp $
  *
  */
 
@@ -133,14 +133,25 @@ public class DSConfigMgrBase implements IDSConfigMgr {
             AccessController.doPrivileged(AdminTokenAction.getInstance());
         String xml = ServerConfiguration.getServerConfigXML(
             adminToken, SystemProperties.getServerInstanceName());
-        XMLParser parser = new XMLParser(true, groupHash);
 
-        // Get the data from the xml classes
-        parser.register(DSConfigMgr.SERVERGROUP, 
-            "com.iplanet.services.ldap.ServerGroup");
-        parser.register(DSConfigMgr.SERVER, "com.iplanet.services.ldap.Server");
-        parser.register(DSConfigMgr.USER, "com.iplanet.services.ldap.LDAPUser");
-        parser.parse(xml);
+        /*
+         * xml can be null or empty when centralized server configuration
+         * is not used i.e. AMConfig.properties and serverconfig.xml
+         * reside in the file system. In the case, we do not need
+         * to update the server config XML in the system.
+         */
+        if ((xml != null) && (xml.trim().length() > 0)) {
+            XMLParser parser = new XMLParser(true, groupHash);
+
+            // Get the data from the xml classes
+            parser.register(DSConfigMgr.SERVERGROUP, 
+                "com.iplanet.services.ldap.ServerGroup");
+            parser.register(DSConfigMgr.SERVER,
+                "com.iplanet.services.ldap.Server");
+            parser.register(DSConfigMgr.USER,
+                "com.iplanet.services.ldap.LDAPUser");
+            parser.parse(xml);
+        }
     }
 
     public String toString() {
