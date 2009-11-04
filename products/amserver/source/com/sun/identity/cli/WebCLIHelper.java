@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.15 2009-08-05 20:15:52 veiming Exp $
+ * $Id: WebCLIHelper.java,v 1.16 2009-11-04 23:36:45 veiming Exp $
  *
  */
 
@@ -79,6 +79,12 @@ public class WebCLIHelper {
             if (submit == null) {
                 buff.append(autogenUI(cmdName));
             } else {
+                if (!request.getMethod().equals("POST")) {
+                    String message = cmdMgr.getResourceBundle().getString(
+                        "error-message-http-post-required");
+                    throw new CLIException(
+                        message, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                }
                 buff.append(processRequest(cmdName, request, ssoToken));
             }
             html = buff.toString();
