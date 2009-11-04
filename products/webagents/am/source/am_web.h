@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.29 2009-10-13 01:36:36 robertis Exp $
+ * $Id: am_web.h,v 1.30 2009-11-04 22:11:56 leiming Exp $
  *
  */
 
@@ -190,7 +190,17 @@ AM_BEGIN_EXTERN_C
 #define AM_PROXY_PROPERTY_PREFIX        AM_COMMON_PROPERTY_PREFIX "proxy."
 #define AM_DOMINO_PROPERTY_PREFIX       AM_COMMON_PROPERTY_PREFIX "domino."
 #define AM_PROXY_OVERRIDE_HOST_PORT_PROPERTY  AM_PROXY_PROPERTY_PREFIX "override.host.port"
+
+#define LTPA_DEFAULT_TOKEN_NAME "LtpaToken"
+#define LTPA_DEFAULT_CONFIG_NAME "LtpaToken"
+#define LTPA_DEFAULT_ORG_NAME NULL
+
 #define AM_DOMINO_CHECK_NAME_DB_PROPERTY  AM_DOMINO_PROPERTY_PREFIX "check.name.database"
+#define AM_DOMINO_LTPA_TOKEN_ENABLE_PROPERTY  AM_DOMINO_PROPERTY_PREFIX "ltpa.enable"
+#define AM_DOMINO_LTPA_CONFIG_NAME_PROPERTY  AM_DOMINO_PROPERTY_PREFIX "ltpa.config.name"
+#define AM_DOMINO_LTPA_ORG_NAME_PROPERTY  AM_DOMINO_PROPERTY_PREFIX "ltpa.org.name"
+#define AM_DOMINO_LTPA_TOKEN_NAME_PROPERTY  AM_DOMINO_PROPERTY_PREFIX "ltpa.cookie.name"
+
 #define AM_WEB_CONNECTION_TIMEOUT AM_COMMON_PROPERTY_PREFIX ".auth.connection.timeout"
 #define AM_WEB_AUTHTYPE_IN_IIS6_AGENT AM_COMMON_PROPERTY_PREFIX  "iis.auth.type"
 #define AM_COMMON_PROPERTY_PREFIX_IIS6_REPLAYPASSWD_KEY AM_COMMON_PROPERTY_PREFIX "replaypasswd.key"
@@ -1250,6 +1260,30 @@ am_web_get_all_request_urls(const char *host_hdr,
  */
 AM_WEB_EXPORT boolean_t am_web_is_proxy_override_host_port_set(void* agent_config);
 
+/*
+ * Method to if ltpa_enable is set for IBM Lotus Domino agent
+ */
+AM_WEB_EXPORT boolean_t am_web_is_domino_check_name_database(void* agent_config);
+
+/*
+ * Method to if ltpa_enable is set for IBM Lotus Domino agent
+ */
+AM_WEB_EXPORT boolean_t am_web_is_domino_ltpa_enable(void* agent_config);
+
+/*
+ * Method to get ltpa_config_name
+ */
+AM_WEB_EXPORT const char *am_web_domino_ltpa_config_name(void* agent_config);
+
+/*
+ * Method to get ltpa_org_name
+ */
+AM_WEB_EXPORT const char *am_web_domino_ltpa_org_name(void* agent_config);
+
+/* 
+ * Method to get ltpa_token_name
+ */
+AM_WEB_EXPORT const char *am_web_domino_ltpa_token_name(void* agent_config);
 
 /*
  * Method to determine if a url is enforced

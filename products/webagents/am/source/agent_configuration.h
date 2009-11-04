@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.h,v 1.14 2009-10-13 01:31:59 robertis Exp $
+ * $Id: agent_configuration.h,v 1.15 2009-11-04 22:11:56 leiming Exp $
  *
  */
 
@@ -136,6 +136,11 @@ public:
     PRBool owa_enable;	// OWA enable in IIS6
     PRBool owa_enable_change_protocol;	// OWA enable change protocol in IIS6
     const char *owa_enable_session_timeout_url; // OWA enable session timeout url 
+    PRBool check_name_database;    // IBM Lotus DOMINO check name database
+    PRBool ltpa_enable;            // IBM Lotus DOMINO enable ltpa token
+    const char * ltpa_config_name; // IBM Lotus DOMINO ltpa config name
+    const char * ltpa_org_name;    // IBM Lotus DOMINO ltpa organization name
+    const char * ltpa_cookie_name; // IBM Lotus DOMINO ltpa cookie name
     const char * attrCookiePrefix;
     const char * attrCookieMaxAge;
     const char * profileMode;
@@ -222,6 +227,11 @@ public:
         this->filter_priority = IIS_FILTER_PRIORITY;
         this->owa_enable = AM_FALSE;
         this->owa_enable_change_protocol = NULL;        
+        this->check_name_database = AM_FALSE;
+        this->ltpa_enable = AM_FALSE;
+        this->ltpa_config_name = LTPA_DEFAULT_CONFIG_NAME;
+        this->ltpa_org_name = LTPA_DEFAULT_ORG_NAME;
+        this->ltpa_cookie_name = LTPA_DEFAULT_TOKEN_NAME;
         this->attrCookiePrefix = COOKIE_ATTRIBUTE_PREFIX;
         this->attrCookieMaxAge = COOKIE_ATTRIBUTE_MAX_AGE;
         this->profileMode = POLICY_ATTRIBUTES_MODE_NONE;

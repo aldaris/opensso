@@ -26,7 +26,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.14 2009-08-27 21:41:31 subbae Exp $
+# $Id: components.mk,v 1.15 2009-11-04 22:11:43 leiming Exp $
 # 
 #
 
@@ -98,6 +98,12 @@ endif
 IIS7_DIR := $(EXTERNAL_DIR)/iis7
 IIS7_INC_DIR := $(IIS7_DIR)/include
 
+##########################################
+# IBM Lotus DOMINO 8.5  defines
+##########################################
+DOMINO_DIR = $(EXTERNAL_DIR)/domino
+DOMINO_INC_DIR = $(DOMINO_DIR)/include
+DOMINO_LIB_DIR = $(DOMINO_DIR)/lib
 
 ##########################################
 # LIBXML defines

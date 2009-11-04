@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.54 2009-10-29 18:59:02 subbae Exp $
+ * $Id: am_web.cpp,v 1.55 2009-11-04 22:11:56 leiming Exp $
  *
  */
 
@@ -6202,6 +6202,70 @@ am_web_is_owa_enabled_session_timeout_url(void* agent_config) {
         (AgentConfigurationRefCntPtr*) agent_config;
 
     return (*agentConfigPtr)->owa_enable_session_timeout_url;
+}
+
+/*
+ * Method to check if IBM Lotus DOMINO Agent checks name database 
+ */
+extern "C" AM_WEB_EXPORT boolean_t
+am_web_is_domino_check_name_database(void* agent_config) {
+    boolean_t status = B_FALSE;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    if((*agentConfigPtr)->check_name_database == AM_TRUE) {
+        status = B_TRUE;
+    }
+    return status;
+}
+
+
+/*
+ * Method to check if IBM Lotus DOMINO enables ltpa
+ */
+extern "C" AM_WEB_EXPORT boolean_t
+am_web_is_domino_ltpa_enable(void* agent_config) {
+    boolean_t status = B_FALSE;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    if((*agentConfigPtr)->ltpa_enable == AM_TRUE) {
+        status = B_TRUE;
+    }
+    return status;
+}
+
+/*
+ * Method to return IBM Lotus DOMINO config name
+ */
+extern "C" AM_WEB_EXPORT const char *
+am_web_domino_ltpa_config_name(void* agent_config) {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    return (*agentConfigPtr)->ltpa_config_name;
+}
+
+/*
+ * Method to return IBM Lotus DOMINO org name
+ */
+extern "C" AM_WEB_EXPORT const char *
+am_web_domino_ltpa_org_name(void* agent_config) {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    return (*agentConfigPtr)->ltpa_org_name;
+}
+
+/*
+ * Method to return IBM Lotus DOMINO cookie name
+ */
+extern "C" AM_WEB_EXPORT const char *
+am_web_domino_ltpa_token_name(void* agent_config) {
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    return (*agentConfigPtr)->ltpa_cookie_name;
 }
 
 /**

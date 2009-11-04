@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.cpp,v 1.19 2009-10-13 01:31:47 robertis Exp $
+ * $Id: agent_configuration.cpp,v 1.20 2009-11-04 22:11:56 leiming Exp $
  *
  * Abstract:
  * AgentConfiguration: This class creates/delets the agent configuration 
@@ -867,6 +867,44 @@ am_status_t AgentConfiguration::populateAgentProperties()
                 this->properties, parameter, 0,
                 &(this->override_host_port));
     }
+
+    // get IBM Lotus domino's check_name_database
+    if (AM_SUCCESS == status) {
+        parameter = AM_DOMINO_CHECK_NAME_DB_PROPERTY;
+        status = am_properties_get_boolean_with_default(
+                this->properties, parameter, 0,
+                &(this->check_name_database));
+    }
+
+    // get IBM Lotus domino's ltpa_enable
+    if (AM_SUCCESS == status) {
+        parameter = AM_DOMINO_LTPA_TOKEN_ENABLE_PROPERTY;
+        status = am_properties_get_boolean_with_default(
+                this->properties, parameter, 0,
+                &(this->ltpa_enable));
+    }
+
+    // get IBM Lotus domino's ltpa_config_name
+    if (AM_SUCCESS == status) {
+        parameter = AM_DOMINO_LTPA_CONFIG_NAME_PROPERTY;
+        status = am_properties_get_with_default(this->properties, parameter,
+                     LTPA_DEFAULT_CONFIG_NAME, &(this->ltpa_config_name));
+    }
+
+    // get IBM Lotus domino's ltpa_org_name
+    if (AM_SUCCESS == status) {
+        parameter = AM_DOMINO_LTPA_ORG_NAME_PROPERTY;
+        status = am_properties_get_with_default(this->properties, parameter,
+                     LTPA_DEFAULT_ORG_NAME, &(this->ltpa_org_name));
+    }
+
+    // get IBM Lotus domino's ltpa_cookie_name
+    if (AM_SUCCESS == status) {
+        parameter = AM_DOMINO_LTPA_TOKEN_NAME_PROPERTY;
+        status = am_properties_get_with_default(this->properties, parameter,
+                     LTPA_DEFAULT_TOKEN_NAME, &(this->ltpa_cookie_name));
+    }
+
 
     // get local audit log file rotate flag
     if (AM_SUCCESS == status) {
