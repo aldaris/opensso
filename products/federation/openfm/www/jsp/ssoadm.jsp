@@ -22,12 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: ssoadm.jsp,v 1.6 2009-07-30 05:30:42 veiming Exp $
+   $Id: ssoadm.jsp,v 1.7 2009-11-04 21:01:12 veiming Exp $
   
 --%>
 
-<%@ page import="com.sun.identity.cli.*" %>
+<%@ page import="com.iplanet.am.util.SystemProperties" %>
 <%@ page import="com.iplanet.sso.*" %>
+<%@ page import="com.sun.identity.cli.*" %>
+<%@ page import="com.sun.identity.shared.Constants" %>
 <%@ page import="java.text.MessageFormat" %>
 
 <%@ page contentType="text/html; charset=UTF-8" %>
@@ -60,25 +62,31 @@
 
 <pre>
 <%
-    try {
-        SSOTokenManager manager = SSOTokenManager.getInstance();
-        SSOToken ssoToken = manager.createSSOToken(request);
-        manager.validateToken(ssoToken);
+    String strDisabled = SystemProperties.get("ssoadm.disabled", "false");
+    if (Boolean.parseBoolean(strDisabled)) {
+        response.sendRedirect(SystemProperties.get(
+            Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR));
+    } else {
+        try {
+            SSOTokenManager manager = SSOTokenManager.getInstance();
+            SSOToken ssoToken = manager.createSSOToken(request);
+            manager.validateToken(ssoToken);
 
-        WebCLIHelper helper = new WebCLIHelper(request,
-            "com.sun.identity.federation.cli.FederationManager,com.sun.identity.cli.AccessManager",
-            "ssoadm", request.getRequestURL().toString());
-        out.println(helper.getHTML(request, ssoToken));
-        Object[] param = {"0"};
-        out.println(MessageFormat.format(
-            CLIConstants.JSP_EXIT_CODE_TAG, param));
-    } catch (SSOException e) {
-        response.sendRedirect("UI/Login?goto=../ssoadm.jsp");
-    } catch (CLIException e) {
-        Object[] param = {Integer.toString(e.getExitCode())};
-        out.println(MessageFormat.format(
-            CLIConstants.JSP_EXIT_CODE_TAG, param));
-        out.println(WebCLIHelper.escapeTags(e.getMessage()));
+            WebCLIHelper helper = new WebCLIHelper(request,
+                "com.sun.identity.federation.cli.FederationManager,com.sun.identity.cli.AccessManager",
+                "ssoadm", request.getRequestURL().toString());
+            out.println(helper.getHTML(request, ssoToken));
+            Object[] param = {"0"};
+            out.println(MessageFormat.format(
+                CLIConstants.JSP_EXIT_CODE_TAG, param));
+        } catch (SSOException e) {
+            response.sendRedirect("UI/Login?goto=../ssoadm.jsp");
+        } catch (CLIException e) {
+            Object[] param = {Integer.toString(e.getExitCode())};
+            out.println(MessageFormat.format(
+                CLIConstants.JSP_EXIT_CODE_TAG, param));
+            out.println(WebCLIHelper.escapeTags(e.getMessage()));
+        }
     }
 %>
 
