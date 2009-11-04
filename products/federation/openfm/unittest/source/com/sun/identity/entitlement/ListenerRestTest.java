@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerRestTest.java,v 1.2 2009-10-21 01:11:36 veiming Exp $
+ * $Id: ListenerRestTest.java,v 1.3 2009-11-04 01:25:36 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -35,6 +35,7 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.unittest.UnittestLog;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.identity.security.AdminTokenAction;
@@ -73,28 +74,33 @@ public class ListenerRestTest {
 
     @BeforeClass
     public void setup() throws Exception {
-        PrivilegeManager pm = PrivilegeManager.getInstance(REALM,
-            adminSubject);
-        Privilege privilege = Privilege.getNewInstance();
-        privilege.setName(PRIVILEGE_NAME);
+        try {
+            PrivilegeManager pm = PrivilegeManager.getInstance(REALM,
+                adminSubject);
+            Privilege privilege = Privilege.getNewInstance();
+            privilege.setName(PRIVILEGE_NAME);
 
-        Map<String, Boolean> actions = new HashMap<String, Boolean>();
-        actions.put("GET", true);
-        Entitlement entitlement = new Entitlement(RESOURCE_NAME + "/*",
-            actions);
-        privilege.setEntitlement(entitlement);
-        EntitlementSubject sbj = new AuthenticatedESubject();
-        privilege.setSubject(sbj);
-        pm.addPrivilege(privilege);
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, REALM);
-        user = createUser(amir, "ListenerRestTestUser");
+            Map<String, Boolean> actions = new HashMap<String, Boolean>();
+            actions.put("GET", true);
+            Entitlement entitlement = new Entitlement(RESOURCE_NAME + "/*",
+                actions);
+            privilege.setEntitlement(entitlement);
+            EntitlementSubject sbj = new AuthenticatedESubject();
+            privilege.setSubject(sbj);
+            pm.addPrivilege(privilege);
+            AMIdentityRepository amir = new AMIdentityRepository(
+                adminToken, REALM);
+            user = createUser(amir, "ListenerRestTestUser");
 
-        listenerClient = Client.create().resource(
-            SystemProperties.getServerInstanceName() +
-            "/ws/1/entitlement/listener");
+            listenerClient = Client.create().resource(
+                SystemProperties.getServerInstanceName() +
+                "/ws/1/entitlement/listener");
 
-        ENC_NOTIFICATION_URL = ESAPI.encoder().encodeForURL(NOTIFICATION_URL);
+            ENC_NOTIFICATION_URL = ESAPI.encoder().encodeForURL(NOTIFICATION_URL);
+        } catch (Exception e) {
+            UnittestLog.logError("ListenerRestTest.setup() failed:", e);
+            throw e;
+        }
     }
 
     @AfterClass
@@ -233,10 +239,21 @@ public class ListenerRestTest {
     public void testGetListener() throws Exception {
         String result = listenerClient.path(ENC_NOTIFICATION_URL).queryParam(
             "admin", adminToken.getTokenID().toString()).get(String.class);
+        UnittestLog.logMessage("ListenerRestTest.testGetListener():result=" + result);
 
         try {
-            EntitlementListener retrieved = new EntitlementListener(
-                new JSONObject(result));
+            JSONObject jo = new JSONObject(result);
+            if (jo.optInt("statusCode") != 200) {
+                throw new Exception("ListenerRESTTest.postDecisionsTest() failed,"
+                        + " status code not 200");
+            }
+            JSONObject jbody = jo.optJSONObject("body");
+            if (jbody == null) {
+                throw new Exception("ListenerRESTTest.postDecisionsTest() failed,"
+                        + " body element is null");
+            }
+        
+            EntitlementListener retrieved = new EntitlementListener(jbody);
 
             Set<String> res = new HashSet<String>();
             res.add(RESOURCE_NAME + "/*");
