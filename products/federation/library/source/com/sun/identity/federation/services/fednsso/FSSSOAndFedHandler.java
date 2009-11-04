@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedHandler.java,v 1.11 2008-12-19 06:50:46 exu Exp $ 
+ * $Id: FSSSOAndFedHandler.java,v 1.12 2009-11-04 00:06:11 exu Exp $ 
  *
  */
 
@@ -1485,7 +1485,7 @@ public abstract class FSSSOAndFedHandler {
 
          FSSessionManager sessManager = FSSessionManager.getInstance(
              IDFFMetaUtils.getMetaAlias(
-                 realm, hostedEntityId, IFSConstants.SP, ssoToken));
+                 realm, hostedEntityId, IFSConstants.SP, null));
          String requestID = newAuthnRequest.getRequestID();
          sessManager.setAuthnRequest(requestID, newAuthnRequest);
          sessManager.setProxySPDescriptor(requestID, spDescriptor);

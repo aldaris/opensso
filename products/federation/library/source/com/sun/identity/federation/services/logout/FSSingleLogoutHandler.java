@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.14 2008-12-19 06:50:47 exu Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.15 2009-11-04 00:06:11 exu Exp $
  *
  */
 
@@ -1790,7 +1790,7 @@ public class FSSingleLogoutHandler {
         if (hostedRole == IFSConstants.IDP) {
             // see if there is a hosted SP with the same hostedEntityId
             proxySPAlias = IDFFMetaUtils.getMetaAlias(
-                realm, hostedEntityId, IFSConstants.SP, ssoToken);
+                realm, hostedEntityId, IFSConstants.SP, null);
             if (proxySPAlias != null) {
                 // check to see if original SP is idp proxy enabled
                 if (metaManager != null) {
