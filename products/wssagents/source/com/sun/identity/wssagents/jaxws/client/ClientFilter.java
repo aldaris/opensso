@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientFilter.java,v 1.2 2009-08-19 19:15:34 mrudul_uchil Exp $
+ * $Id: ClientFilter.java,v 1.3 2009-11-04 04:55:42 kamna Exp $
  *
  */
 
@@ -38,55 +38,52 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.security.auth.Subject;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.wss.provider.ProviderConfig;
+import com.sun.identity.wss.security.handler.ThreadLocalService;
 
 public class ClientFilter implements Filter {
-
-     public static ThreadLocal cred = new ThreadLocal();
 
      public void init(FilterConfig config) {
      }
 
      public void doFilter(ServletRequest request, ServletResponse response,
                    FilterChain chain) throws ServletException {
-         HttpServletRequest httpRequest = 
+         HttpServletRequest httpRequest =
                 (HttpServletRequest)request;
          HttpServletResponse httpResponse = (HttpServletResponse)response;
-         SSOToken ssoToken = null;
-
-         try {
-             SSOTokenManager manager = SSOTokenManager.getInstance();
-             ssoToken = manager.createSSOToken(httpRequest);
-             if (manager.isValidToken(ssoToken)) {
-                 Subject subject = new Subject();
-                 subject.getPrivateCredentials().add(ssoToken);
-                 cred.set(subject);
-             } else {
-                 if (shouldAuthenticate()) {
-                     httpResponse.sendRedirect(getLoginURL(httpRequest));
-                     return;
-                 }
-             }
-         } catch (Exception e) {
-             //Invalid SSOToken, hence redirect to Login URL
+         SSOToken ssoToken = null;       
+           
+         ThreadLocalService.setSubject(null);     
+        
+         if (shouldAuthenticate()) {
              try {
-                 if (shouldAuthenticate()) {
+                 SSOTokenManager manager = SSOTokenManager.getInstance();
+                 ssoToken = manager.createSSOToken(httpRequest);
+                 if (manager.isValidToken(ssoToken)) {
+                     Subject subject = new Subject();
+                     subject.getPrivateCredentials().add(ssoToken);
+                     ThreadLocalService.setSubject(subject);
+                  }else{
                      httpResponse.sendRedirect(getLoginURL(httpRequest));
                      return;
                  }
-             } catch (IOException ie) {
-                ie.printStackTrace();
-                // continue
+             } catch (Exception e) {
+                 //Invalid SSOToken, hence redirect to Login URL
+                 try {
+                     if (shouldAuthenticate()) {
+                         httpResponse.sendRedirect(getLoginURL(httpRequest));
+                         return;
+                     }
+                 } catch (IOException ie) {
+                     ie.printStackTrace();
+                 // continue
+                 }
              }
          }
-
          try {
              chain.doFilter(request, response);
          } catch (IOException ie) {
@@ -144,6 +141,5 @@ public class ClientFilter implements Filter {
      }
      
      public void destroy() {
-     }
-
+     }   
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientHandler.java,v 1.4 2009-10-05 06:09:16 mrudul_uchil Exp $
+ * $Id: ClientHandler.java,v 1.5 2009-11-04 04:55:42 kamna Exp $
  *
  */
 
@@ -44,6 +44,7 @@ import javax.xml.ws.ProtocolException;
 import com.iplanet.am.util.SystemProperties;
 
 import com.sun.identity.wss.security.handler.SOAPRequestHandler;
+import com.sun.identity.wss.security.handler.ThreadLocalService;
 
 public class ClientHandler implements SOAPHandler<SOAPMessageContext>{
 
@@ -108,16 +109,17 @@ public class ClientHandler implements SOAPHandler<SOAPMessageContext>{
             }
 
             try {
-		        Subject subject = (Subject)ClientFilter.cred.get();
-	            if(subject == null) {
+                Subject subject = null;
+                subject = (Subject)ThreadLocalService.getSubject();
+                if(subject == null) {
 	                if(logger != null && logger.isLoggable(Level.FINE)) {
                         logger.log(Level.FINE, "ClientHandler.subject NULL");
                     }
 	                subject = new Subject();
 	            } else {
-                    ClientFilter.cred.remove();
+                    ThreadLocalService.removeSubject();
                 }
-	            SOAPMessage secureMsg = 
+                SOAPMessage secureMsg = 
                     handler.secureRequest(context.getMessage(), subject,
 	                new HashMap());
                 return true;
@@ -150,6 +152,5 @@ public class ClientHandler implements SOAPHandler<SOAPMessageContext>{
 
 	public void close(MessageContext context) {
 		//No operation
-	}
-
+	}    
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerHandler.java,v 1.2 2009-07-27 21:43:55 mrudul_uchil Exp $
+ * $Id: ServerHandler.java,v 1.3 2009-11-04 04:55:43 kamna Exp $
  *
  */
 
@@ -106,7 +106,9 @@ public class ServerHandler implements SOAPHandler<SOAPMessageContext>{
 		    try {
 		        handler.validateRequest(context.getMessage(), subject,
 		            new HashMap(), null, null);
+                synchronized(this){
                 cred.set(subject);
+                }
                 return true;
 		    } catch (Exception ex) {
 		        if(logger != null && logger.isLoggable(Level.SEVERE)) {
