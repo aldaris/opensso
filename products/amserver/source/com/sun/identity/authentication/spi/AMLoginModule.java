@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.20 2009-03-06 22:13:12 hengming Exp $
+ * $Id: AMLoginModule.java,v 1.21 2009-11-04 22:58:37 manish_rustagi Exp $
  *
  */
 
@@ -868,6 +868,7 @@ public abstract class AMLoginModule implements LoginModule {
             currentState = ISAuthConstants.LOGIN_IGNORE;
             setFailureModuleName(moduleName);
             if (e instanceof InvalidPasswordException){
+                setFailureID(((InvalidPasswordException)e).getTokenId());
                 throw new InvalidPasswordException(e);
             } else {
                 throw new AuthLoginException(e);
