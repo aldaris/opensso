@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyProperties.java,v 1.10 2009-10-21 23:50:46 dillidorai Exp $
+ * $Id: PolicyProperties.java,v 1.11 2009-11-04 21:06:41 veiming Exp $
  *
  */
 
@@ -963,8 +963,7 @@ class PolicyProperties {
         if ((value == null) && (ignoreCase)) {
             value = SystemProperties.get(name.toLowerCase());
         }
-        value = (value != null) ? value : defaultValue;
-        return value;
+        return (value != null) ? value.trim() : defaultValue;
     }
 
 }
