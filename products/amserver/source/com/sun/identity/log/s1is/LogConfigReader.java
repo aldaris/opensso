@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.18 2008-09-18 22:56:31 veiming Exp $
+ * $Id: LogConfigReader.java,v 1.19 2009-11-04 22:33:10 bigfatrat Exp $
  *
  */
 
@@ -74,6 +74,7 @@ public class LogConfigReader implements ServiceListener{
     private String localProtocol = null;
     private String localHost = null;
     private String localPort = null;
+
     /**
      * Local Log service identifier
      */
@@ -126,14 +127,14 @@ public class LogConfigReader implements ServiceListener{
         }
         String configString = constructInputStream();
         ByteArrayInputStream inputStream = null;
-        try {
-            inputStream = 
+        try { inputStream = 
                 new ByteArrayInputStream(configString.getBytes("ISO8859-1"));
         } catch (UnsupportedEncodingException unse) {
             debug.error("LogConfigReader: unsupported Encoding" + unse);
         }
         manager = 
             (com.sun.identity.log.LogManager) LogManagerUtil.getLogManager();
+
         try {
             manager.readConfiguration(inputStream);
         } catch (IOException ioe) {
@@ -162,23 +163,23 @@ public class LogConfigReader implements ServiceListener{
         // processing logging attributes.
         try {
             /*
-	     * generate %BASE_DIR% and %SERVER_URI% values, in case
-	     * they're not set up yet (e.g., during configuration
-	     */
-	    famuri = SystemProperties.get(
-		Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
-	    famuri = famuri.replace('\\','/');
-	    basedir = SystemProperties.get(
-		SystemProperties.CONFIG_PATH);
-	    basedir = basedir.replace('\\','/');
-	    if (famuri.startsWith("/")) {
-		byte[] btmp = famuri.getBytes();
-		famuri = new String(btmp, 1, (btmp.length - 1));
-	    }
-	    if (basedir.endsWith("/")) {
-		byte[] btmp = basedir.getBytes();
-		basedir = new String(btmp, 0, (btmp.length - 1));
-	    }
+             * generate %BASE_DIR% and %SERVER_URI% values, in case
+             * they're not set up yet (e.g., during configuration
+             */
+            famuri = SystemProperties.get(
+                Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+            famuri = famuri.replace('\\','/');
+            basedir = SystemProperties.get(
+                SystemProperties.CONFIG_PATH);
+            basedir = basedir.replace('\\','/');
+            if (famuri.startsWith("/")) {
+                byte[] btmp = famuri.getBytes();
+                famuri = new String(btmp, 1, (btmp.length - 1));
+            }
+            if (basedir.endsWith("/")) {
+                byte[] btmp = basedir.getBytes();
+                basedir = new String(btmp, 0, (btmp.length - 1));
+            }
 
             logAttributes = smsLogSchema.getAttributeDefaults();
             // File/jdbc
@@ -471,12 +472,12 @@ public class LogConfigReader implements ServiceListener{
                     "certificate store is null");
             } else {
                 value = value.replace('\\','/');
-		if (value.contains("%BASE_DIR%") ||
-		    value.contains("%SERVER_URI%"))
-		{
-		    value = value.replaceAll("%BASE_DIR%", basedir);
-		    value = value.replaceAll("%SERVER_URI%", famuri);
-		}
+                if (value.contains("%BASE_DIR%") ||
+                    value.contains("%SERVER_URI%"))
+                {
+                    value = value.replaceAll("%BASE_DIR%", basedir);
+                    value = value.replaceAll("%SERVER_URI%", famuri);
+                }
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
             }
@@ -1002,11 +1003,58 @@ public class LogConfigReader implements ServiceListener{
         if (debug.messageEnabled()) {
             debug.message("LogService schemaChanged(): ver = " + ver);
         }
+
+        /*
+         *  if logging config has been read before (i.e., eliminating
+         *  the case where logging status is inactive on startup),
+         *  then if logging status goes from active to inactive,
+         *  force a write of a record (to each active log file)
+         *  indicating the change.  can't really do it in LogManager,
+         *  as the java.util.LogManager (below) has already set
+         *  the logging status to inactive, and no more records will
+         *  get written out.
+         */
+        manager = 
+            (com.sun.identity.log.LogManager) LogManagerUtil.getLogManager();
+        if (manager.getDidFirstReadConfig() &&
+            manager.getLoggingStatusIsActive() &&
+            newStatusIsInactive())
+        {
+            manager.logStopLogs();
+        }
         //shifting to LogManager according to review.
         try{
             manager.readConfiguration();
         } catch (Exception e) {
             debug.error("Error in readConfiguration()",e);
         }
+    }
+
+    private boolean newStatusIsInactive() {
+        SSOToken ssoToken;
+        try {
+            ssoToken = getSSOToken();
+        } catch (SSOException ssoe) {
+            debug.error("LogConfigReader:newStatusIsInactive:" +
+                "Could not get proper SSOToken", ssoe);
+            return false;
+        }
+        try {
+            ServiceSchemaManager schemaManager =
+                new ServiceSchemaManager("iPlanetAMLoggingService", ssoToken);
+            ServiceSchema smsLogSchema = schemaManager.getGlobalSchema();
+            Map sss = smsLogSchema.getAttributeDefaults();
+
+            String key = LogConstants.LOG_STATUS_ATTR;
+            String value = CollectionHelper.getMapAttr(sss, key);
+            if ((value == null) || (value.length() == 0)) {
+                value = "ACTIVE";
+            }
+            return (value.equalsIgnoreCase("INACTIVE"));
+        } catch(Exception e) {
+            debug.error("LogConfigReader:newStatusIsInactive:" +
+                "error reading Log Status attribute: " + e.getMessage());
+        }
+        return false;
     }
 }

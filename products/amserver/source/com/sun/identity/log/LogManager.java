@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.12 2009-07-24 20:02:22 ww203982 Exp $
+ * $Id: LogManager.java,v 1.13 2009-11-04 22:33:38 bigfatrat Exp $
  *
  */
 package com.sun.identity.log;
@@ -100,6 +100,7 @@ public class LogManager extends java.util.logging.LogManager {
     private final int NEWLEVEL = 9;
     private static SsoServerLoggingSvcImpl logServiceImplForMonitoring = null;
     private static int loggerCount = 0;
+    private String inactive = "INACTIVE";
 
     /**
      * Adds a logger to the Log Manager.
@@ -310,10 +311,10 @@ public class LogManager extends java.util.logging.LogManager {
                             if (!dir.exists()) {
                                 if (!dir.mkdirs()) {
                                     Debug.error(
-                                            "LogManager:readConfiguration:" +
-                                            "Unable to create the new log directory." +
-                                            " Verify that the process has necessary" +
-                                            " permissions");
+                                        "LogManager:readConfiguration:" +
+                                        "Unable to create the new log " +
+                                        "directory. Verify that the " +
+                                        "process has necessary permissions");
                                 }
                             }
                         }
@@ -321,7 +322,7 @@ public class LogManager extends java.util.logging.LogManager {
 
                     boolean loggingInactive =
                             (getProperty(LogConstants.LOG_STATUS_ATTR).
-                            equals("INACTIVE"));
+                            equals(inactive));
 
                     String strLogLevel =
                             getProperty(LogConstants.LOGGING_LEVEL);
@@ -397,7 +398,8 @@ public class LogManager extends java.util.logging.LogManager {
                             clz = Class.forName(handlerClass);
                         } catch (Exception e) {
                             Debug.error(
-                                    "LogManager.readConfiguration:could not load " + handlerClass, e);
+                                "LogManager.readConfiguration:could not load " +
+                                handlerClass, e);
                         }
                         try {
                             cons = clz.getDeclaredConstructor(parameters);
@@ -421,7 +423,8 @@ public class LogManager extends java.util.logging.LogManager {
                         } catch (Exception e) {
                             Debug.error(
                                     "LogManager.readConfiguration:could not" +
-                                    " instantiate Formatter " + formatterClass, e);
+                                    " instantiate Formatter " +
+                                    formatterClass, e);
                         }
                         h.setFormatter(f);
                         l.addHandler(h);
@@ -588,6 +591,7 @@ public class LogManager extends java.util.logging.LogManager {
             com.sun.identity.log.LogRecord lr =
                     provider.createLogRecord(msgName, msg, ssot);
             logger.log(lr, ssot);
+            logger.flush();
         } catch (IOException ioex) {
             Debug.error("LogManager.logIt:could not log to " +
                     logger.getName() + ": " + ioex.getMessage());
@@ -637,6 +641,58 @@ public class LogManager extends java.util.logging.LogManager {
                     getProperty(LogConstants.BACKEND));
             
             isMonitoringInit = true;
+        }
+    }
+
+    public boolean getLoggingStatusIsActive() {
+        String oStatus = getProperty(LogConstants.LOG_STATUS_ATTR);
+        return (oStatus.equalsIgnoreCase("ACTIVE"));
+    }
+
+    public boolean getDidFirstReadConfig() {
+        return didFirstReadConfig;
+    }
+
+    /*
+     *  only meant to be called from s1is.LogConfigReader when
+     *  logging status goes from ACTIVE to INACTIVE
+     */
+    public synchronized void logStopLogs() {
+        String location = getProperty(LogConstants.LOG_LOCATION);
+        String level = getProperty(LogConstants.LOGGING_LEVEL);
+        String securityStatus = getProperty(LogConstants.SECURITY_STATUS);
+        String backend = getProperty(LogConstants.BACKEND);
+        String status = getProperty(LogConstants.LOG_STATUS_ATTR);
+        //  only care about status going from ACTIVE to INACTIVE
+        String[] vals = {location, location,
+                        backend, backend,
+                        securityStatus, securityStatus,
+                        status, inactive,
+                        level, level};
+
+        Enumeration loggerNames = getLoggerNames();
+        while (loggerNames.hasMoreElements()) {
+            String curEl = (String) loggerNames.nextElement();
+            /* avoid root logger */
+            if (curEl.length() != 0 && curEl.length() != 0 &&
+                !curEl.equals("global"))
+            {
+                Logger l = (Logger) Logger.getLogger(curEl);
+
+                /*
+                 *  additional reason to check if end record
+                 *  should be written:
+                 *    this individual file's level == oFF
+                 *    then don't log to the individual file
+                 */
+
+                //  get this log's level
+                Level tlevel = l.getLevel();
+
+                if (tlevel != Level.OFF) {
+                    logIt(l, vals, LogConstants.END_LOG_CONFIG_NAME);
+                }
+            }
         }
     }
 }
