@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeChangeNotifier.java,v 1.1 2009-09-14 23:02:40 veiming Exp $
+ * $Id: PrivilegeChangeNotifier.java,v 1.2 2009-11-05 21:13:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -106,7 +106,7 @@ public class PrivilegeChangeNotifier {
                 }
 
                 Application app = ApplicationManager.getApplication(
-                    adminSubject, realm, appName);
+                    PrivilegeManager.superAdminSubject, realm, appName);
                 ResourceName resourceComp = app.getResourceComparator();
 
                 for (String r : res) {

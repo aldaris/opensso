@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.4 2009-10-14 03:18:38 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.5 2009-11-05 21:13:46 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -97,6 +97,18 @@ public abstract class PrivilegeManager {
         this.realm = realm;
         this.adminSubject = subject;
     }
+
+    /**
+     * Returns a privilege.
+     *
+     * @param privilegeName name for the privilege to be returned
+     * @param subject Subject to be used to obtain the privilege.
+     * @throws EntitlementException if privilege is not found.
+     */
+    public abstract Privilege getPrivilege(
+        String privilegeName,
+        Subject subject)
+            throws EntitlementException;
 
     /**
      * Returns a privilege.
@@ -179,10 +191,31 @@ public abstract class PrivilegeManager {
         int searchSizeLimit,
         int searchTimeLimit
     ) throws EntitlementException {
+        boolean hasSizeLimit = (searchSizeLimit > 0);
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             adminSubject, realm);
-        return pis.searchPrivilegeNames(filter, true, searchSizeLimit,
-            false, false);//TODO Search size and time limit
+        Set<String> privilegeNames = pis.searchPrivilegeNames(
+            filter, true, searchSizeLimit, false, false); // TODO Search time limit
+        Set<String> results = new HashSet<String>();
+
+        ApplicationPrivilegeManager applPrivilegeMgr =
+            ApplicationPrivilegeManager.getInstance(realm, adminSubject);
+
+        for (String name : privilegeNames) {
+            Privilege privilege = getPrivilege(name,
+                PrivilegeManager.superAdminSubject);
+
+            if (applPrivilegeMgr.hasPrivilege(privilege,
+                ApplicationPrivilege.Action.READ)) {
+                results.add(name);
+
+                if (hasSizeLimit && (results.size() >= searchSizeLimit)) {
+                    break;
+                }
+            }
+        }
+
+        return results;
     }
 
     /**
@@ -195,10 +228,7 @@ public abstract class PrivilegeManager {
     public Set<String> searchPrivilegeNames(
         Set<SearchFilter> filter
     ) throws EntitlementException {
-        PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
-            adminSubject, realm);
-        return pis.searchPrivilegeNames(filter, true, 0, false, false);
-        //TODO Search size and time limit
+        return searchPrivilegeNames(filter, 0, 0);
     }
 
     /**

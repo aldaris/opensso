@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.2 2009-09-25 05:52:54 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.3 2009-11-05 21:13:46 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.security.auth.Subject;
 
 /**
@@ -46,6 +47,8 @@ public final class ApplicationManager {
     private final static Object lock = new Object();
     private static Map<String, Set<Application>> applications =
         new HashMap<String, Set<Application>>();
+    private static final ReentrantReadWriteLock readWriteLock =
+        new ReentrantReadWriteLock();
 
     private ApplicationManager() {
     }
@@ -65,9 +68,16 @@ public final class ApplicationManager {
         String realm,
         Set<SearchFilter> filters
     ) throws EntitlementException {
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            adminSubject, realm);
-        return ec.searchApplicationNames(adminSubject, filters);
+        if (adminSubject == PrivilegeManager.superAdminSubject) {
+            EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+                adminSubject, realm);
+            return ec.searchApplicationNames(adminSubject, filters);
+        }
+
+        ApplicationPrivilegeManager apm =
+            ApplicationPrivilegeManager.getInstance(realm,
+            adminSubject);
+        return apm.getApplications(ApplicationPrivilege.Action.READ);
     }
 
     /**
@@ -90,23 +100,59 @@ public final class ApplicationManager {
         return results;
     }
 
+    private static Set<Application> getAllApplication(String realm) {
+        readWriteLock.readLock().lock();
+        try {
+            Set<Application> appls = applications.get(realm);
+            if (appls != null) {
+                return appls;
+            }
+        } finally {
+            readWriteLock.readLock().unlock();
+        }
+
+        readWriteLock.writeLock().lock();
+        try {
+            Set<Application> appls = applications.get(realm);
+            if (appls == null) {
+                EntitlementConfiguration ec =
+                    EntitlementConfiguration.getInstance(
+                    PrivilegeManager.superAdminSubject, realm);
+                appls = ec.getApplications();
+                applications.put(realm, appls);
+            }
+            return appls;
+        } finally {
+            readWriteLock.writeLock().unlock();
+        }
+    }
+
     private static Set<Application> getApplications(Subject adminSubject,
         String realm) {
-        Set<Application> appls = applications.get(realm);
+        Set<Application> appls = getAllApplication(realm);
 
-        if (appls == null) {
-            synchronized (lock) {
-                appls = applications.get(realm);
-                if (appls == null) {
-                    EntitlementConfiguration ec =
-                        EntitlementConfiguration.getInstance(
-                        adminSubject, realm);
-                    appls = ec.getApplications();
-                    applications.put(realm, appls);
-                }
+        if (adminSubject == PrivilegeManager.superAdminSubject) {
+            return appls;
+        }
+
+        Set<Application> accessible = new HashSet<Application>();
+        ApplicationPrivilegeManager apm =
+            ApplicationPrivilegeManager.getInstance(realm, adminSubject);
+        Set<String> accessibleApplicationNames =
+            apm.getApplications(ApplicationPrivilege.Action.READ);
+
+        for (Application app : appls) {
+            String applicationName = app.getName();
+            Application cloned = app.clone();
+
+            if (accessibleApplicationNames.contains(applicationName)) {
+                cloned.setResources(apm.getResources(applicationName,
+                    ApplicationPrivilege.Action.READ));
+                accessible.add(cloned);
             }
         }
-        return appls;
+
+        return accessible;
     }
 
     /**
@@ -152,9 +198,8 @@ public final class ApplicationManager {
         }
 
         // try again, to get application for sub realm.
-        synchronized (lock) {
-            applications.remove(realm);
-        }
+        clearCache(realm);
+
         appls = getApplications(adminSubject, realm);
         for (Application appl : appls) {
             if (appl.getName().equals(name)) {
@@ -179,6 +224,16 @@ public final class ApplicationManager {
         String realm,
         String name
     ) throws EntitlementException {
+        boolean allowed = (adminSubject == PrivilegeManager.superAdminSubject);
+        if (!allowed) {
+            allowed = hasAccessToApplication(realm, adminSubject, name,
+                ApplicationPrivilege.Action.MODIFY);
+        }
+
+        if (!allowed) {
+            throw new EntitlementException(326);
+        }
+
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, realm);
         ec.removeApplication(name);
@@ -198,12 +253,28 @@ public final class ApplicationManager {
         String realm,
         Application application
     ) throws EntitlementException {
+        boolean allow = (adminSubject == PrivilegeManager.superAdminSubject);
+        
+        if (!allow) {
+            ApplicationPrivilegeManager apm = 
+                ApplicationPrivilegeManager.getInstance(realm, adminSubject);
+            if (isNewApplication(realm, application)) {
+                allow = apm.canCreateApplication(realm);
+            } else {
+                allow = hasAccessToApplication(apm, application,
+                    ApplicationPrivilege.Action.MODIFY);
+            }
+        }
+
+        if (!allow) {
+            throw new EntitlementException(326);
+        }
+
         validateApplication(adminSubject, realm, application);
         Date date = new Date();
         Set<Principal> principals = adminSubject.getPrincipals();
         String principalName = ((principals != null) && !principals.isEmpty()) ?
             principals.iterator().next().getName() : null;
-
 
         if (application.getCreationDate() == -1) {
             application.setCreationDate(date.getTime());
@@ -220,6 +291,41 @@ public final class ApplicationManager {
             adminSubject, realm);
         ec.storeApplication(application);
         clearCache(realm);
+    }
+
+    private static boolean hasAccessToApplication(
+        String realm,
+        Subject adminSubject,
+        String applicationName,
+        ApplicationPrivilege.Action action) {
+        ApplicationPrivilegeManager apm =
+            ApplicationPrivilegeManager.getInstance(realm,
+            adminSubject);
+        Set<String> applicationNames = apm.getApplications(action);
+        return applicationNames.contains(applicationName);
+    }
+
+    private static boolean hasAccessToApplication(
+        ApplicationPrivilegeManager apm,
+        Application application,
+        ApplicationPrivilege.Action action) {
+        Set<String> applNames = apm.getApplications(action);
+        return applNames.contains(application.getName());
+    }
+
+    private static boolean isNewApplication(
+        String realm,
+        Application application
+    ) {
+        Set<Application> existingAppls = getAllApplication(realm);
+        String applName = application.getName();
+
+        for (Application app : existingAppls) {
+            if (app.getName().equals(applName)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static void validateApplication(
@@ -259,8 +365,13 @@ public final class ApplicationManager {
      * Clears the cached applications. Must be called when notifications are
      * received for changes to applications.
      */
-    public static synchronized void clearCache(String realm) {
-        applications.remove(realm);
+    public static void clearCache(String realm) {
+        readWriteLock.writeLock().lock();
+        try {
+            applications.remove(realm);
+        } finally {
+            readWriteLock.writeLock().unlock();
+        }
     }
 
     /**
@@ -281,8 +392,18 @@ public final class ApplicationManager {
         String applicationName,
         Set<String> resources
     ) throws EntitlementException {
-        Application appl = getApplication(adminSubject, parentRealm,
-            applicationName);
+        boolean allowed = (adminSubject == PrivilegeManager.superAdminSubject);
+        if (!allowed) {
+            allowed = hasAccessToApplication(parentRealm, adminSubject,
+                applicationName, ApplicationPrivilege.Action.MODIFY);
+        }
+
+        if (!allowed) {
+            throw new EntitlementException(326);
+        }
+
+        Application appl = getApplication(PrivilegeManager.superAdminSubject,
+            parentRealm, applicationName);
         if (appl == null) {
             Object[] params = {parentRealm, referRealm, applicationName};
             throw new EntitlementException(280, params);
@@ -311,6 +432,16 @@ public final class ApplicationManager {
         String applicationName,
         Set<String> resources
     ) throws EntitlementException {
+        boolean allowed = (adminSubject == PrivilegeManager.superAdminSubject);
+        if (!allowed) {
+            allowed = hasAccessToApplication(referRealm, adminSubject,
+                applicationName, ApplicationPrivilege.Action.MODIFY);
+        }
+
+        if (!allowed) {
+            throw new EntitlementException(326);
+        }
+
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, referRealm);
         ec.removeApplication(applicationName, resources);
@@ -331,6 +462,16 @@ public final class ApplicationManager {
         String realm,
         String applicationTypeName
     ) throws EntitlementException {
+        boolean allowed = (adminSubject == PrivilegeManager.superAdminSubject);
+        if (!allowed) {
+            allowed = hasAccessToApplication(realm, adminSubject,
+                applicationTypeName, ApplicationPrivilege.Action.READ);
+        }
+
+        if (!allowed) {
+            throw new EntitlementException(326);
+        }
+
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
             adminSubject, realm);
         return pis.getReferredResources(applicationTypeName);

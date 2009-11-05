@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.15 2009-09-22 21:30:12 veiming Exp $
+ * $Id: PolicyManager.java,v 1.16 2009-11-05 21:13:48 veiming Exp $
  *
  */
 
@@ -42,6 +42,7 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ReferralPrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
@@ -1285,7 +1286,7 @@ public final class PolicyManager {
             DNMapper.orgNameToRealmName(realm) :realm;
 
         Application appl = ApplicationManager.getApplication(
-            adminSubject, realmName, serviceName);
+            PrivilegeManager.superAdminSubject, realmName, serviceName);
         com.sun.identity.entitlement.interfaces.ResourceName resComp = appl.
             getResourceComparator();
         resourceName = resComp.canonicalize(resourceName);
@@ -1613,7 +1614,7 @@ public final class PolicyManager {
 
     public Set getManagedResourceNamesE(String serviceName) {
         Application appl = ApplicationManager.getApplication(
-            SubjectUtils.createSuperAdminSubject(), org, serviceName);
+            PrivilegeManager.superAdminSubject, org, serviceName);
         return (appl == null) ? Collections.EMPTY_SET : appl.getResources();
     }
 

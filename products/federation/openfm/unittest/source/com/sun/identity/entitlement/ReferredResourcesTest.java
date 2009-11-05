@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferredResourcesTest.java,v 1.1 2009-08-19 05:41:00 veiming Exp $
+ * $Id: ReferredResourcesTest.java,v 1.2 2009-11-05 21:13:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -163,7 +163,7 @@ public class ReferredResourcesTest {
             return;
         }
         Set<String> resources = ApplicationManager.getReferredResources(
-            adminSubject, SUB_REALM1,
+            PrivilegeManager.superAdminSubject, SUB_REALM1,
             ApplicationTypeManager.URL_APPLICATION_TYPE_NAME);
         if (OpenSSOIndexStore.isOrgAliasMappingResourceEnabled(adminToken)) {
             if (resources.size() != 4) {

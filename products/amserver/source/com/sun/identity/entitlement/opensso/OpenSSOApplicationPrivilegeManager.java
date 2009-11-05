@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.3 2009-10-29 19:05:19 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.4 2009-11-05 21:13:47 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -125,7 +125,7 @@ public class OpenSSOApplicationPrivilegeManager extends
 
         for (String n : applicationNames) {
             Application application = ApplicationManager.getApplication(
-                dsameUserSubject, realm, n);
+                PrivilegeManager.superAdminSubject, realm, n);
             if (application == null) {
                 String[] params = {n};
                 throw new EntitlementException(321, params);
@@ -316,7 +316,18 @@ public class OpenSSOApplicationPrivilegeManager extends
         if ((resources != null) && !resources.isEmpty()) {
             ResourceName resComp = appl.getResourceComparator();
             for (String r : resources) {
-                ResourceMatch result = resComp.compare(res, r, true);
+                if (!r.endsWith("*")) {
+                    if (!r.endsWith("/")) {
+                        r += "/";
+                    }
+                    r += "*";
+                }
+                ResourceMatch result = resComp.compare(r, res, false);
+                if (result.equals(ResourceMatch.EXACT_MATCH) ||
+                    result.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
+                    return true;
+                }
+                result = resComp.compare(res, r, true);
                 if (result.equals(ResourceMatch.EXACT_MATCH) ||
                     result.equals(ResourceMatch.SUB_RESOURCE_MATCH) ||
                     result.equals(ResourceMatch.WILDCARD_MATCH)) {
@@ -442,11 +453,21 @@ public class OpenSSOApplicationPrivilegeManager extends
         Iterator<IPrivilege> results = db.search("/", rIndex, subjectIndex,
             false, false);
 
-        delegatables = new Permission(ACTION_DELEGATE, bPolicyAdmin,
+        Set<String> actions = new HashSet<String>();
+        actions.add(ACTION_READ);
+        actions.add(ACTION_DELEGATE);
+        delegatables = new Permission(actions, bPolicyAdmin,
             resourcePrefix);
-        modifiables = new Permission(ACTION_MODIFY, bPolicyAdmin,
+
+        actions.clear();
+        actions.add(ACTION_READ);
+        actions.add(ACTION_MODIFY);
+        modifiables = new Permission(actions, bPolicyAdmin,
             resourcePrefix);
-        readables = new Permission(ACTION_READ, bPolicyAdmin,
+
+        actions.clear();
+        actions.add(ACTION_READ);
+        readables = new Permission(actions, bPolicyAdmin,
             resourcePrefix);
 
         while (results.hasNext()) {
@@ -540,6 +561,9 @@ public class OpenSSOApplicationPrivilegeManager extends
     }
 
     private boolean isDsameUser() {
+        if (caller == PrivilegeManager.superAdminSubject) {
+            return true;
+        }
         Set<Principal> principals = caller.getPrincipals();
         if ((principals == null) || principals.isEmpty()) {
             return false;
@@ -578,6 +602,9 @@ public class OpenSSOApplicationPrivilegeManager extends
         Privilege p,
         ApplicationPrivilege.Action action
     ) {
+        if (isPolicyAdmin()) {
+            return true;
+        }
         Permission permission = getPermissionObject(action);
         return permission.hasPermission(p);
     }
@@ -587,6 +614,9 @@ public class OpenSSOApplicationPrivilegeManager extends
         ReferralPrivilege p,
         ApplicationPrivilege.Action action
     ) {
+        if (isPolicyAdmin()) {
+            return true;
+        }
         Permission permission = getPermissionObject(action);
         return permission.hasPermission(p);
     }
@@ -604,6 +634,15 @@ public class OpenSSOApplicationPrivilegeManager extends
         return p.getApplications();
     }
 
+    /**
+     * Returns <code>true</code> if subject can create application.
+     *
+     * @param realm Realm where application is to be created.
+     */
+    public boolean canCreateApplication(String realm) {
+        return isPolicyAdmin();
+    }
+
     private Permission getPermissionObject(ApplicationPrivilege.Action action)
     {
         Permission p = readables;
@@ -618,13 +657,14 @@ public class OpenSSOApplicationPrivilegeManager extends
     private class Permission {
         private Map<String, Privilege> privileges;
         private Map<String, Set<String>> appNameToResourceNames;
-        private String action;
+        private Set<String> actions;
         private boolean bPolicyAdmin;
         private String resourcePrefix;
 
-        private Permission(String action, boolean bPolicyAdmin,
+        private Permission(Set<String> action, boolean bPolicyAdmin,
             String resourcePrefix) {
-            this.action = action;
+            this.actions = new HashSet<String>();
+            this.actions.addAll(action);
             this.bPolicyAdmin = bPolicyAdmin;
             this.resourcePrefix = resourcePrefix;
             privileges = new HashMap<String, Privilege>();
@@ -671,11 +711,11 @@ public class OpenSSOApplicationPrivilegeManager extends
         private Map<String, Set<String>> getAllResourceNamesInAllAppls() {
             Map<String, Set<String>> map = new HashMap<String, Set<String>>();
             Set<String> applNames = ApplicationManager.getApplicationNames(
-                dsameUserSubject, realm);
+                PrivilegeManager.superAdminSubject, realm);
 
             for (String s : applNames) {
                 Application appl = ApplicationManager.getApplication(
-                    dsameUserSubject, realm, s);
+                    PrivilegeManager.superAdminSubject, realm, s);
                 map.put(s, appl.getResources());
             }
             return map;
@@ -684,9 +724,15 @@ public class OpenSSOApplicationPrivilegeManager extends
         private void evaluate(Privilege p) {
             Map<String, Boolean> actionValues =
                 p.getEntitlement().getActionValues();
-            Boolean desiredAction = actionValues.get(action);
+            boolean desiredAction = false;
 
-            if ((desiredAction != null) && desiredAction.booleanValue()) {
+            for (String action : actions) {
+                Boolean result = actionValues.get(action);
+                desiredAction = (result != null) && result.booleanValue();
+                break;
+            }
+
+            if (desiredAction) {
                 Map<String, Set<String>> map = getResourceNames(p);
 
                 if ((map != null) && !map.isEmpty()) {
@@ -713,7 +759,7 @@ public class OpenSSOApplicationPrivilegeManager extends
             Entitlement ent = privilege.getEntitlement();
             String applName = ent.getApplicationName();
             Application appl = ApplicationManager.getApplication(
-                dsameUserSubject, realm, applName);
+                PrivilegeManager.superAdminSubject, realm, applName);
             if (appl == null) {
                 return false;
             }
@@ -740,7 +786,7 @@ public class OpenSSOApplicationPrivilegeManager extends
             Set<String> applicationNames = map.keySet();
             for (String applName : applicationNames) {
                 Application appl = ApplicationManager.getApplication(
-                    dsameUserSubject, realm, applName);
+                    PrivilegeManager.superAdminSubject, realm, applName);
                 if (appl == null) {
                     return false;
                 }
@@ -767,10 +813,13 @@ public class OpenSSOApplicationPrivilegeManager extends
             String res
         ) {
             for (String s : resources) {
-                ResourceMatch result = resComp.compare(res, s, true);
+                ResourceMatch result = resComp.compare(s, res, false);
                 if (result.equals(ResourceMatch.EXACT_MATCH) ||
-                    result.equals(ResourceMatch.SUB_RESOURCE_MATCH) ||
-                    result.equals(ResourceMatch.WILDCARD_MATCH)) {
+                    result.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
+                    return true;
+                }
+                result = resComp.compare(res, s, true);
+                if (result.equals(ResourceMatch.WILDCARD_MATCH)) {
                     return true;
                 }
             }

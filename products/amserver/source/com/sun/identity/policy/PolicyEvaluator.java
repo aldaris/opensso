@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.15 2009-09-08 06:17:54 dillidorai Exp $
+ * $Id: PolicyEvaluator.java,v 1.16 2009-11-05 21:13:48 veiming Exp $
  *
  */
 
@@ -54,6 +54,7 @@ import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Evaluator;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.policy.interfaces.PolicyListener;
 import com.sun.identity.security.AdminTokenAction;
@@ -536,7 +537,7 @@ public class PolicyEvaluator {
         String realmName = (DN.isDN(realm)) ?
             DNMapper.orgNameToRealmName(realm) : realm;
         Application appl = ApplicationManager.getApplication(
-            SubjectUtils.createSubject(token),
+            PrivilegeManager.superAdminSubject,
             realmName, serviceTypeName);
         try {
             resourceName = appl.getResourceComparator().canonicalize(

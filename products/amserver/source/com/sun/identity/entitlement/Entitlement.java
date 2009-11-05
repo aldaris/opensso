@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.2 2009-09-21 18:33:45 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.3 2009-11-05 21:13:46 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -438,13 +438,30 @@ public class Entitlement {
                 tagswapResourceNames(subject, resourceNames) : resourceNames;
         
         for (String r : resources) {
-            ResourceMatch match = resComparator.compare(resourceName, r, true);
-            if (match.equals(ResourceMatch.EXACT_MATCH) ||
-                match.equals(ResourceMatch.WILDCARD_MATCH)) {
-                matched.add(r);
-            } else if (recursive && match.equals(
-                ResourceMatch.SUB_RESOURCE_MATCH)) {
-                matched.add(r);
+            if (!recursive) {
+                ResourceMatch match = resComparator.compare(
+                    r, resourceName, false);
+                if (match.equals(ResourceMatch.EXACT_MATCH)) {
+                    matched.add(r);
+                } else {
+                    match = resComparator.compare(resourceName, r, true);
+                    if (match.equals(ResourceMatch.WILDCARD_MATCH)) {
+                        matched.add(r);
+                    }
+                }
+            } else {
+                ResourceMatch match = resComparator.compare(
+                    resourceName, r, true);
+                if (match.equals(ResourceMatch.WILDCARD_MATCH) ||
+                    match.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
+                    matched.add(r);
+                } else {
+                    match = resComparator.compare(r, resourceName, false);
+                    if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                        match.equals(ResourceMatch.SUPER_RESOURCE_MATCH)) {
+                        matched.add(r);
+                    }
+                }
             }
         }
 
@@ -765,7 +782,7 @@ public class Entitlement {
     public Application getApplication(Subject adminSubject, String realm) {
         if (application == null) {
             application = ApplicationManager.getApplication(
-                adminSubject, realm, applicationName);
+                PrivilegeManager.superAdminSubject, realm, applicationName);
         }
         if (application == null) {
             PrivilegeManager.debug.error("Entitlement.getApplication null" +

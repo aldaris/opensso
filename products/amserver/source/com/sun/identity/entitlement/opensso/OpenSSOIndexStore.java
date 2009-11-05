@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.5 2009-10-14 03:18:39 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.6 2009-11-05 21:13:47 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -31,6 +31,8 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
+import com.sun.identity.entitlement.ApplicationPrivilege;
+import com.sun.identity.entitlement.ApplicationPrivilegeManager;
 import com.sun.identity.entitlement.ApplicationTypeManager;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
@@ -564,8 +566,47 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     ) throws EntitlementException {
         Subject adminSubject = getAdminSubject();
         String realm = getRealm();
-        return dataStore.search(adminSubject, realm, getSearchFilter(
-            filters, boolAnd), numOfEntries, sortResults, ascendingOrder);
+
+        // constraint the search with the resources that the users can read.
+        ApplicationPrivilegeManager apm =
+            ApplicationPrivilegeManager.getInstance(realm, adminSubject);
+        Set<String> applicationNames = apm.getApplications(
+            ApplicationPrivilege.Action.READ);
+        if ((applicationNames == null) || applicationNames.isEmpty()) {
+            return Collections.EMPTY_SET;
+        }
+        
+        Map<String, Set<String>> appNameToResources = 
+            new HashMap<String, Set<String>>();
+        for (String applName : applicationNames) {
+            appNameToResources.put(applName, apm.getResources(applName,
+                ApplicationPrivilege.Action.READ));
+        }
+
+        String searchFilters = getSearchFilter(filters, boolAnd);
+        String ldapFilters = "(&" +
+            getResourceSearchFilter(appNameToResources) + searchFilters + ")";
+
+        return dataStore.search(adminSubject, realm, ldapFilters,
+            numOfEntries * (2), sortResults, ascendingOrder);
+    }
+
+    private String getResourceSearchFilter(Map<String, Set<String>> map) {
+        StringBuilder buff = new StringBuilder();
+
+        for (String applName : map.keySet()) {
+            Application appl = ApplicationManager.getApplication(
+                PrivilegeManager.superAdminSubject, "/", applName);
+            if (appl != null) {
+                for (String res : map.get(applName)) {
+                    ResourceSearchIndexes idx =
+                        appl.getResourceSearchIndex(res);
+                    buff.append(DataStore.getFilter(idx, null, false));
+                }
+            }
+        }
+
+        return "(|" + buff.toString() + ")";
     }
 
     private String getSearchFilter(Set<SearchFilter> filters, boolean boolAnd) {
@@ -587,6 +628,10 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 strFilter.append(")");
             }
         }
+
+
+
+
         return strFilter.toString();
     }
 
@@ -704,7 +749,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                         r.getOriginalMapApplNameToResources();
                     for (String a : map.keySet()) {
                         Application appl = ApplicationManager.getApplication(
-                            superAdminSubject, realmName, a);
+                            PrivilegeManager.superAdminSubject, realmName, a);
                         if (appl.getApplicationType().getName().equals(
                             applicationTypeName)) {
                             results.addAll(map.get(a));

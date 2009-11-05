@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.6 2009-10-28 04:22:03 hengming Exp $
+ * $Id: DataStore.java,v 1.7 2009-11-05 21:13:47 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -919,7 +919,7 @@ public class DataStore {
         return results;
     }
 
-    private String getFilter(
+    static String getFilter(
         ResourceSearchIndexes indexes,
         Set<String> subjectIndexes,
         boolean bSubTree

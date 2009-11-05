@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.1 2009-08-19 05:40:36 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.2 2009-11-05 21:13:47 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -580,7 +580,7 @@ public class PrivilegeUtils {
         for (String appName : map.keySet()) {
             Set<String> res = map.get(appName);
             Application appl = ApplicationManager.getApplication(
-                adminSubject, realmName, appName);
+                PrivilegeManager.superAdminSubject, realmName, appName);
             if (appl == null) {
                 Object[] params = {appName, realm};
                 throw new EntitlementException(105, params);
@@ -651,7 +651,7 @@ public class PrivilegeUtils {
             DNMapper.orgNameToRealmName(realm) : realm;
 
         Application appl = ApplicationManager.getApplication(
-            SubjectUtils.createSubject(adminToken), realmName, appName);
+            PrivilegeManager.superAdminSubject, realmName, appName);
         if (appl == null) {
             Object[] params = {appName, realm};
             throw new EntitlementException(105, params);

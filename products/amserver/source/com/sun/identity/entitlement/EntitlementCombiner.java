@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCombiner.java,v 1.1 2009-08-19 05:40:32 veiming Exp $
+ * $Id: EntitlementCombiner.java,v 1.2 2009-11-05 21:13:46 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -80,7 +80,7 @@ public abstract class EntitlementCombiner {
         this.actions = new HashSet<String>();
 
         Application application = ApplicationManager.getApplication(
-            adminSubject, realm, applicationName);
+            PrivilegeManager.superAdminSubject, realm, applicationName);
         rootE = new Entitlement(applicationName, resourceName,
             Collections.EMPTY_MAP);
         resourceComparator = application.getResourceComparator();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.2 2009-09-25 05:52:54 veiming Exp $
+ * $Id: Application.java,v 1.3 2009-11-05 21:13:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -134,6 +134,7 @@ public class Application implements Cloneable {
     protected void cloneAppl(Application clone) {
         clone.name = name;
         clone.realm = realm;
+        clone.description = description;
         clone.applicationType = applicationType;
 
         if (actions != null) {
@@ -524,13 +525,19 @@ public class Application implements Cloneable {
 
             if ((resources != null) && !resources.isEmpty()) {
                 for (String r : resources) {
-                    ResourceMatch rm = resComp.compare(res, resComp.canonicalize(r),
-                        true);
+                    ResourceMatch rm = resComp.compare(resComp.canonicalize(r),
+                        res, false);
                     if (rm.equals(ResourceMatch.EXACT_MATCH) ||
-                        rm.equals(ResourceMatch.SUB_RESOURCE_MATCH) ||
-                        rm.equals(ResourceMatch.WILDCARD_MATCH)) {
+                        rm.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
                         match = true;
                         break;
+                    } else {
+                        rm = resComp.compare(res, resComp.canonicalize(r),
+                            true);
+                        if (rm.equals(ResourceMatch.WILDCARD_MATCH)) {
+                            match = true;
+                            break;
+                        }
                     }
                 }
             }

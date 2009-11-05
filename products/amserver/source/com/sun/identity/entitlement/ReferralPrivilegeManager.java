@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilegeManager.java,v 1.4 2009-10-22 21:04:36 veiming Exp $
+ * $Id: ReferralPrivilegeManager.java,v 1.5 2009-11-05 21:13:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -92,7 +92,7 @@ public final class ReferralPrivilegeManager {
                 referral.getOriginalMapApplNameToResources();
             for (String appName : map.keySet()) {
                 Application appl = ApplicationManager.getApplication(
-                    adminSubject, realm, appName);
+                    PrivilegeManager.superAdminSubject, realm, appName);
                 ResourceName comp = appl.getResourceComparator();
                 Set<String> resources = appl.getResources();
                 Set<String> refResources = map.get(appName);

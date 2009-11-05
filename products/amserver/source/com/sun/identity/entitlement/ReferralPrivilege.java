@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.3 2009-09-24 22:37:43 hengming Exp $
+ * $Id: ReferralPrivilege.java,v 1.4 2009-11-05 21:13:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -261,7 +261,7 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
 
         for (String app : mapApplNameToResources.keySet()) {
             Application appl = ApplicationManager.getApplication(
-                adminSubject, realm, app);
+                PrivilegeManager.superAdminSubject, realm, app);
             for (String r : mapApplNameToResources.get(app)) {
                 ResourceSaveIndexes rsi = appl.getResourceSaveIndex(r);
                 if (result == null) {
@@ -400,7 +400,7 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
         String realm,
         String applName) {
         Application appl = ApplicationManager.getApplication(
-            adminSubject, realm, applName);
+            PrivilegeManager.superAdminSubject, realm, applName);
         return appl.getResourceComparator();
     }
 
@@ -449,8 +449,8 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
 
                     if (applicable) {
                         Application application = 
-                            ApplicationManager.getApplication(adminSubject, 
-                            realm, app);
+                            ApplicationManager.getApplication(
+                                PrivilegeManager.superAdminSubject, realm, app);
                         EntitlementCombiner entitlementCombiner = 
                             application.getEntitlementCombiner();
                         entitlementCombiner.init(adminSubject, rlm, 
@@ -522,7 +522,7 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
         Set<String> results = new HashSet<String>();
         for (String a : mapApplNameToResources.keySet()) {
             Application appl = ApplicationManager.getApplication(
-                adminSubject, realm, a);
+                PrivilegeManager.superAdminSubject, realm, a);
             results.add(appl.getApplicationType().getName());
         }
         return results;

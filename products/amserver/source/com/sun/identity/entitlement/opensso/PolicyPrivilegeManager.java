@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.6 2009-10-29 19:05:20 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.7 2009-11-05 21:13:47 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -124,18 +124,10 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      */
     public Privilege getPrivilege(String privilegeName)
         throws EntitlementException {
-        Privilege privilege = getPrivilege(privilegeName, dsameUserSubject);
-        ApplicationPrivilegeManager applPrivilegeMgr =
-            ApplicationPrivilegeManager.getInstance(realm, getAdminSubject());
-
-        if (!applPrivilegeMgr.hasPrivilege(privilege,
-            ApplicationPrivilege.Action.READ)) {
-            throw new EntitlementException(326);
-        }
-        return privilege;
+        return getPrivilege(privilegeName, getAdminSubject());
     }
 
-    private Privilege getPrivilege(String privilegeName, Subject adminSubject)
+    public Privilege getPrivilege(String privilegeName, Subject adminSubject)
         throws EntitlementException {
         Privilege privilege = null;
         try {
@@ -159,13 +151,15 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 }
             }
 
-            if (privilege != null) {
-                ApplicationPrivilegeManager applPrivilegeMgr =
-                    ApplicationPrivilegeManager.getInstance(realm,
-                    getAdminSubject());
-                if (!applPrivilegeMgr.hasPrivilege(privilege,
-                    ApplicationPrivilege.Action.READ)) {
-                    throw new EntitlementException(326);
+            if (adminSubject != PrivilegeManager.superAdminSubject) {
+                if (privilege != null) {
+                    ApplicationPrivilegeManager applPrivilegeMgr =
+                        ApplicationPrivilegeManager.getInstance(realm,
+                        adminSubject);
+                    if (!applPrivilegeMgr.hasPrivilege(privilege,
+                        ApplicationPrivilege.Action.READ)) {
+                        throw new EntitlementException(326);
+                    }
                 }
             }
         } catch (PolicyException pe) {
@@ -225,10 +219,10 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
                 Privilege privilege = getPrivilege(privilegeName);
 
                 if (privilege != null) {
-                    PolicyDataStore pdb = PolicyDataStore.getInstance();
                     String currentRealm = getRealm();
-                    pdb.removePrivilege(getAdminSubject(), currentRealm,
-                        privilege);
+                    Subject adminSubject = getAdminSubject();
+                    PolicyDataStore pdb = PolicyDataStore.getInstance();
+                    pdb.removePrivilege(adminSubject, currentRealm, privilege);
                     notifyPrivilegeChanged(currentRealm, null, privilege);
                 }
             }
@@ -244,7 +238,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
     private void updateMetaInfo(Privilege privilege)
         throws EntitlementException {
         Privilege origPrivilege = getPrivilege(privilege.getName(),
-            dsameUserSubject);
+            PrivilegeManager.superAdminSubject);
         if (origPrivilege != null) {
             privilege.setCreatedBy(origPrivilege.getCreatedBy());
             privilege.setCreationDate(origPrivilege.getCreationDate());

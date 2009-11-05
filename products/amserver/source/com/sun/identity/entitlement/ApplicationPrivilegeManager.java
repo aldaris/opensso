@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationPrivilegeManager.java,v 1.2 2009-10-22 21:04:35 veiming Exp $
+ * $Id: ApplicationPrivilegeManager.java,v 1.3 2009-11-05 21:13:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -148,6 +148,13 @@ public abstract class ApplicationPrivilegeManager {
      */
     public abstract Set<String> getApplications(
         ApplicationPrivilege.Action action);
+
+    /**
+     * Returns <code>true</code> if subject can create application.
+     *
+     * @param realm Realm where application is to be created.
+     */
+    public abstract boolean canCreateApplication(String realm);
 
     /**
      * Returns an instance of application privilege manager.
