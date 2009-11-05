@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestTest.java,v 1.7 2009-11-02 23:52:03 dillidorai Exp $
+ * $Id: RestTest.java,v 1.8 2009-11-05 10:10:10 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -48,7 +48,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
-import javax.ws.rs.core.MultivaluedMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.AfterClass;
@@ -190,7 +189,7 @@ public class RestTest {
 
         String json = decisionsClient.queryParams(params).accept(
             "application/json").get(String.class);
-        UnittestLog.logMessage("RestTest.getDecisionsTest():json string=" + json);
+
         JSONObject jo = new JSONObject(json);
         if (jo.optInt("statusCode") != 200) {
             throw new Exception("RESTTest.getDecisionsTest() failed, status code not 200");
@@ -225,7 +224,7 @@ public class RestTest {
 
         String json = decisionsClient.queryParams(params).accept(
             "application/json").post(String.class, params);
-        UnittestLog.logMessage("RestTest.postDecisionsTest():json string=" + json);
+
         JSONObject jo = new JSONObject(json);
         if (jo.optInt("statusCode") != 200) {
             throw new Exception("RESTTest.postDecisionsTest() failed, status code not 200");
@@ -306,81 +305,66 @@ public class RestTest {
     public void getEntitlementsTest() throws Exception {
         Form params = new Form();
         params.add("subject", user.getUniversalId());
-        params.add("resource", RESOURCE_NAME + "/index.html");
-        params.add("action", "GET");
+        params.add("resource", RESOURCE_NAME);
         params.add("env", ATTR_NAME + "=" + ATTR_VAL);
         params.add("realm", REALM);
         params.add("admin", adminToken.getTokenID().toString());
 
         String json = entitlementsClient.queryParams(params).accept(
             "application/json").get(String.class);
-        JSONObject jo = new JSONObject(json);
-        if (jo.optInt("statusCode") != 200) {
-            throw new Exception("RESTTest.getEntitlementsTest() failed, status code not 200");
-        }
-        UnittestLog.logMessage("RestTest.getEntitlementsTest():json string=" + json);
-        JSONObject jbody = jo.optJSONObject("body");
-        if (jbody == null) {
-            throw new Exception("RESTTest.getEntitlementsTest() failed, body element is null");
-        }
-        JSONArray results = jbody.optJSONArray("results");
-        if (results == null) {
-            throw new Exception("RESTTest.getEntitlementsTest() failed, results element is null");
-        }
-        if (results.length() < 1) {
-            throw new Exception("RESTTest.getEntitlementsTest() failed, results array is empty");
-        }
-        JSONEntitlement ent = new JSONEntitlement(results.getJSONObject(0));
-        boolean result = false;
-        Object resultObj = ent.getActionValue("GET");
-        if (resultObj != null) {
-            result = ent.getActionValue("GET");
-        } else {
-            throw new Exception("RESTTest.getEntitlementsTest() failed: action value is null");
-        }
-        if (!result) {
-            throw new Exception("RESTTest.getEntitlementsTest() failed: action value is false");
-        }
+        validateGetEntitlementsResult(json, "getEntitlementsTest");
     }
 
     @Test
     public void postEntitlementsTest() throws Exception {
         Form params = new Form();
         params.add("subject", user.getUniversalId());
-        params.add("resource", RESOURCE_NAME + "/index.html");
-        params.add("action", "GET");
+        params.add("resource", RESOURCE_NAME);
         params.add("env", ATTR_NAME + "=" + ATTR_VAL);
         params.add("realm", REALM);
         params.add("admin", adminToken.getTokenID().toString());
 
         String json = entitlementsClient.queryParams(params).accept(
             "application/json").post(String.class, params);
+        validateGetEntitlementsResult(json, "postEntitlementsTest");
+    }
+
+    // add this method so that we do not need to duplicate code
+    private void validateGetEntitlementsResult(String json, String methodName)
+        throws Exception {
         JSONObject jo = new JSONObject(json);
         if (jo.optInt("statusCode") != 200) {
-            throw new Exception("RESTTest.postEntitlementsTest() failed, status code not 200");
+            throw new Exception(
+                "RESTTest." + methodName + ": failed, status code not 200");
         }
-        UnittestLog.logMessage("RestTest.postEntitlementsTest():json string=" + json);
         JSONObject jbody = jo.optJSONObject("body");
         if (jbody == null) {
-            throw new Exception("RESTTest.postEntitlementsTest() failed, body element is null");
+            throw new Exception(
+                "RESTTest." + methodName + ": failed, body element is null");
         }
         JSONArray results = jbody.optJSONArray("results");
         if (results == null) {
-            throw new Exception("RESTTest.postEntitlementsTest() failed, results element is null");
+            throw new Exception(
+                "RESTTest." + methodName + ": failed, results element is null");
         }
         if (results.length() < 1) {
-            throw new Exception("RESTTest.postEntitlementsTest() failed, results array is empty");
+            throw new Exception(
+                "RESTTest." + methodName + ": failed, results array is empty");
         }
-        JSONEntitlement ent = new JSONEntitlement(results.getJSONObject(0));
-        boolean result = false;
+        // dude, there are two entitlements returned.
+        // the first one is the root resource which is http://www.resttest.com
+        // and the action value is empty.
+        // we need to get the second one, which is http://www.resttest.com:80/*
+        JSONEntitlement ent = new JSONEntitlement(results.getJSONObject(1));
         Object resultObj = ent.getActionValue("GET");
         if (resultObj != null) {
-            result = ent.getActionValue("GET");
+            if (!ent.getActionValue("GET")) {
+                throw new Exception("RESTTest." + methodName +
+                    ": failed, action value is false");
+            }
         } else {
-            throw new Exception("RESTTest.postEntitlementsTest() failed: action value is null");
-        }
-        if (!result) {
-            throw new Exception("RESTTest.postEntitlementsTest() failed: action value is false");
+            throw new Exception("RESTTest." + methodName +
+                ": failed, action value is null");
         }
     }
 
@@ -390,7 +374,6 @@ public class RestTest {
         params.add("subject", user.getUniversalId());
         params.add("resource", RESOURCE_NAME + "/index.html");
         params.add("action", "GET");
-        //params.add("env", ATTR_NAME + "=" + ATTR_VAL); //to not get allow
         params.add("realm", REALM);
         params.add("admin", adminToken.getTokenID().toString());
 
@@ -402,7 +385,7 @@ public class RestTest {
 
         String json = entitlementClient.queryParams(params).accept(
             "application/json").get(String.class);
-        UnittestLog.logMessage("RestTest.negativeTest():json string=" + json);
+
         JSONObject jo = new JSONObject(json);
         if (jo.optInt("statusCode") != 200) {
             throw new Exception("RESTTest.negativeTest() failed, status code not 200");

@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.13 2009-11-02 23:52:02 dillidorai Exp $
+ * $Id: DecisionResource.java,v 1.14 2009-11-05 10:10:09 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -471,7 +471,7 @@ public class DecisionResource extends ResourceBase {
             validateSubjectAndResource(subject, resource);
             Evaluator evaluator = getEvaluator(caller, application);
             List<Entitlement> entitlements = evaluator.evaluate(
-                realm, toSubject(subject), resource, env, false); // FIXME : change to true
+                realm, toSubject(subject), resource, env, true);
             List<JSONObject> result = new ArrayList<JSONObject>();
 
             for (Entitlement e : entitlements) {
