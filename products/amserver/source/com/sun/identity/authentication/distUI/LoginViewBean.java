@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.35 2009-11-02 07:19:42 222713 Exp $
+ * $Id: LoginViewBean.java,v 1.36 2009-11-05 19:16:26 manish_rustagi Exp $
  *
  */
 
@@ -58,6 +58,7 @@ import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.CookieUtils;
+import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.locale.L10NMessage;
 import com.sun.identity.shared.locale.L10NMessageImpl;
 import java.util.ArrayList;
@@ -940,11 +941,6 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 indexType =
                 AuthClientUtils.getIndexType((String) session.getAttribute("IndexType"));
                 indexName = (String) session.getAttribute("IndexName");
-                if (indexType != null &&
-                (indexType == AuthContext.IndexType.LEVEL ||
-                indexType == AuthContext.IndexType.COMPOSITE_ADVICE)) {
-                    indexType = AuthContext.IndexType.MODULE_INSTANCE;
-                }
             }
             /*
             String page_state = request.getParameter("page_state");
@@ -1136,8 +1132,9 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             }
             //testing
             
-            if ((indexType == AuthContext.IndexType.LEVEL) ||
-            (indexType == AuthContext.IndexType.COMPOSITE_ADVICE)) {
+            if (((indexType == AuthContext.IndexType.LEVEL) ||
+            (indexType == AuthContext.IndexType.COMPOSITE_ADVICE)) &&
+            (choice.length() > 0)) {
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("In processLoginDisplay(), Index type" +
                         " is Auth Level or Composite Advice and selected " 
@@ -1145,8 +1142,11 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 }
                 indexType = AuthContext.IndexType.MODULE_INSTANCE;
                 indexName = choice;
-                if (choice == null) {
+                if (indexName == null) {
                     indexName="LDAP";
+                } else {
+                    indexName =
+                    AuthClientUtils.getDataFromRealmQualifiedData(indexName);                	
                 }
                 
                 bAuthLevel = true;
@@ -1347,6 +1347,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         } else if ( reqDataHash.get(Constants.COMPOSITE_ADVICE) != null ) {
             indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
             indexName = (String)reqDataHash.get(Constants.COMPOSITE_ADVICE);
+            indexName = URLEncDec.decode(indexName);            
         } else if (((reqDataHash.get(ISAuthConstants.IP_RESOURCE_ENV_PARAM)
             != null) && "true".equalsIgnoreCase((String) reqDataHash.get(
                  ISAuthConstants.IP_RESOURCE_ENV_PARAM)))||

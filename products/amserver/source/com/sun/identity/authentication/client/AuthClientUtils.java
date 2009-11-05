@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.35 2009-09-01 23:25:07 qcheng Exp $
+ * $Id: AuthClientUtils.java,v 1.36 2009-11-05 19:14:30 manish_rustagi Exp $
  *
  */
 
@@ -716,7 +716,9 @@ public class AuthClientUtils {
                 indexType = AuthContext.IndexType.MODULE_INSTANCE;
             } else if (strIndexType.equalsIgnoreCase("level")) {
                 indexType = AuthContext.IndexType.LEVEL;
-            }
+            } else if (strIndexType.equalsIgnoreCase("composite_advice")) {
+                indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
+            }            
         }
         if (utilDebug.messageEnabled()) {
             utilDebug.message("getIndexType : IndexType = " + indexType);
@@ -2883,4 +2885,31 @@ public class AuthClientUtils {
         }
         return text;
     }
+    
+    /**
+     * Returns the data from Realm qualified data. This could be authentication
+     * scheme or authentication level or service.
+     *
+     * @param realmQualifedData Realm qualified data. This could be Realm
+     * qualified authentication scheme or authentication level or service.
+     * @return String representing data. This could be authentication
+     * scheme or authentication level or service.
+     */
+    public static String getDataFromRealmQualifiedData(
+    String realmQualifedData){
+        String data = null;
+        if (realmQualifedData != null && realmQualifedData.length() != 0) {
+            int index = realmQualifedData.indexOf(ISAuthConstants.COLON);
+            if (index != -1) {
+                data = realmQualifedData.substring(index + 1).trim();
+            } else {
+                data = realmQualifedData;
+            }
+        }
+        if (utilDebug.messageEnabled()) {
+            utilDebug.message("realmQualifedData : " + realmQualifedData );
+            utilDebug.message("DataFromRealmQualifiedData : " + data );
+        }
+        return data;
+    }    
 }
