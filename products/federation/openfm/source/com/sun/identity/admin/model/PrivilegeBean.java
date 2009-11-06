@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeBean.java,v 1.1 2009-08-19 05:40:53 veiming Exp $
+ * $Id: PrivilegeBean.java,v 1.2 2009-11-06 19:56:13 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -36,7 +36,6 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttribute;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -44,51 +43,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class PrivilegeBean implements Serializable {
-
-    public Date getBirth() {
-        return birth;
-    }
-
-    public void setBirth(Date birth) {
-        this.birth = birth;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public Date getModified() {
-        return modified;
-    }
-
-    public void setModified(Date modified) {
-        this.modified = modified;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
-    }
-
-    public List<AttributesBean> getAttributesBeans() {
-        return attributesBeans;
-    }
-
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
     public static class NameComparator extends TableColumnComparator {
 
         public NameComparator(boolean ascending) {
@@ -230,19 +184,23 @@ public class PrivilegeBean implements Serializable {
     private String author;
     private String modifier;
     private boolean selected;
+    private boolean writable = false;
 
     public PrivilegeBean() {
         AttributesBean ab;
         ab = new StaticAttributesBean();
         attributesBeans.add(ab);
         ab = new UserAttributesBean();
-        attributesBeans.add(ab);
+       attributesBeans.add(ab);
     }
 
     public PrivilegeBean(
                 Privilege p,
+                boolean writable,
                 Map<String,ViewApplication> viewApplications,
                 SubjectFactory subjectFactory) {
+
+        this.writable = writable;
 
         name = p.getName();
         description = p.getDescription();
@@ -380,5 +338,57 @@ public class PrivilegeBean implements Serializable {
             }
         }
         return null;
+    }
+
+    public Date getBirth() {
+        return birth;
+    }
+
+    public void setBirth(Date birth) {
+        this.birth = birth;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public Date getModified() {
+        return modified;
+    }
+
+    public void setModified(Date modified) {
+        this.modified = modified;
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
+
+    public List<AttributesBean> getAttributesBeans() {
+        return attributesBeans;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isWritable() {
+        return writable;
+    }
+
+    public void setWritable(boolean writable) {
+        this.writable = writable;
     }
 }

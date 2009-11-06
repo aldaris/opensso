@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDao.java,v 1.4 2009-09-30 22:53:34 farble1670 Exp $
+ * $Id: PolicyDao.java,v 1.5 2009-11-06 19:56:13 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
-import com.sun.identity.admin.model.ConditionFactory;
 import com.sun.identity.admin.model.FilterHolder;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.RealmBean;
@@ -37,6 +36,8 @@ import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.SubjectFactory;
 import com.sun.identity.admin.model.ViewApplicationsBean;
 import com.sun.identity.entitlement.Application;
+import com.sun.identity.entitlement.ApplicationPrivilege.Action;
+import com.sun.identity.entitlement.ApplicationPrivilegeManager;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
@@ -89,12 +90,15 @@ public class PolicyDao implements Serializable {
 
     public PrivilegeBean getPrivilegeBean(String privilegeName) {
         PrivilegeManager pm = getPrivilegeManager();
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
         SubjectFactory subjectFactory = SubjectFactory.getInstance();
 
         try {
             Privilege p = pm.getPrivilege(privilegeName);
+            boolean writable = apm.hasPrivilege(p, Action.MODIFY);
             PrivilegeBean pb = new PrivilegeBean(
                     p,
+                    writable,
                     viewApplicationsBean.getViewApplications(),
                     subjectFactory);
             return pb;
@@ -109,6 +113,7 @@ public class PolicyDao implements Serializable {
         psfs.add(new SearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
 
         PrivilegeManager pm = getPrivilegeManager();
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
         List<PrivilegeBean> privilegeBeans = null;
         SubjectFactory subjectFactory = SubjectFactory.getInstance();
 
@@ -119,8 +124,10 @@ public class PolicyDao implements Serializable {
             privilegeBeans = new ArrayList<PrivilegeBean>();
             for (String privilegeName : privilegeNames) {
                 Privilege p = pm.getPrivilege(privilegeName);
+                boolean writable = apm.hasPrivilege(p, Action.MODIFY);
                 PrivilegeBean pb = new PrivilegeBean(
                         p,
+                        writable,
                         viewApplicationsBean.getViewApplications(),
                         subjectFactory);
                 privilegeBeans.add(pb);
@@ -159,6 +166,15 @@ public class PolicyDao implements Serializable {
         PrivilegeManager pm = PrivilegeManager.getInstance(realmBean.getName(), s);
 
         return pm;
+    }
+
+    private ApplicationPrivilegeManager getApplicationPrivilegeManager() {
+        SSOToken t = new Token().getSSOToken();
+        Subject s = SubjectUtils.createSubject(t);
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        ApplicationPrivilegeManager apm = ApplicationPrivilegeManager.getInstance(realmBean.getName(), s);
+
+        return apm;
     }
 
     public void removePrivilege(String name) {

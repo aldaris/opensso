@@ -8,6 +8,7 @@ public enum FromAction {
     POLICY("policy"),
     POLICY_CREATE("policy-create"),
     POLICY_MANAGE("policy-manage"),
+    POLICY_VIEW("policy-view"),
     POLICY_EDIT("policy-edit"),
     REFERRAL_CREATE("referral-create"),
     REFERRAL_MANAGE("referral-manage"),
@@ -37,6 +38,7 @@ public enum FromAction {
             put(POLICY.getAction(), POLICY);
             put(POLICY_CREATE.getAction(), POLICY_CREATE);
             put(POLICY_MANAGE.getAction(), POLICY_MANAGE);
+            put(POLICY_VIEW.getAction(), POLICY_VIEW);
             put(POLICY_EDIT.getAction(), POLICY_EDIT);
             put(REFERRAL_CREATE.getAction(), REFERRAL_CREATE);
             put(REFERRAL_MANAGE.getAction(), REFERRAL_MANAGE);

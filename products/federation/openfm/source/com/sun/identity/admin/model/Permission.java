@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Permission.java,v 1.6 2009-10-21 16:46:04 ggennaro Exp $
+ * $Id: Permission.java,v 1.7 2009-11-06 19:56:13 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -32,6 +32,7 @@ public enum Permission {
     POLICY,
     POLICY_CREATE,
     POLICY_MANAGE,
+    POLICY_VIEW,
     POLICY_EDIT,
     NEWS,
     REFERRAL_CREATE,

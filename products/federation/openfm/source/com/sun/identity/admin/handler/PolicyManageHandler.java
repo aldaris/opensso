@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManageHandler.java,v 1.5 2009-10-12 20:51:58 farble1670 Exp $
+ * $Id: PolicyManageHandler.java,v 1.6 2009-11-06 19:56:13 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -229,12 +229,30 @@ public class PolicyManageHandler implements Serializable {
                 mb.setDetail(r.getString(this, "removeNoneSelectedDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
                 messagesBean.addMessageBean(mb);
+            } else if (isNonWritableSelected()) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "nonWritableSelectedSummary"));
+                mb.setDetail(r.getString(this, "nonWritableSelectedDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+                messagesBean.addMessageBean(mb);
             } else {
                 policyManageBean.setRemovePopupVisible(true);
             }
         } else {
             policyManageBean.setRemovePopupVisible(false);
         }
+    }
+
+    private boolean isNonWritableSelected() {
+        for (PrivilegeBean pb : policyManageBean.getPrivilegeBeans()) {
+            if (pb.isSelected()) {
+                if (!pb.isWritable()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void exportListener(ActionEvent event) {

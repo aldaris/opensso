@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionDao.java,v 1.6 2009-10-21 16:46:07 ggennaro Exp $
+ * $Id: PermissionDao.java,v 1.7 2009-11-06 19:56:13 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -68,10 +68,10 @@ public class PermissionDao implements Serializable {
 
 
     static {
-        serviceNames.add(null);
+        serviceNames.add(null); // realm
         serviceNames.add(EntitlementService.SERVICE_NAME);
 
-        // for each realm, for each access level, call out permissions
+        // for realm-level access, and for each service, call out permissions
 
         Map<AccessLevel, Set<Permission>> accessMap;
         Set<Permission> permissions;
@@ -82,6 +82,7 @@ public class PermissionDao implements Serializable {
         accessMap = new HashMap<AccessLevel, Set<Permission>>();
         permissionMap.put(null, accessMap);
 
+        // realm, read
         permissions = new HashSet<Permission>();
         permissions.add(Permission.HOME);
         permissions.add(Permission.NEWS);
@@ -90,6 +91,7 @@ public class PermissionDao implements Serializable {
         permissions.add(Permission.REFERRAL_MANAGE);
         accessMap.put(AccessLevel.READ, permissions);
 
+        // realm, write
         permissions = new HashSet<Permission>();
         permissions.add(Permission.REFERRAL_EDIT);
         permissions.add(Permission.SAMLV2_HOSTED_IDP_CREATE);
@@ -103,30 +105,39 @@ public class PermissionDao implements Serializable {
         permissions.add(Permission.STS_MANAGE);
         accessMap.put(AccessLevel.WRITE, permissions);
 
+        // realm, delegate
         permissions = new HashSet<Permission>();
         permissions.add(Permission.REFERRAL_CREATE);
         permissions.add(Permission.DELEGATION_CREATE);
         accessMap.put(AccessLevel.DELEGATE, permissions);
 
         //
-        // openssoEntitlements service
+        // policy (openssoEntitlements service)
         //
         accessMap = new HashMap<AccessLevel, Set<Permission>>();
         permissionMap.put(EntitlementService.SERVICE_NAME, accessMap);
 
+        // policy, read
         permissions = new HashSet<Permission>();
         permissions.add(Permission.POLICY);
         permissions.add(Permission.POLICY_MANAGE);
+        permissions.add(Permission.POLICY_VIEW);
         permissions.add(Permission.APPLICATION);
         permissions.add(Permission.APPLICATION_MANAGE);
         accessMap.put(AccessLevel.READ, permissions);
 
+        // policy, write
         permissions = new HashSet<Permission>();
         permissions.add(Permission.APPLICATION_CREATE);
         permissions.add(Permission.APPLICATION_EDIT);
         permissions.add(Permission.POLICY_CREATE);
         permissions.add(Permission.POLICY_EDIT);
         accessMap.put(AccessLevel.WRITE, permissions);
+
+        // policy, delegate
+        permissions = new HashSet<Permission>();
+        // nothing?
+        accessMap.put(AccessLevel.DELEGATE, permissions);
     }
 
     public List<Permission> getPermissions(RealmBean realmBean) {
