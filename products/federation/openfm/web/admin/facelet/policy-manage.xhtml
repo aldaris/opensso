@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-manage.xhtml,v 1.4 2009-11-06 19:56:14 farble1670 Exp $
+   $Id: policy-manage.xhtml,v 1.5 2009-11-06 20:03:37 farble1670 Exp $
 -->
 
 <ui:composition
@@ -160,14 +160,14 @@
                                 styleClass="policy-manage-cell"
                                 visible="#{true}">
                                 <ice:outputLink
-                                    rendered="#{permissionsBean.policyEditAllowed &amp;&amp; privilegeBean.writable}"
+                                    rendered="#{privilegeBean.writable}"
                                     styleClass="command-link"
                                     value="policy-edit.xhtml?privilegeName=#{privilegeBean.name}">
                                     <ice:outputText
                                         value="#{privilegeBean.name}"/>
                                 </ice:outputLink>
                                 <ice:outputLink
-                                    rendered="#{!permissionsBean.policyEditAllowed || !privilegeBean.writable}"
+                                    rendered="#{!privilegeBean.writable}"
                                     styleClass="command-link"
                                     value="policy-view.xhtml?privilegeName=#{privilegeBean.name}">
                                     <ice:outputText
