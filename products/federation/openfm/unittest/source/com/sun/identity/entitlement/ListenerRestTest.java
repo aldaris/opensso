@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerRestTest.java,v 1.3 2009-11-04 01:25:36 dillidorai Exp $
+ * $Id: ListenerRestTest.java,v 1.4 2009-11-06 21:56:52 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -239,7 +239,6 @@ public class ListenerRestTest {
     public void testGetListener() throws Exception {
         String result = listenerClient.path(ENC_NOTIFICATION_URL).queryParam(
             "admin", adminToken.getTokenID().toString()).get(String.class);
-        UnittestLog.logMessage("ListenerRestTest.testGetListener():result=" + result);
 
         try {
             JSONObject jo = new JSONObject(result);

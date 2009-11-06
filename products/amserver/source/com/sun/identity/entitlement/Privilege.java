@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.6 2009-10-14 03:18:37 veiming Exp $
+ * $Id: Privilege.java,v 1.7 2009-11-06 21:56:52 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -270,30 +270,12 @@ public abstract class Privilege implements IPrivilege {
         return s;
     }
 
-    /**
-     * Returns JSONObject mapping of  the object
-     * @return JSONObject mapping of  the object
-     * @throws JSONException if can not map to JSONObject
-     */
-    public JSONObject toJSONObject() throws JSONException {
+
+    JSONObject toMinimalJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
-        jo.put("className", getClass().getName());
-        jo.put("name", name);
-
-        jo.put("active", Boolean.toString(active));
-
         if (description != null) {
             jo.put("description", description);
         }
-        if (createdBy != null) {
-            jo.put("createdBy", createdBy);
-        }
-        if (lastModifiedBy != null) {
-            jo.put("lastModifiedBy", lastModifiedBy);
-        }
-        jo.put("lastModifiedDate", lastModifiedDate);
-        jo.put("creationDate", creationDate);
-
         if (entitlement != null) {
             jo.put("entitlement", entitlement.toJSONObject());
         }
@@ -320,6 +302,33 @@ public abstract class Privilege implements IPrivilege {
                 jo.append("eResourceAttributes", subjo);
             }
         }
+
+        return jo;
+    }
+
+    /**
+     * Returns JSONObject mapping of  the object
+     * @return JSONObject mapping of  the object
+     * @throws JSONException if can not map to JSONObject
+     */
+    public JSONObject toJSONObject() throws JSONException {
+        JSONObject jo = toMinimalJSONObject();
+        jo.put("className", getClass().getName());
+        jo.put("name", name);
+        jo.put("active", Boolean.toString(active));
+
+        if (description != null) {
+            jo.put("description", description);
+        }
+        if (createdBy != null) {
+            jo.put("createdBy", createdBy);
+        }
+        if (lastModifiedBy != null) {
+            jo.put("lastModifiedBy", lastModifiedBy);
+        }
+        jo.put("lastModifiedDate", lastModifiedDate);
+        jo.put("creationDate", creationDate);
+
         return jo;
     }
 
@@ -814,5 +823,35 @@ public abstract class Privilege implements IPrivilege {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    static Privilege getNewInstance(String name, JSONObject jo)
+        throws EntitlementException {
+        if (privilegeClass == null) {
+            throw new EntitlementException(2);
+        }
+        try {
+            Privilege privilege = (Privilege) privilegeClass.newInstance();
+            privilege.name = name;
+            privilege.description = jo.optString("description");
+            if (jo.has("entitlement")) {
+                privilege.entitlement = new Entitlement(
+                    jo.getJSONObject("entitlement"));
+            }
+            privilege.eSubject = getESubject(jo);
+            privilege.eCondition = getECondition(jo);
+            privilege.eResourceAttributes = getResourceAttributes(jo);
+            privilege.init(jo);
+
+            return privilege;
+        } catch (InstantiationException ex) {
+            throw new EntitlementException(1, ex);
+        } catch (IllegalAccessException ex) {
+            throw new EntitlementException(1, ex);
+        } catch (JSONException ex) {
+            throw new EntitlementException(1, ex);
+        }
+    }
+
+
 }
 
