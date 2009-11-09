@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLPatternMatcher.java,v 1.2 2008-06-25 05:51:42 qcheng Exp $
+ * $Id: URLPatternMatcher.java,v 1.3 2009-11-09 19:40:48 leiming Exp $
  *
  */
 
@@ -88,15 +88,16 @@ public class URLPatternMatcher extends SurrogateBase implements
             pattern = (String) patterns.get(i);
             patternLower = pattern.toLowerCase();
             
-            // convert URI to URL if any.
-            if (pattern.startsWith("/")) {
-                pattern = convertToURL(pattern, requestedURL);
-            } else if (!patternLower.startsWith("http")) {
-                pattern = convertToURL("/" + pattern, requestedURL);
-            }
-            
             try {
                 requestedURL = resourceName.canonicalize(requestedURL);
+                
+                // convert URI to URL if any.
+                if (pattern.startsWith("/")) {
+                    pattern = convertToURL(pattern, requestedURL);
+                } else if (!patternLower.startsWith("http")) {
+                    pattern = convertToURL("/" + pattern, requestedURL);
+                }
+
                 pattern = resourceName.canonicalize(pattern);
                 if(isLogMessageEnabled()) {
                     logMessage("URLPatternMatcher.match(" +
