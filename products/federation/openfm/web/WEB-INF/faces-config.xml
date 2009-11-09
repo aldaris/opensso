@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.22 2009-11-06 19:56:14 farble1670 Exp $
+  $Id: faces-config.xml,v 1.23 2009-11-09 23:38:25 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -238,6 +238,10 @@
         <managed-bean-class>com.sun.identity.admin.model.ViewApplicationType</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
         <managed-property>
+            <property-name>creatable</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
             <property-name>name</property-name>
             <value>sunIdentityServerDiscoveryService</value>
         </managed-property>
@@ -312,6 +316,10 @@
         <managed-bean-name>personalProfileViewApplicationType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.ViewApplicationType</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>creatable</property-name>
+            <value>false</value>
+        </managed-property>
         <managed-property>
             <property-name>name</property-name>
             <value>sunIdentityServerLibertyPPService</value>

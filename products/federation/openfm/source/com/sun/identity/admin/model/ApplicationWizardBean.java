@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationWizardBean.java,v 1.2 2009-09-09 19:19:13 farble1670 Exp $
+ * $Id: ApplicationWizardBean.java,v 1.3 2009-11-09 23:38:24 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -103,6 +103,9 @@ public abstract class ApplicationWizardBean extends WizardBean {
     public List<SelectItem> getViewApplicationTypeNameItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
         for (Map.Entry<String, ViewApplicationType> entry : viewApplicationTypeMap.entrySet()) {
+            if (!entry.getValue().isCreatable()) {
+                continue;
+            }
             SelectItem si = new SelectItem(entry.getValue().getName(), entry.getValue().getTitle());
             items.add(si);
         }
