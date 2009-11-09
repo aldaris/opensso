@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.36 2009-11-05 19:14:30 manish_rustagi Exp $
+ * $Id: AuthClientUtils.java,v 1.37 2009-11-09 21:36:04 lakshman_abburi Exp $
  *
  */
 
@@ -2694,7 +2694,7 @@ public class AuthClientUtils {
                 String uri = SystemProperties.get(
                         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
                 hostUrlCookieValue = hostUrlCookieValue.substring(0, 
-                        hostUrlCookieValue.indexOf(uri));
+                        (hostUrlCookieValue.length() - uri.length()));
             } catch(ServerEntryNotFoundException e) { 
                 utilDebug.message("AuthClientUtils.setHostUrlCookie:", e);
             }
