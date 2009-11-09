@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUtils.java,v 1.9 2009-06-03 20:46:52 veiming Exp $
+ * $Id: SessionUtils.java,v 1.10 2009-11-09 18:35:22 beomsuk Exp $
  *
  */
 
@@ -271,8 +271,13 @@ public class SessionUtils {
                             "emptyTrustedSourceList", null);
                 }
                 for (Enumeration e = psl.elements(); e.hasMoreElements();) {
-                    URL url = new URL((String) e.nextElement());
-                    result.add(InetAddress.getByName(url.getHost()));
+                    try {
+                        URL url = new URL((String) e.nextElement());
+                        result.add(InetAddress.getByName(url.getHost()));
+                    } catch (Exception ex) {
+                        debug.error("SessionUtils.getTrustedSourceList : " + 
+                                    "Validating Host exception", ex);
+                    }
                 }
             }
         } catch (Exception e) {
