@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.36 2009-10-27 05:39:38 hengming Exp $
+   $Id: idRepoService.xml,v 1.37 2009-11-10 01:50:57 hengming Exp $
   
 -->
 
@@ -163,6 +163,15 @@
                         <Value>sunPreferredDomain=sunPreferredDomain</Value>
                         <Value>sunDNSAliases=associatedDomain</Value>
                     </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="sunIdRepoAttributeValidator"
+                    type = "list"
+                    syntax = "string"
+                    i18nKey = "a1002">
+                    <DefaultValues>
+                       <Value>class=com.sun.identity.idm.server.IdRepoAttributeValidatorImpl</Value>
+                       <Value>minimumPasswordLength=8</Value>
+                   </DefaultValues>
                 </AttributeSchema>
 
                 <!-- LDAPv3 plugin original 70 (generic ds)  -->
