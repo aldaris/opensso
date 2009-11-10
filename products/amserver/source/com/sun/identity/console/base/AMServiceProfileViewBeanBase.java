@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMServiceProfileViewBeanBase.java,v 1.2 2008-06-25 05:42:47 qcheng Exp $
+ * $Id: AMServiceProfileViewBeanBase.java,v 1.3 2009-11-10 04:16:17 bhavnab Exp $
  *
  */
 
@@ -242,7 +242,7 @@ public abstract class AMServiceProfileViewBeanBase
     protected String getPropertySheetXML(AMServiceProfileModel model)
         throws AMConsoleException {
         String realmName = (String)getPageSessionAttribute(
-            AMAdminConstants.CURRENT_PROFILE);
+            AMAdminConstants.CURRENT_REALM);
         return model.getPropertySheetXML(realmName, getClass().getName(),
             serviceName);
     }
