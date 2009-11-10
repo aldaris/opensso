@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.7 2009-08-19 05:40:37 veiming Exp $
+ * $Id: Policy.java,v 1.8 2009-11-10 00:16:43 veiming Exp $
  *
  */
 
@@ -1388,15 +1388,24 @@ public class Policy implements Cloneable {
         return (answer);
     }
 
-    /** Gets the serialized policy in XML 
+    /**
+     * Returns the serialized policy in XML 
      * @return serialized policy in XML
      *
      * @supported.api
      *
      */
     public String toXML() {
-        StringBuffer answer = new StringBuffer(200);
-        answer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        return toXML(true);
+    }
+
+    public String toXML(boolean withHeader) {
+        StringBuilder answer = new StringBuilder(200);
+
+        if (withHeader) {
+            answer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        }
+
         answer.append("<Policy name=\"");
         answer.append(XMLUtils.escapeSpecialCharacters(policyName));
         if ((description != null) && (description.length() > 0)) {

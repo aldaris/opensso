@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmGetPolicy.java,v 1.4 2008-06-25 05:42:16 qcheng Exp $
+ * $Id: RealmGetPolicy.java,v 1.5 2009-11-10 00:16:43 veiming Exp $
  *
  */
 
@@ -122,6 +122,15 @@ public class RealmGetPolicy extends AuthenticatedCommand {
             
                 String[] params = new String[2];
                 params[0] = realm;
+                StringBuilder buff = new StringBuilder();
+                buff.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n")
+                    .append("<!DOCTYPE Policies \n")
+                    .append("PUBLIC \"-//OpenSSO Policy Administration DTD//EN\"\n")
+                    .append("\"jar://com/sun/identity/policy/policyAdmin.dtd\">\n\n");
+
+                buff.append("<!-- extracted from realm, ")
+                    .append(realm)
+                    .append(" -->\n<Policies>\n");
 
                 for (Iterator i = policyNames.iterator(); i.hasNext(); ) {
                     currentPolicyName = (String)i.next();
@@ -129,28 +138,25 @@ public class RealmGetPolicy extends AuthenticatedCommand {
                     writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                         "ATTEMPT_GET_POLICY_IN_REALM", params);
                     Policy policy = pm.getPolicy(currentPolicyName);
-                    if (pwout != null) {
-                        pwout.write("<!-- extracted from realm, " + realm + 
-                            " -->\n");
-                        pwout.write(policy.toXML());
-                    } else {
-                        outputWriter.printlnMessage(
-                            "<!-- extracted from realm, " + realm + " -->");
-                        outputWriter.printlnMessage(policy.toXML());
-                    }
-                    
+                    buff.append(policy.toXML(false));
                     writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                         "SUCCEED_GET_POLICY_IN_REALM", params);
                 }
 
+                buff.append("\n</Policies>\n");
+
                 if (pwout != null) {
+                    pwout.write(buff.toString());
                     try {
                         pwout.close();
                         fout.close();
                     } catch (IOException e) {
                         //do nothing
                     }
+                } else {
+                    outputWriter.printlnMessage(buff.toString());
                 }
+
                 String[] arg = {realm};
                 outputWriter.printlnMessage(MessageFormat.format(
                     getResourceString("get-policy-in-realm-succeed"), 
