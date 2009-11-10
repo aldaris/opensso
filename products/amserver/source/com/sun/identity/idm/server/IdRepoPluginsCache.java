@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoPluginsCache.java,v 1.7 2008-08-29 01:34:55 arviranga Exp $
+* $Id: IdRepoPluginsCache.java,v 1.8 2009-11-10 01:52:37 hengming Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -625,7 +625,8 @@ public class IdRepoPluginsCache implements ServiceListener {
         // ignore componenet is "". 
         // if component is /" and type is 2(delete), need to remove hidden
         // plugins.
-        if ((type == ServiceListener.REMOVED) && serviceComponent.equals("/")) {
+        if ((type == ServiceListener.REMOVED) &&
+            (serviceComponent.length() == 0)) {
             // Organization has been deleted
             removeIdRepo(orgName);
         } else if ((serviceComponent.length() != 0) && 
