@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthDomainsModelImpl.java,v 1.11 2009-10-29 00:03:51 exu Exp $
+ * $Id: FSAuthDomainsModelImpl.java,v 1.12 2009-11-10 01:19:49 exu Exp $
  *
  */
 
@@ -327,7 +327,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
         
         Set availableEntities = new HashSet();
         try {
-            SAML2MetaManager saml2Mgr = new SAML2MetaManager(getUserSSOToken());
+            SAML2MetaManager saml2Mgr = new SAML2MetaManager();
             Set saml2Entities = saml2Mgr.getAllEntities(realm);
             Iterator it = saml2Entities.iterator();
             while (it.hasNext()){
@@ -341,7 +341,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
         
         try {
             Set wsfedEntities =
-                (new WSFederationMetaManager(getUserSSOToken())).
+                (new WSFederationMetaManager()).
                     getAllEntities(realm);
             for (Iterator i = wsfedEntities.iterator(); i.hasNext(); ) {
                 String tmp = (String)i.next();
@@ -353,8 +353,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
         }
         
         try {
-            IDFFMetaManager idffManager = new IDFFMetaManager(
-                getUserSSOToken());
+            IDFFMetaManager idffManager = new IDFFMetaManager(null);
 
             Set entities = idffManager.getAllEntities(realm);
             for (Iterator i = entities.iterator(); i.hasNext(); ) {

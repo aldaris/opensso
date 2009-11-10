@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataModelImpl.java,v 1.5 2009-10-29 00:03:51 exu Exp $
+ * $Id: CreateMetaDataModelImpl.java,v 1.6 2009-11-10 01:19:49 exu Exp $
  *
  */
 
@@ -109,8 +109,7 @@ public class CreateMetaDataModelImpl extends AMModelBase
     public void createIDFFProvider(String realm, String entityId, Map values)
         throws AMConsoleException {
         try {
-            IDFFMetaManager metaManager = new IDFFMetaManager(
-                getUserSSOToken());
+            IDFFMetaManager metaManager = new IDFFMetaManager(null);
             String metadata = CreateIDFFMetaDataTemplate.
                 createStandardMetaTemplate(entityId, values, requestURL);
             String extendedData = CreateIDFFMetaDataTemplate.
@@ -151,8 +150,8 @@ public class CreateMetaDataModelImpl extends AMModelBase
             if (federationID == null) {
                 federationID = WSFederationConstants.DEFAULT_FEDERATION_ID;
             }
-            WSFederationMetaManager metaManager = new WSFederationMetaManager(
-                getUserSSOToken());
+            WSFederationMetaManager metaManager = 
+                new WSFederationMetaManager();
             metaManager.createFederation(realm, elt);
             
             FederationConfigElement cfg = (FederationConfigElement)

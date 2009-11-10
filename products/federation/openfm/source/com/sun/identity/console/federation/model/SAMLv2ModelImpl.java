@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.43 2009-10-29 00:03:51 exu Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.44 2009-11-10 01:19:49 exu Exp $
  *
  */
 
@@ -3600,7 +3600,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     
     protected SAML2MetaManager getSAML2MetaManager() throws SAML2MetaException {
         if (metaManager == null) {
-            metaManager = new SAML2MetaManager(getUserSSOToken());
+            metaManager = new SAML2MetaManager();
         }
         return metaManager;
     }

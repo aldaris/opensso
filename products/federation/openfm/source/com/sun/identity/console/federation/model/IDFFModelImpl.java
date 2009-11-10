@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFModelImpl.java,v 1.8 2008-11-18 22:39:45 asyhuang Exp $
+ * $Id: IDFFModelImpl.java,v 1.9 2009-11-10 01:19:49 exu Exp $
  *
  */
 package com.sun.identity.console.federation.model;
@@ -1438,7 +1438,7 @@ public class IDFFModelImpl
     protected IDFFMetaManager getIDFFMetaManager()
             throws IDFFMetaException {
         if (metaManager == null) {
-            metaManager = new IDFFMetaManager(getUserSSOToken());
+            metaManager = new IDFFMetaManager(null);
         }
         return metaManager;
     }

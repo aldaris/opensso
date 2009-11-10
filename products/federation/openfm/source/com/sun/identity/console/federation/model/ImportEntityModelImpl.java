@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityModelImpl.java,v 1.10 2009-10-29 00:03:51 exu Exp $
+ * $Id: ImportEntityModelImpl.java,v 1.11 2009-11-10 01:19:49 exu Exp $
  *
  */
 
@@ -155,8 +155,7 @@ public class ImportEntityModelImpl extends AMModelBase
                 }
             }
                         
-            SAML2MetaManager metaManager = new SAML2MetaManager(
-                getUserSSOToken());
+            SAML2MetaManager metaManager = new SAML2MetaManager();
             if (standardMetaData != null) {
                 importSAML2MetaData(metaManager, realm);
             }
@@ -203,7 +202,7 @@ public class ImportEntityModelImpl extends AMModelBase
                 // TBD
                 //Document doc = XMLUtils.toDOMDocument(standardMetadata, debug);
                 // WSFederationMetaSecurityUtils.verifySignature(doc);
-                (new WSFederationMetaManager(getUserSSOToken())).
+                (new WSFederationMetaManager()).
                     createFederation(realm, federation);
             }
         } catch (JAXBException e) {
@@ -242,8 +241,7 @@ public class ImportEntityModelImpl extends AMModelBase
     
     private void createIDFFEntity() throws AMConsoleException {
         try {
-            IDFFMetaManager metaManager = new IDFFMetaManager(
-                getUserSSOToken());
+            IDFFMetaManager metaManager = new IDFFMetaManager(null);
 
             com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement
                 configElt = null;
@@ -342,7 +340,7 @@ public class ImportEntityModelImpl extends AMModelBase
             }
             
             if (configElt != null) {
-                (new WSFederationMetaManager(getUserSSOToken())).createEntityConfig(
+                (new WSFederationMetaManager()).createEntityConfig(
                     realm, configElt);
             }
         } catch (WSFederationMetaException e) {

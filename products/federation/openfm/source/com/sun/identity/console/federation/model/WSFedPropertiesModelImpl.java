@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModelImpl.java,v 1.13 2009-10-29 00:03:51 exu Exp $
+ * $Id: WSFedPropertiesModelImpl.java,v 1.14 2009-11-10 01:19:50 exu Exp $
  *
  */
 
@@ -129,7 +129,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         throws WSFederationMetaException 
     {
         if (metaManager == null) {
-            metaManager = new WSFederationMetaManager(getUserSSOToken());
+            metaManager = new WSFederationMetaManager();
         }
         return metaManager;
     }
