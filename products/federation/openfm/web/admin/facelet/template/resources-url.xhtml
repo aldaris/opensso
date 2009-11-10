@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: resources-url.xhtml,v 1.1 2009-08-19 05:41:11 veiming Exp $
+   $Id: resources-url.xhtml,v 1.2 2009-11-10 22:44:54 farble1670 Exp $
 
 -->
 
@@ -35,6 +35,19 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
+
+    <c:if
+        test="#{empty allowExceptions}">
+        <c:set
+            var="allowExceptions"
+            value="true"/>
+    </c:if>
+    <c:if
+        test="#{empty allowAdd}">
+        <c:set
+            var="allowAdd"
+            value="true"/>
+    </c:if>
 
     <ui:include src="resources-url-add-popup.xhtml"/>
     <ui:include src="resources-url-add-exception-popup.xhtml"/>
@@ -48,6 +61,7 @@
             <ice:panelGrid
                 columns="2">
                 <ice:commandLink
+                    rendered="#{allowAdd}"
                     styleClass="command-link"
                     actionListener="#{urlResourcesHandler.addListener}">
                     <f:attribute
@@ -107,7 +121,7 @@
                                     </ice:checkbox>
                                     <ice:panelGroup
                                         styleClass="float-right"
-                                        rendered="#{allowExceptions &amp;&amp; urlResource.exceptable &amp;&amp; o:contains(policyResourcesBean.viewEntitlement.resources,urlResource)}">
+                                        rendered="#{allowExceptions &amp;&amp; urlResource.exceptable &amp;&amp; o:contains(resourcesBean.viewEntitlement.resources,urlResource)}">
                                         <o:clink
                                             type="add"
                                             linkLabel="#{resources['resources-url.addException']}"

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy.xhtml,v 1.1 2009-08-19 05:41:08 veiming Exp $
+   $Id: policy.xhtml,v 1.2 2009-11-10 22:44:52 farble1670 Exp $
 
 -->
 
@@ -46,6 +46,9 @@
                 <o:litem
                     rendered="#{permissionsBean.referralManageAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
                     action="referral-manage"/>
+                <o:litem
+                    rendered="#{permissionsBean.applicationManageAllowed}"
+                    action="application-manage"/>
             </ui:define>
         </o:landing>
     </ui:define>

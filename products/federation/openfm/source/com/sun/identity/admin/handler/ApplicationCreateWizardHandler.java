@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationCreateWizardHandler.java,v 1.1 2009-08-19 05:40:46 veiming Exp $
+ * $Id: ApplicationCreateWizardHandler.java,v 1.2 2009-11-10 22:44:52 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -70,7 +70,7 @@ public class ApplicationCreateWizardHandler extends ApplicationWizardHandler {
         List<LinkBean> lbs = new ArrayList<LinkBean>();
         lbs.add(LinkBean.HOME);
         lbs.add(LinkBean.APPLICATION_CREATE);
-        lbs.add(LinkBean.POLICY_CREATE);
+        lbs.add(LinkBean.APPLICATION_MANAGE);
 
         return lbs;
     }
@@ -79,6 +79,7 @@ public class ApplicationCreateWizardHandler extends ApplicationWizardHandler {
         List<LinkBean> lbs = new ArrayList<LinkBean>();
         lbs.add(LinkBean.HOME);
         lbs.add(LinkBean.APPLICATION_CREATE);
+        lbs.add(LinkBean.APPLICATION_MANAGE);
 
         return lbs;
     }
