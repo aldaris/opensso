@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: README,v 1.11 2009-10-05 06:09:15 mrudul_uchil Exp $
+ * $Id: README,v 1.12 2009-11-10 08:37:29 mrudul_uchil Exp $
  */
 
  %% Contents:
@@ -185,39 +185,99 @@ Assumption :
 
 %% 4. Building and Deploying the Secured Samples
 
-   4.1 Follow <wssagents_unzip_location>/wssagent/README file
-       (if you have not done already)
-       a) To add the keystore related files to the local file system,
-       by copying <wssagents_unzip_location>/wssagent/resources/keystore.jks,
-       <wssagents_unzip_location>/wssagent/resources/.keypass and
-       <wssagents_unzip_location>/wssagent/resources/.storepass files to some
-       directory that can be later referred in
-       <wssagents_unzip_location>/wssagent/config/AMConfig.properties file and
-       b) To modify the <wssagents_unzip_location>/wssagent/config/AMConfig.properties
-       file, in order to update properties that are at the top of the file, under
-       heading "Following properties need to be updated for OpenSSO WSS Agents".
+   You can use ONE of the following options (A or B) for deployment on all the
+   containers except Tomcat and Sun Web Server.
+   For Tomcat and Sun Web Server, use option B only.
 
-   4.2 cd <wssagents_unzip_location>/wssagent/samples/StockService
-       If you plan to deploy on Tomcat or Sun Web Server, then run
-       "ant tomcat-secure-war" Else run "ant secure-war".
-       This will generate StockService.war under "dist" directory, deploy this
-       war on any JAX-WS compliant container running with JDK "1.6.0_12" or
-       higher.
+   A) Using configurator script / utility
 
-   4.3 cd <wssagents_unzip_location>/wssagent/samples
-       The protocol, host and port number of the container where the
-       StockService is deployed, will need to be changed for "wsdlLocation" in,
-       etc/Tomcat/StockClient/secure/GetQuote.java for Tomcat or Sun Web Server
-       deployment
-       OR
-       etc/config/StockClient/GetQuote.java for rest of the containers.
+       4.1 Run "<wssagents_unzip_location>/wssagent/ant config" to generate
+           secured StockService.war by entering appropriate input as follows :
+           
+        [input] Enter OpenSSO Server URL :
+        <server_protocol>://<server_host.server_domain>:<server_port>/<server_deploy_uri>
 
-   4.4 cd <wssagents_unzip_location>/wssagent/samples/StockClient
-       If your deployment container is Tomcat or Sun Web Server, then run
-       "ant tomcat-secure-war" Else run "ant secure-war".
-       This will generate StockClient.war under "dist" directory, deploy this
-       war on any JAX-WS compliant container running with JDK "1.6.0_12" or
-       higher.
+        [input] Have you configured your application with @HandlerChain annotation (y/n)? (y, n)
+        y
+
+        [input] Enter type of application (WSC/ WSP) : (WSC, WSP)
+        WSP
+
+        [input] Enter location of un-secured WAR file ending with name of the WAR file OR
+                Enter the location of un-secured application's staging area ending with
+                the application name (delimited by '|') :
+        <wssagents_unzip_location>/wssagent/samples/StockService/dist/StockService.war
+        (Assuming you have followed section 3 before)
+
+        [input] Enter the package structure of application class file (e.g. com/sun/stockquote) :
+        com/sun/stockquote
+
+           This will generate secured StockService.war under
+           <wssagents_unzip_location>/wssagent/secured_war directory, deploy this
+           war on any JAX-WS compliant container running with JDK "1.6.0_12" or
+           higher.
+
+       4.2 Run "<wssagents_unzip_location>/wssagent/ant config" to generate
+           secured StockClient.war by entering appropriate input as follows :
+
+        [input] Enter OpenSSO Server URL :
+        <server_protocol>://<server_host.server_domain>:<server_port>/<server_deploy_uri>
+
+        [input] Have you configured your application with @HandlerChain annotation (y/n)? (y, n)
+        y
+
+        [input] Enter type of application (WSC/ WSP) : (WSC, WSP)
+        WSC
+
+        [input] Enter location of un-secured WAR file ending with name of the WAR file OR
+                Enter the location of un-secured application's staging area ending with
+                the application name (delimited by '|') :
+        <wssagents_unzip_location>/wssagent/samples/StockClient/dist/StockClient.war
+        (Assuming you have followed section 3 before)
+
+        [input] Enter the package structure of application class file (e.g. com/sun/stockquote) :
+        com/sun/stockquote
+
+           This will generate secured StockClient.war under
+           <wssagents_unzip_location>/wssagent/secured_war directory, deploy this
+           war on any JAX-WS compliant container running with JDK "1.6.0_12" or
+           higher.
+
+   B) Using manual configuration steps
+
+       4.1 Follow <wssagents_unzip_location>/wssagent/README file
+           (if you have not done already)
+           a) To add the keystore related files to the local file system,
+           by copying <wssagents_unzip_location>/wssagent/resources/keystore.jks,
+           <wssagents_unzip_location>/wssagent/resources/.keypass and
+           <wssagents_unzip_location>/wssagent/resources/.storepass files to some
+           directory that can be later referred in
+           <wssagents_unzip_location>/wssagent/config/AMConfig.properties file and
+           b) To modify the <wssagents_unzip_location>/wssagent/config/AMConfig.properties
+           file, in order to update properties that are at the top of the file, under
+           heading "Following properties need to be updated for OpenSSO WSS Agents".
+
+       4.2 cd <wssagents_unzip_location>/wssagent/samples/StockService
+           If you plan to deploy on Tomcat or Sun Web Server, then run
+           "ant tomcat-secure-war" Else run "ant secure-war".
+           This will generate StockService.war under "dist" directory, deploy this
+           war on any JAX-WS compliant container running with JDK "1.6.0_12" or
+           higher.
+
+       4.3 cd <wssagents_unzip_location>/wssagent/samples
+           The protocol, host and port number of the container where the
+           StockService is deployed, will need to be changed for "wsdlLocation" in,
+           etc/Tomcat/StockClient/secure/GetQuote.java for Tomcat or Sun Web Server
+           deployment
+           OR
+           etc/config/StockClient/GetQuote.java for rest of the containers.
+
+       4.4 cd <wssagents_unzip_location>/wssagent/samples/StockClient
+           If your deployment container is Tomcat or Sun Web Server, then run
+           "ant tomcat-secure-war" Else run "ant secure-war".
+           This will generate StockClient.war under "dist" directory, deploy this
+           war on any JAX-WS compliant container running with JDK "1.6.0_12" or
+           higher.
 
    The WARs generated above can be deployed on GlassFish v2.x, WebLogic 10.x,
    JBoss 5.x, Tomcat 6.x, Sun Web Server 7.x & WebSphere 7.x, all running with

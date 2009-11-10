@@ -32,3 +32,6 @@ com/sun/identity/wss/provider/ConfiguredDiscoveryConfig.class
 com/sun/identity/wss/logging/LogUtil.class
 com/sun/identity/classloader/FAMClassLoader.class
 com/sun/identity/classloader/MaskingClassLoader.class
+com/sun/identity/setup/SwapClientConfig.class
+com/sun/identity/setup/InsertWebXMLContent.class
+com/sun/identity/setup/ParseInputData.class

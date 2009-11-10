@@ -10,5 +10,9 @@
          <handler-name>ClientHandler</handler-name>
          <handler-class>com.sun.identity.wssagents.jaxws.client.ClientHandler</handler-class>
       </handler>
+      <handler>
+         <handler-name>LogClientHandler</handler-name>
+         <handler-class>com.sun.stockquote.LogClientHandler</handler-class>
+      </handler>
    </handler-chain>
 </handler-chains>

@@ -22,19 +22,22 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagents-jax-ws-zip,v 1.9 2009-10-05 06:09:14 mrudul_uchil Exp $
+   $Id: README.wssagents-jax-ws-zip,v 1.10 2009-11-10 08:37:29 mrudul_uchil Exp $
 
 -->
 
 Sun OpenSSO Enterprise Web Services Security (WSS) Agent - Zip file :
 
 openssowssagents.zip
+|____ wssagent/build.xml (Installer/Configurator utility for WSS Agents)
 |____ wssagent/lib/openssoclientsdk.jar (complete OpenSSO clientsdk jar)
 |____ wssagent/lib/openssowssagents.jar (complete WSS Agents jar)
 |____ wssagent/lib/xmlsec.jar (XML Security library jar)
 |____ wssagent/config/AMConfig.properties (complete OpenSSO client properties)
 |____ wssagent/config/client_handlers.xml (JAX-WS Handlers configuration file for Client)
 |____ wssagent/config/server_handlers.xml (JAX-WS Handlers configuration file for Server)
+|____ wssagent/config/web.xml (JAX-WS Handlers Filter configuration file for Client)
+|____ wssagent/config/WSSAgentInputData.properties (Input data file for Installer/Configurator utility)
 |____ wssagent/resources/keystore.jks (client keystore file)
 |____ wssagent/resources/.keypass (password file for key)
 |____ wssagent/resources/.storepass (password file for keystore)
@@ -47,6 +50,17 @@ Sun OpenSSO Enterprise Web Services Security (WSS) Agents are the SOAP protocol
 type of JAX-WS handlers that intercept inbound and outbound Web Service
 requests/responses (SOAP messages) in order to secure them.
 You can easily plug these handlers into the JAX-WS 2.1 runtime environment.
+
+To secure your web service application (WSC / WSP) unsecured war file with
+OpenSSO WSS Agents, using installer/configurator utility, run
+
+wssagent/ant config
+
+for WSC and WSP applications each (separately). You can also specify the
+input data in wssagent/config/WSSAgentInputData.properties file so that
+this installer/configurator utility can run silently, without prompting for
+user input.
+Note : Make sure you have Ant (version "1.7" or higher) in CLASS PATH
 
 To follow step by step procedure on how to secure a Web Service communication
 using Sun OpenSSO Enterprise Web Services Security (WSS) Agents, please go to

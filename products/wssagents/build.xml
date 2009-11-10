@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.29 2009-10-05 13:44:16 kevinserwin Exp $
+   $Id: build.xml,v 1.30 2009-11-10 08:37:28 mrudul_uchil Exp $
 
 -->
 
@@ -143,7 +143,7 @@
     <target name="build-JAX-WS" depends="checkjar, preparebuild">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
             destdir="${wssagents.classes.dir}" source="${target.jdk.set}" target="${target.jdk.set}"
-            debug="${build.debug}" debuglevel="${build.debuglevel}" includes="com/sun/identity/wssagents/jaxws/client/*.*,com/sun/identity/wssagents/jaxws/server/*.*">
+            debug="${build.debug}" debuglevel="${build.debuglevel}" includes="com/sun/identity/wssagents/jaxws/client/*.*,com/sun/identity/wssagents/jaxws/server/*.*,com/sun/identity/wssagents/common/util/*.*">
             <src path="${wssagents.src.dir}"/>
             <classpath refid="build.class.path"/>
         </javac>
@@ -195,10 +195,24 @@
         <copy file="${wssagents.basedir}/docs/README.wssagents-jax-ws-zip"
             tofile="${zip.temp.dir}/README" />
 
+        <copy file="${wssagents.basedir}/scripts/wss_agent_configurator.xml"
+            tofile="${zip.temp.dir}/build.xml" />
+
+        <copy todir="${zip.temp.dir}/bin">
+            <fileset file="${wssagents.basedir}/scripts/encrypt_util" />
+            <fileset file="${wssagents.basedir}/scripts/encrypt_util.bat" />
+        </copy>
+
         <copy todir="${zip.temp.dir}/lib">
             <fileset file="${fm.dist.dir}/openssoclientsdk.jar" />
             <fileset file="${wssagents.dist.dir}/openssowssagents.jar" />
         </copy>
+
+        <jar destfile="${zip.temp.dir}/lib/openssoclientsdk.jar" update="true">
+            <fileset dir="${wssagents.classes.dir}"
+                includes="com/sun/identity/wssagents/common/util/EncryptionUtil.class" />
+        </jar>
+
         <copy todir="${zip.temp.dir}/lib">
             <fileset dir="${extlib.dir}" includes="xmlsec.jar" />
         </copy>
@@ -207,6 +221,7 @@
         </copy>
         <copy todir="${zip.temp.dir}/config">
             <fileset file="${wssagents.xml.dir}/jax-ws/*.xml" />
+            <fileset dir="${wssagents.config.dir}" includes="WSSAgentInputData.properties" />
         </copy>
 
         <copy file="${openfm.built.dir}/clientsamples/package/sdk/resources/AMConfig.properties.template" 
@@ -330,7 +345,7 @@
         <mkdir dir="${zip.temp.dir}" />
 
         <copy todir="${zip.temp.dir}">
-            <fileset dir="${products.license.dir}" includes="*.txt" />
+            <fileset dir="${products.license.dir}" includes="license.txt" />
         </copy>
         <copy file="${wssagents.basedir}/docs/README.wssagentszip"
             tofile="${zip.temp.dir}/README" />
@@ -340,6 +355,8 @@
         <copy todir="${zip.temp.dir}/bin">
             <fileset file="${wssagents.basedir}/scripts/wssagentadmin" />
             <fileset file="${wssagents.basedir}/scripts/wssagentadmin.bat" />
+            <fileset file="${wssagents.basedir}/scripts/encrypt_util" />
+            <fileset file="${wssagents.basedir}/scripts/encrypt_util.bat" />
         </copy>
 
         <copy todir="${zip.temp.dir}/lib">
@@ -349,6 +366,12 @@
             <fileset file="${installtools.dist.dir}/opensso-installtools-launcher.jar" />
             <fileset file="${wssagents.dist.dir}/openssowssproviders.jar" />
         </copy>
+
+        <jar destfile="${zip.temp.dir}/lib/openssoclientsdk.jar" update="true">
+            <fileset dir="${wssagents.classes.dir}"
+                includes="com/sun/identity/wssagents/common/util/EncryptionUtil.class" />
+        </jar>
+        
         <copy todir="${zip.temp.dir}/lib">
             <fileset dir="${extlib.dir}" includes="webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar,xalan.jar,j2ee.jar" />
         </copy>

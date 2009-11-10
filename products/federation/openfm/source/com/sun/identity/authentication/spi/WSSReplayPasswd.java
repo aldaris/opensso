@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSReplayPasswd.java,v 1.2 2009-06-04 01:16:47 mallas Exp $
+ * $Id: WSSReplayPasswd.java,v 1.3 2009-11-10 08:37:28 mrudul_uchil Exp $
  *
  */
 
@@ -80,11 +80,15 @@ public class WSSReplayPasswd implements AMPostAuthProcessInterface {
                }
             } else {
                String userName = ssoToken.getPrincipal().getName();
+               String universalID =
+                   ssoToken.getProperty("sun.am.UniversalIdentifier");
                if(debug.messageEnabled()) {
-                  debug.message("WSSReplayPassword:Authenticated user. " 
+                  debug.message("WSSReplayPassword:Authenticated user : "
                           + userName);
+                  debug.message("WSSReplayPassword:Authenticated UUID : "
+                          + universalID);
                }
-               AMIdentity amId = new AMIdentity(getAdminToken(), userName);
+               AMIdentity amId = new AMIdentity(getAdminToken(), universalID);
                Set tmp = amId.getAttribute("userPassword");
                if(tmp != null && !tmp.isEmpty()) {
                   String userPassword = (String)tmp.iterator().next();                  
