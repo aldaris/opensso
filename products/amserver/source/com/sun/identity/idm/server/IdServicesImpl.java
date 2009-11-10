@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdServicesImpl.java,v 1.58 2009-10-27 05:32:48 hengming Exp $
+* $Id: IdServicesImpl.java,v 1.59 2009-11-10 01:48:01 hengming Exp $
 *
 */
 
@@ -412,6 +412,12 @@ public class IdServicesImpl implements IdServices {
        // checkPermission method throws an "402" exception.
        checkPermission(token, amOrgName, name, attrMap.keySet(),
                IdOperation.CREATE, type);
+       if (type.equals(IdType.USER)) {
+           IdRepoAttributeValidator attrValidator = 
+               IdRepoAttributeValidatorManager.getInstance().
+               getIdRepoAttributeValidator(amOrgName);
+           attrValidator.validateAttributes(attrMap, IdOperation.CREATE);
+       }
        String amsdkdn = null;
        Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
            IdOperation.CREATE, type);
@@ -1650,6 +1656,14 @@ public class IdServicesImpl implements IdServices {
        // checkPermission method throws an "402" exception.
        checkPermission(token, amOrgName, name, attributes.keySet(),
                IdOperation.EDIT, type);
+
+       if (type.equals(IdType.USER)) {
+           IdRepoAttributeValidator attrValidator = 
+               IdRepoAttributeValidatorManager.getInstance().
+               getIdRepoAttributeValidator(amOrgName);
+           attrValidator.validateAttributes(attributes, IdOperation.EDIT);
+       }
+
        // Get the list of plugins that service/edit the create operation.
        Set configuredPluginClasses = (attributes.containsKey("objectclass")) ?
            idrepoCache.getIdRepoPlugins(amOrgName, IdOperation.SERVICE, type):
