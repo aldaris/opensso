@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.13 2008-12-10 18:25:14 farble1670 Exp $
+ * $Id: AgentProfileViewBean.java,v 1.14 2009-11-10 23:20:15 asyhuang Exp $
  *
  */
 
@@ -364,6 +364,24 @@ public abstract class AgentProfileViewBean
                         i.hasNext(); ) {
                         values.remove(i.next());
                     }
+                     if(type.equals(AgentsViewBean.DEFAULT_ID_TYPE)){
+                         Iterator itr = values.keySet().iterator();
+                         while (itr.hasNext()) {
+                              String name = (String) itr.next();                             
+                              Set v = (Set) values.get(name);
+                              if ((v != null) && !v.isEmpty() && (v.size()==1)) {
+                                   Iterator itr2 = v.iterator();
+                                   while (itr2.hasNext()) {
+                                       String subv = (String) itr2.next();
+                                       subv.trim();
+                                       if(subv.length()==0){                                           
+                                           values.put(name, null);
+                                           break;
+                                       }
+                                   }
+                              }                             
+                         }
+                     }
                 }
             } else {
                 if (!isGroup && !is2dot2Agent() && !isAgentAuthenticator()) {
