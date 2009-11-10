@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurID.java,v 1.3 2008-10-23 22:37:42 bigfatrat Exp $
+ * $Id: SecurID.java,v 1.4 2009-11-10 17:51:48 ericow Exp $
  *
  */
 
@@ -87,15 +87,6 @@ public class SecurID extends AMLoginModule {
 
     private final String SDCONF_FILE = "sdconf.rec";
     public String STR_SECURID_CONFIG_PATH = "";  // per module instance
-
-    // prompts back to user
-    private String WAIT_PIN =
-        "Wait for the your token to change, then enter with the new PIN. ";
-    private String SYS_GEN_PIN = "System generated PIN? (y/n):  ";
-    private String ENTER_NEW_PIN = "Enter new PIN, containing ";
-    private String NEW_SYS_PIN = "New system PIN:";
-    private String READY_SYS_GEN_PIN =
-        "Ready to have the system generate your new PIN? (y/n):";
 
     private boolean getCredentialsFromSharedState;
 
@@ -348,17 +339,7 @@ public class SecurID extends AMLoginModule {
                             debug.message("SecurID.process:NEW_PIN_REQUIRED");
                             pinData = session.getPinData();
                             int pinState = pinData.getUserSelectable();
-                            int pinMin = pinData.getMinPinLength();
-                            int pinMax = pinData.getMaxPinLength();
-                            if (debug.messageEnabled()) {
-                                debug.message("SecurID.process:pinState = " +
-                                    pinState +
-                                    "\n\tpinMin = " + pinMin +
-                                    "\n\tpinMax = " + pinMax);
-                            }
-                            String pinSize = pinMin + " to " + pinMax + " ";
-                            String pinType = pinData.isAlphanumeric() ?
-                                "characters" : "digits";
+                            String msg = getNewPinMsg(pinData);
                             //  if user can't choose their own pin
                             if (pinState == PinData.CANNOT_CHOOSE_PIN) {
                                 debug.message(
@@ -429,7 +410,9 @@ public class SecurID extends AMLoginModule {
                                  */
                                 setDynamicText(true,
                                     ISAuthConstants.LOGIN_NEW_PIN_NEXT_TOKEN,
-                                    WAIT_PIN + NEW_SYS_PIN + newPin);
+                                    bundle.getString("SecurIDWaitPin") +
+                                    bundle.getString("SecurIDNewSysPin") + 
+                                    newPin);
                                 rtnval =
                                     ISAuthConstants.LOGIN_NEW_PIN_NEXT_TOKEN;
                             } else if (pinState == PinData.USER_SELECTABLE) {
@@ -438,19 +421,18 @@ public class SecurID extends AMLoginModule {
                                     "SecurID.process:USER_SELECTABLE");
                                 setDynamicText(false,
                                     ISAuthConstants.LOGIN_SYS_GEN_PIN,
-                                    SYS_GEN_PIN);
+                                    bundle.getString("SecurIDSysGenPin"));
                                 rtnval = ISAuthConstants.LOGIN_SYS_GEN_PIN;
                             } else if (pinState == PinData.MUST_CHOOSE_PIN) {
                                 debug.message(
                                     "SecurID.process:MUST_CHOOSE_PIN");
                                 // user must provide new PIN
                                 setDynamicText(true,
-                                    ISAuthConstants.LOGIN_CHALLENGE,
-                                    ENTER_NEW_PIN + pinSize + pinType);
+                                    ISAuthConstants.LOGIN_CHALLENGE, msg);
                                 rtnval = ISAuthConstants.LOGIN_CHALLENGE;
                                 if (debug.messageEnabled()) {
                                     debug.message("SecurID.process:prompt = " +
-                                        ENTER_NEW_PIN + pinSize + pinType);
+                                        msg);
                                 }
                             } else {  // huh?
                                 debug.error(
@@ -585,7 +567,8 @@ public class SecurID extends AMLoginModule {
                         debug.message("SecurID.process:new pin ACCEPTED");
                         rtnval = ISAuthConstants.LOGIN_NEW_PIN_NEXT_TOKEN;
                         setDynamicText(true,
-                            ISAuthConstants.LOGIN_NEW_PIN_NEXT_TOKEN, WAIT_PIN);
+                            ISAuthConstants.LOGIN_NEW_PIN_NEXT_TOKEN, 
+                            bundle.getString("SecurIDWaitPin"));
                         userTokenId = username;
                     } else if (authStatus == AuthSession.PIN_REJECTED) {
                         debug.message(
@@ -781,7 +764,8 @@ public class SecurID extends AMLoginModule {
                         }
                         setDynamicText(true,
                             ISAuthConstants.LOGIN_NEW_PIN_NEXT_TOKEN,
-                            WAIT_PIN + NEW_SYS_PIN + newPin);
+                            bundle.getString("SecurIDWaitPin") +
+                            bundle.getString("SecurIDNewSysPin") + newPin);
                         userTokenId = username;
                         rtnval = ISAuthConstants.LOGIN_NEW_PIN_NEXT_TOKEN;
                     } catch (AuthAgentException aaex) {
@@ -812,20 +796,14 @@ public class SecurID extends AMLoginModule {
                 } else {
                     // user-generated PIN
                     try {
-                        pinData = session.getPinData();
-                        int pinMin = pinData.getMinPinLength();
-                        int pinMax = pinData.getMaxPinLength();
-                        String pinSize = pinMin + " to " + pinMax + " ";
-                        String pinType = pinData.isAlphanumeric() ?
-                            "characters" : "digits";
+                        String msg = getNewPinMsg(session.getPinData());
                         if (debug.messageEnabled()) {
                             debug.message(
                             "SecurID.process:LOGIN_SYS_GEN_PIN:" +
-                            "about to get user-genned PIN, prompt = \n\t" +
-                            ENTER_NEW_PIN + pinSize + pinType);
+                            "about to get user-genned PIN, prompt = \n\t"+msg);
                         }
                         setDynamicText(true, ISAuthConstants.LOGIN_CHALLENGE,
-                            ENTER_NEW_PIN + pinSize + pinType);
+                            msg);
                         rtnval = ISAuthConstants.LOGIN_CHALLENGE;
                     } catch (AuthAgentException aaex) {
                         // probably have to terminate the session
@@ -1030,6 +1008,27 @@ public class SecurID extends AMLoginModule {
         System.arraycopy(tmpPassword, 0, pwd, 0, tmpPassword.length);
         ((PasswordCallback)cbk).clearPassword();
         return new String(pwd);
+    }
+
+    private String getNewPinMsg(PinData pinData) {
+        int pinState = pinData.getUserSelectable();
+        int pinMin = pinData.getMinPinLength();
+        int pinMax = pinData.getMaxPinLength();
+        if (debug.messageEnabled()) {
+            debug.message("SecurID.getNewPinMsg:pinState = " + pinState +
+                    "\n\tpinMin = " + pinMin + "\n\tpinMax = " + pinMax);
+        }
+        StringBuffer sb = new StringBuffer(100);
+        sb.append(bundle.getString("SecurIDEnterNewPin"));
+        sb.append(" ").append(pinMin).append(" ");
+        sb.append(bundle.getString("SecurIDTo")).append(" ");
+        sb.append(pinMax).append(" ");
+        if (pinData.isAlphanumeric()) {
+            sb.append(bundle.getString("SecurIDChar"));
+        } else {
+            sb.append(bundle.getString("SecurIDDigits"));
+        }
+        return sb.toString();
     }
 
     public java.security.Principal getPrincipal() {
