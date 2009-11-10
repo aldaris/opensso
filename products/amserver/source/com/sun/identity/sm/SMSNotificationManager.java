@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.13 2009-07-27 21:04:44 hengming Exp $
+ * $Id: SMSNotificationManager.java,v 1.14 2009-11-10 21:49:44 hengming Exp $
  *
  */
 package com.sun.identity.sm;
@@ -282,7 +282,7 @@ public class SMSNotificationManager implements SMSObjectListener {
             SMSObjectListener listener = (SMSObjectListener) items.next();
             // Listeners might through exceptions, use try-catch
             try {
-                if (listener instanceof SMSJAXRPCObjectImpl) {
+                if ((!isClient) && (listener instanceof SMSJAXRPCObjectImpl)) {
                     // Process this at the end
                     jaxrpclistener = listener;
                 } else {
