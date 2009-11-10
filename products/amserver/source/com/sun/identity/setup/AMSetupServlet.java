@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.113 2009-10-28 20:24:54 goodearth Exp $
+ * $Id: AMSetupServlet.java,v 1.114 2009-11-10 01:31:02 bigfatrat Exp $
  *
  */
 
@@ -62,6 +62,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.security.DecodeAction;
+import com.sun.identity.security.EncodeAction;
 import com.sun.identity.servicetag.registration.StartRegister;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
@@ -860,6 +861,8 @@ public class AMSetupServlet extends HttpServlet {
             copyAuthSecurIDFiles(aceDataDir);
 
             startRegistrationProcess(basedir, deployuri);
+
+            createMonitoringAuthFile(basedir, deployuri);
 
             isConfiguredFlag = true;
             configured = true;
@@ -2231,6 +2234,38 @@ public class AMSetupServlet extends HttpServlet {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
                 "AMSetupServlet.startRegistrationProcess:" +
                 "failed to create registration lib directory");
+            SetupProgress.reportEnd("emb.failed", null);
+        }
+    }
+
+    private static void createMonitoringAuthFile(String basedir,
+        String deployuri)
+    {
+        SetupProgress.reportStart(
+            "configurator.progress.setup.monitorauthfile", null);
+        /*
+         *  make sure the basedir + "/" + deployuri + "/lib/registration"
+         *  directory exists, and then create the monitoring auth file
+         *  there.
+         */
+        String monAuthFile = basedir + "/" + deployuri + "/opensso_mon_auth";
+        String encpwd =
+            (String)AccessController.doPrivileged(new EncodeAction("changeit"));
+
+        try {
+            File mFileSave = new File(monAuthFile + "~");
+            File monFile = new File(monAuthFile);
+            if (monFile.exists()) {
+                monFile.renameTo(mFileSave);
+            }
+            FileWriter fwrtr = new FileWriter (monFile);
+            String stout = "demo " + encpwd + "\n";
+            fwrtr.write(stout);
+            fwrtr.flush();
+        } catch (IOException ex) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.createMonitoringAuthFile:" +
+                "failed to create monitoring authentication file");
             SetupProgress.reportEnd("emb.failed", null);
         }
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Agent.java,v 1.8 2009-10-20 23:56:07 bigfatrat Exp $
+ * $Id: Agent.java,v 1.9 2009-11-10 01:33:22 bigfatrat Exp $
  *
  */
 
@@ -118,6 +118,7 @@ public class Agent {
     private static int monHtmlPort;
     private static int monSnmpPort;
     private static int monRmiPort;
+    private static String monAuthFilePath;
     private static String ssoProtocol;
     private static String ssoName;
     private static String ssoPort;
@@ -493,6 +494,7 @@ public class Agent {
         monHtmlPortEnabled = monConfig.monHtmlPortEnabled;
         monSnmpPortEnabled = monConfig.monSnmpPortEnabled;
         monRmiPortEnabled = monConfig.monRmiPortEnabled;
+        monAuthFilePath = monConfig.monAuthFilePath;
         String classMethod = "Agent.startAgent:";
         // OpenSSO server port comes from WebtopNaming.siteAndServerInfo
         String serverPort = agentSvrInfo.serverPort;
@@ -505,6 +507,7 @@ public class Agent {
         if (debug.messageEnabled()) {
             debug.message(classMethod + "entry:\n" +
                 "    htmlPort = " + monHtmlPort + "\n" +
+                "    authFilePath = " + monAuthFilePath + "\n" +
                 "    snmpPort = " + monSnmpPort + "\n" +
                 "    rmiPort = " + monRmiPort + "\n" +
                 "    monEna = " + monitoringEnabled + "\n" +
@@ -723,7 +726,7 @@ public class Agent {
                         "HTML adaptor is bound on TCP port " + monHtmlPort);
                 }
 
-                String[][] users = omu.getMonAuthList();
+                String[][] users = omu.getMonAuthList(monAuthFilePath);
                 if (users != null) {
                     int sz = Array.getLength(users);
                     AuthInfo authInfo[] = new AuthInfo[sz];

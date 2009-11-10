@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigMonitoring.java,v 1.4 2009-10-20 23:57:33 bigfatrat Exp $
+ * $Id: ConfigMonitoring.java,v 1.5 2009-11-10 01:31:40 bigfatrat Exp $
  *
  */
 
@@ -1111,6 +1111,8 @@ public class ConfigMonitoring {
             int httpPort = 
                 Integer.valueOf(CollectionHelper.getMapAttr(monAttrs,
                     "iplanet-am-monitoring-http-port"));
+            String authFilePath = CollectionHelper.getMapAttr(monAttrs,
+                "iplanet-am-monitoring-authfile-path");
             int rmiPort = 
                 Integer.valueOf(CollectionHelper.getMapAttr(monAttrs,
                     "iplanet-am-monitoring-rmi-port"));
@@ -1127,6 +1129,7 @@ public class ConfigMonitoring {
             if (debug.messageEnabled()) {
                 debug.message(classMethod + "\n" +
                     "     monitoring enabled = " + monEna + "\n" +
+                    "     monitoring auth filepath = " + authFilePath + "\n" +
                     "     httpPort = " + httpPort + "\n" +
                     "     httpPort enabled = " + httpEna + "\n" +
                     "     rmiPort = " + rmiPort + "\n" +
@@ -1139,6 +1142,7 @@ public class ConfigMonitoring {
             SSOServerMonConfig sMonInfo =
                 new SSOServerMonConfig.SSOServerMonInfoBuilder(monEna).
                     htmlPort(httpPort).
+                    htmlAuthFile(authFilePath).
                     snmpPort(snmpPort).
                     rmiPort(rmiPort).
                     monHtmlEnabled(httpEna).

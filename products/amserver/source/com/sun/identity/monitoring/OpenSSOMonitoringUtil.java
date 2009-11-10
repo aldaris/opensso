@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOMonitoringUtil.java,v 1.1 2009-10-20 23:56:44 bigfatrat Exp $
+ * $Id: OpenSSOMonitoringUtil.java,v 1.2 2009-11-10 01:33:22 bigfatrat Exp $
  *
  */
 
@@ -46,6 +46,7 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.security.DecodeAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 
@@ -175,7 +176,90 @@ public class OpenSSOMonitoringUtil {
                     if (st.countTokens() > 1) {
                         String userid = st.nextToken();
                         String passwd = st.nextToken();
-                        hm.put(userid, passwd);
+                        String decpswd =
+                            (String)AccessController.doPrivileged(
+                                new DecodeAction(passwd));
+                        hm.put(userid, decpswd);
+                    }
+                }
+            }
+            if (!hm.isEmpty()) {
+                int len = hm.size();
+                String ents[][] = new String[len][2];
+                Set hs = hm.keySet();
+                int i = 0;
+                for (Iterator it = hs.iterator(); it.hasNext(); ) {
+                    String userid = (String)it.next();
+                    ents[i][0] = userid;
+                    ents[i++][1] = (String)hm.get(userid);
+                }
+                return(ents);
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            debug.error(classMethod + "IOex on file " + filePath + ": " +
+                e.getMessage());
+        } catch (RuntimeException e) {
+            debug.error(classMethod +
+                "RuntimeEx on file " + filePath + ": ", e);
+        } catch (Exception e) {
+            debug.error(classMethod +
+                "Exception on file " + filePath + ": ", e);
+        }
+        return null;
+    }
+
+    protected String[][] getMonAuthList(String authFilePath) {
+        String classMethod = "OpenSSOMonitoringUtil.getMonAuthList: ";
+
+        if ((authFilePath == null) || (!(authFilePath.trim().length() > 0))) {
+            debug.error(classMethod + "No authentication file specified.");
+            return null;
+        }
+
+        String filePath = authFilePath;
+
+        // prep for the "%BASE_DIR%/%SERVER_URI%/" style filepath
+        if (authFilePath.contains("%BASE_DIR%") ||
+            (authFilePath.contains("%SERVER_URI%")))
+        {
+            String ossoUri =
+                SystemProperties.get(
+                    Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+            ossoUri = ossoUri.replace('\\','/');
+            String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
+            baseDir = baseDir.replace('\\','/');
+            if (ossoUri.startsWith("/")) {
+                byte[] btmp = ossoUri.getBytes();
+                ossoUri = new String(btmp, 1, (btmp.length - 1));
+            }
+            if (!ossoUri.endsWith("/")) {
+                ossoUri += "/";
+            }
+            if (!baseDir.endsWith("/")) {
+                baseDir += "/";
+            }
+
+            filePath = filePath.replaceAll("%BASE_DIR%", baseDir);
+            filePath = filePath.replaceAll("%SERVER_URI%", ossoUri);
+        }
+
+        HashMap hm = new HashMap();
+        try {
+            BufferedReader frdr = new BufferedReader(new FileReader(filePath));
+            String fbuff = null;
+            while ((fbuff = frdr.readLine()) != null) {
+                if (fbuff.trim().length() > 0)  {
+                    StringTokenizer st = new StringTokenizer(fbuff);
+                    // assume first is userid, second is password, ignore rest
+                    if (st.countTokens() > 1) {
+                        String userid = st.nextToken();
+                        String passwd = st.nextToken();
+                        String decpswd =
+                            (String)AccessController.doPrivileged(
+                                new DecodeAction(passwd));
+                        hm.put(userid, decpswd);
                     }
                 }
             }

@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amMonitoring.xml,v 1.2 2009-07-01 05:51:36 bigfatrat Exp $
+    $Id: amMonitoring.xml,v 1.3 2009-11-10 01:30:07 bigfatrat Exp $
 
 -->
 
@@ -75,7 +75,15 @@
                         <BooleanFalseValue i18nKey="i18nNo">false</BooleanFalseValue>
                     </BooleanValues>
                     <DefaultValues>
-                        <Value>false</Value>
+                        <Value>true</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-monitoring-authfile-path"
+                    type="single"
+                    syntax="string"
+                    i18nKey="a1021">
+                    <DefaultValues>
+                        <Value>%BASE_DIR%/%SERVER_URI%/opensso_mon_auth</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-monitoring-rmi-port"

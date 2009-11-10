@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOServerMonConfig.java,v 1.1 2009-06-19 02:23:16 bigfatrat Exp $
+ * $Id: SSOServerMonConfig.java,v 1.2 2009-11-10 01:33:22 bigfatrat Exp $
  *
  */
 
@@ -38,6 +38,7 @@ public class SSOServerMonConfig {
     boolean monHtmlPortEnabled;
     boolean monRmiPortEnabled;
     boolean monSnmpPortEnabled;
+    String monAuthFilePath;
 
     public SSOServerMonConfig() {
     }
@@ -50,6 +51,7 @@ public class SSOServerMonConfig {
         monHtmlPortEnabled = asib.monHtmlPortEnabled;
         monRmiPortEnabled = asib.monRmiPortEnabled;
         monSnmpPortEnabled = asib.monSnmpPortEnabled;
+        monAuthFilePath = asib.monAuthFilePath;
     }
 
     public static class SSOServerMonInfoBuilder {
@@ -60,6 +62,7 @@ public class SSOServerMonConfig {
         boolean monHtmlPortEnabled;
         boolean monRmiPortEnabled;
         boolean monSnmpPortEnabled;
+        String monAuthFilePath;
 
         public SSOServerMonInfoBuilder(boolean monEnabled) {
             monitoringEnabled = monEnabled;
@@ -92,6 +95,12 @@ public class SSOServerMonConfig {
 
         public SSOServerMonInfoBuilder monSnmpEnabled (boolean monSnmpEnabled) {
             monSnmpPortEnabled = monSnmpEnabled;
+            return this;
+        }
+
+        public SSOServerMonInfoBuilder htmlAuthFile (String authFilePath)
+        {
+            monAuthFilePath = authFilePath;
             return this;
         }
 
