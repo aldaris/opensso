@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionsBean.java,v 1.7 2009-11-06 19:56:13 farble1670 Exp $
+ * $Id: PermissionsBean.java,v 1.8 2009-11-10 19:29:05 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -95,6 +95,14 @@ public class PermissionsBean implements Serializable {
         permissions = permissionDao.getPermissions(rb);
     }
 
+    public boolean isHomeAllowed() {
+        return isAllowed(HOME);
+    }
+
+    public boolean isEntitlementsAllowed() {
+        return isAllowed(ENTITLEMENTS);
+    }
+
     public boolean isPolicyAllowed() {
         return isAllowed(POLICY);
     }
@@ -113,6 +121,10 @@ public class PermissionsBean implements Serializable {
 
     public boolean isPolicyViewAllowed() {
         return isAllowed(POLICY_VIEW);
+    }
+
+    public boolean isReferralAllowed() {
+        return isAllowed(REFERRAL);
     }
 
     public boolean isReferralCreateAllowed() {
@@ -189,6 +201,10 @@ public class PermissionsBean implements Serializable {
 
     public boolean isStsManageAllowed() {
         return isAllowed(STS_MANAGE);
+    }
+
+    public boolean isDelegationAllowed() {
+        return isAllowed(DELEGATION);
     }
 
     public boolean isDelegationCreateAllowed() {

@@ -22,39 +22,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Permission.java,v 1.8 2009-11-10 19:29:05 farble1670 Exp $
+ * $Id: AccessLevel.java,v 1.1 2009-11-10 19:29:05 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
-public enum Permission {
-    HOME,
-    ENTITLEMENTS,
-    POLICY,
-    POLICY_CREATE,
-    POLICY_MANAGE,
-    POLICY_VIEW,
-    POLICY_EDIT,
-    NEWS,
-    REFERRAL,
-    REFERRAL_CREATE,
-    REFERRAL_MANAGE,
-    REFERRAL_EDIT,
-    FEDERATION,
-    SAMLV2_HOSTED_SP_CREATE,
-    SAMLV2_HOSTED_IDP_CREATE,
-    SAMLV2_REMOTE_SP_CREATE,
-    SAMLV2_REMOTE_IDP_CREATE,
-    APPLICATION,
-    APPLICATION_CREATE,
-    APPLICATION_EDIT,
-    APPLICATION_MANAGE,
-    DELEGATION,
-    DELEGATION_CREATE,
-    WEB_SERVICE_SECURITY,
-    WSP_CREATE,
-    WSP_MANAGE,
-    WSC_CREATE,
-    WSC_MANAGE,
-    STS_MANAGE;
+import com.sun.identity.console.base.model.AMAdminConstants;
+
+public enum AccessLevel {
+
+    READ(AMAdminConstants.PERMISSION_READ),
+    WRITE(AMAdminConstants.PERMISSION_MODIFY),
+    DELEGATE(AMAdminConstants.PERMISSION_DELEGATE);
+
+    private String value;
+
+    AccessLevel(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

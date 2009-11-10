@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.8 2009-10-21 16:46:00 ggennaro Exp $
+   $Id: menu.xhtml,v 1.9 2009-11-10 19:29:06 farble1670 Exp $
 
 -->
 
@@ -38,11 +38,12 @@
         styleClass="menu">
         <ice:menuItem
             action="home"
+            rendered="#{permissionsBean.homeAllowed}"
             value="#{resources['menu.homeItemValue']}"/>
         <ice:menuItem
-            rendered="#{permissionsBean.policyAllowed}"
-            value="#{resources['menu.policyItemValue']}"
-            action="policy">
+            action="policy"
+            rendered="#{permissionsBean.entitlementsAllowed}"
+            value="#{resources['menu.policyItemValue']}">
             <ice:menuItem
                 rendered="#{permissionsBean.policyAllowed}"
                 value="#{resources['menu.policiesItemValue']}">
@@ -56,18 +57,19 @@
                     action="policy-manage"/>
             </ice:menuItem>
             <ice:menuItem
-                rendered="#{o:size(realmsBean.realmBeans) &gt; 1}"
+                rendered="#{permissionsBean.referralAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
                 value="#{resources['menu.referralsItemValue']}">
                 <ice:menuItem
-                    rendered="#{permissionsBean.referralCreateAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
+                    rendered="#{permissionsBean.referralCreateAllowed}"
                     value="#{resources['menu.referralCreateItemValue']}"
                     action="#{referralCreateWizardHandler.createAction}"/>
                 <ice:menuItem
-                    rendered="#{permissionsBean.referralManageAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
+                    rendered="#{permissionsBean.referralManageAllowed}"
                     value="#{resources['menu.referralManageItemValue']}"
                     action="referral-manage"/>
             </ice:menuItem>
             <ice:menuItem
+                rendered="#{permissionsBean.applicationAllowed}"
                 value="#{resources['menu.applicationsItemValue']}">
                 <ice:menuItem
                     rendered="#{permissionsBean.applicationCreateAllowed}"
@@ -79,6 +81,7 @@
                     action="application-manage"/>
             </ice:menuItem>
             <ice:menuItem
+                rendered="#{permissionsBean.delegationAllowed}"
                 value="#{resources['menu.delegationsItemValue']}">
                 <ice:menuItem
                     rendered="#{permissionsBean.delegationCreateAllowed}"
