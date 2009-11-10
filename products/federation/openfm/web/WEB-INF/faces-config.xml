@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.23 2009-11-09 23:38:25 farble1670 Exp $
+  $Id: faces-config.xml,v 1.24 2009-11-10 20:26:36 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2628,6 +2628,11 @@
         <navigation-case>
             <from-outcome>referral-manage</from-outcome>
             <to-view-id>/admin/facelet/referral-manage.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>referral-view</from-outcome>
+            <to-view-id>/admin/facelet/referral-view.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>

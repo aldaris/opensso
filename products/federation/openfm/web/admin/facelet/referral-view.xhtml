@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-  
+
    Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
-  
+
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -23,39 +23,35 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: referral-summary.xhtml,v 1.2 2009-11-10 20:26:37 farble1670 Exp $
+   $Id: referral-view.xhtml,v 1.1 2009-11-10 20:26:36 farble1670 Exp $
+
 -->
 
-<span
+<ui:composition
+    template="template/page.xhtml"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
-    xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
 
-    <o:section>
-        <ui:define name="section-title">
-            <ice:outputText
-                value="#{resources['referral-summary.sectionTitle']}"/>
-        </ui:define>
-        <ui:define name="section-details">
-            <ice:outputText
-                value="#{resources['referral-summary.sectionDetails']}"/>
-        </ui:define>
-        <ui:define name="section-body">
-            <o:summarypanel
-                link="#{link}"
-                summary="#{referralSummaryBean.nameReferralSummary}"/>
-            <o:summarypanel
-                link="#{link}"
-                summary="#{referralSummaryBean.descriptionReferralSummary}"/>
-            <o:summarypanel
-                link="#{link}"
-                summary="#{referralSummaryBean.resourcesReferralSummary}"/>
-            <o:summarypanel
-                link="#{link}"
-                summary="#{referralSummaryBean.subjectsReferralSummary}"/>
-        </ui:define>
-    </o:section>
-</span>
+    <ui:define name="panel-title">
+        <ice:outputText value="#{resources['referral-view.panelTitle']}" />
+    </ui:define>
+    <ui:define name="panel-details">
+        <ice:outputText value="#{resources['referral-view.panelDetails']}" />
+    </ui:define>
+    <ui:define name="panel-body">
+        <ui:include src="template/referral-summary.xhtml">
+            <ui:param
+                name="referralSummaryBean"
+                value="#{referralEditWizardBean}"/>
+            <ui:param
+                name="referralSummaryHandler"
+                value="#{referralEditWizardHandler}"/>
+            <ui:param
+                name="link"
+                value="false"/>
+        </ui:include>
+    </ui:define>
+</ui:composition>

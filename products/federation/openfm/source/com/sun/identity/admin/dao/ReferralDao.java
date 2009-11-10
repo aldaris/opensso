@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralDao.java,v 1.4 2009-09-30 22:53:34 farble1670 Exp $
+ * $Id: ReferralDao.java,v 1.5 2009-11-10 20:26:35 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.FilterHolder;
@@ -33,10 +34,13 @@ import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.RealmsBean;
 import com.sun.identity.admin.model.ReferralBean;
 import com.sun.identity.admin.model.ViewApplicationsBean;
+import com.sun.identity.entitlement.ApplicationPrivilege.Action;
+import com.sun.identity.entitlement.ApplicationPrivilegeManager;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ReferralPrivilegeManager;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.entitlement.util.SearchFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -49,6 +53,15 @@ public class ReferralDao implements Serializable {
 
     private int timeout;
     private int limit;
+
+    private ApplicationPrivilegeManager getApplicationPrivilegeManager() {
+        SSOToken t = new Token().getSSOToken();
+        Subject s = SubjectUtils.createSubject(t);
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        ApplicationPrivilegeManager apm = ApplicationPrivilegeManager.getInstance(realmBean.getName(), s);
+
+        return apm;
+    }
 
     private ReferralPrivilegeManager getReferralPrivilegeManager() {
         RealmBean rb = RealmsBean.getInstance().getRealmBean();
@@ -85,11 +98,14 @@ public class ReferralDao implements Serializable {
 
     public ReferralBean getReferralBean(String referralName) {
         ReferralPrivilegeManager rpm = getReferralPrivilegeManager();
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
 
         try {
             ReferralPrivilege rp = rpm.getReferral(referralName);
+            boolean writable = apm.hasPrivilege(rp, Action.MODIFY);
             ReferralBean rb = new ReferralBean(
                     rp,
+                    writable,
                     ViewApplicationsBean.getInstance().getViewApplications());
 
             return rb;
@@ -104,6 +120,7 @@ public class ReferralDao implements Serializable {
         psfs.add(new SearchFilter(Privilege.NAME_ATTRIBUTE, pattern));
 
         ReferralPrivilegeManager rpm = getReferralPrivilegeManager();
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
         List<ReferralBean> referralBeans = null;
 
         try {
@@ -113,8 +130,10 @@ public class ReferralDao implements Serializable {
             referralBeans = new ArrayList<ReferralBean>();
             for (String referralName : referralNames) {
                 ReferralPrivilege rp = rpm.getReferral(referralName);
+                boolean writable = apm.hasPrivilege(rp, Action.MODIFY);
                 ReferralBean rb = new ReferralBean(
                         rp,
+                        writable,
                         ViewApplicationsBean.getInstance().getViewApplications());
                 referralBeans.add(rb);
             }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralBean.java,v 1.2 2009-10-09 20:17:14 farble1670 Exp $
+ * $Id: ReferralBean.java,v 1.3 2009-11-10 20:26:35 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -159,6 +159,7 @@ public class ReferralBean {
     private String author;
     private String modifier;
     private boolean selected;
+    private boolean writable = true;
 
     public ReferralBean() {
         // nothing
@@ -166,7 +167,10 @@ public class ReferralBean {
 
     public ReferralBean(
             ReferralPrivilege rp,
+            boolean writable,
             Map<String, ViewApplication> viewApplications) {
+
+        this.writable = writable;
 
         // name
         name = rp.getName();
@@ -362,5 +366,13 @@ public class ReferralBean {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public boolean isWritable() {
+        return writable;
+    }
+
+    public void setWritable(boolean writable) {
+        this.writable = writable;
     }
 }
