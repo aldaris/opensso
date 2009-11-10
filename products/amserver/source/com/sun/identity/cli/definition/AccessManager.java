@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.109 2009-10-28 23:55:26 exu Exp $
+ * $Id: AccessManager.java,v 1.110 2009-11-10 19:01:05 veiming Exp $
  *
  */
 
@@ -2628,5 +2628,155 @@ public class AccessManager {
             "set-entitlement-config-unidentified-attr={0} was unidentified.",
             "set-entitlement-config-succeeded=Entitlements Service configuration is updated."})
     private String set_entitlement_conf;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.CreateApplicationPrivilege",
+        description="Add an application privilege to delegate resources of a given application.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "name|m|s|Name for the this delegation",
+            "application|t|s|Application name",
+            "actions|a|s|Possible values are READ, MODIFY, DELEGATE, ALL",
+            "subjecttype|b|s|Possible values are User or Group",
+            "subjects|s|m|Subject name"},
+        optionAliases={},
+        optionalOptions={
+            "description|p|s|Description for the this delegation.",
+            "resources|r|m|Resources to delegate, All resources in the applications will be delegated if this option is absent."},
+        macro="authentication",
+        resourceStrings={
+            "privilege-application-action-invalid={0} was invalid. Supported ones are READ, MODIFY, DELEGATE, ALL.",
+            "privilege-application-subject-type-invalid={0} was invalid. Supported ones are User and Group",
+            "privilege-application-application-invalid={0} was invalid. Either the application did not exist or you did not have permissions to delegate it.",
+            "create-application-privilege-succeeded={0} was added."})
+    private String add_app_priv;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.DeleteApplicationPrivilege",
+        description="Remove an application privileges.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "names|m|m|Names of application privilege to be removed"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "delete-application-privilege-succeeded=Privilege was removed",
+            "delete-application-privileges-succeeded=Privileges were removed"})
+    private String remove_app_privs;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.ShowApplicationPrivilege",
+        description="Show application privilege.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "name|m|s|Name of application privilege"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "show-application-privilege-output-name=Privilege name: {0}",
+            "show-application-privilege-output-description=Description: {0}",
+            "show-application-privilege-output-actions=Actions: {0}",
+            "show-application-privilege-output-subjects=Subject: {0} ({1})",
+            "show-application-privilege-output-resources=Resource: {0} ({1})"})
+    private String show_app_priv;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.ListApplicationPrivileges",
+        description="List application privileges in a realm.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "list-application-privileges-no-privileges=There were no privileges."})
+    private String list_app_privs;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.UpdateApplicationPrivilege",
+        description="Update an application privilege.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "name|m|s|Name for the this delegation"},
+        optionAliases={},
+        optionalOptions={
+            "actions|a|s|Possible values are READ, MODIFY, DELEGATE, ALL",
+            "description|p|s|Description for the this delegation."},
+        macro="authentication",
+        resourceStrings={
+            "update-application-privilege-invalid=description or actions option is needed..",
+            "update-application-privilege-succeeded={0} was updated."})
+    private String update_app_priv;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.SetApplicationPrivilegeSubjects",
+        description="Set application privilege subjects.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "name|m|s|Name for the this delegation",
+            "subjecttype|b|s|Possible values are User or Group",
+            "subjects|s|m|Subject name"},
+        optionAliases={},
+        optionalOptions={
+            "add|p|u|Subjects are added to this application if this option is set. Otherwise, subjects in the current application privilege will be overwritten."},
+        macro="authentication",
+        resourceStrings={})
+    private String update_app_priv_subjects;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.SetApplicationPrivilegeResources",
+        description="Set application privilege resources.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "name|m|s|Name for the this delegation",
+            "application|t|s|Application name"},
+        optionAliases={},
+        optionalOptions={
+            "add|p|u|Resources are added to this application if this option is set. Otherwise, resources in the current application privilege will be overwritten.",
+            "resources|r|m|Resources to delegate, All resources in the applications will be delegated if this option is absent."},
+        macro="authentication",
+        resourceStrings={})
+    private String update_app_priv_resources;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.RemoveApplicationPrivilegeSubjects",
+        description="Remove application privilege subjects.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "name|m|s|Name for the this delegation",
+            "subjecttype|b|s|Possible values are User or Group",
+            "subjects|s|m|Subject name"},
+        optionAliases={},
+        optionalOptions={},
+        macro="authentication",
+        resourceStrings={
+            "remove-application-privilege-subjects-emptied-subjects=Unable to processed this request because you have removed all the subjects in the application privilege."})
+    private String remove_app_priv_subjects;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.RemoveApplicationPrivilegeResources",
+        description="Remove application privilege resources.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Realm name",
+            "name|m|s|Name for the this delegation",
+            "application|t|s|Application name"},
+        optionAliases={},
+        optionalOptions={
+            "resources|r|m|Resources to removed, All resources in the applications will be removed if this option is absent."},
+        macro="authentication",
+        resourceStrings={
+            "remove-application-privilege-resources-emptied-resources=Unable to processed this request because you have removed all the resources in the application privilege."})
+    private String remove_app_priv_resources;
 }
 

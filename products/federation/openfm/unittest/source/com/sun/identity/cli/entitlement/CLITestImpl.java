@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLITestImpl.java,v 1.1 2009-08-21 22:27:55 veiming Exp $
+ * $Id: CLITestImpl.java,v 1.2 2009-11-10 19:01:05 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
@@ -39,7 +39,7 @@ import javax.security.auth.Subject;
 import org.testng.annotations.BeforeClass;
 
 
-public class CLITestImpl {
+public abstract class CLITestImpl {
     protected CommandManager cmdManager;
     private static DevNullOutputWriter outputWriter = new DevNullOutputWriter();
     protected SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -54,5 +54,10 @@ public class CLITestImpl {
             "com.sun.identity.cli.AccessManager");
         env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER, outputWriter);
         cmdManager = new CommandManager(env);
+
+        beforeClass();
+    }
+
+    protected void beforeClass() throws Exception {
     }
 }

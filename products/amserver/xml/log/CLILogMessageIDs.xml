@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.34 2009-08-19 05:40:40 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.35 2009-11-10 19:01:06 veiming Exp $
 
 -->
 
@@ -6895,5 +6895,201 @@
         </actions>
     </logmessage>
 
+    <logmessage name="ATTEMPT_CREATE_APPLICATION_PRIVILEGE" id="6010"
+        loglevel="LL_INFO"
+        description="Attempt to create application privilege.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create application privilege Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_CREATE_APPLICATION_PRIVILEGE" id="6011"
+        loglevel="LL_INFO"
+        description="Application privilege is created.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create application privilege Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_APPLICATION_PRIVILEGE" id="6012"
+        loglevel="LL_INFO"
+        description="Failed to create application privilege.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute create application privilege Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_DELETE_APPLICATION_PRIVILEGE" id="6020"
+        loglevel="LL_INFO"
+        description="Attempt to delete application privilege.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete application privilege Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_DELETE_APPLICATION_PRIVILEGE" id="6021"
+        loglevel="LL_INFO"
+        description="Application privilege is deleted.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete application privilege Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_APPLICATION_PRIVILEGE" id="6022"
+        loglevel="LL_INFO"
+        description="Failed to delete application privilege.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute delete application privilege Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_SHOW_APPLICATION_PRIVILEGE" id="6020"
+        loglevel="LL_INFO"
+        description="Attempt to show application privilege.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show application privilege Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_SHOW_APPLICATION_PRIVILEGE" id="6021"
+        loglevel="LL_INFO"
+        description="Application privilege is displayed.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show application privilege Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SHOW_APPLICATION_PRIVILEGE" id="6022"
+        loglevel="LL_INFO"
+        description="Failed to show application privilege.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute show application privilege Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_LIST_APPLICATION_PRIVILEGES" id="6030"
+        loglevel="LL_INFO"
+        description="Attempt to list application privileges in a realm.">
+        <datainfo>
+            <item>realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list application privileges Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_LIST_APPLICATION_PRIVILEGES" id="6031"
+        loglevel="LL_INFO"
+        description="Application privileges are displayed.">
+        <datainfo>
+            <item>realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list application privileges Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_APPLICATION_PRIVILEGES" id="6032"
+        loglevel="LL_INFO"
+        description="Failed to list application privileges.">
+        <datainfo>
+            <item>realm</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list application privileges Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+
+    <logmessage name="ATTEMPT_UPDATE_APPLICATION_PRIVILEGE" id="6040"
+        loglevel="LL_INFO"
+        description="Attempt to update application privilege.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update application privilege Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_UPDATE_APPLICATION_PRIVILEGE" id="6041"
+        loglevel="LL_INFO"
+        description="Application privilege is updated.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update application privilege Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_UPDATE_APPLICATION_PRIVILEGE" id="6042"
+        loglevel="LL_INFO"
+        description="Failed to update application privilege.">
+        <datainfo>
+            <item>realm</item>
+            <item>application privilege name</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update application privileges Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
 
 </logmessages>

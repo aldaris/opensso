@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIException.java,v 1.3 2008-10-30 18:25:01 veiming Exp $
+ * $Id: CLIException.java,v 1.4 2009-11-10 19:01:05 veiming Exp $
  *
  */
 
@@ -38,6 +38,11 @@ public class CLIException extends Exception {
     private Throwable root;
     private int exitCode = 0;
     private String subcommandName;
+
+    public CLIException(String string, String[] param,
+        int REQUEST_CANNOT_BE_PROCESSED) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 
     /**
      * Constructs a CLI Exception.
