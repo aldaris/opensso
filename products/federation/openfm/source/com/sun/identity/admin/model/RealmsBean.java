@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmsBean.java,v 1.2 2009-11-11 00:49:17 farble1670 Exp $
+ * $Id: RealmsBean.java,v 1.3 2009-11-11 21:28:20 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -63,7 +63,6 @@ public class RealmsBean implements Serializable {
     public void setRealmDao(RealmDao realmDao) {
         this.realmDao = realmDao;
         baseRealmBean = realmDao.getBaseRealmBean();
-        realmBean = baseRealmBean;
         reset();
     }
 
@@ -93,6 +92,13 @@ public class RealmsBean implements Serializable {
 
     public void setRealmBean(RealmBean realmBean) {
         this.realmBean = realmBean;
+        if (realmBean.getName() == null) {
+            // first time initialization
+            realmBean.setName(baseRealmBean.getName());
+        } else if (!realmBeans.contains(realmBean)) {
+            // realm was removed
+            realmBean.setName(baseRealmBean.getName());
+        }
     }
 
     public RealmBean getBaseRealmBean() {

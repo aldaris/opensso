@@ -2,7 +2,9 @@ package com.sun.identity.admin.model;
 
 import com.sun.identity.admin.Resources;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.faces.application.FacesMessage;
 
 public class ResourcesApplicationWizardStepValidator extends ApplicationWizardStepValidator {
@@ -32,6 +34,20 @@ public class ResourcesApplicationWizardStepValidator extends ApplicationWizardSt
             mb.setSeverity(FacesMessage.SEVERITY_INFO);
 
             getMessagesBean().addMessageBean(mb);
+        }
+
+        Set<Resource> rs = new HashSet<Resource>(resources);
+        if (rs.size() != resources.size()) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "duplicateResourceSummary"));
+            mb.setDetail(r.getString(this, "duplicateResourceDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_INFO);
+
+            getMessagesBean().addMessageBean(mb);
+            
+            resources.clear();
+            resources.addAll(rs);
         }
 
         return true;

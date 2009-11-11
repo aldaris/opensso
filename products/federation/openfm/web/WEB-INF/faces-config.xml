@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.24 2009-11-10 20:26:36 farble1670 Exp $
+  $Id: faces-config.xml,v 1.25 2009-11-11 21:28:21 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -97,12 +97,22 @@
     </managed-bean>
 
     <managed-bean>
+        <managed-bean-name>realmBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.RealmBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>realmsBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.RealmsBean</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
+        <managed-bean-scope>request</managed-bean-scope>
         <managed-property>
             <property-name>realmDao</property-name>
             <value>#{realmDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>realmBean</property-name>
+            <value>#{realmBean}</value>
         </managed-property>
     </managed-bean>
 
