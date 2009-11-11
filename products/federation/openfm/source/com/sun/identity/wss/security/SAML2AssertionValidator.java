@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2AssertionValidator.java,v 1.5 2009-09-14 23:02:33 huacui Exp $
+ * $Id: SAML2AssertionValidator.java,v 1.6 2009-11-11 17:17:16 huacui Exp $
  *
  */
 
@@ -47,6 +47,7 @@ import com.sun.identity.saml2.assertion.AuthnContext;
 import com.sun.identity.saml2.assertion.Attribute;
 import com.sun.identity.saml2.assertion.SubjectConfirmation;
 import com.sun.identity.saml2.assertion.SubjectConfirmationData;
+import com.sun.identity.shared.StringUtils;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.security.cert.X509Certificate;
 
@@ -56,7 +57,7 @@ import java.security.cert.X509Certificate;
 public class SAML2AssertionValidator {
     
   //  private Set trustedIssuers = null;
-    private Map attributeMap = null;
+    private Map<String, String> attributeMap = null;
     private String subjectName = null;    
     private Map config = null;
     private static final String TRUSTED_ISSUERS = "trustedIssuers";
@@ -159,15 +160,22 @@ public class SAML2AssertionValidator {
                   
         List<Attribute> attributes = attributeStatement.getAttribute();
         if(!attributes.isEmpty()) {
-           attributeMap = new HashMap(); 
+           attributeMap = new HashMap<String, String>(); 
         }
         for (Iterator iter = attributes.iterator(); iter.hasNext();) {
              Attribute attribute = (Attribute)iter.next();                
              String attrName = attribute.getName();             
              List <String>  values = 
                         attribute.getAttributeValueString();
-             if (values != null && !values.isEmpty()) {
-                attributeMap.put(attrName, (String)values.get(0));
+             if ((values != null) && (!values.isEmpty())) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < values.size(); i++) {
+                    if (i != 0) {
+                        sb.append(StringUtils.PROPERTY_VALUE_DELIMITER);
+                    }
+                    sb.append(StringUtils.getEscapedValue(values.get(i)));
+                }
+                attributeMap.put(attrName, sb.toString());
              }            
         }       
     }

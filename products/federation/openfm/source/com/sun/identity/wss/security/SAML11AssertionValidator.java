@@ -22,17 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML11AssertionValidator.java,v 1.6 2009-05-15 18:02:09 huacui Exp $
+ * $Id: SAML11AssertionValidator.java,v 1.7 2009-11-11 17:17:16 huacui Exp $
  *
  */
 
 package com.sun.identity.wss.security;
 
-import org.w3c.dom.Element;
-import java.util.Set;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.w3c.dom.Element;
 
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.saml.assertion.Assertion;
@@ -42,7 +43,9 @@ import com.sun.identity.saml.assertion.AuthenticationStatement;
 import com.sun.identity.saml.assertion.AttributeStatement;
 import com.sun.identity.saml.assertion.Attribute;
 import com.sun.identity.saml.assertion.Subject;
+import com.sun.identity.saml.assertion.SubjectConfirmation;
 import com.sun.identity.saml.assertion.SubjectLocality;
+import com.sun.identity.shared.StringUtils;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.wss.sts.STSConstants;
 import java.security.cert.X509Certificate;
@@ -54,7 +57,7 @@ public class SAML11AssertionValidator {
     
   
     private static Debug debug = WSSUtils.debug;
-    private Map attributeMap = null;
+    private Map<String, String> attributeMap = new HashMap<String, String>();
     private String subjectName = null;      
     private Map config = null;
     private X509Certificate cert = null;
@@ -142,11 +145,14 @@ public class SAML11AssertionValidator {
                     WSSUtils.bundle.getString("invalidIPAddress"));
            }*/
         }
-        
-        Element keyInfo = authnStatement.getSubject().
-                getSubjectConfirmation().getKeyInfo();
-        if(keyInfo != null) {
-           cert = WSSUtils.getCertificate(keyInfo); 
+       
+        SubjectConfirmation sc = 
+            authnStatement.getSubject().getSubjectConfirmation(); 
+        if (sc != null) {
+            Element keyInfo = sc.getKeyInfo();
+            if(keyInfo != null) {
+               cert = WSSUtils.getCertificate(keyInfo); 
+            }
         }               
     }
     
@@ -159,11 +165,13 @@ public class SAML11AssertionValidator {
                        WSSUtils.bundle.getString("nullSubject"));
             }
             subjectName = subject.getNameIdentifier().getName();
-            Element keyInfo = attributeStatement.getSubject().
-                getSubjectConfirmation().getKeyInfo();
-            if(keyInfo != null) {
-               cert = WSSUtils.getCertificate(keyInfo); 
-            } 
+            SubjectConfirmation sc = subject.getSubjectConfirmation(); 
+            if (sc != null) {
+                Element keyInfo = sc.getKeyInfo();
+                if(keyInfo != null) {
+                   cert = WSSUtils.getCertificate(keyInfo); 
+                }
+            }               
             
             List<Attribute> attributes = attributeStatement.getAttribute();
             for (Iterator iter = attributes.iterator(); iter.hasNext();) {
@@ -172,9 +180,15 @@ public class SAML11AssertionValidator {
                 List <org.w3c.dom.Element>  values = 
                         attribute.getAttributeValue();
                 if(values != null && !values.isEmpty()) {
-                   String value = 
-                           XMLUtils.getElementValue((Element)values.get(0));
-                   attributeMap.put(attrName, value);
+                   StringBuilder sb = new StringBuilder();
+                   for (int i = 0; i < values.size(); i++) {
+                       if (i != 0) {
+                           sb.append(StringUtils.PROPERTY_VALUE_DELIMITER);
+                       }
+                       sb.append(StringUtils.getEscapedValue(XMLUtils.getElementValue(
+                                 (Element)values.get(i))));
+                   }
+                   attributeMap.put(attrName, sb.toString());
                 }            
             }
         } catch (SAMLException se) {
