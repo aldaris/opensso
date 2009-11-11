@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: status.xhtml,v 1.1 2009-08-19 05:41:12 veiming Exp $
+   $Id: status.xhtml,v 1.2 2009-11-11 21:46:46 farble1670 Exp $
 
 -->
 
@@ -68,18 +68,21 @@
             columns="3">
             <ice:outputLink
                 value="#{statusBean.standardConsoleLink}">
-                <ice:outputLabel
+                <ice:outputText
+                    styleClass="iceOutLbl"
                     value="#{resources['status.standardConsole']}"/>
             </ice:outputLink>
             <ice:outputLink
                 target="blank"
                 value="#{statusBean.helpLink}">
-                <ice:outputLabel
+                <ice:outputText
+                    styleClass="iceOutLbl"
                     value="#{resources['status.help']}"/>
             </ice:outputLink>
             <ice:outputLink
                 value="#{statusBean.logoutLink}">
-                <ice:outputLabel
+                <ice:outputText
+                    styleClass="iceOutLbl"
                     value="#{resources['status.logout']}"/>
             </ice:outputLink>
         </ice:panelGrid>
