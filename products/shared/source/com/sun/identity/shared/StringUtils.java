@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringUtils.java,v 1.1 2009-01-13 19:16:49 veiming Exp $
+ * $Id: StringUtils.java,v 1.2 2009-11-11 17:14:52 huacui Exp $
  *
  */
 
@@ -32,6 +32,17 @@ package com.sun.identity.shared;
  * This class provides string related helper methods.
  */
 public class StringUtils {
+
+     // ampersand character '&'
+     public static final String AMPERSAND = "&";
+     // HTML escape code for character '&'
+     public static final String ESCAPE_AMPERSAND = "&#38;";
+     // character '|' used as property value delimiter
+     public static final String PROPERTY_VALUE_DELIMITER = "|";
+     // HTML escape code for character '|'
+     public static final String ESCAPE_DELIMITER = "&#124;";
+
+
     private StringUtils() {
     }
 
@@ -46,4 +57,19 @@ public class StringUtils {
     public static String strReplaceAll(String orig, String pattern, String str){
         return orig.replaceAll(pattern, str.replaceAll("[$]", "\\\\\\$"));
     }
+
+    /**
+     * Returns special character escaped string.
+     *
+     * @param value original string.
+     * @return special character escaped string.
+     */
+    public static String getEscapedValue(String value) {
+        if (value != null) {
+            return value.replaceAll(AMPERSAND, ESCAPE_AMPERSAND).replaceAll(
+                         "\\" + PROPERTY_VALUE_DELIMITER, ESCAPE_DELIMITER);
+        }
+        return null;
+    }
+
 }
