@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Notifier.java,v 1.1 2009-08-19 05:40:35 veiming Exp $
+ * $Id: Notifier.java,v 1.2 2009-11-11 23:53:22 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -36,19 +36,23 @@ import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.interfaces.IThreadPool;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.SMSException;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.AccessController;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class Notifier implements Runnable {
+    private static final int CONN_TIMEOUT = 1000; //TOFIX
+    private static final int NUM_RETRY = 3; //TOFIX
+    private static final int WAIT_BETWEEN_RETRY = 100; //TOFIX
+
     private static final String currentServerInstance =
         SystemProperties.getServerInstanceName();
     private String action;
@@ -70,7 +74,7 @@ public class Notifier implements Runnable {
         try {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-            Set<String> serverURLs =
+            Set<String> serverURLs = 
                 ServerConfiguration.getServerInfo(adminToken);
 
             for (String url : serverURLs) {
@@ -95,7 +99,18 @@ public class Notifier implements Runnable {
                             .append(URLEncoder.encode(params.get(k),
                             "UTF-8"));
                     }
-                    postRequest(strURL, buff.toString());
+
+                    for (int i = 0; i < NUM_RETRY; i++) {
+                        if (postRequest(strURL, buff.toString())) {
+                            break;
+                        } else {
+                            try {
+                                Thread.sleep(WAIT_BETWEEN_RETRY);
+                            } catch (InterruptedException ex) {
+                                //DO NOTHING
+                            }
+                        }
+                    }
                 }
             }
         } catch (UnsupportedEncodingException ex) {
@@ -109,35 +124,28 @@ public class Notifier implements Runnable {
         }
     }
 
-    private String postRequest(String strURL, String data)
+    private boolean postRequest(String strURL, String data)
         throws IOException {
-
         OutputStreamWriter wr = null;
-        BufferedReader rd = null;
 
         try {
             URL url = new URL(strURL);
-            URLConnection conn = url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            conn.setConnectTimeout(CONN_TIMEOUT);
+            conn.setReadTimeout(CONN_TIMEOUT);
             conn.setDoOutput(true);
             wr = new OutputStreamWriter(
                 conn.getOutputStream());
             wr.write(data);
             wr.flush();
-
-            rd = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()));
-            StringBuffer result = new StringBuffer();
-            String line;
-            while ((line = rd.readLine()) != null) {
-                result.append(line).append("\n");
-            }
-            return result.toString();
+            int status = conn.getResponseCode();
+            return (status == HttpURLConnection.HTTP_OK);
+        } catch (SocketTimeoutException e) {
+            PrivilegeManager.debug.error("Notifier.post", e);
+            return false;
         } finally {
             if (wr != null) {
                 wr.close();
-            }
-            if (rd != null) {
-                rd.close();
             }
         }
     }
