@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.36 2009-11-05 19:16:26 manish_rustagi Exp $
+ * $Id: LoginViewBean.java,v 1.37 2009-11-11 12:22:32 bhavnab Exp $
  *
  */
 
@@ -330,6 +330,9 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             }
             String authCookieValue = AuthClientUtils.getAuthCookieValue(request);
             loginURL = AuthClientUtils.constructLoginURL(request);
+            session.setAttribute("LoginURL", loginURL);
+            reqDataHash = AuthClientUtils.parseRequestParameters(request);
+
             if (ssoToken != null) {
                 if (loginDebug.messageEnabled()) {
                     loginDebug.message("Existing valid ssoToken = " + ssoToken);
