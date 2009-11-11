@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.4 2009-09-17 16:58:42 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.5 2009-11-11 19:01:36 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -143,6 +143,8 @@ public class ViewApplication implements Serializable {
     }
 
     public ViewApplication(Application a) {
+        this();
+        
         ManagedBeanResolver mbr = new ManagedBeanResolver();
 
         name = a.getName();
