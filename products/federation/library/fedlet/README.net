@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.net,v 1.4 2009-06-11 20:44:20 ggennaro Exp $
+$Id: README.net,v 1.5 2009-11-11 18:13:41 ggennaro Exp $
 
 %% Contents:
     %% 1. Contents of this directory 
@@ -61,10 +61,12 @@ $Id: README.net,v 1.4 2009-06-11 20:44:20 ggennaro Exp $
                                   
 
 %% 2. What is currently supported
-   The Fedlet.dll currently supports IDP and SP initiated SSO with POST and
-   Artifact binding.  In addition, multiple IDP and IDP Discovery are also
-   supported. These features are made available by providing ASP.NET developers
-   an API to retrieve an AuthnResponse from their IDP.  Details are described in
+   The Fedlet.dll currently supports IDP and SP initiated Single Sign On (SSO)
+   with POST and Artifact binding.  Multiple IDP and IDP Discovery are also
+   supported with the aforementioned SSO.  In addition, IDP and SP initiated
+   Single Logout Out is also supported. These features are made available by
+   providing ASP.NET developers an API and an example sample application to
+   retrieve an AuthnResponse from their IDP.  Details are described in
    Section 5 below.
 
 %% 3. How to configure and deploy the Fedlet for .NET
@@ -80,12 +82,12 @@ $Id: README.net,v 1.4 2009-06-11 20:44:20 ggennaro Exp $
       b) Within the conf/ folder, edit the template files by changing
          the following tags:
 
-    FEDLET_COT       : Replace with the name of your circle of trust.
-    FEDLET_ENTITY_ID : Replace with the name of the entity id for your Fedlet.
-    FEDLET_URL       : Replace with the url of the Fedlet.
-                       http://sp.example.com/SampleApp/fedletapplication.aspx
-    IDP_ENTITY_ID    : Replace with the name of the entity id of the remote 
-                       Identity Provider.
+    FEDLET_COT        : Replace with the name of your circle of trust.
+    FEDLET_ENTITY_ID  : Replace with the name of the entity id for your Fedlet.
+    FEDLET_DEPLOY_URI : Replace with the url of the Fedlet.
+                        http://sp.example.com/SampleApp/
+    IDP_ENTITY_ID     : Replace with the name of the entity id of the remote
+                        Identity Provider.
 
       c) Copy the edited files above to your application's App_Data/ folder.
       d) Obtain the standard metadata XML file from your IDP, name it idp.xml,

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: AuthnResponse.cs,v 1.4 2009-10-26 18:55:19 ggennaro Exp $
+ * $Id: AuthnResponse.cs,v 1.5 2009-11-11 18:13:39 ggennaro Exp $
  */
 
 using System;
@@ -244,6 +244,21 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
+        /// Gets the session index within the authn statement within the authn
+        /// response assertion.
+        /// </summary>
+        public string SessionIndex
+        {
+            get
+            {
+                string xpath = "/samlp:Response/saml:Assertion/saml:AuthnStatement";
+                XmlNode root = this.xml.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.nsMgr);
+                return node.Attributes["SessionIndex"].Value.Trim();
+            }
+        }
+
+        /// <summary>
         /// Gets the name ID of the subject within the authn response assertion.
         /// </summary>
         public string SubjectNameId
@@ -335,6 +350,7 @@ namespace Sun.Identity.Saml2
                         string value = node.InnerText.Trim();
                         values.Add(value);
                     }
+
                     attributes.Add(name, values);
                 }
 

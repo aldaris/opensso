@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ArtifactResponse.cs,v 1.1 2009-06-18 22:20:15 ggennaro Exp $
+ * $Id: ArtifactResponse.cs,v 1.2 2009-11-11 18:13:39 ggennaro Exp $
  */
 
 using System;
@@ -81,7 +81,7 @@ namespace Sun.Identity.Saml2
                 XmlNode response = this.xml.DocumentElement.SelectSingleNode(xpath, this.nsMgr);
                 if (response == null)
                 {
-                    throw new Saml2Exception("todo: couldn't find the response element in the response.");
+                    throw new Saml2Exception(Resources.ArtifactResponseMissingResponse);
                 }
 
                 this.authnResponse = new AuthnResponse(response.OuterXml);

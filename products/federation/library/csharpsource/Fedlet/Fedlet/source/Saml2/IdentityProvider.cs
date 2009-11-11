@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: IdentityProvider.cs,v 1.3 2009-06-11 18:37:58 ggennaro Exp $
+ * $Id: IdentityProvider.cs,v 1.4 2009-11-11 18:13:39 ggennaro Exp $
  */
 
 using System.Collections;
@@ -153,6 +153,22 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
+        /// Gets the list of single log out service locations, if present,
+        /// otherwise an empty list.
+        /// </summary>
+        public XmlNodeList SingleLogOutServiceLocations
+        {
+            get
+            {
+                string xpath = "/md:EntityDescriptor/md:IDPSSODescriptor/md:SingleLogoutService";
+                XmlNode root = this.metadata.DocumentElement;
+                XmlNodeList nodeList = root.SelectNodes(xpath, this.metadataNsMgr);
+
+                return nodeList;
+            }
+        }
+
+        /// <summary>
         /// Gets the list of single sign on service locations, if present,
         /// otherwise an empty list.
         /// </summary>
@@ -189,6 +205,63 @@ namespace Sun.Identity.Saml2
             if (node != null)
             {
                 return node.Attributes["Location"].Value.Trim();
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Obtain the single logout location based on the given binding.
+        /// </summary>
+        /// <param name="binding">
+        /// The binding (should be made into constants / types).
+        /// </param>
+        /// <returns>
+        /// Service location as defined in the metadata for the specified IDP
+        /// and binding.
+        /// </returns>
+        public string GetSingleLogoutServiceLocation(string binding)
+        {
+            StringBuilder xpath = new StringBuilder();
+            xpath.Append("/md:EntityDescriptor/md:IDPSSODescriptor/md:SingleLogoutService");
+            xpath.Append("[@Binding='");
+            xpath.Append(binding);
+            xpath.Append("']");
+
+            XmlNode root = this.metadata.DocumentElement;
+            XmlNode node = root.SelectSingleNode(xpath.ToString(), this.metadataNsMgr);
+            if (node != null)
+            {
+                return node.Attributes["Location"].Value.Trim();
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Obtain the single logout resopnse location based on the given
+        /// binding.
+        /// </summary>
+        /// <param name="binding">
+        /// The binding (should be made into constants / types).
+        /// </param>
+        /// <returns>
+        /// Service response location as defined in the metadata for the
+        /// specified IDP and binding.
+        /// </returns>
+        public string GetSingleLogoutServiceResponseLocation(string binding)
+        {
+            StringBuilder xpath = new StringBuilder();
+            xpath.Append("/md:EntityDescriptor/md:IDPSSODescriptor/md:SingleLogoutService");
+            xpath.Append("[@Binding='");
+            xpath.Append(binding);
+            xpath.Append("']");
+
+            XmlNode root = this.metadata.DocumentElement;
+            XmlNode node = root.SelectSingleNode(xpath.ToString(), this.metadataNsMgr);
+            if (node != null)
+            {
+                return node.Attributes["ResponseLocation"].Value.Trim();
             }
 
             return null;

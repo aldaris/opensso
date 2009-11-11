@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: Saml2Constants.cs,v 1.4 2009-06-11 18:37:58 ggennaro Exp $
+ * $Id: Saml2Constants.cs,v 1.5 2009-11-11 18:13:39 ggennaro Exp $
  */
 
 namespace Sun.Identity.Saml2
@@ -129,10 +129,20 @@ namespace Sun.Identity.Saml2
         public const int IdLength = 20;
 
         /// <summary>
+        /// Constant for idpEntityId parameter.
+        /// </summary>
+        public const string IdpEntityId = "idpEntityID";
+
+        /// <summary>
         /// Constant for the request parameter for specifying if the 
         /// AuthnRequest is passive.
         /// </summary>
         public const string IsPassive = "IsPassive";
+
+        /// <summary>
+        /// Constant for the RelayState parameter.
+        /// </summary>
+        public const string RelayState = "RelayState";
 
         /// <summary>
         /// Constant for the response parameter for SAML responses.
@@ -148,6 +158,36 @@ namespace Sun.Identity.Saml2
         /// Constant for the reqBinding parameter.
         /// </summary>
         public const string RequestBinding = "ReqBinding";
+
+        /// <summary>
+        /// Constant for the SignatureAlgorithm parameter.
+        /// </summary>
+        public const string SignatureAlgorithm = "SigAlg";
+
+        /// <summary>
+        /// Constant for the DSA type of signature algorithm. 
+        /// </summary>
+        public const string SignatureAlgorithmDsa = "http://www.w3.org/2000/09/xmldsig#dsa-sha1";
+
+        /// <summary>
+        /// Constant for the RSA type of signature algorithm. 
+        /// </summary>
+        public const string SignatureAlgorithmRsa = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+
+        /// <summary>
+        /// Constant for the Signature parameter.
+        /// </summary>
+        public const string Signature = "Signature";
+
+        /// <summary>
+        /// Constant for SessionIndex parameter.
+        /// </summary>
+        public const string SessionIndex = "SessionIndex";
+
+        /// <summary>
+        /// Constant for SubjectNameId parameter.
+        /// </summary>
+        public const string SubjectNameId = "SubjectNameId";
 
         /// <summary>
         /// Constant for status codes used in SAML responses.

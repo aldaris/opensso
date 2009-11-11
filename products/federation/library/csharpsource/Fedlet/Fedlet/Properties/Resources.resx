@@ -162,17 +162,8 @@
   <data name="AuthnResponseInvalidConditionTime" xml:space="preserve">
     <value>AuthnResponse failed validation due to an invalid condition related to time.</value>
   </data>
-  <data name="AuthnResponseInvalidIssuer" xml:space="preserve">
-    <value>AuthnResponse failed validation due to an invalid issuer.</value>
-  </data>
   <data name="AuthnResponseInvalidSignature" xml:space="preserve">
     <value>AuthnResponse failed validation due to an invalid signature.</value>
-  </data>
-  <data name="AuthnResponseInvalidStatusCode" xml:space="preserve">
-    <value>AuthnResponse failed validation due to an invalid status code.</value>
-  </data>
-  <data name="AuthnResponseNotInCircleOfTrust" xml:space="preserve">
-    <value>AuthnResponse failed validation due to untrusted service providers.</value>
   </data>
   <data name="ServiceProviderUtilityNoSamlResponseReceived" xml:space="preserve">
     <value>No SAML Response was received.</value>
@@ -222,9 +213,6 @@
   <data name="AuthnRequestIsNull" xml:space="preserve">
     <value>AuthnRequest was null.</value>
   </data>
-  <data name="AuthnResponseInvalidInResponseTo" xml:space="preserve">
-    <value>AuthnResponse failed validation due to unknown InResponseTo ID.</value>
-  </data>
   <data name="AuthnResponseInvalidSignatureReference" xml:space="preserve">
     <value>AuthnResponse failed validation due to invalid signature reference.</value>
   </data>
@@ -248,5 +236,113 @@
   </data>
   <data name="ArtifactResolutionInvalidInResponseTo" xml:space="preserve">
     <value>ArtifactResponse failed due to invalid InResponseTo ID.</value>
+  </data>
+  <data name="LogoutRequestIsNull" xml:space="preserve">
+    <value>LogoutRequest was null.</value>
+  </data>
+  <data name="LogoutRequestNullArgument" xml:space="preserve">
+    <value>Specified SAML logout request was null.</value>
+  </data>
+  <data name="LogoutRequestXmlException" xml:space="preserve">
+    <value>Specified SAML logout request threw an XML exception.</value>
+  </data>
+  <data name="ServiceProviderUtilityIdpSingleLogoutSvcLocNotDefined" xml:space="preserve">
+    <value>Single Logout Service Location not defined for the specified IDP.</value>
+  </data>
+  <data name="LogoutRequestSessionIndexNotDefined" xml:space="preserve">
+    <value>SessionIndex was not defined.</value>
+  </data>
+  <data name="LogoutRequestSubjectNameIdNotDefined" xml:space="preserve">
+    <value>SubjectNameId was not defined.</value>
+  </data>
+  <data name="ServiceProviderUtilityUnsupportedLogoutBinding" xml:space="preserve">
+    <value>Specified logout binding is not supported.</value>
+  </data>
+  <data name="ServiceProviderUtilityLogoutRequestIsNull" xml:space="preserve">
+    <value>LogoutRequest was null.</value>
+  </data>
+  <data name="LogoutResponseInvalidInResponseTo" xml:space="preserve">
+    <value>LogoutResponse failed validation due to unknown InResponseTo ID.</value>
+  </data>
+  <data name="LogoutRequestWebException" xml:space="preserve">
+    <value>An error occurred in sending the LogoutRequest SOAP message.</value>
+  </data>
+  <data name="LogoutResponseInvalidStatusCode" xml:space="preserve">
+    <value>LogoutResponse failed validation due to an invalid status code.</value>
+  </data>
+  <data name="LogoutRequestIdentityProviderIsNull" xml:space="preserve">
+    <value>Identity Provider was null.</value>
+  </data>
+  <data name="LogoutRequestServiceProviderIsNull" xml:space="preserve">
+    <value>Service Provider was null.</value>
+  </data>
+  <data name="LogoutResponseLogoutRequestIsNull" xml:space="preserve">
+    <value>Logout Request was null.</value>
+  </data>
+  <data name="ServiceProviderUtilityIdpNotDeterminedFromLogoutRequest" xml:space="preserve">
+    <value>Could not determine IDP from the logout request.</value>
+  </data>
+  <data name="ServiceProviderUtilityIdpSingleLogoutSvcResLocNotDefined" xml:space="preserve">
+    <value>Single Logout Service Response Location not defined for the specified IDP.</value>
+  </data>
+  <data name="ServiceProviderUtilityLogoutResponseIsNull" xml:space="preserve">
+    <value>LogoutResponse was null.</value>
+  </data>
+  <data name="ServiceProviderUtilityNoSamlRequestReceived" xml:space="preserve">
+    <value>No SAML Request was received.</value>
+  </data>
+  <data name="LogoutResponseIdentityProviderIsNull" xml:space="preserve">
+    <value>Identity Provider was null.</value>
+  </data>
+  <data name="LogoutResponseServiceProviderIsNull" xml:space="preserve">
+    <value>Service Provider was null.</value>
+  </data>
+  <data name="ArtifactResponseMissingResponse" xml:space="preserve">
+    <value>Specified SAML artifact response did not have the Response element.</value>
+  </data>
+  <data name="AuthnResponseInvalidInResponseTo" xml:space="preserve">
+    <value>AuthnResponse failed validation due to unknown InResponseTo ID.</value>
+  </data>
+  <data name="InvalidIdpEntityIdNotInCircleOfTrust" xml:space="preserve">
+    <value>Validation failed due to the IDP and SP not being in the same circle of trust.</value>
+  </data>
+  <data name="InvalidInResponseTo" xml:space="preserve">
+    <value>Validation failed due to an invalid InResponseTo ID.</value>
+  </data>
+  <data name="InvalidIssuer" xml:space="preserve">
+    <value>Validation failed due to an invalid Issuer.</value>
+  </data>
+  <data name="InvalidStatusCode" xml:space="preserve">
+    <value>Validation failed due to an invalid StatusCode.</value>
+  </data>
+  <data name="LogoutResponseInvalidIssuer" xml:space="preserve">
+    <value>LogoutResponse failed validatione due to invalid Issuer.</value>
+  </data>
+  <data name="LogoutRequestInvalidSignatureMissing" xml:space="preserve">
+    <value>LogoutRequest failed validation due to missing signature.</value>
+  </data>
+  <data name="SignedQueryStringCertIsNull" xml:space="preserve">
+    <value>Certifcate not provided for checking query string signature.</value>
+  </data>
+  <data name="SignedQueryStringIsNull" xml:space="preserve">
+    <value>Query string not provided for checking signature.</value>
+  </data>
+  <data name="SignedQueryStringMissingSigAlg" xml:space="preserve">
+    <value>Query string did not have the SigAlg parameter used for query string validation.</value>
+  </data>
+  <data name="SignedQueryStringMissingSignature" xml:space="preserve">
+    <value>Query string did not have the Signature parameter used for query string validation.</value>
+  </data>
+  <data name="SignedQueryStringVerifyDataFailed" xml:space="preserve">
+    <value>Signed query string did not have the correct signature.</value>
+  </data>
+  <data name="SignedQueryStringUnsupportedSigAlg" xml:space="preserve">
+    <value>Signed query string specified an unsupported signature algorithm.</value>
+  </data>
+  <data name="LogoutResponseNullArgument" xml:space="preserve">
+    <value>Specified SAML logout response was null.</value>
+  </data>
+  <data name="LogoutResponseXmlException" xml:space="preserve">
+    <value>Specified SAML logout response threw an XML exception.</value>
   </data>
 </root>

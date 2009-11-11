@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProviderUtility.cs,v 1.6 2009-06-18 22:20:15 ggennaro Exp $
+ * $Id: ServiceProviderUtility.cs,v 1.7 2009-11-11 18:13:39 ggennaro Exp $
  */
 
 using System;
@@ -104,82 +104,7 @@ namespace Sun.Identity.Saml2
         public Hashtable CircleOfTrusts { get; private set; }
         #endregion
 
-        #region Methods
-
-        /// <summary>
-        /// Retrieve the AuthnResponse object found within the HttpRequest
-        /// in the context of the HttpContext, performing validation of
-        /// the AuthnResponse prior to returning to the user.
-        /// </summary>
-        /// <param name="context">
-        /// HttpContext containing session, request, and response objects.
-        /// </param>
-        /// <returns>AuthnResponse object</returns>
-        public AuthnResponse GetAuthnResponse(HttpContext context)
-        {
-            ArtifactResponse artifactResponse = null;
-            AuthnResponse authnResponse = null;
-            ICollection authnRequests = AuthnRequestCache.GetSentAuthnRequests(context);
-            HttpRequest request = context.Request;
-
-            // Check if a saml response was received...
-            if (string.IsNullOrEmpty(request[Saml2Constants.ResponseParameter])
-                && string.IsNullOrEmpty(request[Saml2Constants.ArtifactParameter]))
-            {
-                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityNoSamlResponseReceived);
-            }
-
-            // Obtain AuthnResponse object from either HTTP-POST or HTTP-Artifact
-            if (request[Saml2Constants.ResponseParameter] != null)
-            {
-                string samlResponse = Saml2Utils.ConvertFromBase64(request[Saml2Constants.ResponseParameter]);
-                authnResponse = new AuthnResponse(samlResponse);
-
-                XmlDocument xmlDoc = (XmlDocument)authnResponse.XmlDom;
-                StringBuilder logMessage = new StringBuilder();
-                logMessage.Append("AuthnResponse:\r\n").Append(xmlDoc.OuterXml);
-                FedletLogger.Info(logMessage.ToString());
-            }
-            else if (request[Saml2Constants.ArtifactParameter] != null)
-            {
-                Artifact artifact = new Artifact(request[Saml2Constants.ArtifactParameter]);
-                artifactResponse = this.GetArtifactResponse(artifact);
-                authnResponse = artifactResponse.AuthnResponse;
-
-                XmlDocument xmlDoc = (XmlDocument)artifactResponse.XmlDom;
-                StringBuilder logMessage = new StringBuilder();
-                logMessage.Append("ArtifactResponse:\r\n").Append(xmlDoc.OuterXml);
-                FedletLogger.Info(logMessage.ToString());
-            }
-
-            string prevAuthnRequestId = authnResponse.InResponseTo;
-            try
-            {
-                if (artifactResponse != null)
-                {
-                    this.ValidateForArtifactProfile(artifactResponse, authnRequests);
-                }
-                else
-                {
-                    this.ValidateForPostProfile(authnResponse, authnRequests);
-                }
-            }
-            catch (Saml2Exception se)
-            {
-                // log and throw again...
-                XmlDocument authnResponseXml = (XmlDocument)authnResponse.XmlDom;
-                StringBuilder logMessage = new StringBuilder();
-                logMessage.Append(se.Message).Append("\r\n").Append(authnResponseXml.InnerXml);
-                FedletLogger.Warning(logMessage.ToString());
-                throw;
-            }
-            finally
-            {
-                AuthnRequestCache.RemoveSentAuthnRequest(context, prevAuthnRequestId);
-            }
-
-            return authnResponse;
-        }
+        #region Public Retrieval Methods
 
         /// <summary>
         /// Retrieve the ArtifactResponse object with the given SAMLv2 
@@ -270,6 +195,235 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
+        /// Retrieve the AuthnResponse object found within the HttpRequest
+        /// in the context of the HttpContext, performing validation of
+        /// the AuthnResponse prior to returning to the user.
+        /// </summary>
+        /// <param name="context">
+        /// HttpContext containing session, request, and response objects.
+        /// </param>
+        /// <returns>AuthnResponse object</returns>
+        public AuthnResponse GetAuthnResponse(HttpContext context)
+        {
+            ArtifactResponse artifactResponse = null;
+            AuthnResponse authnResponse = null;
+            ICollection authnRequests = AuthnRequestCache.GetSentAuthnRequests(context);
+            HttpRequest request = context.Request;
+
+            // Check if a saml response was received...
+            if (string.IsNullOrEmpty(request[Saml2Constants.ResponseParameter])
+                && string.IsNullOrEmpty(request[Saml2Constants.ArtifactParameter]))
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityNoSamlResponseReceived);
+            }
+
+            // Obtain AuthnResponse object from either HTTP-POST or HTTP-Artifact
+            if (request[Saml2Constants.ResponseParameter] != null)
+            {
+                string samlResponse = Saml2Utils.ConvertFromBase64(request[Saml2Constants.ResponseParameter]);
+                authnResponse = new AuthnResponse(samlResponse);
+
+                XmlDocument xmlDoc = (XmlDocument)authnResponse.XmlDom;
+                StringBuilder logMessage = new StringBuilder();
+                logMessage.Append("AuthnResponse:\r\n").Append(xmlDoc.OuterXml);
+                FedletLogger.Info(logMessage.ToString());
+            }
+            else if (request[Saml2Constants.ArtifactParameter] != null)
+            {
+                Artifact artifact = new Artifact(request[Saml2Constants.ArtifactParameter]);
+                artifactResponse = this.GetArtifactResponse(artifact);
+                authnResponse = artifactResponse.AuthnResponse;
+
+                XmlDocument xmlDoc = (XmlDocument)artifactResponse.XmlDom;
+                StringBuilder logMessage = new StringBuilder();
+                logMessage.Append("ArtifactResponse:\r\n").Append(xmlDoc.OuterXml);
+                FedletLogger.Info(logMessage.ToString());
+            }
+
+            string prevAuthnRequestId = authnResponse.InResponseTo;
+            try
+            {
+                if (artifactResponse != null)
+                {
+                    this.ValidateForArtifact(artifactResponse, authnRequests);
+                }
+                else
+                {
+                    this.ValidateForPost(authnResponse, authnRequests);
+                }
+            }
+            catch (Saml2Exception se)
+            {
+                // log and throw again...
+                XmlDocument authnResponseXml = (XmlDocument)authnResponse.XmlDom;
+                StringBuilder logMessage = new StringBuilder();
+                logMessage.Append(se.Message).Append("\r\n").Append(authnResponseXml.InnerXml);
+                FedletLogger.Warning(logMessage.ToString());
+                throw;
+            }
+            finally
+            {
+                AuthnRequestCache.RemoveSentAuthnRequest(context, prevAuthnRequestId);
+            }
+
+            return authnResponse;
+        }
+
+        /// <summary>
+        /// Retrieve the LogoutRequest object found within the HttpRequest
+        /// in the context of the HttpContext, performing validation of
+        /// the LogoutRequest prior to returning to the user.
+        /// </summary>
+        /// <param name="context">
+        /// HttpContext containing session, request, and response objects.
+        /// </param>
+        /// <returns>LogoutRequest object</returns>
+        public LogoutRequest GetLogoutRequest(HttpContext context)
+        {
+            HttpRequest request = context.Request;
+            string samlRequest = null;
+
+            // Obtain the LogoutRequest object...
+            if (request.HttpMethod == "GET")
+            {
+                samlRequest = Saml2Utils.ConvertFromBase64Decompress(request[Saml2Constants.RequestParameter]);
+            }
+            else if (request.HttpMethod == "POST")
+            {
+                // something posted...check if soap vs form post
+                if (!String.IsNullOrEmpty(request[Saml2Constants.RequestParameter]))
+                {
+                    samlRequest = Saml2Utils.ConvertFromBase64(request[Saml2Constants.RequestParameter]);
+                }
+                else
+                {
+                    StreamReader reader = new StreamReader(request.InputStream);
+                    string requestContent = reader.ReadToEnd();
+
+                    XmlDocument soapRequest = new XmlDocument();
+                    soapRequest.PreserveWhitespace = true;
+                    soapRequest.LoadXml(requestContent);
+
+                    XmlNamespaceManager soapNsMgr = new XmlNamespaceManager(soapRequest.NameTable);
+                    soapNsMgr.AddNamespace("soap", "http://schemas.xmlsoap.org/soap/envelope/");
+                    soapNsMgr.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
+                    soapNsMgr.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
+                    soapNsMgr.AddNamespace("ds", "http://www.w3.org/2000/09/xmldsig#");
+
+                    XmlElement root = soapRequest.DocumentElement;
+                    XmlNode requestXml = root.SelectSingleNode("/soap:Envelope/soap:Body/samlp:LogoutRequest", soapNsMgr);
+                    samlRequest = requestXml.OuterXml;
+                }
+            }
+
+            // Check if a saml request was received...
+            if (samlRequest == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityNoSamlRequestReceived);
+            }
+
+            LogoutRequest logoutRequest = new LogoutRequest(samlRequest);
+
+            XmlDocument xmlDoc = (XmlDocument)logoutRequest.XmlDom;
+            StringBuilder logMessage = new StringBuilder();
+            logMessage.Append("LogoutRequest:\r\n").Append(xmlDoc.OuterXml);
+            FedletLogger.Info(logMessage.ToString());
+
+            try
+            {
+                if (request.HttpMethod == "GET")
+                {
+                    string queryString 
+                        = request.RawUrl.Substring(request.RawUrl.IndexOf("?", StringComparison.Ordinal) + 1);
+                    FedletLogger.Info("LogoutRequest query string:\r\n" + queryString);
+                    this.ValidateForRedirect(logoutRequest, queryString);
+                }
+                else
+                {
+                    this.ValidateForPost(logoutRequest);
+                }
+            }
+            catch (Saml2Exception se)
+            {
+                // log and throw again...
+                logMessage = new StringBuilder();
+                logMessage.Append(se.Message).Append("\r\n").Append(xmlDoc.InnerXml);
+                FedletLogger.Warning(logMessage.ToString());
+                throw;
+            }
+
+            return logoutRequest;
+        }
+
+        /// <summary>
+        /// Retrieve the LogoutResponse object found within the HttpRequest
+        /// in the context of the HttpContext, performing validation of
+        /// the LogoutResponse prior to returning to the user.
+        /// </summary>
+        /// <param name="context">
+        /// HttpContext containing session, request, and response objects.
+        /// </param>
+        /// <returns>LogoutResponse object</returns>
+        public LogoutResponse GetLogoutResponse(HttpContext context)
+        {
+            LogoutResponse logoutResponse = null;
+            HttpRequest request = context.Request;
+
+            // Check if a saml response was received...
+            if (String.IsNullOrEmpty(request[Saml2Constants.ResponseParameter]))
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityNoSamlResponseReceived);
+            }
+
+            // Obtain the LogoutRequest object...
+            if (request.HttpMethod == "GET")
+            {
+                string samlResponse = Saml2Utils.ConvertFromBase64Decompress(request[Saml2Constants.ResponseParameter]);
+                logoutResponse = new LogoutResponse(samlResponse);
+            }
+            else
+            {
+                string samlResponse = Saml2Utils.ConvertFromBase64(request[Saml2Constants.ResponseParameter]);
+                logoutResponse = new LogoutResponse(samlResponse);
+            }
+
+            XmlDocument xmlDoc = (XmlDocument)logoutResponse.XmlDom;
+            StringBuilder logMessage = new StringBuilder();
+            logMessage.Append("LogoutResponse:\r\n").Append(xmlDoc.OuterXml);
+            FedletLogger.Info(logMessage.ToString());
+
+            string prevLogoutRequestId = logoutResponse.InResponseTo;
+            try
+            {
+                if (request.HttpMethod == "GET")
+                {
+                    string queryString 
+                        = request.RawUrl.Substring(request.RawUrl.IndexOf("?", StringComparison.Ordinal) + 1);
+                    FedletLogger.Info("LogoutResponse query string:\r\n" + queryString);
+                    this.ValidateForRedirect(logoutResponse, LogoutRequestCache.GetSentLogoutRequests(context), queryString);
+                }
+                else
+                {
+                    this.ValidateForPost(logoutResponse, LogoutRequestCache.GetSentLogoutRequests(context));
+                }
+            }
+            catch (Saml2Exception se)
+            {
+                // log and throw again...
+                logMessage = new StringBuilder();
+                logMessage.Append(se.Message).Append("\r\n").Append(xmlDoc.InnerXml);
+                FedletLogger.Warning(logMessage.ToString());
+                throw;
+            }
+            finally
+            {
+                LogoutRequestCache.RemoveSentLogoutRequest(context, prevLogoutRequestId);
+            }
+
+            return logoutResponse;
+        }
+
+        /// <summary>
         /// Gets the HTML for use of submitting the AuthnRequest with POST.
         /// </summary>
         /// <param name="authnRequest">
@@ -291,7 +445,7 @@ namespace Sun.Identity.Saml2
             {
                 throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdentityProviderNotFound);
             }
-            
+
             string ssoPostLocation = idp.GetSingleSignOnServiceLocation(Saml2Constants.HttpPostProtocolBinding);
             if (ssoPostLocation == null)
             {
@@ -323,7 +477,7 @@ namespace Sun.Identity.Saml2
         /// to be used for actual browser requests.
         /// </summary>
         /// <param name="authnRequest">
-        /// AuthnRequest to packaged for a POST.
+        /// AuthnRequest to packaged for a redirect.
         /// </param>
         /// <param name="idpEntityId">Entity ID of the IDP.</param>
         /// <returns>
@@ -359,6 +513,242 @@ namespace Sun.Identity.Saml2
 
             return redirectUrl.ToString();
         }
+
+        /// <summary>
+        /// Gets the HTML for use of submitting the LogoutRequest with POST.
+        /// </summary>
+        /// <param name="logoutRequest">
+        /// LogoutRequest to packaged for a POST.
+        /// </param>
+        /// <param name="idpEntityId">Entity ID of the IDP.</param>
+        /// <param name="parameters">
+        /// NameVallueCollection of additional parameters.
+        /// </param>
+        /// <returns>
+        /// HTML with auto-form submission with POST of the LogoutRequest
+        /// </returns>
+        public string GetLogoutRequestPostHtml(LogoutRequest logoutRequest, string idpEntityId, NameValueCollection parameters)
+        {
+            if (logoutRequest == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityLogoutRequestIsNull);
+            }
+
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[idpEntityId];
+            if (idp == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdentityProviderNotFound);
+            }
+
+            string sloPostLocation = idp.GetSingleLogoutServiceLocation(Saml2Constants.HttpPostProtocolBinding);
+            if (sloPostLocation == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdpSingleLogoutSvcLocNotDefined);
+            }
+
+            string packagedLogoutRequest = Saml2Utils.ConvertToBase64(((XmlDocument)logoutRequest.XmlDom).InnerXml);
+            string inputFieldFormat = "<input type=\"hidden\" name=\"{0}\" value=\"{1}\" />";
+
+            StringBuilder html = new StringBuilder();
+            html.Append("<html><head><title>OpenSSO - SP initiated SLO</title></head>");
+            html.Append("<body onload=\"document.forms[0].submit();\">");
+            html.Append("<form method=\"post\" action=\"");
+            html.Append(sloPostLocation);
+            html.Append("\">");
+            html.Append("<input type=\"hidden\" name=\"");
+            html.Append(Saml2Constants.RequestParameter);
+            html.Append("\" value=\"");
+            html.Append(packagedLogoutRequest);
+            html.Append("\" />");
+
+            if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
+            {
+                html.Append(string.Format(
+                                          CultureInfo.InvariantCulture,
+                                          inputFieldFormat,
+                                          Saml2Constants.RelayState,
+                                          HttpUtility.HtmlEncode(parameters[Saml2Constants.RelayState])));
+            }
+
+            html.Append("</form>");
+            html.Append("</body>");
+            html.Append("</html>");
+
+            return html.ToString();
+        }
+
+        /// <summary>
+        /// Gets the LogoutRequest location along with querystring parameters 
+        /// to be used for actual browser requests.
+        /// </summary>
+        /// <param name="logoutRequest">
+        /// LogoutRequest to packaged for a redirect.
+        /// </param>
+        /// <param name="idpEntityId">Entity ID of the IDP.</param>
+        /// <param name="parameters">
+        /// NameVallueCollection of additional parameters.
+        /// </param>
+        /// <returns>
+        /// URL with query string parameter for the specified IDP.
+        /// </returns>
+        public string GetLogoutRequestRedirectLocation(LogoutRequest logoutRequest, string idpEntityId, NameValueCollection parameters)
+        {
+            if (logoutRequest == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityLogoutRequestIsNull);
+            }
+
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[idpEntityId];
+            if (idp == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdentityProviderNotFound);
+            }
+
+            string sloRedirectLocation = idp.GetSingleLogoutServiceLocation(Saml2Constants.HttpRedirectProtocolBinding);
+            if (sloRedirectLocation == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdpSingleLogoutSvcLocNotDefined);
+            }
+
+            string packagedAuthnRequest = Saml2Utils.CompressConvertToBase64UrlEncode(logoutRequest.XmlDom);
+
+            StringBuilder redirectUrl = new StringBuilder();
+            redirectUrl.Append(sloRedirectLocation);
+            redirectUrl.Append("?");
+            redirectUrl.Append(Saml2Constants.RequestParameter);
+            redirectUrl.Append("=");
+            redirectUrl.Append(packagedAuthnRequest);
+
+            if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
+            {
+                redirectUrl.Append("&");
+                redirectUrl.Append(Saml2Constants.RelayState);
+                redirectUrl.Append("=");
+                redirectUrl.Append(HttpUtility.UrlEncode(parameters[Saml2Constants.RelayState]));
+            }
+
+            return redirectUrl.ToString();
+        }
+
+        /// <summary>
+        /// Gets the HTML for use of submitting the LogoutResponse with POST.
+        /// </summary>
+        /// <param name="logoutResponse">
+        /// LogoutResponse to packaged for a POST.
+        /// </param>
+        /// <param name="idpEntityId">Entity ID of the IDP.</param>
+        /// <param name="parameters">
+        /// NameVallueCollection of additional parameters.
+        /// </param>
+        /// <returns>
+        /// HTML with auto-form submission with POST of the LogoutRequest
+        /// </returns>
+        public string GetLogoutResponsePostHtml(LogoutResponse logoutResponse, string idpEntityId, NameValueCollection parameters)
+        {
+            if (logoutResponse == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityLogoutResponseIsNull);
+            }
+
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[idpEntityId];
+            if (idp == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdentityProviderNotFound);
+            }
+
+            string sloPostResponseLocation = idp.GetSingleLogoutServiceResponseLocation(Saml2Constants.HttpPostProtocolBinding);
+            if (sloPostResponseLocation == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdpSingleLogoutSvcResLocNotDefined);
+            }
+
+            string packagedLogoutResponse = Saml2Utils.ConvertToBase64(((XmlDocument)logoutResponse.XmlDom).InnerXml);
+            string inputFieldFormat = "<input type=\"hidden\" name=\"{0}\" value=\"{1}\" />";
+
+            StringBuilder html = new StringBuilder();
+            html.Append("<html><head><title>OpenSSO - IDP initiated SLO</title></head>");
+            html.Append("<body onload=\"document.forms[0].submit();\">");
+            html.Append("<form method=\"post\" action=\"");
+            html.Append(sloPostResponseLocation);
+            html.Append("\">");
+            html.Append("<input type=\"hidden\" name=\"");
+            html.Append(Saml2Constants.ResponseParameter);
+            html.Append("\" value=\"");
+            html.Append(packagedLogoutResponse);
+            html.Append("\" />");
+
+            if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
+            {
+                html.Append(string.Format(
+                                          CultureInfo.InvariantCulture,
+                                          inputFieldFormat,
+                                          Saml2Constants.RelayState,
+                                          HttpUtility.HtmlEncode(parameters[Saml2Constants.RelayState])));
+            }
+
+            html.Append("</form>");
+            html.Append("</body>");
+            html.Append("</html>");
+
+            return html.ToString();
+        }
+
+        /// <summary>
+        /// Gets the LogoutResponse location along with querystring parameters 
+        /// to be used for actual browser requests.
+        /// </summary>
+        /// <param name="logoutResponse">
+        /// LogoutResponse to packaged for a redirect.
+        /// </param>
+        /// <param name="idpEntityId">Entity ID of the IDP.</param>
+        /// <param name="parameters">
+        /// NameVallueCollection of additional parameters.
+        /// </param>
+        /// <returns>
+        /// URL with query string parameter for the specified IDP.
+        /// </returns>
+        public string GetLogoutResponseRedirectLocation(LogoutResponse logoutResponse, string idpEntityId, NameValueCollection parameters)
+        {
+            if (logoutResponse == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityLogoutResponseIsNull);
+            }
+
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[idpEntityId];
+            if (idp == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdentityProviderNotFound);
+            }
+
+            string sloRedirectResponseLocation = idp.GetSingleLogoutServiceResponseLocation(Saml2Constants.HttpRedirectProtocolBinding);
+            if (sloRedirectResponseLocation == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdpSingleLogoutSvcLocNotDefined);
+            }
+
+            string packagedLogoutResponse = Saml2Utils.CompressConvertToBase64UrlEncode(logoutResponse.XmlDom);
+
+            StringBuilder redirectUrl = new StringBuilder();
+            redirectUrl.Append(sloRedirectResponseLocation);
+            redirectUrl.Append("?");
+            redirectUrl.Append(Saml2Constants.ResponseParameter);
+            redirectUrl.Append("=");
+            redirectUrl.Append(packagedLogoutResponse);
+
+            if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
+            {
+                redirectUrl.Append("&");
+                redirectUrl.Append(Saml2Constants.RelayState);
+                redirectUrl.Append("=");
+                redirectUrl.Append(HttpUtility.UrlEncode(parameters[Saml2Constants.RelayState]));
+            }
+
+            return redirectUrl.ToString();
+        }
+
+        #endregion
+
+        #region Public Send Methods
 
         /// <summary>
         /// Sends an AuthnRequest to the specified IDP with the given 
@@ -403,6 +793,237 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
+        /// Sends a LogoutRequest to the specified IDP with the given 
+        /// parameters.
+        /// </summary>
+        /// <param name="context">
+        /// HttpContext containing session, request, and response objects.
+        /// </param>
+        /// <param name="idpEntityId">Entity ID of the IDP.</param>
+        /// <param name="parameters">
+        /// NameValueCollection of varying parameters for use in the 
+        /// construction of the LogoutRequest.
+        /// </param>
+        public void SendLogoutRequest(HttpContext context, string idpEntityId, NameValueCollection parameters)
+        {
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[idpEntityId];
+            if (idp == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdentityProviderNotFound);
+            }
+
+            if (parameters == null)
+            {
+                parameters = new NameValueCollection();
+            }
+
+            LogoutRequest logoutRequest = new LogoutRequest(idp, this.ServiceProvider, parameters);
+            XmlDocument xmlDoc = (XmlDocument)logoutRequest.XmlDom;
+            StringBuilder logMessage = new StringBuilder();
+            logMessage.Append("LogoutRequest:\r\n").Append(xmlDoc.OuterXml);
+            FedletLogger.Info(logMessage.ToString());
+
+            // Send with Redirect, POST, or SOAP based on the 'Binding' parameter.
+            if (parameters[Saml2Constants.Binding] == Saml2Constants.HttpPostProtocolBinding)
+            {
+                LogoutRequestCache.AddSentLogoutRequest(context, logoutRequest);
+                string postHtml = this.GetLogoutRequestPostHtml(logoutRequest, idpEntityId, parameters);
+                context.Response.Write(postHtml);
+                context.Response.End();
+            }
+            else if (parameters[Saml2Constants.Binding] == Saml2Constants.HttpRedirectProtocolBinding)
+            {
+                LogoutRequestCache.AddSentLogoutRequest(context, logoutRequest);
+                string redirectUrl = this.GetLogoutRequestRedirectLocation(logoutRequest, idpEntityId, parameters);
+                context.Response.Redirect(redirectUrl.ToString(), true);
+            }
+            else if (parameters[Saml2Constants.Binding] == Saml2Constants.HttpSoapProtocolBinding)
+            {
+                this.SendSoapLogoutRequest(logoutRequest, idpEntityId);
+            }
+            else
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityUnsupportedLogoutBinding);
+            }
+        }
+
+        /// <summary>
+        /// Sends a SOAP LogoutRequest to the specified IDP.
+        /// </summary>
+        /// <param name="logoutRequest">
+        /// LogoutRequest object.
+        /// </param>
+        /// <param name="idpEntityId">Entity ID of the IDP.</param>
+        public void SendSoapLogoutRequest(LogoutRequest logoutRequest, string idpEntityId)
+        {
+            HttpWebRequest request = null;
+            HttpWebResponse response = null;
+            LogoutResponse logoutResponse = null;
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[idpEntityId];
+
+            if (logoutRequest == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityLogoutRequestIsNull);
+            }
+            else if (idp == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdentityProviderNotFound);
+            }
+            else if (idp.GetSingleLogoutServiceLocation(Saml2Constants.HttpSoapProtocolBinding) == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdpSingleLogoutSvcLocNotDefined);
+            }
+
+            try
+            {
+                Uri soapLogoutSvcUri = new Uri(idp.GetSingleLogoutServiceLocation(Saml2Constants.HttpSoapProtocolBinding));
+                request = (HttpWebRequest)WebRequest.Create(soapLogoutSvcUri);
+                XmlDocument logoutRequestXml = (XmlDocument)logoutRequest.XmlDom;
+                string soapMessage = Saml2Utils.CreateSoapMessage(logoutRequestXml.InnerXml);
+
+                byte[] byteArray = Encoding.UTF8.GetBytes(soapMessage);
+                request.ContentType = "text/xml";
+                request.ContentLength = byteArray.Length;
+                request.AllowAutoRedirect = false;
+                request.Method = "POST";
+
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(byteArray, 0, byteArray.Length);
+                requestStream.Close();
+
+                response = (HttpWebResponse)request.GetResponse();
+                StreamReader streamReader = new StreamReader(response.GetResponseStream());
+                string responseContent = streamReader.ReadToEnd();
+                streamReader.Close();
+
+                XmlDocument soapResponse = new XmlDocument();
+                soapResponse.PreserveWhitespace = true;
+                soapResponse.LoadXml(responseContent);
+
+                XmlNamespaceManager soapNsMgr = new XmlNamespaceManager(soapResponse.NameTable);
+                soapNsMgr.AddNamespace("soap", "http://schemas.xmlsoap.org/soap/envelope/");
+                soapNsMgr.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
+                soapNsMgr.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
+                soapNsMgr.AddNamespace("ds", "http://www.w3.org/2000/09/xmldsig#");
+
+                XmlElement root = soapResponse.DocumentElement;
+                XmlNode responseXml = root.SelectSingleNode("/soap:Envelope/soap:Body/samlp:LogoutResponse", soapNsMgr);
+                string logoutResponseXml = responseXml.OuterXml;
+
+                logoutResponse = new LogoutResponse(logoutResponseXml);
+                StringBuilder logMessage = new StringBuilder();
+                logMessage.Append("LogoutResponse:\r\n").Append(logoutResponseXml);
+                FedletLogger.Info(logMessage.ToString());
+
+                ArrayList logoutRequests = new ArrayList();
+                logoutRequests.Add(logoutRequest);
+                this.Validate(logoutResponse, logoutRequests);
+            }
+            catch (WebException we)
+            {
+                throw new ServiceProviderUtilityException(Resources.LogoutRequestWebException, we);
+            }
+            finally
+            {
+                if (response != null)
+                {
+                    response.Close();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Send the SAML LogoutResponse message based on the received
+        /// LogoutRequest.  POST (default) or Redirect is supported.
+        /// </summary>
+        /// <param name="context">
+        /// HttpContext containing session, request, and response objects.
+        /// </param>
+        /// <param name="logoutRequest">
+        /// LogoutRequest corresponding to the ensuing LogoutResponse to send.
+        /// </param>
+        public void SendLogoutResponse(HttpContext context, LogoutRequest logoutRequest)
+        {
+            if (logoutRequest == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityLogoutRequestIsNull);
+            }
+
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[logoutRequest.Issuer];
+            if (idp == null)
+            {
+                throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdpNotDeterminedFromLogoutRequest);
+            }
+
+            // send logout response based on how it was received
+            if (context.Request.HttpMethod == "GET")
+            {
+                NameValueCollection parameters = new NameValueCollection();
+                parameters[Saml2Constants.Binding] = Saml2Constants.HttpRedirectProtocolBinding;
+                LogoutResponse logoutResponse = new LogoutResponse(idp, this.ServiceProvider, logoutRequest, parameters);
+
+                StringBuilder logMessage = new StringBuilder();
+                XmlDocument xmlDoc = (XmlDocument)logoutResponse.XmlDom;
+                logMessage.Append("LogoutResponse:\r\n").Append(xmlDoc.OuterXml);
+                FedletLogger.Info(logMessage.ToString());
+
+                parameters = Saml2Utils.GetRequestParameters(context.Request);
+                string redirectUrl = this.GetLogoutResponseRedirectLocation(logoutResponse, idp.EntityId, parameters);
+                context.Response.Redirect(redirectUrl.ToString(), true);
+            }
+            else
+            {
+                NameValueCollection parameters = new NameValueCollection();
+                parameters[Saml2Constants.Binding] = Saml2Constants.HttpPostProtocolBinding;
+                LogoutResponse logoutResponse = new LogoutResponse(idp, this.ServiceProvider, logoutRequest, parameters);
+
+                StringBuilder logMessage = new StringBuilder();
+                XmlDocument xmlDoc = (XmlDocument)logoutResponse.XmlDom;
+                logMessage.Append("LogoutResponse:\r\n").Append(xmlDoc.OuterXml);
+                FedletLogger.Info(logMessage.ToString());
+
+                parameters = Saml2Utils.GetRequestParameters(context.Request);
+                string postHtml = this.GetLogoutResponsePostHtml(logoutResponse, idp.EntityId, parameters);
+                context.Response.Write(postHtml);
+                context.Response.End();
+            }
+        }
+
+        /// <summary>
+        /// Writes a SOAP LogoutResponse to the Response object found within
+        /// the given HttpContext based on the given logout request.
+        /// </summary>
+        /// <param name="context">
+        /// HttpContext containing session, request, and response objects.
+        /// </param>
+        /// <param name="logoutRequest">
+        /// LogoutRequest object.
+        /// </param>
+        public void SendSoapLogoutResponse(HttpContext context, LogoutRequest logoutRequest)
+        {
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[logoutRequest.Issuer];
+
+            NameValueCollection parameters = new NameValueCollection();
+            parameters[Saml2Constants.Binding] = Saml2Constants.HttpSoapProtocolBinding;
+
+            LogoutResponse logoutResponse = new LogoutResponse(idp, this.ServiceProvider, logoutRequest, parameters);
+
+            XmlDocument xmlDoc = (XmlDocument)logoutResponse.XmlDom;
+            StringBuilder logMessage = new StringBuilder();
+            logMessage.Append("LogoutResponse:\r\n").Append(xmlDoc.OuterXml);
+            FedletLogger.Info(logMessage.ToString());
+
+            string soapMessage = Saml2Utils.CreateSoapMessage(xmlDoc.OuterXml);
+
+            context.Response.ContentType = "text/xml";
+            context.Response.Write(soapMessage);
+        }
+
+        #endregion
+
+        #region Public Validation Methods
+
+        /// <summary>
         /// Validates the given ArtifactResponse object.
         /// </summary>
         /// <param name="artifactResponse">ArtifactResponse object.</param>
@@ -411,8 +1032,8 @@ namespace Sun.Identity.Saml2
         /// the InResponseTo attribute (if present) of the embedded 
         /// AuthnResponse within the ArtifactResponse.
         /// </param>
-        /// <see cref="ServiceProviderUtility.Validate"/>
-        public void ValidateForArtifactProfile(ArtifactResponse artifactResponse, ICollection authnRequests)
+        /// <see cref="ServiceProviderUtility.Validate(AuthnResponse, ICollection)"/>
+        public void ValidateForArtifact(ArtifactResponse artifactResponse, ICollection authnRequests)
         {
             this.CheckSignature(artifactResponse);
             this.Validate(artifactResponse.AuthnResponse, authnRequests);
@@ -426,38 +1047,100 @@ namespace Sun.Identity.Saml2
         /// Collection of previously sent authnRequests used to compare with
         /// the InResponseTo attribute (if present) of the AuthnResponse.
         /// </param>
-        /// <see cref="ServiceProviderUtility.Validate"/>
-        public void ValidateForPostProfile(AuthnResponse authnResponse, ICollection authnRequests)
+        /// <see cref="ServiceProviderUtility.Validate(AuthnResponse, ICollection)"/>
+        public void ValidateForPost(AuthnResponse authnResponse, ICollection authnRequests)
         {
             this.CheckSignature(authnResponse);
             this.Validate(authnResponse, authnRequests);
         }
 
         /// <summary>
-        /// Validates the given AuthnResponse object except for xml signature.
-        /// XML signature checking is expected to be done prior to calling
-        /// this method based on the appropriate profile.
+        /// Validates the given LogoutRequest.
         /// </summary>
-        /// <param name="authnResponse">AuthnResponse object.</param>
-        /// <param name="authnRequests">
-        /// Collection of previously sent authnRequests used to compare with
-        /// the InResponseTo attribute of the AuthnResponse (if present).
-        /// </param>
-        /// <see cref="ServiceProviderUtility.ValidateForArtifactProfile"/>
-        /// <see cref="ServiceProviderUtility.ValidateForPostProfile"/>
-        public void Validate(AuthnResponse authnResponse, ICollection authnRequests)
+        /// <param name="logoutRequest">LogoutRequest object.</param>
+        public void ValidateForPost(LogoutRequest logoutRequest)
         {
-            if (authnResponse.InResponseTo != null)
+            this.CheckIssuer(logoutRequest.Issuer);
+
+            if (this.ServiceProvider.WantLogoutRequestSigned)
             {
-                ServiceProviderUtility.CheckInResponseTo(authnResponse, authnRequests);
+                this.CheckSignature(logoutRequest);
+            }
+        }
+
+        /// <summary>
+        /// Validates the given LogoutRequest.
+        /// </summary>
+        /// <param name="logoutRequest">LogoutRequest object.</param>
+        /// <param name="queryString">
+        /// Raw query string that contains the request and possible signature
+        /// </param>
+        public void ValidateForRedirect(LogoutRequest logoutRequest, string queryString)
+        {
+            this.CheckIssuer(logoutRequest.Issuer);
+
+            if (this.ServiceProvider.WantLogoutRequestSigned)
+            {
+                this.CheckSignature(logoutRequest, queryString);
+            }
+        }
+        
+        /// <summary>
+        /// Validates the given LogoutResponse object obtained from a POST. If
+        /// this service provider desires the logout respone to be signed, XML
+        /// signature checking will be performed.
+        /// </summary>
+        /// <param name="logoutResponse">LogoutResponse object.</param>
+        /// <param name="logoutRequests">
+        /// Collection of previously sent logoutRequests used to compare with
+        /// the InResponseTo attribute of the LogoutResponse (if present).
+        /// </param>
+        public void ValidateForPost(LogoutResponse logoutResponse, ICollection logoutRequests)
+        {
+            if (logoutResponse == null)
+            {
+                throw new Saml2Exception(Resources.ServiceProviderUtilityLogoutResponseIsNull);
             }
 
-            this.CheckIssuer(authnResponse);
-            ServiceProviderUtility.CheckStatusCode(authnResponse);
-            ServiceProviderUtility.CheckConditionWithTime(authnResponse);
-            this.CheckConditionWithAudience(authnResponse);
-            this.CheckCircleOfTrust(authnResponse);
+            if (this.ServiceProvider.WantLogoutResponseSigned)
+            {
+                this.CheckSignature(logoutResponse);
+            }
+
+            this.Validate(logoutResponse, logoutRequests);
         }
+
+        /// <summary>
+        /// Validates the given LogoutResponse object obtained from a
+        /// Redirect. If this service provider desires the logout respone to 
+        /// be signed, XML signature checking will be performed.
+        /// </summary>
+        /// <param name="logoutResponse">LogoutResponse object.</param>
+        /// <param name="logoutRequests">
+        /// Collection of previously sent logoutRequests used to compare with
+        /// the InResponseTo attribute of the LogoutResponse (if present).
+        /// </param>
+        /// <param name="queryString">
+        /// Raw query string that contains the request and possible signature
+        /// </param>
+        public void ValidateForRedirect(LogoutResponse logoutResponse, ICollection logoutRequests, string queryString)
+        {
+            if (logoutResponse == null)
+            {
+                throw new Saml2Exception(Resources.ServiceProviderUtilityLogoutResponseIsNull);
+            }
+
+            if (this.ServiceProvider.WantLogoutResponseSigned)
+            {
+                this.CheckSignature(logoutResponse, queryString);
+            }
+
+            this.Validate(logoutResponse, logoutRequests);
+        }
+
+        #endregion
+
+        #region Static Private Methods
 
         /// <summary>
         /// Checks the time condition of the given AuthnResponse.
@@ -504,16 +1187,49 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
-        /// Checks the status code of the given AuthnResponse.
+        /// Checks the InResponseTo field of the given LogoutResponse to
+        /// see if it is one of the managed logout requests.
         /// </summary>
-        /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
-        private static void CheckStatusCode(AuthnResponse authnResponse)
+        /// <param name="logoutResponse">SAMLv2 LogoutResponse.</param>
+        /// <param name="logoutRequests">
+        /// Collection of previously sent LogoutRequests.
+        /// </param>
+        private static void CheckInResponseTo(LogoutResponse logoutResponse, ICollection logoutRequests)
         {
-            if (authnResponse.StatusCode != Saml2Constants.Success)
+            if (logoutRequests != null && logoutResponse.InResponseTo != null)
             {
-                throw new Saml2Exception(Resources.AuthnResponseInvalidStatusCode);
+                IEnumerator i = logoutRequests.GetEnumerator();
+                while (i.MoveNext())
+                {
+                    LogoutRequest logoutRequest = (LogoutRequest)i.Current;
+                    if (logoutRequest.Id == logoutResponse.InResponseTo)
+                    {
+                        // Found one, return quietly.
+                        return;
+                    }
+                }
+            }
+
+            // Didn't find one, complain loudly.
+            throw new Saml2Exception(Resources.LogoutResponseInvalidInResponseTo);
+        }
+
+        /// <summary>
+        /// Checks for a SAML "success" status code in a SAML message, 
+        /// otherwise a Saml2Exception is thrown.
+        /// </summary>
+        /// <param name="statusCode">StatusCode to check</param>
+        private static void CheckStatusCode(string statusCode)
+        {
+            if (string.IsNullOrEmpty(statusCode) || statusCode != Saml2Constants.Success)
+            {
+                throw new Saml2Exception(Resources.InvalidStatusCode);
             }
         }
+
+        #endregion
+
+        #region Non-static Private Methods
 
         /// <summary>
         /// Internal method to load configuration information and metadata
@@ -580,7 +1296,7 @@ namespace Sun.Identity.Saml2
             foreach (FileInfo metadataFile in files)
             {
                 Match m = Regex.Match(metadataFile.Name, metadataFilePattern);
-                
+
                 // determine index
                 if (m.Success)
                 {
@@ -612,14 +1328,15 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
-        /// Checks the issuer of the given AuthnResponse.
+        /// Checks if the provided entity ID matches one of the known entity
+        /// Identity Provider ID's, otherwise a Saml2Exception is thrown..
         /// </summary>
-        /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
-        private void CheckIssuer(AuthnResponse authnResponse)
+        /// <param name="idpEntityId">IDP entity ID</param>
+        private void CheckIssuer(string idpEntityId)
         {
-            if (!this.IdentityProviders.ContainsKey(authnResponse.Issuer))
+            if (string.IsNullOrEmpty(idpEntityId) || !this.IdentityProviders.ContainsKey(idpEntityId))
             {
-                throw new Saml2Exception(Resources.AuthnResponseInvalidIssuer);
+                throw new Saml2Exception(Resources.InvalidIssuer);
             }
         }
 
@@ -640,7 +1357,7 @@ namespace Sun.Identity.Saml2
         /// AuthnResponse used for the Artifact profile.
         /// </summary>
         /// <param name="artifactResponse">ArtifactResponse object.</param>
-        /// <seealso cref="ServiceProviderUtility.ValidateForArtifactProfile"/>
+        /// <seealso cref="ServiceProviderUtility.ValidateForArtifact"/>
         private void CheckSignature(ArtifactResponse artifactResponse)
         {
             AuthnResponse authnResponse = artifactResponse.AuthnResponse;
@@ -648,7 +1365,7 @@ namespace Sun.Identity.Saml2
             IdentityProvider identityProvider = (IdentityProvider)this.IdentityProviders[authnResponse.Issuer];
             if (identityProvider == null)
             {
-                throw new Saml2Exception(Resources.AuthnResponseInvalidIssuer);
+                throw new Saml2Exception(Resources.InvalidIssuer);
             }
 
             XmlElement artifactResponseSignature = (XmlElement)artifactResponse.XmlSignature;
@@ -667,7 +1384,7 @@ namespace Sun.Identity.Saml2
             {
                 throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureMissingOnResponse);
             }
-            else if (this.ServiceProvider.WantAssertionsSigned && assertionSignature == null && responseSignature == null && artifactResponseSignature == null) 
+            else if (this.ServiceProvider.WantAssertionsSigned && assertionSignature == null && responseSignature == null && artifactResponseSignature == null)
             {
                 throw new Saml2Exception(Resources.AuthnResponseInvalidSignatureMissing);
             }
@@ -703,7 +1420,7 @@ namespace Sun.Identity.Saml2
             }
 
             // check the signature of the xml document (optional for artifact)
-            if (validationSignature != null) 
+            if (validationSignature != null)
             {
                 Saml2Utils.ValidateSignedXml(
                                              identityProvider.SigningCertificate,
@@ -712,19 +1429,19 @@ namespace Sun.Identity.Saml2
                                              validationReferenceId);
             }
         }
-        
+
         /// <summary>
         /// Checks the signature of the given AuthnResponse used for the POST
         /// profile.
         /// </summary>
         /// <param name="authnResponse">AuthnResponse object.</param>
-        /// <seealso cref="ServiceProviderUtility.ValidateForPostProfile"/>
+        /// <seealso cref="ServiceProviderUtility.ValidateForPost(AuthnResponse, ICollection)"/>
         private void CheckSignature(AuthnResponse authnResponse)
         {
             IdentityProvider identityProvider = (IdentityProvider)this.IdentityProviders[authnResponse.Issuer];
             if (identityProvider == null)
             {
-                throw new Saml2Exception(Resources.AuthnResponseInvalidIssuer);
+                throw new Saml2Exception(Resources.InvalidIssuer);
             }
 
             XmlElement responseSignature = (XmlElement)authnResponse.XmlResponseSignature;
@@ -775,25 +1492,101 @@ namespace Sun.Identity.Saml2
         }
 
         /// <summary>
-        /// Checks to confirm the issuer and hosted service provider are in
-        /// the same circle of trust for the the given AuthnResponse.
+        /// Checks the signature of the given LogoutRequest assuming
+        /// the signature is within the XML.
         /// </summary>
-        /// <param name="authnResponse">SAMLv2 AuthnResponse.</param>
-        private void CheckCircleOfTrust(AuthnResponse authnResponse)
+        /// <param name="logoutRequest">SAMLv2 LogoutRequest object.</param>
+        private void CheckSignature(LogoutRequest logoutRequest)
+        {
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[logoutRequest.Issuer];
+
+            if (idp == null)
+            {
+                throw new Saml2Exception(Resources.InvalidIssuer);
+            }
+
+            Saml2Utils.ValidateSignedXml(
+                idp.SigningCertificate,
+                logoutRequest.XmlDom,
+                logoutRequest.XmlSignature,
+                logoutRequest.Id);
+        }
+
+        /// <summary>
+        /// Checks the signature of the given LogoutRequest with
+        /// the raw query string.
+        /// </summary>
+        /// <param name="logoutRequest">SAMLv2 LogoutRequest object.</param>
+        /// <param name="queryString">
+        /// Raw query string that contains the request and possible signature.
+        /// </param>
+        private void CheckSignature(LogoutRequest logoutRequest, string queryString)
+        {
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[logoutRequest.Issuer];
+
+            if (idp == null)
+            {
+                throw new Saml2Exception(Resources.InvalidIssuer);
+            }
+
+            Saml2Utils.ValidateSignedQueryString(idp.SigningCertificate, queryString);
+        }
+
+        /// <summary>
+        /// Checks the signature of the given logoutResponse assuming
+        /// the signature is within the XML.
+        /// </summary>
+        /// <param name="logoutResponse">SAMLv2 LogoutRequest object.</param>
+        private void CheckSignature(LogoutResponse logoutResponse)
+        {
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[logoutResponse.Issuer];
+
+            if (idp == null)
+            {
+                throw new Saml2Exception(Resources.InvalidIssuer);
+            }
+
+            Saml2Utils.ValidateSignedXml(
+                idp.SigningCertificate,
+                logoutResponse.XmlDom,
+                logoutResponse.XmlSignature,
+                logoutResponse.Id);
+        }
+
+        /// <summary>
+        /// Checks the signature of the given LogoutResponse with
+        /// the raw query string.
+        /// </summary>
+        /// <param name="logoutResponse">SAMLv2 LogoutResponse object.</param>
+        /// <param name="queryString">
+        /// Raw query string that contains the response and possible signature.
+        /// </param>
+        private void CheckSignature(LogoutResponse logoutResponse, string queryString)
+        {
+            IdentityProvider idp = (IdentityProvider)this.IdentityProviders[logoutResponse.Issuer];
+
+            Saml2Utils.ValidateSignedQueryString(idp.SigningCertificate, queryString);
+        }
+
+        /// <summary>
+        /// Checks to confirm the issuer and hosted service provider are in
+        /// the same circle of trust, otherwise a Saml2Exception is thrown.
+        /// </summary>
+        /// <param name="idpEntityId">IDP entity ID</param>
+        private void CheckCircleOfTrust(string idpEntityId)
         {
             string spEntityId = this.ServiceProvider.EntityId;
-            string authIdpEntityId = authnResponse.Issuer;
 
             foreach (string cotName in this.CircleOfTrusts.Keys)
             {
-                CircleOfTrust cot = (CircleOfTrust) this.CircleOfTrusts[cotName];
-                if (cot.AreProvidersTrusted(spEntityId, authIdpEntityId))
+                CircleOfTrust cot = (CircleOfTrust)this.CircleOfTrusts[cotName];
+                if (cot.AreProvidersTrusted(spEntityId, idpEntityId))
                 {
                     return;
                 }
             }
 
-            throw new Saml2Exception(Resources.AuthnResponseNotInCircleOfTrust);
+            throw new Saml2Exception(Resources.InvalidIdpEntityIdNotInCircleOfTrust);
         }
 
         /// <summary>
@@ -826,6 +1619,55 @@ namespace Sun.Identity.Saml2
             }
 
             return idp;
+        }
+
+        /// <summary>
+        /// Validates the given AuthnResponse object except for xml signature.
+        /// XML signature checking is expected to be done prior to calling
+        /// this method based on the appropriate profile.
+        /// </summary>
+        /// <param name="authnResponse">AuthnResponse object.</param>
+        /// <param name="authnRequests">
+        /// Collection of previously sent authnRequests used to compare with
+        /// the InResponseTo attribute of the AuthnResponse (if present).
+        /// </param>
+        /// <see cref="ServiceProviderUtility.ValidateForArtifact"/>
+        /// <see cref="ServiceProviderUtility.ValidateForPost(AuthnResponse, ICollection)"/>
+        private void Validate(AuthnResponse authnResponse, ICollection authnRequests)
+        {
+            if (authnResponse.InResponseTo != null)
+            {
+                ServiceProviderUtility.CheckInResponseTo(authnResponse, authnRequests);
+            }
+
+            this.CheckIssuer(authnResponse.Issuer);
+            ServiceProviderUtility.CheckStatusCode(authnResponse.StatusCode);
+            ServiceProviderUtility.CheckConditionWithTime(authnResponse);
+            this.CheckConditionWithAudience(authnResponse);
+            this.CheckCircleOfTrust(authnResponse.Issuer);
+        }
+
+        /// <summary>
+        /// Validates the given LogoutResponse object except for xml signature.
+        /// XML signature checking is expected to be done prior to calling
+        /// this method based on the appropriate profile.
+        /// </summary>
+        /// <param name="logoutResponse">LogoutResponse object.</param>
+        /// <param name="logoutRequests">
+        /// Collection of previously sent logoutRequests used to compare with
+        /// the InResponseTo attribute of the LogoutResponse (if present).
+        /// </param>
+        private void Validate(LogoutResponse logoutResponse, ICollection logoutRequests)
+        {
+            if (logoutResponse == null)
+            {
+                throw new Saml2Exception(Resources.ServiceProviderUtilityLogoutResponseIsNull);
+            }
+
+            ServiceProviderUtility.CheckInResponseTo(logoutResponse, logoutRequests);
+            this.CheckIssuer(logoutResponse.Issuer);
+            this.CheckCircleOfTrust(logoutResponse.Issuer);
+            ServiceProviderUtility.CheckStatusCode(logoutResponse.StatusCode);
         }
 
         #endregion

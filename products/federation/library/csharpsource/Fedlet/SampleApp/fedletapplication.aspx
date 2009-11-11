@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: fedletapplication.aspx,v 1.4 2009-10-26 18:55:36 ggennaro Exp $
+ * $Id: fedletapplication.aspx,v 1.5 2009-11-11 18:13:40 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" MasterPageFile="~/site.master" %>
@@ -38,10 +38,10 @@
         string errorMessage = null;
         string errorTrace = null;
         AuthnResponse authnResponse = null;
+        ServiceProviderUtility serviceProviderUtility = null;
+
         try
         {
-            ServiceProviderUtility serviceProviderUtility;
-
             serviceProviderUtility = (ServiceProviderUtility)Cache["spu"];
             if (serviceProviderUtility == null)
             {
@@ -116,7 +116,7 @@
             <td>System.Xml.XPath.IXPathNavigable</td>
             <td>
                 <form action="javascript:void();" method="get">
-                <textarea rows="5" cols="80"><%
+                <textarea rows="5" cols="60"><%
                     StringWriter stringWriter = new StringWriter();
                     XmlTextWriter xmlWriter = new XmlTextWriter(stringWriter);
                     XmlDocument xml = (XmlDocument)authnResponse.XmlDom;
@@ -132,6 +132,11 @@
             <td><%=Server.HtmlEncode(authnResponse.SubjectNameId)%></td>
         </tr>
         <tr>
+            <td>authnResponse.SessionIndex</td>
+            <td>System.String</td>
+            <td><%=Server.HtmlEncode(authnResponse.SessionIndex)%></td>
+        </tr>
+        <tr>
             <td>authnResponse.Attributes</td>
             <td>System.Collections.Hashtable</td>
             <td>
@@ -141,30 +146,99 @@
                   <th>value(s)</th>
                 </tr>
                 <%
-                    foreach (string key in authnResponse.Attributes.Keys)
+                    if (authnResponse.Attributes.Count == 0)
                     {
-                        ArrayList values = (ArrayList)authnResponse.Attributes[key];
-
                         Response.Write("<tr>\n");
-                        Response.Write("<td>" + Server.HtmlEncode(key) + "</td>\n");
-                        Response.Write("<td>\n");
-                        foreach (string value in values)
-                        {
-                            Response.Write(Server.HtmlEncode(value) + "<br/>\n");
-                        }
-                        Response.Write("</td>\n");
+                        Response.Write("  <td colspan='2'><i>No attributes found in the response</i></td>\n");
                         Response.Write("</tr>\n");
+                    }
+                    else
+                    {
+                        foreach (string key in authnResponse.Attributes.Keys)
+                        {
+                            ArrayList values = (ArrayList)authnResponse.Attributes[key];
+
+                            Response.Write("<tr>\n");
+                            Response.Write("<td>" + Server.HtmlEncode(key) + "</td>\n");
+                            Response.Write("<td>\n");
+                            foreach (string value in values)
+                            {
+                                Response.Write(Server.HtmlEncode(value) + "<br/>\n");
+                            }
+                            Response.Write("</td>\n");
+                            Response.Write("</tr>\n");
+                        }
                     }
                 %>
                 </table>
             </td>
         </tr>
         </table>
+        
+<%
+    string fedletUrl = Request.Url.AbsoluteUri.Substring(0, Request.Url.AbsoluteUri.LastIndexOf("/") + 1);
+    Hashtable identityProviders = serviceProviderUtility.IdentityProviders;
+    IdentityProvider idp = (IdentityProvider)identityProviders[authnResponse.Issuer];
+    StringBuilder sloListItems = new StringBuilder();
+    string sloListItemFormat = "<li>{0} initiated SLO with <a href=\"{1}\">{2}</a></li>";
+
+    if (idp != null)
+    {
+        string idpDeployment = null;
+        string idpMetaAlias = null;
+        string pattern = "(.+?/opensso).+?/metaAlias(.+?)$";
+        Match m = null;
+
+        foreach (XmlNode node in idp.SingleLogOutServiceLocations)
+        {
+            string location = node.Attributes["Location"].Value;
+            if (location != null)
+            {
+                m = Regex.Match(location, pattern);
+                if (m.Success && m.Groups.Count == 3)
+                {
+                    idpDeployment = m.Groups[1].Value;
+                    idpMetaAlias = m.Groups[2].Value;
+                }
+                break;
+            }
+        }
+
+        if (!String.IsNullOrEmpty(idpDeployment) && !String.IsNullOrEmpty(idpMetaAlias))
+        {
+            string idpUrlFormat = "{0}/IDPSloInit?metaAlias={1}&binding={2}&RelayState={3}";
+            string idpUrl = string.Empty;
+
+            idpUrl = Server.HtmlEncode(String.Format(idpUrlFormat, idpDeployment, idpMetaAlias, Saml2Constants.HttpRedirectProtocolBinding, fedletUrl));
+            sloListItems.Append(String.Format(sloListItemFormat, "IDP", idpUrl, "HTTP Redirect"));
+            idpUrl = Server.HtmlEncode(String.Format(idpUrlFormat, idpDeployment, idpMetaAlias, Saml2Constants.HttpPostProtocolBinding, fedletUrl));
+            sloListItems.Append(String.Format(sloListItemFormat, "IDP", idpUrl, "HTTP POST"));
+            idpUrl = Server.HtmlEncode(String.Format(idpUrlFormat, idpDeployment, idpMetaAlias, Saml2Constants.HttpSoapProtocolBinding, fedletUrl));
+            sloListItems.Append(String.Format(sloListItemFormat, "IDP", idpUrl, "SOAP"));
+        } 
+    }
+
+    string spUrlFormat = "spinitiatedslo.aspx?idpEntityID={0}&SubjectNameId={1}&SessionIndex={2}&binding={3}&RelayState={4}";
+    string spUrl = string.Empty;
+
+    spUrl = Server.HtmlEncode(String.Format(spUrlFormat, idp.EntityId, authnResponse.SubjectNameId, authnResponse.SessionIndex, Saml2Constants.HttpRedirectProtocolBinding, fedletUrl));
+    sloListItems.Append(String.Format(sloListItemFormat, "SP", spUrl, "HTTP Redirect"));
+    spUrl = Server.HtmlEncode(String.Format(spUrlFormat, idp.EntityId, authnResponse.SubjectNameId, authnResponse.SessionIndex, Saml2Constants.HttpPostProtocolBinding, fedletUrl));
+    sloListItems.Append(String.Format(sloListItemFormat, "SP", spUrl, "HTTP POST"));
+    spUrl = Server.HtmlEncode(String.Format(spUrlFormat, idp.EntityId, authnResponse.SubjectNameId, authnResponse.SessionIndex, Saml2Constants.HttpSoapProtocolBinding, fedletUrl));
+    sloListItems.Append(String.Format(sloListItemFormat, "SP", spUrl, "SOAP"));
+
+%>
+
+        <p>Use one of the links below to perform Single Log Out with <b><%=idp.EntityId %></b>:</p>
+        <ul>
+            <%=sloListItems.ToString() %>
+        </ul>
+        
     <% } %>
 
     <p>
     Return to the <a href="default.aspx">homepage</a> to try other examples available in this sample application.
     </p>
-
 
 </asp:Content>

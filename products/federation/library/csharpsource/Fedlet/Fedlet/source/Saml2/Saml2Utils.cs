@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: Saml2Utils.cs,v 1.4 2009-06-18 22:20:15 ggennaro Exp $
+ * $Id: Saml2Utils.cs,v 1.5 2009-11-11 18:13:39 ggennaro Exp $
  */
 
 using System;
@@ -30,14 +30,16 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Web;
 using System.Xml;
 using System.Xml.XPath;
-using Sun.Identity.Saml2.Exceptions;
+using Sun.Identity.Common;
 using Sun.Identity.Properties;
+using Sun.Identity.Saml2.Exceptions;
 
 namespace Sun.Identity.Saml2
 {
@@ -57,6 +59,27 @@ namespace Sun.Identity.Saml2
         {
             byte[] byteArray = Convert.FromBase64String(value);
             return Encoding.UTF8.GetString(byteArray);
+        }
+
+        /// <summary>
+        /// Converts from Base64, then decompresses the given
+        /// parameter and returns the ensuing string.
+        /// </summary>
+        /// <param name="message">message to undergo the process</param>
+        /// <returns>String output from the process.</returns>
+        public static string ConvertFromBase64Decompress(string message)
+        {
+            // convert from base 64
+            byte[] byteArray = Convert.FromBase64String(message);
+
+            // inflate the gzip deflated message
+            StreamReader streamReader = new StreamReader(new DeflateStream(new MemoryStream(byteArray), CompressionMode.Decompress));
+
+            // put in a string
+            string decompressedMessage = streamReader.ReadToEnd();
+            streamReader.Close();
+
+            return decompressedMessage;
         }
 
         /// <summary>
@@ -256,6 +279,102 @@ namespace Sun.Identity.Saml2
                 throw new Saml2Exception(Resources.SignedXmlInvalidReference);
             }
         }
+
+        /// <summary>
+        /// Validates a signed query string.
+        /// </summary>
+        /// <param name="cert">
+        /// X509Certificate used to verify the signature of the xml document.
+        /// </param>
+        /// <param name="queryString">
+        /// Query string to validate.  SigAlg and Signature are expected
+        /// to in the set of parameters.
+        /// </param>
+        public static void ValidateSignedQueryString(X509Certificate2 cert, string queryString)
+        {
+            if (cert == null)
+            {
+                throw new Saml2Exception(Resources.SignedQueryStringCertIsNull);
+            }
+
+            if (string.IsNullOrEmpty(queryString))
+            {
+                throw new Saml2Exception(Resources.SignedQueryStringIsNull);
+            }
+
+            char[] queryStringSep = { '&' };
+            NameValueCollection queryParams = new NameValueCollection();
+            foreach (string pairs in queryString.Split(queryStringSep))
+            {
+                string key = pairs.Substring(0, pairs.IndexOf("=", StringComparison.Ordinal));
+                string value = pairs.Substring(pairs.IndexOf("=", StringComparison.Ordinal) + 1);
+
+                queryParams[key] = value;
+            }
+
+            if (string.IsNullOrEmpty(queryParams[Saml2Constants.SignatureAlgorithm]))
+            {
+                throw new Saml2Exception(Resources.SignedQueryStringMissingSigAlg);
+            }
+
+            if (string.IsNullOrEmpty(queryParams[Saml2Constants.Signature]))
+            {
+                throw new Saml2Exception(Resources.SignedQueryStringMissingSignature);
+            }
+
+            string sigAlg = HttpUtility.UrlDecode(queryParams[Saml2Constants.SignatureAlgorithm]);
+            string signature = HttpUtility.UrlDecode(queryParams[Saml2Constants.Signature]);
+            
+            // construct a new query string with specific sequence and no signature param
+            string newQueryString = string.Empty;
+            if (!string.IsNullOrEmpty(queryParams[Saml2Constants.RequestParameter]))
+            {
+                newQueryString = Saml2Constants.RequestParameter + "=" + queryParams[Saml2Constants.RequestParameter];
+            }
+            else if (!string.IsNullOrEmpty(queryParams[Saml2Constants.ResponseParameter]))
+            {
+                newQueryString = Saml2Constants.ResponseParameter + "=" + queryParams[Saml2Constants.ResponseParameter];
+            }
+
+            if (!string.IsNullOrEmpty(queryParams[Saml2Constants.RelayState]))
+            {
+                newQueryString += "&" + Saml2Constants.RelayState + "=" + queryParams[Saml2Constants.RelayState];
+            }
+
+            newQueryString += "&" + Saml2Constants.SignatureAlgorithm + "=" + queryParams[Saml2Constants.SignatureAlgorithm];
+
+            byte[] dataBuffer = Encoding.UTF8.GetBytes(newQueryString);
+            byte[] sigBuffer = Convert.FromBase64String(signature);
+
+            if (sigAlg == Saml2Constants.SignatureAlgorithmDsa)
+            {
+                /*
+                 * Issues with the way the signature is created in 
+                 * Java (DER Encoding) versus what is used in the 
+                 * .NET framework (IEEE P1363 standard).
+                 * 
+                 * TODO: Will need to create the DSA signature converter
+                 * DSACryptoServiceProvider publicKey = (DSACryptoServiceProvider)cert.PublicKey.Key;
+                 * if(!publicKey.VerifyData(dataBuffer, sigBuffer)) {
+                 *      throw new Saml2Exception(Resources.SignedQueryStringVerifyDataFailed);
+                 * }
+                 */
+                throw new Saml2Exception(Resources.SignedQueryStringUnsupportedSigAlg);
+            }
+            else if (sigAlg == Saml2Constants.SignatureAlgorithmRsa)
+            {
+                RSACryptoServiceProvider publicKey = (RSACryptoServiceProvider)cert.PublicKey.Key;
+                if (!publicKey.VerifyData(dataBuffer, new SHA1CryptoServiceProvider(), sigBuffer))
+                {
+                    throw new Saml2Exception(Resources.SignedQueryStringVerifyDataFailed);
+                }
+            }
+            else
+            {
+                throw new Saml2Exception(Resources.SignedQueryStringUnsupportedSigAlg);
+            }
+        }
+
         #endregion
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProvider.cs,v 1.3 2009-06-17 16:32:02 ggennaro Exp $
+ * $Id: ServiceProvider.cs,v 1.4 2009-11-11 18:13:39 ggennaro Exp $
  */
 
 using System;
@@ -42,12 +42,72 @@ namespace Sun.Identity.Saml2
     public class ServiceProvider
     {
         #region Members
+
+        /// <summary>
+        /// Constant for the name of the service provider's metadata file.
+        /// </summary>
         private static string metadataFilename = "sp.xml";
+
+        /// <summary>
+        /// Constant for the name of the service provider's extended metadata
+        /// file.
+        /// </summary>
         private static string extendedMetadataFilename = "sp-extended.xml";
+
+        /// <summary>
+        /// XML document representing the metadata for this Service Provider.
+        /// </summary>
         private XmlDocument metadata;
+
+        /// <summary>
+        /// Namespace Manager for the metadata.
+        /// </summary>
         private XmlNamespaceManager metadataNsMgr;
+
+        /// <summary>
+        /// XML document representing the extended metadata for this Service 
+        /// Provider.
+        /// </summary>
         private XmlDocument extendedMetadata;
+
+        /// <summary>
+        /// Namespace Manager for the extended metadata.
+        /// </summary>
         private XmlNamespaceManager extendedMetadataNsMgr;
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the ServiceProvider class. 
+        /// </summary>
+        /// <param name="homeFolder">Home folder containing configuration and metadata.</param>
+        public ServiceProvider(string homeFolder)
+        {
+            try
+            {
+                this.metadata = new XmlDocument();
+                this.metadata.Load(homeFolder + "\\" + ServiceProvider.metadataFilename);
+                this.metadataNsMgr = new XmlNamespaceManager(this.metadata.NameTable);
+                this.metadataNsMgr.AddNamespace("md", "urn:oasis:names:tc:SAML:2.0:metadata");
+
+                this.extendedMetadata = new XmlDocument();
+                this.extendedMetadata.Load(homeFolder + "\\" + ServiceProvider.extendedMetadataFilename);
+                this.extendedMetadataNsMgr = new XmlNamespaceManager(this.extendedMetadata.NameTable);
+                this.extendedMetadataNsMgr.AddNamespace("mdx", "urn:sun:fm:SAML:2.0:entityconfig");
+            }
+            catch (DirectoryNotFoundException dnfe)
+            {
+                throw new ServiceProviderException(Resources.ServiceProviderDirNotFound, dnfe);
+            }
+            catch (FileNotFoundException fnfe)
+            {
+                throw new ServiceProviderException(Resources.ServiceProviderFileNotFound, fnfe);
+            }
+            catch (XmlException xe)
+            {
+                throw new ServiceProviderException(Resources.ServiceProviderXmlException, xe);
+            }
+        }
         #endregion
 
         #region Properties
@@ -154,42 +214,53 @@ namespace Sun.Identity.Saml2
                 return false;
             }
         }
-        #endregion
-
-        #region Methods
 
         /// <summary>
-        /// Initializes a new instance of the ServiceProvider class. 
+        /// Gets a value indicating whether the extended metadata value for 
+        /// wantLogoutRequestSigned is true or false.
         /// </summary>
-        /// <param name="homeFolder">Home folder containing configuration and metadata.</param>
-        public ServiceProvider(string homeFolder)
+        public bool WantLogoutRequestSigned
         {
-            try
+            get
             {
-                this.metadata = new XmlDocument();
-                this.metadata.Load(homeFolder + "\\" + ServiceProvider.metadataFilename);
-                this.metadataNsMgr = new XmlNamespaceManager(this.metadata.NameTable);
-                this.metadataNsMgr.AddNamespace("md", "urn:oasis:names:tc:SAML:2.0:metadata");
+                string xpath = "/mdx:EntityConfig/mdx:SPSSOConfig/mdx:Attribute[@name='wantLogoutRequestSigned']/mdx:Value";
+                XmlNode root = this.extendedMetadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
 
-                this.extendedMetadata = new XmlDocument();
-                this.extendedMetadata.Load(homeFolder + "\\" + ServiceProvider.extendedMetadataFilename);
-                this.extendedMetadataNsMgr = new XmlNamespaceManager(this.extendedMetadata.NameTable);
-                this.extendedMetadataNsMgr.AddNamespace("mdx", "urn:sun:fm:SAML:2.0:entityconfig");
-            }
-            catch (DirectoryNotFoundException dnfe)
-            {
-                throw new ServiceProviderException(Resources.ServiceProviderDirNotFound, dnfe);
-            }
-            catch (FileNotFoundException fnfe)
-            {
-                throw new ServiceProviderException(Resources.ServiceProviderFileNotFound, fnfe);
-            }
-            catch (XmlException xe)
-            {
-                throw new ServiceProviderException(Resources.ServiceProviderXmlException, xe);
+                if (node != null)
+                {
+                    string value = node.InnerText.Trim();
+                    return Saml2Utils.GetBoolean(value);
+                }
+
+                return false;
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the extended metadata value for 
+        /// wantLogoutResponseSigned is true or false.
+        /// </summary>
+        public bool WantLogoutResponseSigned
+        {
+            get
+            {
+                string xpath = "/mdx:EntityConfig/mdx:SPSSOConfig/mdx:Attribute[@name='wantLogoutResponseSigned']/mdx:Value";
+                XmlNode root = this.extendedMetadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
+
+                if (node != null)
+                {
+                    string value = node.InnerText.Trim();
+                    return Saml2Utils.GetBoolean(value);
+                }
+
+                return false;
+            }
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Obtain the assertion consumer service location based on the given binding.
         /// </summary>

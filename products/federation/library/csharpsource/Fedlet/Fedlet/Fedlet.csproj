@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -58,6 +58,9 @@
     <Compile Include="source\Saml2\ArtifactResponse.cs" />
     <Compile Include="source\Saml2\AuthnRequest.cs" />
     <Compile Include="source\Saml2\AuthnRequestCache.cs" />
+    <Compile Include="source\Saml2\LogoutRequestCache.cs" />
+    <Compile Include="source\Saml2\LogoutResponse.cs" />
+    <Compile Include="source\Saml2\LogoutRequest.cs" />
     <Compile Include="source\Saml2\RequestedAuthnContext.cs" />
     <Compile Include="source\Saml2\Exceptions\CircleOfTrustException.cs" />
     <Compile Include="source\Saml2\CircleOfTrust.cs" />
