@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmsHandler.java,v 1.1 2009-08-19 05:40:46 veiming Exp $
+ * $Id: RealmsHandler.java,v 1.2 2009-11-11 00:49:17 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -51,17 +51,6 @@ public class RealmsHandler implements Serializable {
     private QueuedActionBean queuedActionBean;
     private MessagesBean messagesBean;
 
-    public void realmChanged(ValueChangeEvent event) {
-        PhaseEventAction pea = new PhaseEventAction();
-        pea.setDoBeforePhase(true);
-        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
-        pea.setAction("#{realmsHandler.handleReset}");
-        pea.setParameters(new Class[]{});
-        pea.setArguments(new Object[]{});
-
-        queuedActionBean.getPhaseEventActions().add(pea);
-    }
-
     public void realmSelectListener(ActionEvent event) {
         realmsBean.setRealmSelectPopupRealmBean(realmsBean.getRealmBean());
         realmsBean.setRealmSelectPopupVisible(true);
@@ -70,7 +59,6 @@ public class RealmsHandler implements Serializable {
     public void realmSelectPopupOkListener(ActionEvent event) {
         if (realmsBean.getRealmSelectPopupRealmBean() != null) {
             realmsBean.setRealmBean(realmsBean.getRealmSelectPopupRealmBean());
-            handleReset();
         } else {
             MessageBean mb = new MessageBean();
             Resources r = new Resources();
@@ -82,26 +70,12 @@ public class RealmsHandler implements Serializable {
 
 
         realmsBean.resetRealmSelectPopup();
+        // this will cause request-scope beans to reset
         LinkBean.HOME.redirect();
     }
 
     public void realmSelectPopupCancelListener(ActionEvent event) {
         realmsBean.resetRealmSelectPopup();
-    }
-
-    public void handleReset() {
-        ViewApplicationsBean vasb = ViewApplicationsBean.getInstance();
-        vasb.reset();
-        PolicyManageBean pmb = PolicyManageBean.getInstance();
-        pmb.reset();
-        PolicyCreateWizardBean pcwb = PolicyCreateWizardBean.getInstance();
-        pcwb.reset();
-        PolicyEditWizardBean pewb = PolicyEditWizardBean.getInstance();
-        pewb.reset();
-        ReferralCreateWizardBean rcwb = ReferralCreateWizardBean.getInstance();
-        rcwb.reset();
-        ReferralManageBean rmb = ReferralManageBean.getInstance();
-        rmb.reset();
     }
 
     public void setRealmsBean(RealmsBean realmsBean) {

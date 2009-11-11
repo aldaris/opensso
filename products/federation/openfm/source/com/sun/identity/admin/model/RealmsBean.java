@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmsBean.java,v 1.1 2009-08-19 05:40:53 veiming Exp $
+ * $Id: RealmsBean.java,v 1.2 2009-11-11 00:49:17 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -51,10 +51,10 @@ public class RealmsBean implements Serializable {
         realmSelectPopupRealmBean = null;
         realmChange = false;
         realmSelectPopupFilter = null;
-        resetRealmBeans();
+        reset();
     }
 
-    private void resetRealmBeans() {
+    public void reset() {
         realmBeans = realmDao.getSubRealmBeans(baseRealmBean, realmSelectPopupFilter, true);
         realmBeans.add(baseRealmBean);
         Collections.sort(realmBeans);
@@ -64,7 +64,7 @@ public class RealmsBean implements Serializable {
         this.realmDao = realmDao;
         baseRealmBean = realmDao.getBaseRealmBean();
         realmBean = baseRealmBean;
-        resetRealmBeans();
+        reset();
     }
 
     public List<SelectItem> getRealmBeanItems() {
@@ -126,7 +126,7 @@ public class RealmsBean implements Serializable {
         NullComparator n = new NullComparator();
         if (n.compare(this.realmSelectPopupFilter, realmSelectPopupFilter) != 0) {
             this.realmSelectPopupFilter = realmSelectPopupFilter;
-            resetRealmBeans();
+            reset();
         }
     }
 
