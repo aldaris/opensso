@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibertyManagerImpl.java,v 1.3 2008-06-25 05:48:18 qcheng Exp $
+ * $Id: LibertyManagerImpl.java,v 1.4 2009-11-12 23:25:34 exu Exp $
  *
  */
 
@@ -70,7 +70,7 @@ public class LibertyManagerImpl implements LibertyManagerIF {
             FSSession session = FSSessionManager.getInstance(
                 IDFFMetaUtils.getMetaAlias(
                     IFSConstants.ROOT_REALM, hostProviderID, 
-                    IFSConstants.SP, token)).
+                    IFSConstants.SP, null)).
                         getSession(token);
 
             if (session == null) {
@@ -128,7 +128,7 @@ public class LibertyManagerImpl implements LibertyManagerIF {
             FSSession session = FSSessionManager.getInstance(
                 IDFFMetaUtils.getMetaAlias(
                     IFSConstants.ROOT_REALM, hostProviderID, 
-                    IFSConstants.SP, token)).
+                    IFSConstants.SP, null)).
                         getSession(token);
 
             if (session == null) {
