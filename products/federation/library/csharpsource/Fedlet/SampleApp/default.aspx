@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: default.aspx,v 1.4 2009-06-11 18:38:00 ggennaro Exp $
+ * $Id: default.aspx,v 1.5 2009-11-12 00:36:50 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" MasterPageFile="~/site.master"%>
@@ -74,19 +74,133 @@
 
     <%
         StringBuilder idpListItems = new StringBuilder();
+        string idpListItemFormat = "<li><a href=\"{0}\">Run Identity Provider initiated Single Sign-On using {1} binding</a></li>";
+        string idpUrlFormat = "{0}/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias={1}&spEntityID={2}&binding={3}";
+        
+        StringBuilder spListItems = new StringBuilder();
+        string spListItemFormat = "<li><a href=\"{0}\">Run Fedlet (SP) initiated Single Sign-On using {1} binding</a></li>";
+        string spUrlFormat = "spinitiatedsso.aspx?idpEntityId={0}&binding={1}";
+        
+        string errorMessage = null;
+        bool hasMultipleIdps = false;
+        bool spSupportsArtifact = false;
+        bool spSupportsPost = false;
+
+        try
+        {
+            ServiceProviderUtility serviceProviderUtility;
+
+            serviceProviderUtility = (ServiceProviderUtility)Cache["spu"];
+            if (serviceProviderUtility == null)
+            {
+                serviceProviderUtility = new ServiceProviderUtility(Context);
+                Cache["spu"] = serviceProviderUtility;
+            }
+
+            hasMultipleIdps = (serviceProviderUtility.IdentityProviders.Count > 1);
+            spSupportsPost = !string.IsNullOrEmpty(serviceProviderUtility.ServiceProvider.GetAssertionConsumerServiceLocation(Saml2Constants.HttpPostProtocolBinding));
+            spSupportsArtifact = !string.IsNullOrEmpty(serviceProviderUtility.ServiceProvider.GetAssertionConsumerServiceLocation(Saml2Constants.HttpArtifactProtocolBinding));
+
+            foreach (string idpEntityId in serviceProviderUtility.IdentityProviders.Keys)
+            {
+                IdentityProvider idp = (IdentityProvider) serviceProviderUtility.IdentityProviders[idpEntityId];
+
+                // create the idp initiated links
+                string deploymentUrl = null;
+                string metaAlias = null;
+                string pattern = "(.+?/opensso).+?/metaAlias(.+?)$";
+                Match m = null;
+
+                foreach (XmlNode node in idp.SingleSignOnServiceLocations)
+                {
+                    string binding = node.Attributes["Binding"].Value;
+                    string location = node.Attributes["Location"].Value;
+                    if (binding != null && location != null)
+                    {
+                        m = Regex.Match(location, pattern);
+                        if (m.Success && m.Groups.Count == 3)
+                        {
+                            deploymentUrl = m.Groups[1].Value;
+                            metaAlias = m.Groups[2].Value;
+                        }
+                        break;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(deploymentUrl) && !string.IsNullOrEmpty(metaAlias))
+                {
+                    string idpListItem;
+                    string idpUrl;
+
+                    idpListItems.Append("<p>Using <b>" + Server.HtmlEncode(idp.EntityId) + "</b>:</p>");
+                    idpListItems.Append("<ul>");
+                    
+                    idpUrl = Server.HtmlEncode(
+                                            string.Format(
+                                                idpUrlFormat,
+                                                deploymentUrl,
+                                                metaAlias,
+                                                serviceProviderUtility.ServiceProvider.EntityId,
+                                                Saml2Constants.HttpPostProtocolBinding));
+                    idpListItem = string.Format(idpListItemFormat, idpUrl, "HTTP POST");
+                    idpListItems.Append(idpListItem);
+
+                    idpUrl = Server.HtmlEncode(
+                                            string.Format(
+                                                idpUrlFormat,
+                                                deploymentUrl,
+                                                metaAlias,
+                                                serviceProviderUtility.ServiceProvider.EntityId,
+                                                Saml2Constants.HttpArtifactProtocolBinding));
+                    idpListItem = string.Format(idpListItemFormat, idpUrl, "HTTP Artifact");
+                    idpListItems.Append(idpListItem);
+
+                    idpListItems.Append("</ul>");
+                }
+                
+                // create the sp initiated links
+                if (spSupportsPost)
+                {
+                    string spUrl = Server.HtmlEncode(
+                                                string.Format(
+                                                        spUrlFormat, 
+                                                        idp.EntityId, 
+                                                        Saml2Constants.HttpPostProtocolBinding));
+                    string spListItem = string.Format(spListItemFormat, spUrl, "HTTP POST");
+                    spListItems.Append(spListItem);
+                }
+                if (spSupportsArtifact)
+                {
+                    string spUrl = Server.HtmlEncode(
+                                        string.Format(
+                                                spUrlFormat, 
+                                                idp.EntityId, 
+                                                Saml2Constants.HttpArtifactProtocolBinding));
+                    string spListItem = string.Format(spListItemFormat, spUrl, "HTTP Artifact");
+                    spListItems.Append(spListItem);
+                }
+            }
+
+            if (idpListItems.Length == 0)
+            {
+                idpListItems.Append("<li>IDP initiated SSO is currently only supported with an OpenSSO deployment.</li>");
+            }
+            if (spListItems.Length == 0)
+            {
+                spListItems.Append("<li>SP initiated SSO requires either HTTP-POST or HTTP-Artifact assertion consumer service locations to be configured.</li>");
+            }
+        }
+        catch (ServiceProviderUtilityException spue)
+        {
+            errorMessage = spue.Message;
+        }
+
+        
+        /*
+        StringBuilder idpListItems = new StringBuilder();
         string idpListItemFormat = "<li>IDP initiated SSO with <span class=\"resource\">{0}</span> using <a href=\"{1}\">{2}</a> or <a href=\"{3}\">{4}</a></li>";
         string idpUrlFormat = "{0}/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias={1}&spEntityID={2}&binding={3}";
 
-        StringBuilder spListItems = new StringBuilder();
-        string spListItemFormat = "<li>SP initiated SSO with <span class=\"resource\">{0}</span> using {1}</li>";
-        string spLinkFormat = "<a href=\"{0}\">{1}</a>";
-        string spUrlFormat = "spinitiatedsso.aspx?idpEntityId={0}&binding={1}";
-
-        string errorMessage = null;
-        bool hasMultipleIdps = false;
-        bool spSupportsPost = false;
-        bool spSupportsArtifact = false;
-        
         try
         {
             ServiceProviderUtility serviceProviderUtility;
@@ -100,8 +214,6 @@
 
             ServiceProvider sp = serviceProviderUtility.ServiceProvider;
             hasMultipleIdps = (serviceProviderUtility.IdentityProviders.Count > 1);
-            spSupportsArtifact = (!String.IsNullOrEmpty(sp.GetAssertionConsumerServiceLocation(Saml2Constants.HttpArtifactProtocolBinding)));
-            spSupportsPost = (!String.IsNullOrEmpty(sp.GetAssertionConsumerServiceLocation(Saml2Constants.HttpPostProtocolBinding)));
 
             Hashtable identityProviders = serviceProviderUtility.IdentityProviders;
             foreach (string key in identityProviders.Keys)
@@ -139,45 +251,14 @@
                                                       Server.HtmlEncode(artifactUrl),
                                                       "HTTP Artifact" ));
                 }
-
-                if ( spSupportsPost || spSupportsArtifact )
-                {
-                    StringBuilder spLinks = new StringBuilder();
-                    string urlValue = null;
-                    
-                    if (spSupportsPost)
-                    {
-                        urlValue = String.Format(spUrlFormat, idp.EntityId, Saml2Constants.HttpPostProtocolBinding);
-                        spLinks.Append(String.Format(spLinkFormat, Server.HtmlEncode(urlValue), "HTTP Post"));
-                    }
-                    if (spSupportsArtifact)
-                    {
-                        if (spLinks.Length != 0)
-                        {
-                            spLinks.Append(" or ");
-                        }
-
-                        urlValue = String.Format(spUrlFormat, idp.EntityId, Saml2Constants.HttpArtifactProtocolBinding);
-                        spLinks.Append(String.Format(spLinkFormat, Server.HtmlEncode(urlValue), "HTTP Artifact"));
-                    }
-
-                    spListItems.Append(String.Format(spListItemFormat, Server.HtmlEncode(idp.EntityId), spLinks.ToString()));
-                }
             }
 
-            if (idpListItems.Length == 0)
-            {
-                idpListItems.Append("<li>IDP initiated SSO is currently only supported with an OpenSSO deployment.</li>");
-            }
-            if (spListItems.Length == 0)
-            {
-                spListItems.Append("<li>SP initiated SSO requires either HTTP-POST or HTTP-Artifact assertion consumer service locations to be configured.</li>");
-            }
         }
         catch (ServiceProviderUtilityException spue)
         {
             errorMessage = spue.Message;
         }
+        */
     %>
 
     <% if( errorMessage == null ) { %>
@@ -188,9 +269,7 @@
         for this sample application.  
         </p>
         
-        <ul>
         <%=idpListItems.ToString()%>
-        </ul>
         
         <p>
         Alternatively, you can perform SP initiated Single Sign On with the link(s) provided

@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: fedletapplication.aspx,v 1.5 2009-11-11 18:13:40 ggennaro Exp $
+ * $Id: fedletapplication.aspx,v 1.6 2009-11-12 00:36:50 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" MasterPageFile="~/site.master" %>
@@ -180,7 +180,7 @@
     Hashtable identityProviders = serviceProviderUtility.IdentityProviders;
     IdentityProvider idp = (IdentityProvider)identityProviders[authnResponse.Issuer];
     StringBuilder sloListItems = new StringBuilder();
-    string sloListItemFormat = "<li>{0} initiated SLO with <a href=\"{1}\">{2}</a></li>";
+    string sloListItemFormat = "<li><a href=\"{0}\">Run {1} initiated Single Logout using {2} binding</a></li>";
 
     if (idp != null)
     {
@@ -210,11 +210,11 @@
             string idpUrl = string.Empty;
 
             idpUrl = Server.HtmlEncode(String.Format(idpUrlFormat, idpDeployment, idpMetaAlias, Saml2Constants.HttpRedirectProtocolBinding, fedletUrl));
-            sloListItems.Append(String.Format(sloListItemFormat, "IDP", idpUrl, "HTTP Redirect"));
+            sloListItems.Append(String.Format(sloListItemFormat, idpUrl, "Identity Provider", "HTTP Redirect"));
             idpUrl = Server.HtmlEncode(String.Format(idpUrlFormat, idpDeployment, idpMetaAlias, Saml2Constants.HttpPostProtocolBinding, fedletUrl));
-            sloListItems.Append(String.Format(sloListItemFormat, "IDP", idpUrl, "HTTP POST"));
+            sloListItems.Append(String.Format(sloListItemFormat, idpUrl, "Identity Provider", "HTTP POST"));
             idpUrl = Server.HtmlEncode(String.Format(idpUrlFormat, idpDeployment, idpMetaAlias, Saml2Constants.HttpSoapProtocolBinding, fedletUrl));
-            sloListItems.Append(String.Format(sloListItemFormat, "IDP", idpUrl, "SOAP"));
+            sloListItems.Append(String.Format(sloListItemFormat, idpUrl, "Identity Provider", "SOAP"));
         } 
     }
 
@@ -222,11 +222,11 @@
     string spUrl = string.Empty;
 
     spUrl = Server.HtmlEncode(String.Format(spUrlFormat, idp.EntityId, authnResponse.SubjectNameId, authnResponse.SessionIndex, Saml2Constants.HttpRedirectProtocolBinding, fedletUrl));
-    sloListItems.Append(String.Format(sloListItemFormat, "SP", spUrl, "HTTP Redirect"));
+    sloListItems.Append(String.Format(sloListItemFormat, spUrl, "Fedlet", "HTTP Redirect"));
     spUrl = Server.HtmlEncode(String.Format(spUrlFormat, idp.EntityId, authnResponse.SubjectNameId, authnResponse.SessionIndex, Saml2Constants.HttpPostProtocolBinding, fedletUrl));
-    sloListItems.Append(String.Format(sloListItemFormat, "SP", spUrl, "HTTP POST"));
+    sloListItems.Append(String.Format(sloListItemFormat, spUrl, "Fedlet", "HTTP POST"));
     spUrl = Server.HtmlEncode(String.Format(spUrlFormat, idp.EntityId, authnResponse.SubjectNameId, authnResponse.SessionIndex, Saml2Constants.HttpSoapProtocolBinding, fedletUrl));
-    sloListItems.Append(String.Format(sloListItemFormat, "SP", spUrl, "SOAP"));
+    sloListItems.Append(String.Format(sloListItemFormat, spUrl, "Fedlet", "SOAP"));
 
 %>
 
