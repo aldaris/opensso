@@ -32,24 +32,24 @@
         <param-value>../policy</param-value>
     </context-param>
     <context-param>
-         <param-name>jato:com.sun.identity.console.idm.*:moduleURL</param-name>
-         <param-value>../idm</param-value>
+        <param-name>jato:com.sun.identity.console.idm.*:moduleURL</param-name>
+        <param-value>../idm</param-value>
     </context-param>
     <context-param>
-         <param-name>jato:com.sun.identity.console.user.*:moduleURL</param-name>
-         <param-value>../user</param-value>
+        <param-name>jato:com.sun.identity.console.user.*:moduleURL</param-name>
+        <param-value>../user</param-value>
     </context-param>
-         <context-param>
+    <context-param>
         <param-name>jato:com.sun.identity.console.delegation.*:moduleURL</param-name>
         <param-value>../delegation</param-value>
     </context-param>
     <context-param>
-         <param-name>jato:com.sun.identity.console.agentconfig.*:moduleURL</param-name>
-         <param-value>../agentconfig</param-value>
+        <param-name>jato:com.sun.identity.console.agentconfig.*:moduleURL</param-name>
+        <param-value>../agentconfig</param-value>
     </context-param>
     <context-param>
-         <param-name>jato:com.sun.identity.console.task.*:moduleURL</param-name>
-         <param-value>../task</param-value>
+        <param-name>jato:com.sun.identity.console.task.*:moduleURL</param-name>
+        <param-value>../task</param-value>
     </context-param>
     <context-param>
         <param-name>jato:enforceStrictSessionTimeout</param-name>
@@ -99,6 +99,26 @@
     <context-param>
         <param-name>com.icesoft.faces.synchronousUpdate</param-name>
         <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.icesoft.faces.heartbeatInterval</param-name>
+        <param-value>60000</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.icesoft.faces.heartbeatTimeout</param-name>
+        <param-value>60000</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.icesoft.faces.connectionTimeout</param-name>
+        <param-value>60000</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.icesoft.faces.blockingConnectionTimeout</param-name>
+        <param-value>60000</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.icesoft.faces.heartbeatRetries</param-name>
+        <param-value>30</param-value>
     </context-param>
     <context-param>
         <param-name>facelets.LIBRARIES</param-name>
@@ -335,36 +355,36 @@
         <servlet-name>uploadServlet</servlet-name>
         <url-pattern>/uploadHtml</url-pattern>
     </servlet-mapping>
-    </web-app>
+</web-app>
 
     <!-- servlet mapping -->
 
     <!-- This tag is for the welcome files such as index.html -->
-    <welcome-file-list>
-        <welcome-file>
+<welcome-file-list>
+    <welcome-file>
             index.html
-        </welcome-file>
-    </welcome-file-list>
+    </welcome-file>
+</welcome-file-list>
 
     <!-- The taglib is only specified once -->
-    <taglib>
-        <taglib-uri>/WEB-INF/jato.tld</taglib-uri>
-        <taglib-location>/WEB-INF/jato.tld</taglib-location>
-    </taglib>
-    <taglib>
-        <taglib-uri>/WEB-INF/cc.tld</taglib-uri>
-        <taglib-location>/WEB-INF/com_sun_web_ui/cc.tld</taglib-location>
-    </taglib>
+<taglib>
+    <taglib-uri>/WEB-INF/jato.tld</taglib-uri>
+    <taglib-location>/WEB-INF/jato.tld</taglib-location>
+</taglib>
+<taglib>
+    <taglib-uri>/WEB-INF/cc.tld</taglib-uri>
+    <taglib-location>/WEB-INF/com_sun_web_ui/cc.tld</taglib-location>
+</taglib>
 
     <!-- workarounds for lockart 2.x --> 
-    <taglib>
-        <taglib-uri>/WEB-INF/tld/com_iplanet_jato/jato.tld</taglib-uri>
-        <taglib-location>/WEB-INF/jato.tld</taglib-location>
-    </taglib>
-    <taglib>
-        <taglib-uri>/WEB-INF/tld/com_sun_web_ui/cc.tld</taglib-uri>
-        <taglib-location>/WEB-INF/com_sun_web_ui/cc.tld</taglib-location>
-    </taglib>
+<taglib>
+    <taglib-uri>/WEB-INF/tld/com_iplanet_jato/jato.tld</taglib-uri>
+    <taglib-location>/WEB-INF/jato.tld</taglib-location>
+</taglib>
+<taglib>
+    <taglib-uri>/WEB-INF/tld/com_sun_web_ui/cc.tld</taglib-uri>
+    <taglib-location>/WEB-INF/com_sun_web_ui/cc.tld</taglib-location>
+</taglib>
     <!-- taglib definition -->
     <!-- Comment it out due to issue 4891 in WAS/JBOSS/Geronimo
     <resource-ref>
