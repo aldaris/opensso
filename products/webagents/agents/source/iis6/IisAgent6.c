@@ -350,8 +350,8 @@ DWORD send_error(EXTENSION_CONTROL_BLOCK *pECB)
     const char *thisfunc = "send_error()";
     const char *data = INTERNAL_SERVER_ERROR_MSG;
     size_t data_len = sizeof(INTERNAL_SERVER_ERROR_MSG) - 1;
-    if (pECB->WriteClient(pECB->ConnID, (LPVOID)data,
-                     (LPDWORD)&data_len, (DWORD) 0))
+    if ((pECB->WriteClient(pECB->ConnID, (LPVOID)data,
+                     (LPDWORD)&data_len, (DWORD) 0))==FALSE)
     {
         am_web_log_error("%s: WriteClient did not succeed: "
                      "Attempted message = %s ", thisfunc, data);
@@ -963,8 +963,8 @@ static DWORD do_redirect(EXTENSION_CONTROL_BLOCK *pECB,
                         data = INTERNAL_SERVER_ERROR_MSG;
                         data_len = sizeof(INTERNAL_SERVER_ERROR_MSG) - 1;
                     }
-                    if (pECB->WriteClient(pECB->ConnID, (LPVOID)data,
-                                (LPDWORD)&data_len, (DWORD) 0)) {
+                    if ((pECB->WriteClient(pECB->ConnID, (LPVOID)data,
+                                (LPDWORD)&data_len, (DWORD) 0))==FALSE) {
                         am_web_log_error("do_redirect() WriteClient did not "
                                  "succeed: Attempted message = %s ", data);
                     }
@@ -1679,8 +1679,8 @@ static DWORD redirect_to_request_url(EXTENSION_CONTROL_BLOCK *pECB,
         const char *data = FORBIDDEN_MSG;
         data = INTERNAL_SERVER_ERROR_MSG;
         data_len = sizeof(INTERNAL_SERVER_ERROR_MSG) - 1;
-        if (pECB->WriteClient(pECB->ConnID, (LPVOID)data,
-                       (LPDWORD)&data_len, (DWORD) 0)) {
+        if ((pECB->WriteClient(pECB->ConnID, (LPVOID)data,
+                       (LPDWORD)&data_len, (DWORD) 0))==FALSE) {
             am_web_log_error("%s: WriteClient did not "
                         "succeed. Attempted message = %s ", thisfunc, data);
             returnValue = HSE_STATUS_ERROR;
@@ -1700,8 +1700,8 @@ DWORD send_ok(EXTENSION_CONTROL_BLOCK *pECB)
     const char *thisfunc = "send_ok()";
     const char *data = HTTP_RESPONSE_OK;
     size_t data_len = sizeof(HTTP_RESPONSE_OK) - 1;
-    if (pECB->WriteClient(pECB->ConnID, (LPVOID)data,
-                     (LPDWORD)&data_len, (DWORD) 0))
+    if ((pECB->WriteClient(pECB->ConnID, (LPVOID)data,
+                     (LPDWORD)&data_len, (DWORD) 0))==FALSE)
     {
         am_web_log_error("%s: WriteClient did not succeed: "
                      "Attempted message = %s ", thisfunc, data);
@@ -2219,10 +2219,78 @@ DWORD WINAPI HttpExtensionProc(EXTENSION_CONTROL_BLOCK *pECB)
             am_web_log_info("%s: Access denied to %s",thisfunc,
                             OphResources.result.remote_user ?
                             OphResources.result.remote_user : "unknown user");
-            returnValue = do_redirect(pECB, status,
-                                       &OphResources.result,
-                                       requestURL, requestMethod, args,
-                                       agent_config);
+            //returnValue = do_redirect(pECB, status, &OphResources.result, requestURL, requestMethod, args, agent_config);
+
+            if (strcmp(requestMethod, REQUEST_METHOD_POST) == 0 
+                && B_TRUE==am_web_is_postpreserve_enabled(agent_config))
+            {
+                post_urls_t *post_urls = NULL;
+                post_urls = am_web_create_post_preserve_urls(requestURL, agent_config);
+                // In CDSSO mode, for a POST request, the post data have
+                // already been saved in the response variable, so we need
+                // to get them here only if response is NULL.
+                if (response == NULL) {
+                    status_tmp = get_post_data(pECB, &response);
+                }                
+                if (status_tmp == AM_SUCCESS) {
+                    const char *lbCookieHeader = NULL;
+                    if (response != NULL && strlen(response) > 0) {
+                        if (AM_SUCCESS == register_post_data(pECB,post_urls->action_url,
+                                          post_urls->post_time_key, response, agent_config)) 
+                        {                            
+                            // If using a LB in front of the agent, the LB cookie
+                            // needs to be set there. The boolean argument allows
+                            // to set the value of the cookie to the one defined in the
+                            // properties file (B_FALSE) or to NULL (B_TRUE).
+                            status_tmp = am_web_get_postdata_preserve_lbcookie(
+                                                   &lbCookieHeader, B_FALSE, agent_config);
+                            if (status_tmp == AM_SUCCESS) {
+                                if (lbCookieHeader != NULL) {
+                                    am_web_log_debug("%s: Setting LB cookie for post data "
+                                             "preservation", thisfunc);
+                                    set_cookie(lbCookieHeader, args);
+                                }
+                                returnValue = do_redirect(pECB, status, 
+                                                      &pOphResources->result,
+                                                      post_urls->dummy_url, 
+                                                      requestMethod, args, 
+                                                      agent_config);
+                            } else {
+                                am_web_log_error("%s: "
+                                   "am_web_get_postdata_preserve_lbcookie() "
+                                   "failed ", thisfunc);
+                                returnValue = send_error(pECB);
+                            }
+                            if (lbCookieHeader != NULL) {
+                                am_web_free_memory(lbCookieHeader);
+                                lbCookieHeader = NULL;
+                            }
+
+                        } else {
+                            returnValue = send_error(pECB);
+                        }
+                        if (post_urls != NULL) {
+                            am_web_clean_post_urls(post_urls);
+                            post_urls = NULL;
+                        }
+                    } else {
+                        am_web_log_debug("%s: AM_INVALID_SESSION. This is a POST "
+                                         "request with no post data => redirecting "
+                                         "as a GET request.", thisfunc);
+                        returnValue = do_redirect(pECB, status,
+                                              &OphResources.result,
+                                              requestURL, REQUEST_METHOD_GET, args,
+                                              agent_config);
+                    }
+                } else {
+                    returnValue = send_error(pECB);
+                }
+            } else {
+                returnValue = do_redirect(pECB, status,
+                                          &OphResources.result,
+                                          requestURL, requestMethod, args,
+                                          agent_config);
+            }
             break;
 
         case AM_INVALID_FQDN_ACCESS:
