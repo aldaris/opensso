@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: domino_agent.c,v 1.1 2009-11-04 22:04:57 leiming Exp $
+ * $Id: domino_agent.c,v 1.2 2009-11-12 20:06:05 leiming Exp $
  *
  *
  */ 
@@ -1978,7 +1978,7 @@ filterRawRequest(FilterContext *context, FilterRawRequest *rawRequest) {
         context->privateContext = NULL;
         (void)render_response(context, HTTP_500_INT_ERROR, NULL, &retVal);
 
-    } else if ((context->privateContext = (void *)priv_ctx =
+    } else if ((context->privateContext = 
                 create_private_context(context)) == NULL) {
         am_web_log_error("%s: Failed to create request private context.",
                         thisfunc);
