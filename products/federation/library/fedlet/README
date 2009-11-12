@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.12 2009-10-14 21:32:43 madan_ranganath Exp $
+$Id: README,v 1.13 2009-11-12 17:30:30 exu Exp $
 
 
 
@@ -89,8 +89,8 @@ $Id: README,v 1.12 2009-10-14 21:32:43 madan_ranganath Exp $
      "/export/fedlet/conf" directory instead.
   c) Copy all other files to your application WAR staging directory, overlay 
      them with your existing application WAR structure.
-     Optionally you could remove index.jsp and "conf" directory from the 
-     temporal directory created in step a) before copying. 
+     Optionally you could remove index.jsp, fedletEncode.jsp and "conf" 
+     directory from the temporal directory created in step a) before copying. 
   d) Create the application WAR and redeploy in your web container. 
 
 
@@ -240,7 +240,9 @@ I. Signing
       Following steps need to be performed on hosted IDP:
 
       a) When creating the IDP entity metadata, make sure that you specify that
-         particular entity with Attribute Authority role. 
+         particular entity with Attribute Authority role. Also the reponse from
+         Attribute Authority needs to be signed. Enable signing for Attribute
+         Authority role.
       b) Specify the list of attributes to be fetched in the Attribute Map
 	 IDP Entity -> Assertion Processing -> Attribute Map
 	 ex : CommonName=cn
@@ -293,8 +295,10 @@ II. Signing and Encryption
       Following steps need to be performed on hosted IDP:
 
       a) When creating the IDP entity metadata, make sure that you specify that
-         particular entity with Attribute Authority role. Enable encryption
-	 for the IDP Attribute Authority entity.
+         particular entity with Attribute Authority role. Also the response from
+         Attribute Authority needs to be signed. Enable signing for Attribute 
+         Authority role. Enable encryption for the IDP Attribute Authority 
+         entity.
       b) Specify the list of attributes to be fetched in the Attribute Map
 	 IDP Entity -> Assertion Processing -> Attribute Map
 	 ex : CommonName=cn
