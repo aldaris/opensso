@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.3 2009-11-05 21:13:46 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.4 2009-11-12 01:11:06 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -31,6 +31,7 @@ import com.sun.identity.entitlement.util.SearchFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -469,7 +470,7 @@ public final class ApplicationManager {
         }
 
         if (!allowed) {
-            throw new EntitlementException(326);
+            return Collections.EMPTY_SET;
         }
 
         PrivilegeIndexStore pis = PrivilegeIndexStore.getInstance(
