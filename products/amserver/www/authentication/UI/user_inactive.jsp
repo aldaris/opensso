@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: user_inactive.jsp,v 1.5 2008-08-15 01:05:30 veiming Exp $
+   $Id: user_inactive.jsp,v 1.6 2009-11-12 05:57:09 bhavnab Exp $
                                                                                 
 --%>
 
@@ -105,7 +105,7 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
                     
                 <!-- hyperlink -->
                 <jato:content name="ContentHref">
-                <p><auth:href name="DefaultLoginURL"
+                <p><auth:href name="LoginURL"
                 fireDisplayEvents='true'><jato:text
                 name="txtGotoLoginAfterFail" /></auth:href></p>
                 </jato:content>
