@@ -22,9 +22,34 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: entitlement.properties,v 1.2 2009-11-02 23:52:02 dillidorai Exp $
+ * $Id: IAuthorization.java,v 1.1 2009-11-12 18:37:35 veiming Exp $
  */
 
-resource.validation.does.not.match.valid.resources={0} did not match any valid resources.
-resource.validation.invalid.resource={0} was invalid.
-200=OK
+package com.sun.identity.rest.spi;
+
+import com.sun.identity.rest.RestException;
+import javax.security.auth.Subject;
+import javax.servlet.Filter;
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * Implements this interface to do REST permission check.
+ */
+public interface IAuthorization extends Filter {
+    /**
+     * Returns the accept authentication method
+     *
+     * @return the accept authentication method
+     */
+    String[] accept();
+
+    /**
+     * Returns subject.
+     *
+     * @param req Http Servlet Request
+     * @return subject.
+     * @throws RestException if subject cannot be created.
+     */
+    Subject getAuthZSubject(HttpServletRequest req)
+        throws RestException;
+}

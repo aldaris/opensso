@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubRealmGroupTest.java,v 1.1 2009-09-24 22:39:19 hengming Exp $
+ * $Id: SubRealmGroupTest.java,v 1.2 2009-11-12 18:37:40 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -32,10 +32,10 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.opensso.OpenSSOGroupSubject;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.entitlement.util.IdRepoUtils;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdType;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
@@ -88,8 +88,8 @@ public class SubRealmGroupTest {
         appl.setEntitlementCombiner(DenyOverride.class);
         ApplicationManager.saveApplication(adminSubject, "/", appl);
 
-        user1 = createUser(USER1_NAME);
-        group1 = createGroup(GROUP1_NAME);
+        user1 = IdRepoUtils.createUser("/", USER1_NAME);
+        group1 = IdRepoUtils.createGroup("/", GROUP1_NAME);
         group1.addMember(user1);
 
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
@@ -168,7 +168,7 @@ public class SubRealmGroupTest {
     }
 
     @AfterClass
-    private void cleanup() throws Exception {
+    public void cleanup() throws Exception {
         ApplicationManager.deleteApplication(adminSubject, "/", APPL_NAME);
     }
 
@@ -180,12 +180,10 @@ public class SubRealmGroupTest {
         mgr.delete(REFERRAL1_NAME);
         mgr.delete(REFERRAL2_NAME);
 
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
         Set<AMIdentity> identities = new HashSet<AMIdentity>();
         identities.add(user1);
         identities.add(group1);
-        amir.deleteIdentities(identities);
+        IdRepoUtils.deleteIdentities("/", identities);
 
         OrganizationConfigManager orgMgr = new OrganizationConfigManager(
             adminToken, "/");
@@ -255,36 +253,6 @@ public class SubRealmGroupTest {
             SubjectUtils.createSubject(adminToken), APPL_NAME);
         return evaluator.hasEntitlement("/", subject,
             new Entitlement(res, actions), Collections.EMPTY_MAP);
-    }
-
-    private AMIdentity createUser(String name)
-        throws SSOException, IdRepoException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
-        Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
-        Set<String> set = new HashSet<String>();
-        set.add(name);
-        attrValues.put("givenname", set);
-        attrValues.put("sn", set);
-        attrValues.put("cn", set);
-        attrValues.put("userpassword", set);
-        return amir.createIdentity(IdType.USER, name, attrValues);
-    }
-
-    private AMIdentity createGroup(String name)
-        throws SSOException, IdRepoException {
-
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
-        Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
-        Set<String> set = new HashSet<String>();
-        set.add(name);
-        attrValues.put("cn", set);
-        return amir.createIdentity(IdType.GROUP, name, attrValues);
     }
 
     public static Subject createSubject(String uuid) {

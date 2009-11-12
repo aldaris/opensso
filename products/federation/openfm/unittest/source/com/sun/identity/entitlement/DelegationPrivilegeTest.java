@@ -22,17 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPrivilegeTest.java,v 1.3 2009-10-29 19:05:20 veiming Exp $
+ * $Id: DelegationPrivilegeTest.java,v 1.4 2009-11-12 18:37:39 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.entitlement.opensso.OpenSSOUserSubject;
 import org.testng.annotations.Test;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.entitlement.util.AuthUtils;
+import com.sun.identity.entitlement.util.IdRepoUtils;
 import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -44,9 +45,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 
@@ -89,12 +87,10 @@ public class DelegationPrivilegeTest {
 
     @AfterTest
     public void cleanup() throws Exception {
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, realm);
         Set<AMIdentity> identities = new HashSet<AMIdentity>();
         identities.add(nonDelegatedUser);
         identities.add(delegatedUser);
-        amir.deleteIdentities(identities);
+        IdRepoUtils.deleteIdentities(realm, identities);
     }
 
     @Test
@@ -123,7 +119,8 @@ public class DelegationPrivilegeTest {
 
     @Test (dependsOnMethods = {"testAdd"})
     public void testModify() throws Exception {
-        SSOToken userSSOToken = authenticate(testParams.get("DELEGATED_USER"),
+        SSOToken userSSOToken = AuthUtils.authenticate("/",
+            testParams.get("DELEGATED_USER"),
             testParams.get("DELEGATED_USER"));
         ApplicationPrivilegeManager mgr =
             ApplicationPrivilegeManager.getInstance(realm,
@@ -147,7 +144,7 @@ public class DelegationPrivilegeTest {
 
     @Test (dependsOnMethods = {"testModify"})
     public void testModifyNegative() throws Exception {
-        SSOToken userSSOToken = authenticate(
+        SSOToken userSSOToken = AuthUtils.authenticate("/",
             testParams.get("NON_DELEGATED_USER"),
             testParams.get("NON_DELEGATED_USER"));
         ApplicationPrivilegeManager mgr =
@@ -195,29 +192,5 @@ public class DelegationPrivilegeTest {
         attrValues.put("cn", set);
         attrValues.put("userpassword", set);
         return amir.createIdentity(IdType.USER, name, attrValues);
-    }
-
-    private SSOToken authenticate(String userName, String password)
-        throws Exception {
-        AuthContext lc = new AuthContext(realm);
-        lc.login();
-        while (lc.hasMoreRequirements()) {
-            Callback[] callbacks = lc.getRequirements();
-            for (int i = 0; i < callbacks.length; i++) {
-                if (callbacks[i] instanceof NameCallback) {
-                    NameCallback nc = (NameCallback) callbacks[i];
-                    nc.setName(userName);
-                } else if (callbacks[i] instanceof PasswordCallback) {
-                    PasswordCallback pc = (PasswordCallback) callbacks[i];
-                    pc.setPassword(password.toCharArray());
-                } else {
-                    throw new Exception("No callback");
-                }
-            }
-            lc.submitRequirements(callbacks);
-        }
-
-        return (lc.getStatus() != AuthContext.Status.SUCCESS) ? null :
-            lc.getSSOToken();
     }
 }

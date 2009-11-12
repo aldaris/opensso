@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubRealmEvaluationTest.java,v 1.1 2009-08-19 05:41:01 veiming Exp $
+ * $Id: SubRealmEvaluationTest.java,v 1.2 2009-11-12 18:37:39 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -32,10 +32,9 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.opensso.OpenSSOUserSubject;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.entitlement.util.IdRepoUtils;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdType;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
@@ -111,8 +110,8 @@ public class SubRealmEvaluationTest {
         Map<String, Boolean> actions = new HashMap<String, Boolean>();
         actions.put("GET", Boolean.TRUE);
         Entitlement ent = new Entitlement(APPL_NAME, URL1, actions);
-        user1 = createUser(USER1_NAME);
-        user2 = createUser(USER2_NAME);
+        user1 = IdRepoUtils.createUser("/", USER1_NAME);
+        user2 = IdRepoUtils.createUser("/", USER2_NAME);
         Set<EntitlementSubject> esSet = new HashSet<EntitlementSubject>();
         EntitlementSubject es1 = new OpenSSOUserSubject(user1.getUniversalId());
         EntitlementSubject es2 = new OpenSSOUserSubject(user2.getUniversalId());
@@ -129,7 +128,7 @@ public class SubRealmEvaluationTest {
     }
 
     @AfterClass
-    private void x() throws EntitlementException {
+    public void cleanup() throws EntitlementException {
         ApplicationManager.deleteApplication(adminSubject, "/", APPL_NAME);
     }
 
@@ -140,12 +139,10 @@ public class SubRealmEvaluationTest {
             adminSubject);
         mgr.delete(REFERRAL_NAME);
 
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
         Set<AMIdentity> identities = new HashSet<AMIdentity>();
         identities.add(user1);
         identities.add(user2);
-        amir.deleteIdentities(identities);
+        IdRepoUtils.deleteIdentities("/", identities);
 
         OrganizationConfigManager orgMgr = new OrganizationConfigManager(
             adminToken, "/");
@@ -191,22 +188,6 @@ public class SubRealmEvaluationTest {
             APPL_NAME);
         return evaluator.hasEntitlement(SUB_REALM, subject,
             new Entitlement(res, actions), Collections.EMPTY_MAP);
-    }
-
-    private AMIdentity createUser(String name)
-        throws SSOException, IdRepoException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
-        Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
-        Set<String> set = new HashSet<String>();
-        set.add(name);
-        attrValues.put("givenname", set);
-        attrValues.put("sn", set);
-        attrValues.put("cn", set);
-        attrValues.put("userpassword", set);
-        return amir.createIdentity(IdType.USER, name, attrValues);
     }
 
     public static Subject createSubject(String uuid) {

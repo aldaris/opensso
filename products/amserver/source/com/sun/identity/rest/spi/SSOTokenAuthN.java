@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenAuthN.java,v 1.1 2009-10-21 01:11:02 veiming Exp $
+ * $Id: SSOTokenAuthN.java,v 1.2 2009-11-12 18:37:35 veiming Exp $
  */
 
 package com.sun.identity.rest.spi;
@@ -31,9 +31,9 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.rest.AuthNFilter;
 import com.sun.identity.rest.HttpServletRequestWrapperEx;
 import com.sun.identity.rest.SSOTokenPrincipal;
+import com.sun.identity.rest.RestServiceManager;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -50,7 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SSOTokenAuthN implements IAuthentication {
 
     public String[] accept() {
-        String[] method = { AuthNFilter.DEF_AUTH };
+        String[] method = { RestServiceManager.DEFAULT_AUTHN_SCHEME };
         return method;
     }
 
@@ -87,16 +87,14 @@ public class SSOTokenAuthN implements IAuthentication {
         ServletResponse response,
         FilterChain chain
     ) throws IOException, ServletException {
-        String tokenId = request.getParameter(PARAM_ADMIN);
-        boolean hasTokenId = ((tokenId != null) && (tokenId.length() > 0));
-        if (!hasTokenId && !hasCookie((HttpServletRequest)request)) {
+        if (!hasCookie((HttpServletRequest)request)) {
             redirect((HttpServletRequest)request,
                 (HttpServletResponse)response);
         } else {
             try {
                 SSOTokenManager mgr = SSOTokenManager.getInstance();
-                SSOToken token = (hasTokenId) ? mgr.createSSOToken(tokenId) :
-                    mgr.createSSOToken((HttpServletRequest)request);
+                SSOToken token = mgr.createSSOToken(
+                    (HttpServletRequest)request);
                 HttpServletRequestWrapperEx reqWrapper = new
                     HttpServletRequestWrapperEx((HttpServletRequest) request);
 

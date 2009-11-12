@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.49 2009-03-31 23:53:22 babysunil Exp $
+ * $Id: AgentConfiguration.java,v 1.50 2009-11-12 18:37:37 veiming Exp $
  *
  */
 
@@ -364,7 +364,7 @@ public class AgentConfiguration {
      * @throws ConfigurationException if there are missing information in
      *         server or agent URL; or invalid agent type.
      */
-    public static void createAgent(
+    public static AMIdentity createAgent(
         SSOToken ssoToken,
         String realm,
         String agentName,
@@ -372,8 +372,8 @@ public class AgentConfiguration {
         Map attrValues
     ) throws IdRepoException, SSOException, SMSException,
         ConfigurationException {
-        createAgentEx(ssoToken, realm, agentName, agentType, attrValues, null,
-            null);
+        return createAgentEx(ssoToken, realm, agentName, agentType, 
+            attrValues, null, null);
     }
 
     /**
@@ -393,7 +393,7 @@ public class AgentConfiguration {
      * @throws ConfigurationException if there are missing information in
      *         server or agent URL; or invalid agent type.
      */
-    private static void createAgentEx(
+    private static AMIdentity createAgentEx(
         SSOToken ssoToken,
         String realm,
         String agentName,
@@ -441,7 +441,7 @@ public class AgentConfiguration {
                 agentURL);
         }
 
-        amir.createIdentity(IdType.AGENTONLY, agentName, inheritedValues);
+        return amir.createIdentity(IdType.AGENTONLY, agentName, inheritedValues);
     }
 
     private static void addAgentRootURLKey(String agentType, Map map)

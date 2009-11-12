@@ -140,7 +140,7 @@
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>com.sun.identity.entitlement</param-value>
+            <param-value>com.sun.identity.rest</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

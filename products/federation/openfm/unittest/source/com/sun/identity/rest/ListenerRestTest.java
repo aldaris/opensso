@@ -22,32 +22,42 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerRestTest.java,v 1.4 2009-11-06 21:56:52 veiming Exp $
+ * $Id: ListenerRestTest.java,v 1.1 2009-11-12 18:37:36 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.rest;
 
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.ApplicationTypeManager;
+import com.sun.identity.entitlement.AuthenticatedESubject;
+import com.sun.identity.entitlement.Entitlement;
+import com.sun.identity.entitlement.EntitlementListener;
+import com.sun.identity.entitlement.EntitlementSubject;
+import com.sun.identity.entitlement.ListenerManager;
+import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.entitlement.util.AuthUtils;
+import com.sun.identity.entitlement.util.IdRepoUtils;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
-import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdType;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.unittest.UnittestLog;
+import com.sun.identity.shared.encode.Hash;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.identity.security.AdminTokenAction;
 import com.sun.jersey.api.representation.Form;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import javax.ws.rs.core.Cookie;
 import org.json.JSONObject;
 import org.owasp.esapi.ESAPI;
 import org.testng.annotations.AfterClass;
@@ -60,21 +70,42 @@ import org.testng.annotations.Test;
  */
 public class ListenerRestTest {
     private static final String REALM = "/";
+    private static final String AGENT_NAME = "ListenerRestTestAgent";
     private static final String NOTIFICATION_URL =
         "http://www.listenerresttest.com/notification";
     private static String ENC_NOTIFICATION_URL = null;
-
-    private static final String PRIVILEGE_NAME = "ListenerRestTestPrivilege";
     private static final SSOToken adminToken = (SSOToken)
         AccessController.doPrivileged(AdminTokenAction.getInstance());
+
+    private static final String PRIVILEGE_NAME = "ListenerRestTestPrivilege";
     private Subject adminSubject = SubjectUtils.createSuperAdminSubject();
     private static final String RESOURCE_NAME = "http://www.listenerresttest.com";
-    private AMIdentity user;
     private WebResource listenerClient;
+    private String hashedTokenId;
+    private String tokenIdHeader;
+    private Cookie cookie;
+    private AMIdentity agent;
 
     @BeforeClass
     public void setup() throws Exception {
         try {
+            agent = IdRepoUtils.createAgent(REALM, AGENT_NAME);
+            SSOToken ssoToken = AuthUtils.authenticate(REALM, AGENT_NAME,
+                AGENT_NAME);
+            String userTokenId = ssoToken.getTokenID().toString();
+            hashedTokenId = Hash.hash(userTokenId);
+            tokenIdHeader = RestServiceManager.SSOTOKEN_SUBJECT_PREFIX +
+                RestServiceManager.SUBJECT_DELIMITER + userTokenId;
+            String cookieValue = userTokenId;
+
+            if (Boolean.parseBoolean(
+                SystemProperties.get(Constants.AM_COOKIE_ENCODE, "false"))) {
+                cookieValue = URLEncoder.encode(userTokenId, "UTF-8");
+            }
+
+            cookie = new Cookie(SystemProperties.get(Constants.AM_COOKIE_NAME),
+                 cookieValue);
+
             PrivilegeManager pm = PrivilegeManager.getInstance(REALM,
                 adminSubject);
             Privilege privilege = Privilege.getNewInstance();
@@ -88,9 +119,6 @@ public class ListenerRestTest {
             EntitlementSubject sbj = new AuthenticatedESubject();
             privilege.setSubject(sbj);
             pm.addPrivilege(privilege);
-            AMIdentityRepository amir = new AMIdentityRepository(
-                adminToken, REALM);
-            user = createUser(amir, "ListenerRestTestUser");
 
             listenerClient = Client.create().resource(
                 SystemProperties.getServerInstanceName() +
@@ -108,33 +136,19 @@ public class ListenerRestTest {
         PrivilegeManager pm = PrivilegeManager.getInstance(REALM,
             adminSubject);
         pm.removePrivilege(PRIVILEGE_NAME);
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, REALM);
-        Set<AMIdentity> users = new HashSet<AMIdentity>();
-        users.add(user);
-        amir.deleteIdentities(users);
-    }
-
-    private AMIdentity createUser(AMIdentityRepository amir, String id)
-        throws SSOException, IdRepoException {
-        Map<String, Set<String>> attrValues =
-            new HashMap<String, Set<String>>();
-        Set<String> set = new HashSet<String>();
-        set.add(id);
-        attrValues.put("givenname", set);
-        attrValues.put("sn", set);
-        attrValues.put("cn", set);
-        attrValues.put("userpassword", set);
-        return amir.createIdentity(IdType.USER, id, attrValues);
+        IdRepoUtils.deleteIdentity(REALM, agent);
     }
 
     @Test
     public void test() throws Exception {
         Form form = new Form();
         form.add("resources", RESOURCE_NAME + "/*");
-        form.add("admin", adminToken.getTokenID().toString());
-        String result = listenerClient.path(ENC_NOTIFICATION_URL).post(
-            String.class, form);
+        form.add("subject", hashedTokenId);
+        String result = listenerClient
+            .path(ENC_NOTIFICATION_URL)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
+            .post(String.class, form);
         if (!result.equals("OK")) {
             throw new Exception("ListenerRESTTest.test failed to add");
         }
@@ -173,9 +187,12 @@ public class ListenerRestTest {
     public void testAddMoreResources() throws Exception {
         Form form = new Form();
         form.add("resources", RESOURCE_NAME + "/a/*");
-        form.add("admin", adminToken.getTokenID().toString());
-        String result = listenerClient.path(ENC_NOTIFICATION_URL).post(
-            String.class, form);
+        form.add("subject", hashedTokenId);
+        String result = listenerClient
+            .path(ENC_NOTIFICATION_URL)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
+            .post(String.class, form);
         if (!result.equals("OK")) {
             throw new Exception(
                 "ListenerRESTTest.testAddMoreResources failed to add");
@@ -218,9 +235,12 @@ public class ListenerRestTest {
     public void testAddDifferentApp() throws Exception {
         Form form = new Form();
         form.add("application", "sunBank");
-        form.add("admin", adminToken.getTokenID().toString());
-        String result = listenerClient.path(ENC_NOTIFICATION_URL).post(
-            String.class, form);
+        form.add("subject", hashedTokenId);
+        String result = listenerClient
+            .path(ENC_NOTIFICATION_URL)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
+            .post(String.class, form);
         if (!result.equals("OK")) {
             throw new Exception(
                 "ListenerRESTTest.testAddDifferentApp failed to add");
@@ -237,8 +257,27 @@ public class ListenerRestTest {
 
     @Test(dependsOnMethods = {"testAddDifferentApp"})
     public void testGetListener() throws Exception {
-        String result = listenerClient.path(ENC_NOTIFICATION_URL).queryParam(
-            "admin", adminToken.getTokenID().toString()).get(String.class);
+        //have to use dsame user here
+
+       String adminTokenId = adminToken.getTokenID().toString();
+       String adminHashedTokenId = Hash.hash(adminTokenId);
+       String adminTokenIdHeader = RestServiceManager.SSOTOKEN_SUBJECT_PREFIX +
+           RestServiceManager.SUBJECT_DELIMITER + adminTokenId;
+       String cookieValue = adminTokenId;
+
+        if (Boolean.parseBoolean(
+            SystemProperties.get(Constants.AM_COOKIE_ENCODE, "false"))) {
+            cookieValue = URLEncoder.encode(adminTokenId, "UTF-8");
+        }
+
+        cookie = new Cookie(SystemProperties.get(Constants.AM_COOKIE_NAME),
+            cookieValue);
+
+        String result = listenerClient.path(ENC_NOTIFICATION_URL)
+            .queryParam("subject", adminHashedTokenId)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, adminTokenIdHeader)
+            .cookie(cookie)
+            .get(String.class);
 
         try {
             JSONObject jo = new JSONObject(result);
@@ -275,9 +314,12 @@ public class ListenerRestTest {
 
     @Test(dependsOnMethods = {"testAddDifferentApp"})
     public void testRemove() throws Exception {
-        String result = listenerClient.path(ENC_NOTIFICATION_URL).queryParam(
-            "admin", adminToken.getTokenID().toString()).
-            delete(String.class);
+        String result = listenerClient
+            .path(ENC_NOTIFICATION_URL)
+            .queryParam("subject", hashedTokenId)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
+            .delete(String.class);
         if (!result.equals("OK")) {
             throw new Exception(
                 "ListenerRESTTest.testRemove failed to remove");

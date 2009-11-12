@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityGroupToEntitlementGroupTest.java,v 1.1 2009-08-19 05:41:00 veiming Exp $
+ * $Id: IdentityGroupToEntitlementGroupTest.java,v 1.2 2009-11-12 18:37:39 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.opensso.PrivilegeUtils;
+import com.sun.identity.entitlement.util.IdRepoUtils;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdType;
@@ -72,14 +73,10 @@ public class IdentityGroupToEntitlementGroupTest {
 
     @AfterClass
     public void cleanup() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
         Set<AMIdentity> identities = new HashSet<AMIdentity>();
         identities.add(group1);
         identities.add(group2);
-        amir.deleteIdentities(identities);
+        IdRepoUtils.deleteIdentities("/", identities);
     }
 
     @Test

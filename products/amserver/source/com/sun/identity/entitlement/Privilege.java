@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.7 2009-11-06 21:56:52 veiming Exp $
+ * $Id: Privilege.java,v 1.8 2009-11-12 18:37:38 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -271,7 +271,7 @@ public abstract class Privilege implements IPrivilege {
     }
 
 
-    JSONObject toMinimalJSONObject() throws JSONException {
+    public JSONObject toMinimalJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
         if (description != null) {
             jo.put("description", description);
@@ -824,7 +824,7 @@ public abstract class Privilege implements IPrivilege {
         this.active = active;
     }
 
-    static Privilege getNewInstance(String name, JSONObject jo)
+    public static Privilege getNewInstance(String name, JSONObject jo)
         throws EntitlementException {
         if (privilegeClass == null) {
             throw new EntitlementException(2);

@@ -22,22 +22,31 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeRestTest.java,v 1.1 2009-11-06 21:56:52 veiming Exp $
+ * $Id: PrivilegeRestTest.java,v 1.1 2009-11-12 18:37:36 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.rest;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.AuthenticatedESubject;
+import com.sun.identity.entitlement.Entitlement;
+import com.sun.identity.entitlement.EntitlementSubject;
+import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.encode.Hash;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.representation.Form;
+import java.net.URLEncoder;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.Map;
 import javax.security.auth.Subject;
+import javax.ws.rs.core.Cookie;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.AfterClass;
@@ -57,6 +66,9 @@ public class PrivilegeRestTest {
     private static final String RESOURCE_NAME =
         "http://www.PrivilegeRestTest.com";
     private WebResource webClient;
+    private String tokenIdHeader;
+    private String hashedTokenId;
+    private Cookie cookie;
 
     @BeforeClass
     public void setup() throws Exception {
@@ -73,10 +85,23 @@ public class PrivilegeRestTest {
         EntitlementSubject sbj = new AuthenticatedESubject();
         privilege.setSubject(sbj);
         pm.addPrivilege(privilege);
+
+        String tokenId = adminToken.getTokenID().toString();
+        hashedTokenId = Hash.hash(tokenId);
+        tokenIdHeader = RestServiceManager.SSOTOKEN_SUBJECT_PREFIX +
+            RestServiceManager.SUBJECT_DELIMITER + tokenId;
+        String cookieValue = tokenId;
+
+        if (Boolean.parseBoolean(
+            SystemProperties.get(Constants.AM_COOKIE_ENCODE, "false"))) {
+            cookieValue = URLEncoder.encode(tokenId, "UTF-8");
+        }
+
+        cookie = new Cookie(SystemProperties.get(Constants.AM_COOKIE_NAME),
+            cookieValue);
         webClient = Client.create().resource(
             SystemProperties.getServerInstanceName() +
             "/ws/1/entitlement/privilege");
-
     }
 
     @AfterClass
@@ -88,10 +113,13 @@ public class PrivilegeRestTest {
 
     @Test
     public void search() throws Exception {
-        String result = webClient.path("privileges")
+        String result = webClient
+            .path("privileges")
             .queryParam("filter",
                 Privilege.NAME_ATTRIBUTE + "=" + PRIVILEGE_NAME)
-            .queryParam("admin", adminToken.getTokenID().toString())
+            .queryParam("subject", hashedTokenId)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
             .get(String.class);
         
         JSONObject jbody = parseResult(result);
@@ -110,8 +138,11 @@ public class PrivilegeRestTest {
 
     @Test (dependsOnMethods="search")
     public void getAndPut() throws Exception {
-        String result = webClient.path(PRIVILEGE_NAME)
-            .queryParam("admin", adminToken.getTokenID().toString())
+        String result = webClient
+            .path(PRIVILEGE_NAME)
+            .queryParam("subject", hashedTokenId)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
             .get(String.class);
         JSONObject jbody = parseResult(result);
         String jsonStr = jbody.getString(PrivilegeResource.RESULT);
@@ -122,8 +153,12 @@ public class PrivilegeRestTest {
 
         Form form = new Form();
         form.add("privilege.json", privilege.toMinimalJSONObject());
-        result = webClient.path(PRIVILEGE_NAME)
+        result = webClient
+            .path(PRIVILEGE_NAME)
             .queryParam("admin", adminToken.getTokenID().toString())
+            .queryParam("subject", hashedTokenId)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
             .put(String.class, form);
         parseResult(result); //OK
     }
@@ -131,21 +166,29 @@ public class PrivilegeRestTest {
     @Test (dependsOnMethods="getAndPut")
     public void getAndDeleteAndAdd()
         throws Exception {
-        String result = webClient.path(PRIVILEGE_NAME)
-            .queryParam("admin", adminToken.getTokenID().toString())
+        String result = webClient
+            .path(PRIVILEGE_NAME)
+            .queryParam("subject", hashedTokenId)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
             .get(String.class);
         JSONObject jbody = parseResult(result);
         String jsonStr = jbody.getString(PrivilegeResource.RESULT);
 
         result = webClient.path(PRIVILEGE_NAME)
-            .queryParam("admin", adminToken.getTokenID().toString())
+            .queryParam("subject", hashedTokenId)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
             .delete(String.class);
         jbody = parseResult(result); //OK
 
         Form form = new Form();
         form.add("privilege.json", jsonStr);
-        form.add("admin", adminToken.getTokenID().toString());
-        result = webClient.path(PRIVILEGE_NAME).post(String.class, form);
+        form.add("subject", hashedTokenId);
+        result = webClient.path(PRIVILEGE_NAME)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
+            .post(String.class, form);
         parseResult(result); //OK
     }
     

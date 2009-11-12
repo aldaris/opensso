@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.18 2009-11-02 23:52:02 dillidorai Exp $
+ * $Id: ResourceResultCache.java,v 1.19 2009-11-12 18:37:38 veiming Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
 import com.iplanet.am.util.Cache;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
@@ -71,7 +72,6 @@ import com.sun.identity.policy.remote.PolicyService;
 import com.sun.identity.policy.remote.RemoveListenerRequest;
 import com.sun.identity.policy.remote.ResourceResultRequest;
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -90,6 +90,8 @@ import java.util.Set;
 import com.sun.identity.policy.ResBundleUtils;
 
 
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.encode.Hash;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -130,7 +132,6 @@ class ResourceResultCache implements SSOTokenListener {
 
     private static final String REST_QUERY_REALM = "realm";
     private static final String REST_QUERY_APPLICATION = "application";
-    private static final String REST_QUERY_ADMIN = "admin";
     private static final String REST_QUERY_SUBJECT = "subject";
     private static final String REST_QUERY_RESOURCE = "resource";
     private static final String REST_QUERY_RESOURCES = "resources";
@@ -608,13 +609,9 @@ class ResourceResultCache implements SSOTokenListener {
         Set<ResourceResult> resourceResults = null;
         try {        
             AMIdentity userIdentity  = IdUtils.getIdentity(token);
-            // FIXME: need to be able to handle non uuid, for example ssoTokenId
-            String subjectUuid = userIdentity.getUniversalId();
             String restUrl = getRESTPolicyServiceURL(token, scope);
-            String admin = appToken.getTokenID().toString(); 
             String queryString = buildEntitlementRequestQueryString(
-                    admin, "/", serviceName, subjectUuid,
-                    resourceName, actionNames, env);
+                "/", serviceName, token, resourceName, actionNames, env);
             restUrl = restUrl + "?" + queryString;
             if (debug.messageEnabled()) {
                 debug.message("ResourceResultCache.getRESTResultsFromServer():"
@@ -626,13 +623,13 @@ class ResourceResultCache implements SSOTokenListener {
                         + ":restUrl=" + restUrl
                         + ":entering");
             }
-            String jsonString = getResourceContent(restUrl);
+            String jsonString = getResourceContent(appToken, token, restUrl);
             if (debug.messageEnabled()) {
                 debug.message("ResourceResultCache.getRESTResultsFromServer():"
                         + ":server response jsonString=" + jsonString); 
             }
-            resourceResults 
-                    = jsonResourceContentToResourceResults(jsonString, serviceName);
+            resourceResults = jsonResourceContentToResourceResults(
+                jsonString, serviceName);
         } catch (Exception e) {
             String[] args = {e.getMessage()};
             throw new PolicyEvaluationException(
@@ -833,8 +830,7 @@ class ResourceResultCache implements SSOTokenListener {
         }
 
         ResourceMatch  result = resourceComparator.compare(resourceName,
-                resourceResult.getResourceName(), 
-                true); //wild card compare
+            resourceResult.getResourceName(), true); //wild card compare
         if (result.equals(ResourceMatch.EXACT_MATCH)) {
             resetPolicyDecision(resourceResult.getPolicyDecision(), pd,
                     serviceName);
@@ -1647,9 +1643,8 @@ class ResourceResultCache implements SSOTokenListener {
     
     private String getRESTPolicyServiceURL(SSOToken token, String scope) 
             throws SSOException, PolicyException {
-        String restUrl = null;
         URL policyServiceURL = getPolicyServiceURL(token);
-        restUrl = policyServiceURL.toString();
+        String restUrl = policyServiceURL.toString();
         restUrl = restUrl.replace(POLICY_SERVICE, REST_POLICY_SERVICE);
         if (PolicyProperties.SUBTREE.equals(scope)) {
             restUrl = restUrl + "s";
@@ -1677,34 +1672,37 @@ class ResourceResultCache implements SSOTokenListener {
         return values;
     }
 
-    String getResourceContent(String url) throws PolicyException {
+    String getResourceContent(SSOToken appToken, SSOToken userToken, String url)
+        throws PolicyException {
         StringBuilder sb = new StringBuilder();
         HttpURLConnection conn = null;
-        OutputStream out = null;
         BufferedReader reader = null;
         try {
             conn = HttpURLConnectionManager.getConnection(new URL(url));
             conn.setDoOutput(true);
             conn.setUseCaches(false);
             conn.setRequestMethod("GET");
+            setCookieAndHeader(conn, appToken, userToken);
             conn.connect();
 
-            reader =  new BufferedReader(
-                    new InputStreamReader(
-                    conn.getInputStream(), "UTF-8"));
+            reader = new BufferedReader(
+                new InputStreamReader(conn.getInputStream(), "UTF-8"));
             int len;
             char[] buf = new char[1024];
             while ((len = reader.read(buf, 0, buf.length)) != -1) {
                 sb.append(buf, 0, len);
             }
             int responseCode = conn.getResponseCode();
-            if (responseCode != conn.HTTP_OK) {
-                    if (debug.warningEnabled()) {
-                        debug.warning("ResourceResultCache.getResourceContent():"
-                                + "REST call failed with HTTP response code:" + responseCode);
-                    }
-                    throw new PolicyException(
-                            "Entitlement REST call failed with error code:" + responseCode);
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                if (debug.warningEnabled()) {
+                    debug.warning(
+                        "ResourceResultCache.getResourceContent():" +
+                        "REST call failed with HTTP response code:" +
+                        responseCode);
+                }
+                throw new PolicyException(
+                    "Entitlement REST call failed with error code:" +
+                    responseCode);
             }
         } catch (UnsupportedEncodingException uee) {
             // should not happen
@@ -1728,6 +1726,25 @@ class ResourceResultCache implements SSOTokenListener {
             }
         }
         return sb.toString();
+    }
+
+    private void setCookieAndHeader(
+        HttpURLConnection conn,
+        SSOToken appToken,
+        SSOToken userToken
+    ) throws UnsupportedEncodingException {
+        String cookieValue = appToken.getTokenID().toString();
+        if (Boolean.parseBoolean(
+            SystemProperties.get(Constants.AM_COOKIE_ENCODE, "false"))) {
+            cookieValue = URLEncoder.encode(cookieValue, "UTF-8");
+        }
+        String cookieName = SystemProperties.get(Constants.AM_COOKIE_NAME,
+            "iPlanetDirectoryPro");
+        conn.setRequestProperty("Cookie", cookieName + "=" + cookieValue);
+
+        String userTokenId = userToken.getTokenID().toString();
+        String userTokenIdHeader = "ssotoken:" + userTokenId;
+        conn.setRequestProperty("X-Query-Parameters", userTokenIdHeader);
     }
 
     Set<ResourceResult> jsonResourceContentToResourceResults(
@@ -1885,14 +1902,14 @@ class ResourceResultCache implements SSOTokenListener {
                 } 
                 StringBuilder sb = new StringBuilder();
                 sb.append(policyServiceListenerURL).append("/");
-                sb.append(URLEncoder.encode(notificationURL));
+                sb.append(URLEncoder.encode(notificationURL, "UTF-8"));
                 String restUrl = sb.toString();
-                String admin = appToken.getTokenID().toString(); 
                 Set<String> resourceNames = new HashSet<String>();
                 resourceNames.add(rootURL);
                 String queryString = buildRegisterListenerQueryString(
-                        admin, serviceName, resourceNames);
-                String resourceContent = postForm(restUrl, queryString);
+                    appToken, serviceName, resourceNames);
+                String resourceContent = postForm(appToken, restUrl,
+                    queryString);
                 // FIXME: what do we check in the content?
                 // FIXME: check the response, detect error conditions?
                 if (debug.messageEnabled()) {
@@ -1903,6 +1920,9 @@ class ResourceResultCache implements SSOTokenListener {
                 } 
                 status = true;
                 remotePolicyListeners.add(serviceName);
+            } catch (UnsupportedEncodingException e) {
+                debug.error("ResourceResultCache.addRESTRemotePolicyListener():"
+                        + "Can not add policy listner", e);
             } catch (SSOException se) {
                 debug.error("ResourceResultCache.addRESTRemotePolicyListener():"
                         + "Can not add policy listner", se);
@@ -1958,12 +1978,14 @@ class ResourceResultCache implements SSOTokenListener {
                 } 
                 StringBuilder sb = new StringBuilder();
                 sb.append(policyServiceListenerURL).append("/");
-                sb.append(URLEncoder.encode(notificationURL));
-                String admin = appToken.getTokenID().toString(); 
+                sb.append(URLEncoder.encode(notificationURL, "UTF-8"));
                 Set<String> resourceNames = null;
-                sb.append(buildRegisterListenerQueryString(admin, serviceName, resourceNames));
+                sb.append("?");
+                sb.append(buildRegisterListenerQueryString(
+                    appToken, serviceName, resourceNames));
                 String restUrl = sb.toString();
-                String resourceContent = deleteRESTResourceContent(restUrl);
+                String resourceContent = deleteRESTResourceContent(
+                    appToken, restUrl);
                 // FIXME: what do we check in the content
                 if (debug.messageEnabled()) {
                     debug.message("ResourceResultCache."
@@ -1972,6 +1994,9 @@ class ResourceResultCache implements SSOTokenListener {
                             );
                 } 
                 remotePolicyListeners.remove(notificationURL);
+            } catch (UnsupportedEncodingException e) {
+                debug.error("ResourceResultCache.addRESTRemotePolicyListener():"
+                        + "Can not add policy listner", e);
             } catch (SSOException se) {
                 debug.error("ResourceResultCache.addRESTRemotePolicyListener():"
                         + "Can not add policy listner", se);
@@ -2074,7 +2099,8 @@ class ResourceResultCache implements SSOTokenListener {
         return restUrl;
     }
     
-    String postForm(String url, String formContent) throws PolicyException {
+    String postForm(SSOToken appToken, String url, String formContent)
+        throws PolicyException {
         if (debug.messageEnabled()) {
             debug.message("ResourceResultCache."
                     + "postForm():"
@@ -2090,6 +2116,7 @@ class ResourceResultCache implements SSOTokenListener {
             conn.setDoInput(true);
             conn.setDoOutput(true);
             conn.setUseCaches(false);
+            setCookieAndHeader(conn, appToken, appToken);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", 
                     "application/x-www-form-urlencoded");
@@ -2150,78 +2177,21 @@ class ResourceResultCache implements SSOTokenListener {
         return sb.toString();
     }
 
-    String getRESTResourceContent(String url) throws PolicyException {
+    private String deleteRESTResourceContent(SSOToken appToken, String url)
+        throws PolicyException {
         StringBuilder sb = new StringBuilder();
         HttpURLConnection conn = null;
-        OutputStream out = null;
         BufferedReader reader = null;
         try {
             conn = HttpURLConnectionManager.getConnection(new URL(url));
             conn.setDoOutput(true);
             conn.setUseCaches(false);
-            conn.setRequestMethod("GET");
-            conn.connect();
-
-            reader =  new BufferedReader(
-                    new InputStreamReader(
-                    conn.getInputStream(), "UTF-8"));
-            int len;
-            char[] buf = new char[1024];
-            while ((len = reader.read(buf, 0, buf.length)) != -1) {
-                sb.append(buf, 0, len);
-            }
-            int responseCode = conn.getResponseCode();
-            if (responseCode != conn.HTTP_OK) {
-                    if (debug.warningEnabled()) {
-                        debug.warning("ResourceResultCache."
-                                + "getRESTResourceContent():"
-                                + "REST call failed with HTTP response code:" 
-                                + responseCode);
-                    }
-                    throw new PolicyException(
-                            "Entitlement REST call failed with error code:" 
-                            + responseCode);
-            }
-        } catch (UnsupportedEncodingException uee) {
-            // should not happen
-            debug.error("ResourceResultCache.getRESTResourceContent():"
-                    + "UnsupportedEncodingException:" + uee.getMessage());
-        } catch (IOException ie) {
-            debug.error("ResourceResultCache.getResourceConent():IOException:" 
-                    + ie.getMessage(), ie);
-            throw new PolicyException(ResBundleUtils.rbName,
-                    "rest_call_failed_with_io_exception", null, ie);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-                if (conn != null) {
-                    conn.disconnect();
-                }
-                
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return sb.toString();
-    }
-
-    String deleteRESTResourceContent(String url) throws PolicyException {
-        StringBuilder sb = new StringBuilder();
-        HttpURLConnection conn = null;
-        OutputStream out = null;
-        BufferedReader reader = null;
-        try {
-            conn = HttpURLConnectionManager.getConnection(new URL(url));
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
+            setCookieAndHeader(conn, appToken, appToken);
             conn.setRequestMethod("DELETE");
             conn.connect();
 
-            reader =  new BufferedReader(
-                    new InputStreamReader(
-                    conn.getInputStream(), "UTF-8"));
+            reader = new BufferedReader(new InputStreamReader(
+                conn.getInputStream(), "UTF-8"));
             int len;
             char[] buf = new char[1024];
             while ((len = reader.read(buf, 0, buf.length)) != -1) {
@@ -2264,12 +2234,12 @@ class ResourceResultCache implements SSOTokenListener {
     }
 
     static String buildRegisterListenerQueryString(
-            String admin, 
+            SSOToken appToken,
             String serviceName, // called application in entitlement
             Set<String> resourceNames) throws PolicyException {
         StringBuilder sb = new StringBuilder();
         try {
-            if ((admin == null) || (admin.length() == 0)) {
+            if (appToken == null) {
                 if (debug.warningEnabled()) {
                     debug.warning("ResourceResultCache.builRegisterListenerdQueryString():"
                             + "admin is null");
@@ -2277,8 +2247,10 @@ class ResourceResultCache implements SSOTokenListener {
                 throw new PolicyException(ResBundleUtils.rbName,
                         "admin_can_not_be_null", null, null); 
             } else {
-                sb.append(REST_QUERY_ADMIN).append("=");
-                sb.append(URLEncoder.encode(admin, "UTF-8"));
+                String tokenId = appToken.getTokenID().toString();
+                String hashedTokenId = Hash.hash(tokenId);
+                sb.append(REST_QUERY_SUBJECT).append("=");
+                sb.append(URLEncoder.encode(hashedTokenId, "UTF-8"));
             }
 
             if ((serviceName == null) || (serviceName.length() == 0)) {
@@ -2319,10 +2291,9 @@ class ResourceResultCache implements SSOTokenListener {
     }
 
     static String buildEntitlementRequestQueryString(
-            String admin, 
             String realm, 
             String serviceName, 
-            String subjectUuid,
+            SSOToken userToken,
             String resource,
             Set actionNames,
             Map envMap) throws PolicyException {
@@ -2333,19 +2304,6 @@ class ResourceResultCache implements SSOTokenListener {
             realm = URLEncoder.encode(realm, "UTF-8");
             sb.append(REST_QUERY_REALM).append("=");
             sb.append(realm);
-
-            if ((admin == null) || (admin.length() == 0)) {
-                if (debug.warningEnabled()) {
-                    debug.warning("ResourceResultCache."
-                            + "buildEntitlementRequestQueryString():"
-                            + "adminCookie can not be null");
-                }
-                throw new PolicyException(ResBundleUtils.rbName,
-                        "admin_can_not_be_null", null, null); //FIXME: add i18n
-            } else {
-                sb.append("&").append(REST_QUERY_ADMIN).append("=");
-                sb.append(URLEncoder.encode(admin, "UTF-8"));
-            }
 
             if ((serviceName == null) || (serviceName.length() == 0)) {
                 if (debug.warningEnabled()) {
@@ -2360,7 +2318,7 @@ class ResourceResultCache implements SSOTokenListener {
                 sb.append(URLEncoder.encode(serviceName, "UTF-8"));
             }
 
-            if ((subjectUuid == null) || (subjectUuid.trim().length() == 0)) {
+            if (userToken == null) {
                 if (debug.warningEnabled()) {
                     debug.warning("ResourceResultCache."
                             + "buildEntitlementRequestQueryString():"
@@ -2369,8 +2327,10 @@ class ResourceResultCache implements SSOTokenListener {
                 throw new PolicyException(ResBundleUtils.rbName,
                         "subject_can_not_be_null", null, null);
             } else {
+                String userTokenId = userToken.getTokenID().toString();
+                String hashedUserTokenId = Hash.hash(userTokenId);
                 sb.append("&").append(REST_QUERY_SUBJECT).append("=");
-                sb.append(URLEncoder.encode(subjectUuid, "UTF-8"));
+                sb.append(URLEncoder.encode(hashedUserTokenId, "UTF-8"));
             }
             if ((resource == null) || (resource.trim().length() == 0)) {
                 if (debug.warningEnabled()) {
@@ -2415,7 +2375,6 @@ class ResourceResultCache implements SSOTokenListener {
     }
 
     String getRootURL(String url) {
-        String rootUrl = null;
         if (url == null) {
             return null;
         }

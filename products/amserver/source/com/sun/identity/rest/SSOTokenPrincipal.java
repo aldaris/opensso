@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenPrincipal.java,v 1.1 2009-10-21 01:10:31 veiming Exp $
+ * $Id: SSOTokenPrincipal.java,v 1.2 2009-11-12 18:37:35 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -30,7 +30,6 @@ package com.sun.identity.rest;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.shared.Constants;
-import com.sun.identity.security.ISubjectable;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,7 +46,7 @@ public class SSOTokenPrincipal implements Principal, ISubjectable {
         return ssoToken.getTokenID().toString();
     }
 
-    public Subject createSubject()
+    public Subject createSubject() 
         throws Exception {
         Set<Principal> userPrincipals = new HashSet<Principal>(2);
         String uuid = ssoToken.getProperty(Constants.UNIVERSAL_IDENTIFIER);

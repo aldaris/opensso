@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidateResourceResult.java,v 1.1 2009-08-19 05:40:34 veiming Exp $
+ * $Id: ValidateResourceResult.java,v 1.2 2009-11-12 18:37:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -85,7 +85,8 @@ public class ValidateResourceResult {
      * @return localized message.
      */
     public String getLocalizedMessage(Locale locale) {
-        ResourceBundle rb = ResourceBundle.getBundle("entitlement", locale);
+        ResourceBundle rb = ResourceBundle.getBundle(
+            "EntitlementException", locale);
         String str = rb.getString(message);
         return ((args != null) && (args.length > 0)) ?
             MessageFormat.format(str, args) : str;

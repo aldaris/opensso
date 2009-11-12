@@ -22,20 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPPTest.java,v 1.1 2009-08-21 21:47:49 hengming Exp $
+ * $Id: IDPPTest.java,v 1.2 2009-11-12 18:37:39 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.entitlement.util.IdRepoUtils;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
-import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdType;
 import com.sun.identity.policy.ActionDecision;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyDecision;
@@ -45,8 +41,6 @@ import com.sun.identity.policy.Rule;
 import com.sun.identity.policy.SubjectTypeManager;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
-import java.security.Principal;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -82,8 +76,8 @@ public class IDPPTest {
             return;
         }
         
-        user1 = createUser(USER1_NAME);
-        group1 = createGroup(GROUP1_NAME);
+        user1 = IdRepoUtils.createUser(orgName, USER1_NAME);
+        group1 = IdRepoUtils.createGroup(orgName, GROUP1_NAME);
         group1.addMember(user1);
 
         PolicyManager policyMgr = new PolicyManager(adminToken, orgName);
@@ -127,12 +121,10 @@ public class IDPPTest {
         PolicyManager policyMgr = new PolicyManager(adminToken, orgName);
         policyMgr.removePolicy("IDPPTestPolicy1");
 
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, orgName);
         Set<AMIdentity> identities = new HashSet<AMIdentity>();
         identities.add(user1);
         identities.add(group1);
-        amir.deleteIdentities(identities);
+        IdRepoUtils.deleteIdentities(orgName, identities);
 
     }
 
@@ -199,39 +191,6 @@ public class IDPPTest {
 
         String actionValue = (String)(values.iterator().next());
         return (actionValue.equals("deny"));
-    }
-
-    
-    private AMIdentity createUser(String name)
-        throws SSOException, IdRepoException {
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
-        Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
-        Set<String> set = new HashSet<String>();
-        set.add(name);
-        attrValues.put("givenname", set);
-        attrValues.put("sn", set);
-        attrValues.put("cn", set);
-        attrValues.put("userpassword", set);
-        return amir.createIdentity(IdType.USER, name, attrValues);
-    }
-
-    private AMIdentity createGroup(String name)
-        throws SSOException, IdRepoException {
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
-        Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
-        Set<String> set = new HashSet<String>();
-        set.add(name);
-        attrValues.put("cn", set);
-        return amir.createIdentity(IdType.GROUP, name, attrValues);
-    }
-
-    private static Subject createSubject(String uuid) {
-        Set<Principal> userPrincipals = new HashSet<Principal>(2);
-        userPrincipals.add(new AuthSPrincipal(uuid));
-        return new Subject(false, userPrincipals, new HashSet(),
-            new HashSet());
     }
 
 }

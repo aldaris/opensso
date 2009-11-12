@@ -22,30 +22,35 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultipleResourceRestTest.java,v 1.3 2009-10-21 01:11:36 veiming Exp $
+ * $Id: MultipleResourceRestTest.java,v 1.1 2009-11-12 18:37:36 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.rest;
 
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.AuthenticatedESubject;
+import com.sun.identity.entitlement.Entitlement;
+import com.sun.identity.entitlement.EntitlementSubject;
+import com.sun.identity.entitlement.JSONEntitlement;
+import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.entitlement.util.IdRepoUtils;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
-import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdType;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.encode.Hash;
+import java.net.URLEncoder;
 import java.security.AccessController;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.security.auth.Subject;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedMap;
 import org.json.JSONObject;
 import org.testng.annotations.AfterClass;
@@ -68,6 +73,9 @@ public class MultipleResourceRestTest {
     private AMIdentity user;
     private WebResource decisionsClient;
     private WebResource entitlementsClient;
+    private String hashedTokenId;
+    private String tokenIdHeader;
+    private Cookie cookie;
 
     @BeforeClass
     public void setup() throws Exception {
@@ -99,10 +107,21 @@ public class MultipleResourceRestTest {
             pm.addPrivilege(privilege);
         }
 
+        String tokenId = adminToken.getTokenID().toString();
+        hashedTokenId = Hash.hash(tokenId);
+        tokenIdHeader = RestServiceManager.SSOTOKEN_SUBJECT_PREFIX +
+            RestServiceManager.SUBJECT_DELIMITER + tokenId;
+        String cookieValue = tokenId;
 
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, REALM);
-        user = createUser(amir, "MultipleResourceRestTestUser");
+        if (Boolean.parseBoolean(
+            SystemProperties.get(Constants.AM_COOKIE_ENCODE, "false"))) {
+            cookieValue = URLEncoder.encode(tokenId, "UTF-8");
+        }
+
+        cookie = new Cookie(SystemProperties.get(Constants.AM_COOKIE_NAME),
+            cookieValue);
+
+        user = IdRepoUtils.createUser(REALM, "MultipleResourceRestTestUser");
 
         decisionsClient = Client.create().resource(
             SystemProperties.getServerInstanceName() +
@@ -118,38 +137,25 @@ public class MultipleResourceRestTest {
             adminSubject);
         pm.removePrivilege(PRIVILEGE_NAME  + "1");
         pm.removePrivilege(PRIVILEGE_NAME  + "2");
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, REALM);
-        Set<AMIdentity> users = new HashSet<AMIdentity>();
-        users.add(user);
-        amir.deleteIdentities(users);
-    }
-
-    private AMIdentity createUser(AMIdentityRepository amir, String id)
-        throws SSOException, IdRepoException {
-        Map<String, Set<String>> attrValues =
-            new HashMap<String, Set<String>>();
-        Set<String> set = new HashSet<String>();
-        set.add(id);
-        attrValues.put("givenname", set);
-        attrValues.put("sn", set);
-        attrValues.put("cn", set);
-        attrValues.put("userpassword", set);
-        return amir.createIdentity(IdType.USER, id, attrValues);
+        IdRepoUtils.deleteIdentity(REALM, user);
     }
 
     @Test
     public void testDecisions() throws Exception {
         MultivaluedMap params = new MultivaluedMapImpl();
-        params.add("subject", user.getUniversalId());
         params.add("resources", RESOURCE_NAME + "/index.html");
         params.add("resources", RESOURCE_NAME + "/a");
         params.add("action", "GET");
         params.add("realm", REALM);
-        params.add("admin", adminToken.getTokenID().toString());
+        params.add("subject", hashedTokenId);
 
-        String json = decisionsClient.queryParams(params).accept(
-            "application/json").get(String.class);
+        String json = decisionsClient
+            .queryParams(params)
+            .accept("application/json")
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
+            .get(String.class);
+
         List<JSONEntitlement> entitlements = JSONEntitlement.getEntitlements(
             new JSONObject(json));
         for (JSONEntitlement e : entitlements) {
@@ -174,13 +180,16 @@ public class MultipleResourceRestTest {
     @Test
     public void testEntitlements() throws Exception {
         MultivaluedMap params = new MultivaluedMapImpl();
-        params.add("subject", user.getUniversalId());
         params.add("resource", RESOURCE_NAME);
         params.add("realm", REALM);
-        params.add("admin", adminToken.getTokenID().toString());
+        params.add("subject", hashedTokenId);
 
-        String json = entitlementsClient.queryParams(params).accept(
-            "application/json").get(String.class);
+        String json = entitlementsClient
+            .queryParams(params)
+            .accept("application/json")
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+            .cookie(cookie)
+            .get(String.class);
         List<JSONEntitlement> entitlements = JSONEntitlement.getEntitlements(
             new JSONObject(json));
         for (JSONEntitlement e : entitlements) {

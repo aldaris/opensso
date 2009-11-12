@@ -22,22 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegePolicyMapping.java,v 1.1 2009-08-19 05:41:01 veiming Exp $
+ * $Id: PrivilegePolicyMapping.java,v 1.2 2009-11-12 18:37:40 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
-import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.util.IdRepoUtils;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
-import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdType;
 import com.sun.identity.policy.ConditionTypeManager;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
@@ -96,7 +93,7 @@ public class PrivilegePolicyMapping {
 
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                     AdminTokenAction.getInstance());
-            testUser = createUser(adminToken);
+            testUser = IdRepoUtils.createUser("/", TEST_USER_NAME);
             PolicyManager pm = new PolicyManager(adminToken, "/");
             policy = new Policy(POLICY_NAME, "", false, true);
             policy.addRule(createRule());
@@ -120,7 +117,7 @@ public class PrivilegePolicyMapping {
     public void cleanup() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        deleteUser(adminToken);
+        IdRepoUtils.deleteIdentity("/", testUser);
         PolicyManager pm = new PolicyManager(adminToken, "/");
         pm.removePolicy(POLICY_NAME);
     }
@@ -224,30 +221,6 @@ public class PrivilegePolicyMapping {
         Set<String> excludeRes = new HashSet<String>();
         excludeRes.add(EXCLUDED_RES);
         privilege.getEntitlement().setExcludedResourceNames(excludeRes);
-    }
-    
-    private AMIdentity createUser(SSOToken adminToken)
-        throws IdRepoException, SSOException {
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
-        Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
-        Set<String> set = new HashSet<String>();
-        set.add(TEST_USER_NAME);
-        attrValues.put("givenname", set);
-        attrValues.put("sn", set);
-        attrValues.put("cn", set);
-        attrValues.put("userpassword", set);
-        return amir.createIdentity(IdType.USER, TEST_USER_NAME,
-            attrValues);
-    }
-
-    private void deleteUser(SSOToken adminToken)
-        throws IdRepoException, SSOException {
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
-        Set<AMIdentity> identities = new HashSet<AMIdentity>();
-        identities.add(testUser);
-        amir.deleteIdentities(identities);
     }
     
     private Rule createRule() throws PolicyException {

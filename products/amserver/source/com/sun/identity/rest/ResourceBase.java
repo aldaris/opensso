@@ -19,13 +19,15 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceBase.java,v 1.3 2009-11-02 23:52:02 dillidorai Exp $
+ * $Id: ResourceBase.java,v 1.1 2009-11-12 18:37:35 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.rest;
 
+import com.sun.identity.entitlement.Entitlement;
+import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.util.AuthSPrincipal;
-import com.sun.identity.security.ISubjectable;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,22 +53,27 @@ public abstract class ResourceBase {
 
     public enum MimeType {PLAIN, JSON};
 
-    private static final String RES_BUNDLE_NAME = "entitlement";
+    private static final String RES_BUNDLE_NAME = "RestException";
 
     protected Subject getCaller(HttpServletRequest req)
-        throws EntitlementException {
+        throws RestException {
         Principal p = req.getUserPrincipal();
         if (p != null) {
             if (p instanceof ISubjectable) {
                 try {
                     return ((ISubjectable)p).createSubject();
                 } catch (Exception e) {
-                    throw new EntitlementException(433, e);
+                    throw new RestException(1, e);
                 }
             }
             return toSubject(p.getName());
         }
-        throw new EntitlementException(423);
+        throw new RestException(2);
+    }
+
+    protected Subject getSubject(HttpServletRequest request) 
+        throws RestException {
+        return RestServiceManager.getInstance().getAuthZSubject(request);
     }
 
     protected Map<String, Set<String>> getMap(List<String> list) {
@@ -111,14 +118,39 @@ public abstract class ResourceBase {
             toSubject(new AuthSPrincipal(subject));
     }
 
+     protected WebApplicationException getWebApplicationException(
+            HttpHeaders headers,
+            RestException e,
+            MimeType mimeType
+     ) {
+        if (MimeType.JSON == mimeType) {
+            int statusCode = e.getErrorCode();
+            String statusMessage =  e.getLocalizedMessage(
+                getUserLocale(headers));
+            String responseJsonString = createResponseJSONString(
+                statusCode, statusMessage, null);
+            ResponseBuilder responseBuilder =  Response.status(statusCode);
+            responseBuilder.status(statusCode);
+            responseBuilder.entity(responseJsonString);
+            responseBuilder.type("applicaton/json; charset=UTF-8");
+            throw new WebApplicationException(responseBuilder.build());
+        } else {
+            throw new WebApplicationException(
+                  Response.status(e.getErrorCode())
+                  .entity(e.getLocalizedMessage(getUserLocale(headers)))
+                  .type("text/plain; charset=UTF-8").build());
+        }
+    }
+
     protected WebApplicationException getWebApplicationException(
             HttpHeaders headers,
             EntitlementException e, MimeType mimeType) {
         if (MimeType.JSON == mimeType) {
             int statusCode = e.getErrorCode();
-            String statusMessage =  e.getLocalizedMessage(getUserLocale(headers));
-            String responseJsonString = createResponseJSONString(statusCode, statusMessage, 
-                    null);
+            String statusMessage =  e.getLocalizedMessage(
+                getUserLocale(headers));
+            String responseJsonString = createResponseJSONString(
+                statusCode, statusMessage,  null);
             ResponseBuilder responseBuilder =  Response.status(statusCode);
             responseBuilder.status(statusCode);
             responseBuilder.entity(responseJsonString);
@@ -142,8 +174,8 @@ public abstract class ResourceBase {
             Exception e, MimeType mimeType) {
         if (MimeType.JSON == mimeType) {
             String statusMessage =  e.getLocalizedMessage();
-            String responseJsonString = createResponseJSONString(statusCode, statusMessage, 
-                    null);
+            String responseJsonString = createResponseJSONString(
+                statusCode, statusMessage, null);
             ResponseBuilder responseBuilder =  Response.status(statusCode);
             responseBuilder.status(statusCode);
             responseBuilder.entity(responseJsonString);
@@ -163,8 +195,11 @@ public abstract class ResourceBase {
             locales.get(0);
     }
 
-    protected String createResponseJSONString(int statusCode, String statusMessage, 
-            JSONObject body) {
+    protected String createResponseJSONString(
+        int statusCode,
+        String statusMessage,
+        JSONObject body
+    ) {
         JSONObject jo = null;
         try {
             jo = new JSONObject();
@@ -176,8 +211,9 @@ public abstract class ResourceBase {
                 jo.put(BODY, body);
             }
         } catch (JSONException je) {
-            PrivilegeManager.debug.error("ResourceBase.createeResponseJSONString():"
-                    + "hit JSONException", je);
+            PrivilegeManager.debug.error(
+                "ResourceBase.createeResponseJSONString(): hit JSONException",
+                je);
         }
         return (jo != null) ? jo.toString(): "{}";
     }

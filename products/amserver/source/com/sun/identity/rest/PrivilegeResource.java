@@ -22,11 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeResource.java,v 1.1 2009-11-06 21:56:52 veiming Exp $
+ * $Id: PrivilegeResource.java,v 1.1 2009-11-12 18:37:35 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.rest;
 
+import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.util.SearchFilter;
 import java.util.Collections;
 import java.util.HashSet;
@@ -78,6 +81,9 @@ public class PrivilegeResource extends ResourceBase {
         } catch (JSONException e) {
             PrivilegeManager.debug.error("PrivilegeResource.privileges", e);
             throw getWebApplicationException(e, MimeType.JSON);
+        } catch (RestException e) {
+            PrivilegeManager.debug.error("PrivilegeResource.privileges", e);
+            throw getWebApplicationException(headers, e, MimeType.JSON);
         } catch (EntitlementException e) {
             PrivilegeManager.debug.error("PrivilegeResource.privileges", e);
             throw getWebApplicationException(headers, e, MimeType.JSON);
@@ -109,6 +115,10 @@ public class PrivilegeResource extends ResourceBase {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.createPrivilege", e);
             throw getWebApplicationException(e, MimeType.JSON);
+        } catch (RestException e) {
+            PrivilegeManager.debug.error(
+                "PrivilegeResource.createPrivilege", e);
+            throw getWebApplicationException(headers, e, MimeType.JSON);
         } catch (EntitlementException e) {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.createPrivilege", e);
@@ -141,6 +151,10 @@ public class PrivilegeResource extends ResourceBase {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.modifyPrivilege", e);
             throw getWebApplicationException(e, MimeType.JSON);
+        } catch (RestException e) {
+            PrivilegeManager.debug.error(
+                "PrivilegeResource.modifyPrivilege", e);
+            throw getWebApplicationException(headers, e, MimeType.JSON);
         } catch (EntitlementException e) {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.modifyPrivilege", e);
@@ -169,6 +183,9 @@ public class PrivilegeResource extends ResourceBase {
         } catch (JSONException e) {
             PrivilegeManager.debug.error("PrivilegeResource.privilege", e);
             throw getWebApplicationException(e, MimeType.JSON);
+        } catch (RestException e) {
+            PrivilegeManager.debug.error("PrivilegeResource.privilege", e);
+            throw getWebApplicationException(headers, e, MimeType.JSON);
         } catch (EntitlementException e) {
             PrivilegeManager.debug.error("PrivilegeResource.privilege", e);
             throw getWebApplicationException(headers, e, MimeType.JSON);
@@ -197,6 +214,10 @@ public class PrivilegeResource extends ResourceBase {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.deletePrivilege", e);
             throw getWebApplicationException(e, MimeType.JSON);
+        } catch (RestException e) {
+            PrivilegeManager.debug.error(
+                "PrivilegeResource.deletePrivilege", e);
+            throw getWebApplicationException(headers, e, MimeType.JSON);
         } catch (EntitlementException e) {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.deletePrivilege", e);

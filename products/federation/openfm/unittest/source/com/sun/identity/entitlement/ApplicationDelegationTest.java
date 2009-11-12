@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationDelegationTest.java,v 1.1 2009-11-05 21:13:46 veiming Exp $
+ * $Id: ApplicationDelegationTest.java,v 1.2 2009-11-12 18:37:39 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -32,11 +32,10 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.entitlement.opensso.OpenSSOUserSubject;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.entitlement.util.IdRepoUtils;
 import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdType;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
@@ -97,7 +96,7 @@ public class ApplicationDelegationTest {
         appl.setEntitlementCombiner(DenyOverride.class);
         ApplicationManager.saveApplication(adminSubject, "/", appl);
 
-        user1 = createUser("/", USER1);
+        user1 = IdRepoUtils.createUser("/", USER1);
         createDelegationPrivilege();
         createPrivileges();
     }
@@ -116,12 +115,7 @@ public class ApplicationDelegationTest {
             ApplicationPrivilegeManager.getInstance("/", adminSubject);
         apm.removePrivilege(DELEGATE_PRIVILEGE_NAME);
 
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, "/");
-        Set<AMIdentity> identities = new HashSet<AMIdentity>();
-        identities.add(user1);
-        amir.deleteIdentities(identities);
-
+        IdRepoUtils.deleteIdentity("/", user1);
         ApplicationManager.deleteApplication(adminSubject, "/", 
             APPL_NAME);
     }
@@ -146,20 +140,6 @@ public class ApplicationDelegationTest {
         privilege2.setEntitlement(entitlement);
         privilege2.setSubject(subject);
         pm.addPrivilege(privilege2);
-    }
-
-    private AMIdentity createUser(String realm, String name)
-        throws SSOException, IdRepoException {
-        AMIdentityRepository amir = new AMIdentityRepository(
-            adminToken, realm);
-        Map<String, Set<String>> attrValues =new HashMap<String, Set<String>>();
-        Set<String> set = new HashSet<String>();
-        set.add(name);
-        attrValues.put("givenname", set);
-        attrValues.put("sn", set);
-        attrValues.put("cn", set);
-        attrValues.put("userpassword", set);
-        return amir.createIdentity(IdType.USER, name, attrValues);
     }
 
     private void createDelegationPrivilege()

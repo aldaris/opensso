@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthZFilter.java,v 1.1 2009-10-21 01:10:31 veiming Exp $
+ * $Id: AuthZFilter.java,v 1.2 2009-11-12 18:37:35 veiming Exp $
  *
  */
 
 package com.sun.identity.rest;
 
+import com.sun.identity.rest.spi.IAuthorization;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -39,10 +40,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public final class AuthZFilter implements Filter {
+
     public void destroy() {
+        RestServiceManager.getInstance().destroy();
     }
 
-    public void init(FilterConfig arg0) throws ServletException {
+    public void init(FilterConfig config) throws ServletException {
+        RestServiceManager.getInstance().initAuthZ(config);
     }
 
     public void doFilter(
@@ -51,6 +55,16 @@ public final class AuthZFilter implements Filter {
         FilterChain chain)
         throws IOException, ServletException
     {
-        chain.doFilter(request, response);
+        IAuthorization auth = 
+            RestServiceManager.getInstance().getAuthorizationFilter(
+            (HttpServletRequest) request);
+        if (auth == null) {
+            ((HttpServletResponse) response).sendError(
+                HttpServletResponse.SC_BAD_REQUEST);
+        } else {
+            auth.doFilter(request, response, chain);
+        }
     }
+
+
 }

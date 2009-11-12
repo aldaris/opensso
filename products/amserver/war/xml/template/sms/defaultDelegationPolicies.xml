@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: defaultDelegationPolicies.xml,v 1.13 2009-08-19 05:40:39 veiming Exp $
+  $Id: defaultDelegationPolicies.xml,v 1.14 2009-11-12 18:37:39 veiming Exp $
 
 -->
                                                                                 
@@ -173,6 +173,53 @@ End of comment for "notAttributes" AttributeValuePair -->
     <Rule name="delegation-rule1">
         <ServiceName name="sunAMDelegationService" />
         <ResourceName name="sms://*@SM_CONFIG_ROOT_SUFFIX@/iPlanetAMLoggingService/1.0/application/*" />
+        <AttributeValuePair>
+            <Attribute name="MODIFY" />
+            <Value>allow</Value>
+        </AttributeValuePair>
+    </Rule>
+    <Subjects name="Subjects" description="">
+        <Subject name="AuthenticatedAgents" type="AuthenticatedAgents" includeType="inclusive">
+        </Subject>
+    </Subjects>
+</Policy>
+
+<Policy name="@SM_ROOT_SUFFIX_HAT@^^EntitlementEval" referralPolicy="false" active="true" >
+    <Rule name="delegation-rule1">
+        <ServiceName name="sunAMDelegationService" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/decision" />
+        <AttributeValuePair>
+            <Attribute name="READ" />
+            <Value>allow</Value>
+        </AttributeValuePair>
+    </Rule>
+    <Rule name="delegation-rule2">
+        <ServiceName name="sunAMDelegationService" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/decisions" />
+        <AttributeValuePair>
+            <Attribute name="READ" />
+            <Value>allow</Value>
+        </AttributeValuePair>
+    </Rule>
+    <Rule name="delegation-rule3">
+        <ServiceName name="sunAMDelegationService" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/entitlement" />
+        <AttributeValuePair>
+            <Attribute name="READ" />
+            <Value>allow</Value>
+        </AttributeValuePair>
+    </Rule>
+    <Rule name="delegation-rule4">
+        <ServiceName name="sunAMDelegationService" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/entitlements" />
+        <AttributeValuePair>
+            <Attribute name="READ" />
+            <Value>allow</Value>
+        </AttributeValuePair>
+    </Rule>
+    <Rule name="delegation-rule5">
+        <ServiceName name="sunAMDelegationService" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/listener/*" />
         <AttributeValuePair>
             <Attribute name="MODIFY" />
             <Value>allow</Value>

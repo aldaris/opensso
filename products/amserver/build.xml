@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.88 2009-10-12 16:27:54 bigfatrat Exp $
+   $Id: build.xml,v 1.89 2009-11-12 18:37:37 veiming Exp $
 
 -->
 
@@ -81,6 +81,15 @@
               srcdir="${amserver.src.dir}"
               includes="com/sun/identity/entitlement/**"
               excludes = "com/sun/identity/entitlement/opensso/**,com/sun/identity/entitlement/xacml3/**,com/sun/identity/entitlement/log/**" >
+            <classpath refid="build.ent.class.path"/>
+        </javac>
+
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+            destdir="${amserver.classes.dir}"
+            source="${target.jdk.set}" target="${target.jdk.set}"
+            debug="${build.debug}" debuglevel="${build.debuglevel}"
+            srcdir="${amserver.src.dir}"
+            includes="com/sun/identity/rest/*">
             <classpath refid="build.ent.class.path"/>
         </javac>
         

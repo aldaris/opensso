@@ -22,31 +22,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpServletRequestWrapperEx.java,v 1.2 2009-11-12 18:37:35 veiming Exp $
+ * $Id: ISubjectable.java,v 1.1 2009-11-12 18:37:35 veiming Exp $
+ *
  */
 
 package com.sun.identity.rest;
 
-import java.security.Principal;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import javax.security.auth.Subject;
 
 /**
+ * Caller is able to get <code>javax.security.auth.Subject</code>
+ * from implementing class.
  */
-public class HttpServletRequestWrapperEx extends HttpServletRequestWrapper {
-    private Principal principal;
-
-    public HttpServletRequestWrapperEx(HttpServletRequest r) {
-        super(r);
-    }
-
-    public void setUserPrincipal(Principal p) {
-        principal = p;
-    }
-
-    @Override
-    public Principal getUserPrincipal() {
-        return principal;
-    }
-
+public interface ISubjectable {
+    /**
+     * Returns <code>javax.security.auth.Subject</code>.
+     *
+     * @return <code>javax.security.auth.Subject</code>.
+     * @throws Exception if subject cannot be created.
+     */
+    Subject createSubject()
+        throws Exception;
 }

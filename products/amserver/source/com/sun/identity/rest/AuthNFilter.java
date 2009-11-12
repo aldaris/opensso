@@ -22,19 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthNFilter.java,v 1.1 2009-10-21 01:10:31 veiming Exp $
+ * $Id: AuthNFilter.java,v 1.2 2009-11-12 18:37:35 veiming Exp $
  *
  */
 
 package com.sun.identity.rest;
 
-import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.rest.spi.IAuthentication;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.StringTokenizer;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -45,41 +40,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public final class AuthNFilter implements Filter {
-    // TOFIX: make DEF_AUTH configurable
-    public static final String DEF_AUTH = "SSOToken";
-    
-    private Map<String, IAuthentication> services = new
-        HashMap<String, IAuthentication>();
-
     public void destroy() {
-        for (IAuthentication auth : services.values()) {
-            try {
-                auth.destroy();
-            } catch (Exception e) {
-                // catch all exception, so that all auth filters have
-                // the chance to shutdown.
-                PrivilegeManager.debug.error("AuthNFilter.destroy", e);
-            }
-        }
-        services.clear();
+        RestServiceManager.getInstance().destroy();
     }
 
     public void init(FilterConfig config) throws ServletException {
-        ServiceLoader<IAuthentication> filters = ServiceLoader.load(
-            IAuthentication.class);
-        for (IAuthentication p : filters) {
-            try {
-                p.init(config);
-                String[] acceptMtd = p.accept();
-                for (int i = 0; i < acceptMtd.length; i++) {
-                    services.put(acceptMtd[i], p);
-                }
-            } catch (Exception e) {
-                // catch all exception, so that all auth filters have
-                // the chance to registered
-                PrivilegeManager.debug.error("AuthNFilter.init", e);
-            }
-        }
+        RestServiceManager.getInstance().initAuthN(config);
     }
 
     public void doFilter(
@@ -88,8 +54,9 @@ public final class AuthNFilter implements Filter {
         FilterChain chain)
         throws IOException, ServletException
     {
-        IAuthentication auth = getAuthenticationFilter(
-            (HttpServletRequest) request);
+        IAuthentication auth = 
+            RestServiceManager.getInstance().getAuthenticationFilter(
+                (HttpServletRequest) request);
         if (auth == null) {
             ((HttpServletResponse) response).setStatus(434);
         } else {
@@ -97,21 +64,4 @@ public final class AuthNFilter implements Filter {
         }
     }
 
-    private IAuthentication getAuthenticationFilter(HttpServletRequest req) {
-        String acceptAuth = req.getHeader("X-Accept-Authentication");
-        if (acceptAuth == null) {
-            return services.get(DEF_AUTH);
-        }
-
-        StringTokenizer st = new StringTokenizer(acceptAuth, ",");
-        while (st.hasMoreTokens()) {
-            String mtd = st.nextToken();
-            IAuthentication auth = services.get(mtd);
-            if (auth != null) {
-                return auth;
-            }
-        }
-        
-        return null;
-    }
 }
