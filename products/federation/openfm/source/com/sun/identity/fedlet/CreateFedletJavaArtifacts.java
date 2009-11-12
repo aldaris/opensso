@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedletJavaArtifacts.java,v 1.1 2009-05-01 15:19:58 ggennaro Exp $
+ * $Id: CreateFedletJavaArtifacts.java,v 1.2 2009-11-12 17:32:00 exu Exp $
  *
  */
 
 package com.sun.identity.fedlet;
 
+import com.sun.identity.shared.encode.Base64;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -54,16 +56,19 @@ import java.util.jar.JarOutputStream;
  *
  */
 public class CreateFedletJavaArtifacts {
+    private static String FEDLET_DEFAULT_SHARED_KEY = 
+        "JKEK7DosAgR3Aw3Ece20F8qZdXtiMYJ+";
     private Map fedConfigTagSwap;
     private List fedConfigTagSwapOrder;
     private Map fedletBits;
     private Map jarExtracts;
-
+    
     /**
      * Default constructor
      */
     public CreateFedletJavaArtifacts() {
         fedConfigTagSwap = new HashMap();
+        fedConfigTagSwap.put("@AM_ENC_PWD@", getRandomString());
         fedConfigTagSwap.put("@CONFIGURATION_PROVIDER_CLASS@",
             "com.sun.identity.plugin.configuration.impl.FedletConfigurationImpl");
         fedConfigTagSwap.put("@DATASTORE_PROVIDER_CLASS@",
@@ -76,6 +81,8 @@ public class CreateFedletJavaArtifacts {
             "com.sun.identity.saml.xmlsig.AMSignatureProvider");
         fedConfigTagSwap.put("@XMLSIG_KEY_PROVIDER@",
             "com.sun.identity.saml.xmlsig.JKSKeyProvider");
+        fedConfigTagSwap.put("com.sun.identity.saml.xmlsig.passwordDecoder=com.sun.identity.saml.xmlsig.FMPasswordDecoder",
+            "com.sun.identity.saml.xmlsig.passwordDecoder=com.sun.identity.fedlet.FedletEncodeDecode");
         fedConfigTagSwap.put("%BASE_DIR%%SERVER_URI%", "@FEDLET_HOME@");
         fedConfigTagSwap.put("%BASE_DIR%", "@FEDLET_HOME@");
         fedConfigTagSwap.put("com.sun.identity.common.serverMode=true",
@@ -86,12 +93,14 @@ public class CreateFedletJavaArtifacts {
         fedConfigTagSwap.put("/@SERVER_URI@", "/fedlet");
 
         fedConfigTagSwapOrder = new ArrayList();
+        fedConfigTagSwapOrder.add("@AM_ENC_PWD@");
         fedConfigTagSwapOrder.add("@CONFIGURATION_PROVIDER_CLASS@");
         fedConfigTagSwapOrder.add("@DATASTORE_PROVIDER_CLASS@");
         fedConfigTagSwapOrder.add("@LOG_PROVIDER_CLASS@");
         fedConfigTagSwapOrder.add("@SESSION_PROVIDER_CLASS@");
         fedConfigTagSwapOrder.add("@XML_SIGNATURE_PROVIDER@");
         fedConfigTagSwapOrder.add("@XMLSIG_KEY_PROVIDER@");
+        fedConfigTagSwapOrder.add("com.sun.identity.saml.xmlsig.passwordDecoder=com.sun.identity.saml.xmlsig.FMPasswordDecoder");
         fedConfigTagSwapOrder.add("%BASE_DIR%%SERVER_URI%");
         fedConfigTagSwapOrder.add("%BASE_DIR%");
         fedConfigTagSwapOrder.add("com.sun.identity.common.serverMode=true");
@@ -99,6 +108,25 @@ public class CreateFedletJavaArtifacts {
         fedConfigTagSwapOrder.add("@SERVER_HOST@");
         fedConfigTagSwapOrder.add("@SERVER_PORT@");
         fedConfigTagSwapOrder.add("/@SERVER_URI@");
+    }
+
+    /**
+     * Returns secure random string.
+     *
+     * @return secure random string.
+     */
+    private static String getRandomString() {
+        String randomStr = null;
+        try {
+            byte [] bytes = new byte[24];
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            random.nextBytes(bytes);
+            randomStr = Base64.encode(bytes).trim();
+        } catch (Exception e) {
+            randomStr = null;
+        }
+        return (randomStr != null) ? randomStr :
+            FEDLET_DEFAULT_SHARED_KEY;
     }
 
     public void createFedletJavaArtifacts(String bitsFile, String jarExtractFile,

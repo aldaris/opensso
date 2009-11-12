@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.53 2009-08-19 05:40:42 veiming Exp $
+   $Id: build-war.xml,v 1.54 2009-11-12 17:31:59 exu Exp $
 
 -->
 
@@ -94,6 +94,9 @@
 
         <copy file="${library.dir}/fedlet/README"
             tofile="${war.package.dir}/WEB-INF/fedlet/README" />
+
+        <copy file="${library.dir}/fedlet/fedletEncode.jsp"
+            tofile="${war.package.dir}/WEB-INF/fedlet/fedletEncode.jsp" />
 
         <copy file="${library.dir}/fedlet/index.jsp"
             tofile="${war.package.dir}/WEB-INF/fedlet/index.jsp" />
