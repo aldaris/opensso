@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIHandler.java,v 1.2 2009-07-24 22:12:26 ak138937 Exp $
+ * $Id: CLIHandler.java,v 1.3 2009-11-13 21:53:28 ak138937 Exp $
  *
  */
 
@@ -42,6 +42,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import com.sun.identity.diagnostic.base.core.ToolContext;
+import com.sun.identity.diagnostic.base.core.ToolLogWriter;
 import com.sun.identity.diagnostic.base.core.ToolManager;
 import com.sun.identity.diagnostic.base.core.service.ServiceRequest;
 import com.sun.identity.diagnostic.base.core.service.ServiceResponse;
@@ -146,6 +147,11 @@ public class CLIHandler implements CLIConstants {
                             saveToFile(sRes, (String)paramMap.get(
                                 SAVE_FILE_NAME));
                         }
+                        ToolLogWriter.log(sRes.getMessage());
+                        ToolLogWriter.log(sRes.getError());
+                        ToolLogWriter.log(sRes.getWarning());
+                        ToolLogWriter.log(sRes.getResult(1));
+                        ToolLogWriter.log(sRes.getResult(2));
                     }
                 }
             } catch (Exception e) {

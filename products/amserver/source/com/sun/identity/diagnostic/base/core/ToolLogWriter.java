@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ToolLogWriter.java,v 1.1 2008-11-22 02:19:53 ak138937 Exp $
+ * $Id: ToolLogWriter.java,v 1.2 2009-11-13 21:52:43 ak138937 Exp $
  *
  */
 
@@ -59,11 +59,12 @@ public class ToolLogWriter {
     public static void init() throws IOException {
         String logName = getLogName();
         logger = Logger.getLogger(ToolLogWriter.class.getName());
-        fh = new FileHandler(logName);
+        fh = new FileHandler(logName, true);
         fh.setFormatter(new SimpleFormatter());
         logger.addHandler(fh);
         //log only above the log level specified
         logger.setLevel(getLogLevel());
+        logger.setUseParentHandlers(false);
         String status = "";
         status = SystemProperties.get(ToolConstants.PROPERTY_LOG_ENABLED,
             "off");
@@ -121,6 +122,26 @@ public class ToolLogWriter {
                     if (msg != null) {
                         logger.log(level, msg);
                     }
+                }
+            } catch (Exception e) {
+                throw new DTException(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Writes to log.
+     *
+     * @param msg Message string.
+     * @throws DTException if log cannot be written.
+     */
+    public static void log(
+        String msg
+    ) throws DTException {
+        if (enabled) {
+            try {
+                if (msg != null) {
+                    logger.info(msg);
                 }
             } catch (Exception e) {
                 throw new DTException(e.getMessage());

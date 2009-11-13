@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigValidator.java,v 1.2 2009-04-13 23:57:29 ak138937 Exp $
+ * $Id: ServerConfigValidator.java,v 1.3 2009-11-13 21:55:12 ak138937 Exp $
  *
  */
 
@@ -250,6 +250,10 @@ public class ServerConfigValidator extends ServerConfigBase {
             String key = (String)e.nextElement();
             String value = cfgProp.getProperty(key);
             String defValue = (String)defProp.get(key);
+            if (key.equals(ENC_PWD_PROPERTY) || 
+                key.equals(AM_SERVICES_SECRET)) {
+                value = "xxxxxxxxxxxxxxxx";
+            }
             String[] params = {key, value};
             if ((defValue != null) && (defValue.length() > 0)) {
                 if (!((defValue.trim()).equals(value.trim()))) {

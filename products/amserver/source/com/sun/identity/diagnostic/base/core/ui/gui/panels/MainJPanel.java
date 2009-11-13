@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MainJPanel.java,v 1.2 2009-07-24 22:04:57 ak138937 Exp $
+ * $Id: MainJPanel.java,v 1.3 2009-11-13 21:53:58 ak138937 Exp $
  *
  */
 
@@ -55,6 +55,7 @@ import javax.swing.text.html.HTMLWriter;
 
 import com.sun.identity.diagnostic.base.core.ToolContext;
 import com.sun.identity.diagnostic.base.core.ToolManager;
+import com.sun.identity.diagnostic.base.core.ToolLogWriter;
 import com.sun.identity.diagnostic.base.core.log.IToolOutput;
 import com.sun.identity.diagnostic.base.core.service.ServiceRequest;
 import com.sun.identity.diagnostic.base.core.service.ServiceResponse;
@@ -398,6 +399,11 @@ public class MainJPanel extends javax.swing.JPanel implements ToolConstants {
                                             finalTableModel.fireTableRowsUpdated(
                                                 rowNum[i], rowNum[i]);
                                         }
+                                        ToolLogWriter.log(sRes.getMessage());
+                                        ToolLogWriter.log(sRes.getError());
+                                        ToolLogWriter.log(sRes.getWarning());
+                                        ToolLogWriter.log(sRes.getResult(1));
+                                        ToolLogWriter.log(sRes.getResult(2));
                                     } catch (NullPointerException npe) {
                                         /**/
                                         outputWriter.printError(npe.toString());

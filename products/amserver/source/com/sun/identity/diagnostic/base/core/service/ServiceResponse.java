@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceResponse.java,v 1.1 2008-11-22 02:19:54 ak138937 Exp $
+ * $Id: ServiceResponse.java,v 1.2 2009-11-13 21:54:35 ak138937 Exp $
  *
  */
 
@@ -110,6 +110,16 @@ public class ServiceResponse implements Serializable {
      */
     public String getResult() {
         return toResponseStr(result);
+    }
+
+    /**
+     * Returns the specific result of the executed service.
+     *
+     * @param idx Index of the result string.
+     * @return specific result of the executed service.
+     */
+    public String getResult(int idx) {
+        return (String)this.result.get(idx);
     }
     
     /**

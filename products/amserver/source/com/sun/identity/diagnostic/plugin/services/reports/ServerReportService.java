@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerReportService.java,v 1.1 2008-11-22 02:41:20 ak138937 Exp $
+ * $Id: ServerReportService.java,v 1.2 2009-11-13 21:57:40 ak138937 Exp $
  *
  */
 
@@ -83,7 +83,6 @@ public class ServerReportService implements ToolConstants,
      * Starts up the report service.
      */
     public void start() {
-        ToolLogWriter.log(rb,Level.INFO,"service-start-msg", null);
     }
     
     /**
@@ -99,6 +98,7 @@ public class ServerReportService implements ToolConstants,
     ) throws Exception {
         toolOutWriter.init(sRes, rb);
         toolOutWriter.printlnResult("service-start-msg");
+        ToolLogWriter.log(rb,Level.INFO,"service-start-msg", null);
         HashSet commandSet = (HashSet)sReq.getCommandSet();
         Map params = (HashMap)sReq.getData();    
         try {

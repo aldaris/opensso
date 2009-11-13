@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TamperDetectionService.java,v 1.2 2009-08-06 22:26:49 ak138937 Exp $
+ * $Id: TamperDetectionService.java,v 1.3 2009-11-13 21:58:21 ak138937 Exp $
  *
  */
 
@@ -78,7 +78,6 @@ public class TamperDetectionService extends ServiceBase implements ToolService {
      * Starts up the tamperdetection service.
      */
     public void start() {
-        ToolLogWriter.log(rb,Level.INFO,"service-start-msg", null);
     }
       
     /**
@@ -94,6 +93,7 @@ public class TamperDetectionService extends ServiceBase implements ToolService {
     ) throws Exception {
         toolOutWriter.init(sRes, rb);
         toolOutWriter.printlnResult("service-start-msg");
+        ToolLogWriter.log(rb,Level.INFO,"service-start-msg", null);
         HashSet commandSet = (HashSet)sReq.getCommandSet();
         Map params = (HashMap)sReq.getData();
         try {

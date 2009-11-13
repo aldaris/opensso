@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConnectionService.java,v 1.1 2008-11-22 02:41:20 ak138937 Exp $
+ * $Id: ServerConnectionService.java,v 1.2 2009-11-13 21:57:06 ak138937 Exp $
  *
  */
 
@@ -81,7 +81,6 @@ public class ServerConnectionService implements ToolConstants,
      * Starts up the connection service.
      */
     public void start() {
-        ToolLogWriter.log(rb,Level.INFO,"service-start-msg", null);
     }
     
     /**
@@ -97,6 +96,7 @@ public class ServerConnectionService implements ToolConstants,
     ) throws Exception {
         toolOutWriter.init(sRes, rb);
         toolOutWriter.printlnResult("service-start-msg");
+        ToolLogWriter.log(rb,Level.INFO,"service-start-msg", null);
         HashSet commandSet = (HashSet)sReq.getCommandSet();
         Map params = (HashMap)sReq.getData();
         String path = (String)params.get(CONFIG_DIR);
