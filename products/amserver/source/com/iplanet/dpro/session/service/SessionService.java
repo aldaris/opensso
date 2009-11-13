@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.35 2009-11-02 20:08:40 hvijay Exp $
+ * $Id: SessionService.java,v 1.36 2009-11-13 05:23:41 bina Exp $
  *
  */
 
@@ -1428,7 +1428,7 @@ public class SessionService {
      */
     public void setProperty(SessionID sid, String name, String value)
             throws SessionException {
-        locateSession(sid).putProperty(name, value);
+        resolveToken(sid).putProperty(name, value);
     }
 
     /**
@@ -1461,7 +1461,7 @@ public class SessionService {
     public void setExternalProperty(SSOToken clientToken, SessionID sid,
             String name, String value)
             throws SessionException {
-        locateSession(sid).putExternalProperty(clientToken, name, value);
+        resolveToken(sid).putExternalProperty(clientToken, name, value);
     }
     
     /**
