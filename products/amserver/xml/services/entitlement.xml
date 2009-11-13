@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.5 2009-10-01 00:18:35 veiming Exp $
+   $Id: entitlement.xml,v 1.6 2009-11-13 00:05:06 farble1670 Exp $
 
 -->
 
@@ -172,11 +172,11 @@
                             type="single"
                             syntax="string"
                             i18nKey="" />
-                        <AttributeSchema name="subjectAttributeNames" 
+                        <AttributeSchema name="subjectAttributeNames"
                             type="list"
                             syntax="string"
                             i18nKey="" />
-                        <AttributeSchema name="meta" 
+                        <AttributeSchema name="meta"
                             type="list"
                             syntax="string"
                             i18nKey="" />
@@ -206,7 +206,7 @@
                             <Value>GET=true</Value>
                             <Value>POST=true</Value>
                         </AttributeValuePair>
-                    <AttributeValuePair>
+                        <AttributeValuePair>
                             <Attribute name="searchIndexImpl" />
                             <Value>com.sun.identity.entitlement.util.ResourceNameSplitter</Value>
                         </AttributeValuePair>
@@ -226,7 +226,7 @@
                             <Value>LOOKUP=true</Value>
                             <Value>UPDATE=true</Value>
                         </AttributeValuePair>
-                    <AttributeValuePair>
+                        <AttributeValuePair>
                             <Attribute name="searchIndexImpl" />
                             <Value>com.sun.identity.entitlement.util.ResourceNameSplitter</Value>
                         </AttributeValuePair>
@@ -356,7 +356,7 @@
             <OrganizationConfiguration name="/">
                 <SubConfiguration name="registeredApplications"
                     id="applications">
-                    <SubConfiguration name="iPlanetAMWebAgentService" 
+                    <SubConfiguration name="iPlanetAMWebAgentService"
                         id="application">
                         <AttributeValuePair>
                             <Attribute name="applicationType" />
@@ -396,7 +396,7 @@
                             <Value>com.sun.identity.entitlement.DenyOverride</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
-                    <SubConfiguration name="sunIdentityServerDiscoveryService" 
+                    <SubConfiguration name="sunIdentityServerDiscoveryService"
                         id="application">
                         <AttributeValuePair>
                             <Attribute name="applicationType" />
@@ -475,7 +475,7 @@
                             <Value>com.sun.identity.entitlement.DenyOverride</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
-                    <SubConfiguration name="sunAMDelegationService" 
+                    <SubConfiguration name="sunAMDelegationService"
                         id="application">
                         <AttributeValuePair>
                             <Attribute name="applicationType" />
@@ -484,6 +484,10 @@
                         <AttributeValuePair>
                             <Attribute name="resources" />
                             <Value>sms://*</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="subjects" />
+                            <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
@@ -641,9 +645,9 @@
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>
-                <SubConfiguration name="subjectAttributesCollectors" 
+                <SubConfiguration name="subjectAttributesCollectors"
                     id="subjectAttributesCollectors">
-                    <SubConfiguration name="OpenSSO" 
+                    <SubConfiguration name="OpenSSO"
                         id="OpenSSOSubjectAttributesCollector">
                         <AttributeValuePair>
                             <Attribute name="class" />

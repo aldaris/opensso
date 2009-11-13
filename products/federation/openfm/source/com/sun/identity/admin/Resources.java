@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Resources.java,v 1.1 2009-08-19 05:40:44 veiming Exp $
+ * $Id: Resources.java,v 1.2 2009-11-13 00:05:07 farble1670 Exp $
  */
 
 package com.sun.identity.admin;
@@ -31,6 +31,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletRequest;
 
@@ -60,7 +61,8 @@ public class Resources {
             throw new RuntimeException("faces context is not available");
         }
 
-        Locale l = fc.getViewRoot().getLocale();
+        UIViewRoot vr = fc.getViewRoot();
+        Locale l = vr.getLocale();
         return l;
     }
 

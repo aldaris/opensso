@@ -118,7 +118,7 @@
     </context-param>
     <context-param>
         <param-name>com.icesoft.faces.heartbeatRetries</param-name>
-        <param-value>30</param-value>
+        <param-value>3</param-value>
     </context-param>
     <context-param>
         <param-name>facelets.LIBRARIES</param-name>
