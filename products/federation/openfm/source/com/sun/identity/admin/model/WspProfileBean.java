@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspProfileBean.java,v 1.3 2009-10-19 22:51:22 ggennaro Exp $
+ * $Id: WspProfileBean.java,v 1.4 2009-11-13 17:16:57 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -42,6 +42,36 @@ public class WspProfileBean extends WssProfileBean implements Serializable {
     private String authenticationChain;
     private String tokenConversionType;
 
+    
+    // convenience methods -----------------------------------------------------
+    
+    public boolean isUsingAnySamlSecurityMechanism() {
+        boolean value = false;
+        
+        if( this.getSecurityMechanismPanels() != null ) {
+            
+            for(SecurityMechanismPanelBean panel : this.getSecurityMechanismPanels() ) {
+                if( panel.isChecked() ) {
+                    SecurityMechanism sm = panel.getSecurityMechanism();
+                    
+                    switch(sm) {
+                        case SAML2_HOK:
+                        case SAML2_SV:
+                        case SAML_HOK:
+                        case SAML_SV:
+                            value = true;
+                            break;
+                    }
+                    
+                    if( value ) {
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return value;
+    }
     
     // getters / setters -------------------------------------------------------
     

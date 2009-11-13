@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: StsManageWizardBean.java,v 1.6 2009-10-21 16:46:03 ggennaro Exp $
+ * $Id: StsManageWizardBean.java,v 1.7 2009-11-13 17:16:57 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -75,6 +75,13 @@ public class StsManageWizardBean
         this.setTokenValidationSummary(new StsManageTokenValidationSummary(this));
     }
 
+    // Convenience methods -----------------------------------------------------
+    
+    public boolean isSamlAttributeMappingAvailable() {
+        StsProfileBean profileBean = this.getStsProfileBean();
+        return profileBean.isUsingAnySamlSecurityMechanism();
+    }
+    
     // Getters / Setters -------------------------------------------------------
 
     public void setStsProfileBean(StsProfileBean stsProfileBean) {

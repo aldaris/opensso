@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WscCreateWizardBean.java,v 1.3 2009-10-16 19:39:21 ggennaro Exp $
+ * $Id: WscCreateWizardBean.java,v 1.4 2009-11-13 17:16:57 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -218,6 +218,30 @@ public class WscCreateWizardBean
 
         return panelId;
     }
+
+    public boolean isSamlAttributeMappingAvailable() {
+        boolean value = false;
+        SecurityMechanism sm;
+        
+        if( this.usingSts ) {
+            StsClientProfileBean stsProfile = this.getStsClientProfileBean();
+            sm = SecurityMechanism.valueOf(stsProfile.getSecurityMechanism());
+        } else {
+            WscProfileBean wscProfile = this.getWscProfileBean();
+            sm = SecurityMechanism.valueOf(wscProfile.getSecurityMechanism());
+        }
+        
+        switch(sm) {
+            case SAML2_HOK:
+            case SAML2_SV:
+            case SAML_HOK:
+            case SAML_SV:
+                value = true;
+                break;
+        }
+
+        return value;
+    }    
     
     // Lists -------------------------------------------------------------------
 

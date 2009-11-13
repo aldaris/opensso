@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sts-saml.xhtml,v 1.4 2009-10-21 16:46:02 ggennaro Exp $
+   $Id: sts-saml.xhtml,v 1.5 2009-11-13 17:16:57 ggennaro Exp $
 
 -->
 
@@ -42,12 +42,22 @@
             value="#{resources['sts-saml.section-title']}"/>
     </ui:define>
     <ui:define name="section-details">
+
         <ice:outputText
-            value="#{resources['sts-saml.section-details']}"/>
+            rendered="#{wizardBean.samlAttributeMappingAvailable}"
+            value="#{resources['sts-saml.section-details.withSaml']}"/>
+
+        <ice:outputText
+            rendered="#{!wizardBean.samlAttributeMappingAvailable}"
+            value="#{resources['sts-saml.section-details.withoutSaml']}"/>
+
     </ui:define>
     <ui:define name="section-body">
 
-    <ice:panelGrid columns="2" columnClasses="label-column,input-column">
+    <ice:panelGrid 
+        columns="2" 
+        columnClasses="label-column,input-column"
+        rendered="#{wizardBean.samlAttributeMappingAvailable}">
 
         <ice:outputLabel 
             for="attributeMapping"
