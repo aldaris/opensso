@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDao.java,v 1.5 2009-11-06 19:56:13 farble1670 Exp $
+ * $Id: PolicyDao.java,v 1.6 2009-11-13 20:19:18 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -58,6 +58,7 @@ public class PolicyDao implements Serializable {
     private ViewApplicationsBean viewApplicationsBean;
     private int timeout;
     private int limit;
+    private boolean limited = false;
 
     private String getPattern(String filter) {
         String pattern;
@@ -120,6 +121,11 @@ public class PolicyDao implements Serializable {
         try {
             Set<String> privilegeNames;
             privilegeNames = pm.searchPrivilegeNames(psfs, limit, timeout);
+            if (privilegeNames.size() >= limit) {
+                limited = true;
+            } else {
+                limited = false;
+            }
 
             privilegeBeans = new ArrayList<PrivilegeBean>();
             for (String privilegeName : privilegeNames) {
@@ -264,6 +270,10 @@ public class PolicyDao implements Serializable {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    public boolean isLimited() {
+        return limited;
     }
 
     public static PolicyDao getInstance() {

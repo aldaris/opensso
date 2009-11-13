@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-manage.xhtml,v 1.5 2009-11-06 20:03:37 farble1670 Exp $
+   $Id: policy-manage.xhtml,v 1.6 2009-11-13 20:19:19 farble1670 Exp $
 -->
 
 <ui:composition
@@ -60,10 +60,18 @@
                     pageCountVar="pageCount"
                     pageIndexVar="pageIndex">
                     <ice:outputFormat
+                        rendered="#{!policyManageBean.limited}"
                         value="#{resources['policy-manage.tableTitle']}">
                         <f:param value="#{firstRowIndex}" />
                         <f:param value="#{lastRowIndex}" />
                         <f:param value="#{rowsCount}" />
+                    </ice:outputFormat>
+                    <ice:outputFormat
+                        rendered="#{policyManageBean.limited}"
+                        value="#{resources['policy-manage.tableTitle']}">
+                        <f:param value="#{firstRowIndex}" />
+                        <f:param value="#{lastRowIndex}" />
+                        <f:param value="#{rowsCount}*" />
                     </ice:outputFormat>
                 </ice:dataPaginator>
             </ui:define>
@@ -111,7 +119,7 @@
                     style="padding-top: 10px"
                     rendered="#{o:size(policyManageBean.privilegeBeans) == 0}">
                     <ice:outputText
-                        value="No policies."/>
+                        value="#{resources['policy-manage.noPolicies']}"/>
                 </ice:panelGroup>
                 <ice:panelGroup
                     rendered="#{o:size(policyManageBean.privilegeBeans) > 0}">
@@ -477,6 +485,12 @@
                             </o:tooltip>
                         </ice:column>
                     </ice:dataTable>
+                    <ice:panelGroup
+                        styleClass="limited"
+                        rendered="#{policyManageBean.limited}">
+                        <ice:outputText
+                            value="#{resources['policy-manage.limited']}"/>
+                    </ice:panelGroup>
                     <center>
                         <ice:panelGrid
                             columns="1" >
