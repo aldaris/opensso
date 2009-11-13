@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: default.aspx,v 1.5 2009-11-12 00:36:50 ggennaro Exp $
+ * $Id: default.aspx,v 1.6 2009-11-13 18:23:36 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" MasterPageFile="~/site.master"%>
@@ -194,71 +194,6 @@
         {
             errorMessage = spue.Message;
         }
-
-        
-        /*
-        StringBuilder idpListItems = new StringBuilder();
-        string idpListItemFormat = "<li>IDP initiated SSO with <span class=\"resource\">{0}</span> using <a href=\"{1}\">{2}</a> or <a href=\"{3}\">{4}</a></li>";
-        string idpUrlFormat = "{0}/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias={1}&spEntityID={2}&binding={3}";
-
-        try
-        {
-            ServiceProviderUtility serviceProviderUtility;
-
-            serviceProviderUtility = (ServiceProviderUtility)Cache["spu"];
-            if (serviceProviderUtility == null)
-            {
-                serviceProviderUtility = new ServiceProviderUtility(Context);
-                Cache["spu"] = serviceProviderUtility;
-            }
-
-            ServiceProvider sp = serviceProviderUtility.ServiceProvider;
-            hasMultipleIdps = (serviceProviderUtility.IdentityProviders.Count > 1);
-
-            Hashtable identityProviders = serviceProviderUtility.IdentityProviders;
-            foreach (string key in identityProviders.Keys)
-            {
-                IdentityProvider idp = (IdentityProvider) identityProviders[key];
-                string ssoDeployment = null;
-                string ssoMetaAlias = null;
-                string pattern = "(.+?/opensso).+?/metaAlias(.+?)$";
-                Match m = null;
-
-                foreach (XmlNode node in idp.SingleSignOnServiceLocations)
-                {
-                    string binding = node.Attributes["Binding"].Value;
-                    string location = node.Attributes["Location"].Value;
-                    if ( binding != null && location != null)
-                    {
-                        m = Regex.Match(location, pattern);
-                        if (m.Success && m.Groups.Count == 3)
-                        {
-                            ssoDeployment = m.Groups[1].Value;
-                            ssoMetaAlias = m.Groups[2].Value;
-                        }
-                        break;
-                    }
-                }
-
-                if (ssoMetaAlias != null)
-                {
-                    string postUrl = string.Format(idpUrlFormat, ssoDeployment, ssoMetaAlias, sp.EntityId, Saml2Constants.HttpPostProtocolBinding);
-                    string artifactUrl = string.Format(idpUrlFormat, ssoDeployment, ssoMetaAlias, sp.EntityId, Saml2Constants.HttpArtifactProtocolBinding);
-                    idpListItems.Append(string.Format(idpListItemFormat,
-                                                      Server.HtmlEncode(idp.EntityId),
-                                                      Server.HtmlEncode(postUrl),
-                                                      "HTTP Post",
-                                                      Server.HtmlEncode(artifactUrl),
-                                                      "HTTP Artifact" ));
-                }
-            }
-
-        }
-        catch (ServiceProviderUtilityException spue)
-        {
-            errorMessage = spue.Message;
-        }
-        */
     %>
 
     <% if( errorMessage == null ) { %>
