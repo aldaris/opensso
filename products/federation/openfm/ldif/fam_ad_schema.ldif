@@ -694,7 +694,7 @@ schemaUpdateNow: 1
 dn: CN=sun-fm-saml2-nameid-info,CN=Schema,CN=Configuration,ROOT_SUFFIX
 adminDisplayName: sun-fm-saml2-nameid-info
 adminDescription: Attribute to store SAML 2.0 name identifier information
-attributeID: 1.3.6.1.4.1.42.2.27.9.1.500
+attributeID: 1.3.6.1.4.1.42.2.27.9.1.990
 attributeSyntax: 2.5.5.3
 cn: sun-fm-saml2-nameid-info
 instanceType: 4
@@ -709,7 +709,7 @@ systemOnly: FALSE
 dn: CN=sun-fm-saml2-nameid-infokey,CN=Schema,CN=Configuration,ROOT_SUFFIX
 adminDisplayName: sun-fm-saml2-nameid-infokey
 adminDescription: Attribute to store SAML2.0 name identifier info key
-attributeID: 1.3.6.1.4.1.42.2.27.9.1.501
+attributeID: 1.3.6.1.4.1.42.2.27.9.1.989
 attributeSyntax: 2.5.5.3
 cn: sun-fm-saml2-nameid-infokey
 instanceType: 4
@@ -732,7 +732,7 @@ dn: CN=sunFMSAML2NameIdentifier,CN=Schema,CN=Configuration,ROOT_SUFFIX
 adminDisplayName: sunFMSAML2NameIdentifier
 adminDescription: Object Class to store SAML 2.0 Name Identifier attributes
 cn: sunFMSAML2NameIdentifier
-governsID: 1.3.6.1.4.1.42.2.27.9.2.200
+governsID: 1.3.6.1.4.1.42.2.27.9.2.148
 instanceType: 4
 lDAPDisplayName: sunFMSAML2NameIdentifier
 mayContain: sun-fm-saml2-nameid-info
