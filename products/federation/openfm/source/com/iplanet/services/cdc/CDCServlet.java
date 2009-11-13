@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCServlet.java,v 1.12 2009-10-22 00:06:05 qcheng Exp $
+ * $Id: CDCServlet.java,v 1.13 2009-11-13 23:43:17 dknab Exp $
  *
  */
 
@@ -147,6 +147,7 @@ public class CDCServlet extends HttpServlet {
         adviceParams.add("user");
         adviceParams.add("realm");
         adviceParams.add("org");
+        adviceParams.add("domain");
         adviceParams.add("sunamcompositeadvice");
         adviceParams.add("resource");
         String invalidStrings = SystemPropertiesManager.get(
