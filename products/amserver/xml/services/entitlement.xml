@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.6 2009-11-13 00:05:06 farble1670 Exp $
+   $Id: entitlement.xml,v 1.7 2009-11-14 00:46:36 farble1670 Exp $
 
 -->
 
@@ -487,7 +487,8 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="subjects" />
-                            <Value>com.sun.identity.admin.model.VirtualViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.IdRepoUserViewSubject</Value>
+                            <Value>com.sun.identity.admin.model.IdRepoGroupViewSubject</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="entitlementCombiner" />
