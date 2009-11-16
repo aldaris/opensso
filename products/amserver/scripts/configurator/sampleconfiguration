@@ -89,11 +89,20 @@ DS_DIRMGRPASSWD=11111111
 ###
 ### DS_EMB_REPL_HOST2 is the host name of the existing OpenSSO Server.
 ###
-### DS_EMB_REPL_PORT2 is listening port of the configuration data store of
-### the existing OpenSSO Server.
+### DS_EMB_REPL_PORT2 is listening port of the configuration data 
+### store of the existing OpenSSO Server.
 ###
-### DS_EMB_REPL_REPLPORT2 is replication port of the configuration data store
-### of the existing OpenSSO Server
+### DS_EMB_REPL_REPLPORT2 is replication port of the configuration 
+### data store of the existing OpenSSO Server
+###
+### 'existingserverid' is the URL of the existing OpenSSO Server.
+### 'existingserverid' property should only be added to the
+###    second instance of the multi server setup.
+### 'existingserverid' should have the value of this format;
+### http://FQDN of existing OpenSSO Server:port of existing 
+###    OpenSSO Server/<DEPLOYMENT_URI>
+### eg.,
+### http://sample2.sun.com:58080/opensso
 ###
 ##############################################################################
 #DS_EMB_REPL_FLAG=embReplFlag
@@ -101,6 +110,7 @@ DS_DIRMGRPASSWD=11111111
 #DS_EMB_REPL_HOST2=sample2.sun.com
 #DS_EMB_REPL_PORT2=50389
 #DS_EMB_REPL_REPLPORT2=50889
+#existingserverid=http://sample2.com:58080/opensso
 
 
 ##############################################################################
