@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSampleApp.jsp,v 1.13 2009-09-22 22:59:33 madan_ranganath Exp $
+   $Id: fedletSampleApp.jsp,v 1.14 2009-11-16 23:51:29 exu Exp $
 
 --%>
 
@@ -204,11 +204,11 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
     if (idpMetaAlias != null) {
         out.println("<br><b><a href=\"" + idpBaseUrl + "/IDPSloInit?metaAlias=" + idpMetaAlias + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:SOAP&RelayState=" + fedletBaseUrl + "/index.jsp\">Run Identity Provider initiated Single Logout using SOAP binding</a></b></br>");
         out.println("<br><b><a href=\"" + idpBaseUrl + "/IDPSloInit?metaAlias=" + idpMetaAlias + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect&RelayState=" + fedletBaseUrl + "/index.jsp\">Run Identity Provider initiated Single Logout using HTTP-Redirect binding</a></b></br>");
-        out.println("<br><b><a href=\"" + idpBaseUrl + "/IDPSloInit?metaAlias=" + idpMetaAlias + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=" + fedletBaseUrl + "/index.jsp\">Run Identity Provider initiated Single Logout using HTTP-POST binding</a></b></br>");
+        out.println("<br><b><a href=\"" + idpBaseUrl + "/IDPSloInit?metaAlias=" + idpMetaAlias + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=" + fedletBaseUrl + "/index.jsp\">Run Identity Provider initiated Single Logout using HTTP POST binding</a></b></br>");
     }
     out.println("<br><b><a href=\"" + fedletBaseUrl + "/fedletSloInit?spEntityID=" + URLEncDec.encode(spEntityID) + "&idpEntityID=" + URLEncDec.encode(entityID) + "&NameIDValue=" + URLEncDec.encode(value) + "&SessionIndex=" + URLEncDec.encode(sessionIndex) + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:SOAP&RelayState=" + URLEncDec.encode(fedletBaseUrl + "/index.jsp") + "\">Run Fedlet initiated Single Logout using SOAP binding</a></b></br>");
-    out.println("<br><b><a href=\"" + fedletBaseUrl + "/fedletSloInit?spEntityID=" + URLEncDec.encode(spEntityID) + "&idpEntityID=" + URLEncDec.encode(entityID) + "&NameIDValue=" + URLEncDec.encode(value) + "&SessionIndex=" + URLEncDec.encode(sessionIndex) + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect&RelayState=" + URLEncDec.encode(fedletBaseUrl + "/index.jsp") + "\">Run Fedlet initiated Single Logout using HTTP-Redirect binding</a></b></br>");
-    out.println("<br><b><a href=\"" + fedletBaseUrl + "/fedletSloInit?spEntityID=" + URLEncDec.encode(spEntityID) + "&idpEntityID=" + URLEncDec.encode(entityID) + "&NameIDValue=" + URLEncDec.encode(value) + "&SessionIndex=" + URLEncDec.encode(sessionIndex) + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=" + URLEncDec.encode(fedletBaseUrl + "/index.jsp") + "\">Run Fedlet initiated Single Logout using HTTP-POST binding</a></b></br>");
+    out.println("<br><b><a href=\"" + fedletBaseUrl + "/fedletSloInit?spEntityID=" + URLEncDec.encode(spEntityID) + "&idpEntityID=" + URLEncDec.encode(entityID) + "&NameIDValue=" + URLEncDec.encode(value) + "&SessionIndex=" + URLEncDec.encode(sessionIndex) + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect&RelayState=" + URLEncDec.encode(fedletBaseUrl + "/index.jsp") + "\">Run Fedlet initiated Single Logout using HTTP Redirect binding</a></b></br>");
+    out.println("<br><b><a href=\"" + fedletBaseUrl + "/fedletSloInit?spEntityID=" + URLEncDec.encode(spEntityID) + "&idpEntityID=" + URLEncDec.encode(entityID) + "&NameIDValue=" + URLEncDec.encode(value) + "&SessionIndex=" + URLEncDec.encode(sessionIndex) + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=" + URLEncDec.encode(fedletBaseUrl + "/index.jsp") + "\">Run Fedlet initiated Single Logout using HTTP POST binding</a></b></br>");
 %>
 <script>
 function toggleDisp(id)
