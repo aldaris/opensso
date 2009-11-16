@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JAXRPCHelper.java,v 1.5 2008-06-25 05:53:04 qcheng Exp $
+ * $Id: JAXRPCHelper.java,v 1.6 2009-11-16 21:57:47 goodearth Exp $
  *
  */
 
@@ -84,7 +84,12 @@ public class JAXRPCHelper {
      * Sets the service to be failed.
      */
     public static void serverFailed(String serviceName) {
-        if (serviceName.startsWith(validRemoteURL)) {
+        if (validRemoteURL == null) {
+            if (debug.warningEnabled()) {
+                debug.warning("JAXRPCHelper: No valid server found");
+            }
+            serverFailed = true;
+        } else if (serviceName.startsWith(validRemoteURL)) {
             serverFailed = true;
         }
     }
