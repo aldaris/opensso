@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationPrivilegeCLITest.java,v 1.1 2009-11-10 19:01:05 veiming Exp $
+ * $Id: ApplicationPrivilegeCLITest.java,v 1.2 2009-11-16 21:42:20 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
@@ -59,8 +59,8 @@ public class ApplicationPrivilegeCLITest extends CLITestImpl {
 
     @Override
     protected void beforeClass() throws Exception {
-        user1 = createUser("user1");
-        user2 = createUser("user2");
+        user1 = createUser("ApplicationPrivilegeCLITestUser1");
+        user2 = createUser("ApplicationPrivilegeCLITestUser2");
     }
 
     @AfterClass

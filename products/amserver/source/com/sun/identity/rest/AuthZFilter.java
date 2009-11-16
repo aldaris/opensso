@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthZFilter.java,v 1.2 2009-11-12 18:37:35 veiming Exp $
+ * $Id: AuthZFilter.java,v 1.3 2009-11-16 21:42:19 veiming Exp $
  *
  */
 
@@ -65,6 +65,4 @@ public final class AuthZFilter implements Filter {
             auth.doFilter(request, response, chain);
         }
     }
-
-
 }
