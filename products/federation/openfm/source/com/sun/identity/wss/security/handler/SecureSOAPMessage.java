@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.27 2009-11-02 04:34:27 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.28 2009-11-16 21:52:59 mallas Exp $
  *
  */
 
@@ -118,7 +118,26 @@ public class SecureSOAPMessage {
      private String messageID = null;
      private long msgTimestamp = 0;
      private SecurityContext securityContext = null;
-    
+     private String clientDnsClaim = null;
+     private List signedElements = new ArrayList();
+
+     /**
+      * Constructor to create secure SOAP message.
+      *
+      * @param soapMessage the SOAP message to be secured.
+      *
+      * @param create if true, creates a new secured SOAP message by adding
+      *               security headers.
+      *               if false, parses the secured SOAP message.
+      *
+      * @exception SecurityException if failed in creating or parsing the
+      *            new secured SOAP message.
+      */
+     public SecureSOAPMessage(SOAPMessage soapMessage, boolean create)
+             throws SecurityException {
+         this(soapMessage, create, new ArrayList());
+     }
+
      /**
       * Constructor to create secure SOAP message. 
       *
@@ -126,16 +145,18 @@ public class SecureSOAPMessage {
       *
       * @param create if true, creates a new secured SOAP message by adding
       *               security headers.
-      *               if false, parses the secured SOAP message. 
+      *               if false, parses the secured SOAP message.
+      * @param signedElements list of signed elements
       *
       * @exception SecurityException if failed in creating or parsing the
       *            new secured SOAP message. 
       */
-     public SecureSOAPMessage(SOAPMessage soapMessage, boolean create) 
-          throws SecurityException {
+     public SecureSOAPMessage(SOAPMessage soapMessage, boolean create,
+             List signedElements) throws SecurityException {
           
          this.soapMessage = soapMessage;
          this.create = create;
+         this.signedElements = signedElements;
 
          if(debug.messageEnabled()) {
             debug.message("SecureSOAPMessage.Input SOAP message : " + 
@@ -226,6 +247,19 @@ public class SecureSOAPMessage {
                  if((WSSConstants.wsaMessageID.equals(nodeName)) &&
                          (WSSConstants.wsaNS.equals(nodeNS))) {
                      messageID = XMLUtils.getElementValue((Element)currentNode);       
+                 }
+                 
+                 if(("From".equals(nodeName)) &&
+                         (WSSConstants.wsaNS.equals(nodeNS))) {
+                     Element fromElement = (Element)currentNode;
+                     NodeList nodeList =
+                             fromElement.getElementsByTagNameNS(
+                             WSSConstants.WSID_NS, WSSConstants.DNS_CLAIM);
+                     if(nodeList == null || nodeList.getLength() == 0) {
+                        continue;
+                     }
+                     clientDnsClaim = XMLUtils.getElementValue(
+                             (Element)nodeList.item(0));
                  }
              }            
          } catch (SOAPException se) {
@@ -424,11 +458,15 @@ public class SecureSOAPMessage {
          String tokenType = securityToken.getTokenType();
          if(SecurityToken.WSS_USERNAME_TOKEN.equals(tokenType)) {
             UserNameToken userNameToken = (UserNameToken)securityToken;
-            signingIds.add(userNameToken.getSigningId());
+            if(signedElements.contains(WSSConstants.SECURITY_TOKEN)) {
+               signingIds.add(userNameToken.getSigningId());
+            }
          } else if(SecurityToken.WSS_X509_TOKEN.equals(tokenType)) {
             BinarySecurityToken binaryToken = 
                     (BinarySecurityToken)securityToken;
-            signingIds.add(binaryToken.getSigningId());
+            if(signedElements.contains(WSSConstants.SECURITY_TOKEN)) {
+               signingIds.add(binaryToken.getSigningId());
+            }
          }
          Element tokenE = token.toDocumentElement();
          Node tokenNode = soapMessage.getSOAPPart().importNode(tokenE, true);
@@ -437,6 +475,8 @@ public class SecureSOAPMessage {
          try {
              soapMessage.saveChanges();
          } catch (SOAPException se) {
+             debug.error("SecureSOAPMessage.setSecurityToken: " +
+                     "SOAPException" , se);
              throw new SecurityException(se.getMessage());
          }
      }
@@ -473,7 +513,7 @@ public class SecureSOAPMessage {
                        WSSConstants.TAG_XML_WSU,
                        WSSConstants.WSU_NS);
              body.setAttribute(WSSConstants.WSU_ID, SAMLUtils.generateID());
-
+             
          } catch (SOAPException se) {
              debug.error("SecureSOAPMessage.addNameSpaces:: Could not add " + 
              "Name spaces. ", se);
@@ -497,6 +537,7 @@ public class SecureSOAPMessage {
              if(header == null) {
                 header = soapMessage.getSOAPPart().getEnvelope().addHeader();
              }
+             checkForAddressingHeaders();
              SOAPPart soapPart = soapMessage.getSOAPPart();
              wsseHeader = soapMessage.getSOAPPart().createElementNS(
                           WSSConstants.WSSE_NS,
@@ -526,8 +567,10 @@ public class SecureSOAPMessage {
                           WSSConstants.WSU_TAG + ":" +
                           WSSConstants.TIME_STAMP);
              String tsId = SAMLUtils.generateID();
-             if(signingIds != null) {
-                signingIds.add(tsId);
+             if(signedElements.contains(WSSConstants.TIME_STAMP)) {
+                if(signingIds != null) {
+                   signingIds.add(tsId);
+                }
              }
              timeStamp.setAttribute(WSSConstants.WSU_ID, tsId);
              wsseHeader.appendChild(timeStamp);
@@ -562,6 +605,40 @@ public class SecureSOAPMessage {
                         null);
              throw new SecurityException(
                     bundle.getString("addSecurityHeaderFailed"));
+         }
+     }
+
+     private void checkForAddressingHeaders() throws SecurityException {
+         try {
+             SOAPHeader header = soapMessage.getSOAPPart().
+                     getEnvelope().getHeader();
+             java.util.Iterator childElements = header.getChildElements();
+             while(childElements.hasNext()) {
+                Element childElement = (Element)childElements.next();
+                String localName = childElement.getLocalName();
+                String nameSpace = childElement.getNamespaceURI();
+                if(WSSConstants.wsaNS.equals(nameSpace)
+                        &&( localName.equals("To") ||
+                            localName.equals("From") ||
+                            localName.equals("MessageID") ||
+                            localName.equals("Action"))) {
+                   childElement.setAttributeNS(WSSConstants.NS_XML,
+                       WSSConstants.TAG_XML_WSU,
+                       WSSConstants.WSU_NS);
+                   String id = SAMLUtils.generateID();
+                   childElement.setAttribute(WSSConstants.WSU_ID, id);
+                   if(signedElements.contains(localName)) {
+                      signingIds.add(id);
+                   }
+                }
+
+             }            
+
+         } catch (SOAPException se) {
+             debug.error("SecureSOAPMessage.addNameSpaces:: Could not add " +
+             "Name spaces. ", se);
+             throw new SecurityException(
+                   bundle.getString("nameSpaceAdditionfailure"));
          }
      }
 
@@ -883,8 +960,11 @@ public class SecureSOAPMessage {
            signingIds = new ArrayList();
         }
         SOAPBody body = soapMessage.getSOAPPart().getEnvelope().getBody();
-        String id  = body.getAttribute(WSSConstants.WSU_ID); 
-        signingIds.add(id);
+        String id  = body.getAttribute(WSSConstants.WSU_ID);
+        if(signedElements.isEmpty() ||
+                signedElements.contains(WSSConstants.BODY_LNAME)) {
+           signingIds.add(id);
+        }
         return signingIds;
      }
 
@@ -1493,6 +1573,72 @@ public class SecureSOAPMessage {
              return false; 
          }
          
+     }
+
+     public void setSenderIdentity(String dnsName) {
+         try {
+             SOAPHeader header = soapMessage.getSOAPPart().
+                     getEnvelope().getHeader();
+             if(header == null) {
+                return;
+             }
+             NodeList nl = header.getElementsByTagNameNS(WSSConstants.wsaNS,
+                     "Action");
+             if(nl == null || nl.getLength() == 0) {
+                return;
+             }
+             NodeList childNodes =
+                     header.getElementsByTagNameNS(WSSConstants.wsaNS, "From");
+             Element fromElement = null;
+             if(childNodes == null || childNodes.getLength() == 0) {
+                fromElement = soapMessage.getSOAPPart().createElementNS(
+                        WSSConstants.wsaNS, "From");
+                fromElement.setAttributeNS(WSSConstants.NS_XML,
+                       WSSConstants.TAG_XML_WSU,
+                       WSSConstants.WSU_NS);
+                String id = SAMLUtils.generateID();
+                fromElement.setAttribute(WSSConstants.WSU_ID, id);
+                if(signedElements.contains(WSSConstants.FROM)) {
+                   signingIds.add(id);
+                }
+             } else {
+                fromElement = (Element)childNodes.item(0);
+             }
+
+             Element identityE = soapMessage.getSOAPPart().createElementNS(
+                     WSSConstants.WSID_NS,
+                     WSSConstants.TAG_IDENTITY);
+
+             identityE.setAttributeNS(
+                          WSSConstants.NS_XML,
+                          WSSConstants.TAG_XML_WSID,
+                          WSSConstants.WSID_NS);
+
+             Element dnsClaim = soapMessage.getSOAPPart().createElementNS(
+                      WSSConstants.WSID_NS,
+                      WSSConstants.TAG_DNSCLAIM);
+
+             org.w3c.dom.Text textNode =
+                     soapMessage.getSOAPPart().createTextNode(dnsName);
+             dnsClaim.appendChild(textNode);
+             identityE.appendChild(dnsClaim);
+             fromElement.appendChild(identityE);
+             Element replyTo = 
+                         (Element)header.getElementsByTagNameNS(
+                         WSSConstants.wsaNS, "ReplyTo").item(0);
+             header.insertBefore(fromElement, replyTo);
+         } catch (SOAPException se) {
+             WSSUtils.debug.error("SecureSOAPMessage.setSenderIdentity: " +
+                     "SOAP Exception", se);
+         }
+     }
+     
+     public String getClientDnsClaim() {
+         return clientDnsClaim;
+     }
+     
+     public void setSignedElements(List elements) {
+         this.signedElements = elements;
      }
 
 }

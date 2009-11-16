@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSRemoteConfig.java,v 1.5 2009-07-22 15:58:45 mallas Exp $
+ * $Id: STSRemoteConfig.java,v 1.6 2009-11-16 21:52:59 mallas Exp $
  */
 
 package com.sun.identity.wss.sts.config;
@@ -72,7 +72,8 @@ public class STSRemoteConfig {
     private String signingRefType = null;
     private String authChain = null;    
     private boolean detectUserTokenReplay = true;
-    private static boolean detectMessageReplay = true;
+    private boolean detectMessageReplay = true;
+    private List signedElements = null;
     
     static final String ISSUER = "stsIssuer";
     static final String SERVICE_NAME = "sunFAMSTSService";
@@ -100,6 +101,7 @@ public class STSRemoteConfig {
     static final String AUTHENTICATION_CHAIN = "AuthenticationChain";    
     static final String USER_TOKEN_DETECT_REPLAY = "DetectUserTokenReplay";
     static final String MESSAGE_REPLAY_DETECTION = "DetectMessageReplay";
+    static final String SIGNED_ELEMENTS = "SignedElements";
     
     public STSRemoteConfig() {
         
@@ -298,6 +300,18 @@ public class STSRemoteConfig {
             detectUserTokenReplay = 
                 Boolean.valueOf((String)values.iterator().next())
                 .booleanValue();
+        }
+
+        values = (Set)attrMap.get(SIGNED_ELEMENTS);
+        if (values != null && !values.isEmpty()) {
+            if(signedElements == null) {
+               signedElements = new ArrayList();
+               signedElements.addAll(values);
+            } else {
+               signedElements.clear();
+               signedElements.addAll(values);
+            }
+
         }
     }    
     
@@ -679,5 +693,21 @@ public class STSRemoteConfig {
      */
     public void setMessageReplayDetection(boolean enable) {
         this.detectMessageReplay = enable;
+    }
+
+    /**
+     * Returns the list of signed elements.
+     * @return the list of signed elements.
+     */
+    public List getSignedElements() {
+        return signedElements;
+    }
+
+    /**
+     * Sets the signed elements
+     * @param signedElements the signed elements.
+     */
+    public void setSignedElements(List signedElements) {
+        this.signedElements = signedElements;
     }
 }

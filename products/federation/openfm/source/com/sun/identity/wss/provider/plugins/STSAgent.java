@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.22 2009-10-13 23:19:46 mallas Exp $
+ * $Id: STSAgent.java,v 1.23 2009-11-16 21:52:58 mallas Exp $
  *
  */
 
@@ -90,6 +90,8 @@ public class STSAgent extends STSConfig {
     private static final String NAMEID_MAPPER = "NameIDMapper";
     private static final String KEYTYPE = "KeyType";
     private static final String REQUESTED_CLAIMS = "RequestedClaims";
+    private static final String DNS_CLAIM = "DnsClaim";
+    private static final String SIGNED_ELEMENTS = "SignedElements";
      
     private static Debug debug = ProviderUtils.debug;
     
@@ -124,6 +126,8 @@ public class STSAgent extends STSConfig {
         attrNames.add(NAMEID_MAPPER);
         attrNames.add(KEYTYPE);
         attrNames.add(REQUESTED_CLAIMS);
+        attrNames.add(DNS_CLAIM);
+        attrNames.add(SIGNED_ELEMENTS);
     }
 
     /** Creates a new instance of STSAgent */
@@ -340,6 +344,22 @@ public class STSAgent extends STSConfig {
             while(st.hasMoreTokens()) {
                requestedClaims.add(st.nextToken());
             }
+        } else if (attr.equals(DNS_CLAIM)) {
+            if ((value != null) && (value.length() != 0)) {
+                this.dnsClaim = value;
+            }
+        } else if (attr.equals(SIGNED_ELEMENTS)) {
+           if (signedElements == null) {
+               signedElements = new ArrayList();
+           }
+
+           if(value == null) {
+              return;
+           }
+           StringTokenizer st = new StringTokenizer(value, ",");
+           while(st.hasMoreTokens()) {
+               signedElements.add(st.nextToken());
+           }
         }
     }
         
@@ -476,6 +496,18 @@ public class STSAgent extends STSConfig {
         if(keyType != null) {
            config.put(KEYTYPE, keyType);
         }
+
+        if(dnsClaim != null) {
+           config.put(DNS_CLAIM, dnsClaim);
+        }
+
+        Set signedElementSet = new HashSet();
+        if(signedElements != null) {
+           Iterator iter = signedElements.iterator();
+           while(iter.hasNext()) {
+               signedElementSet.add((String)iter.next());
+           }
+        }
         
         // Save the entry in Agent's profile
         try {
@@ -501,6 +533,10 @@ public class STSAgent extends STSConfig {
                Set claims = new HashSet();
                claims.addAll(requestedClaims);
                attributes.put(REQUESTED_CLAIMS, claims); 
+            }
+
+            if (signedElementSet != null && !signedElementSet.isEmpty()) {
+                attributes.put(SIGNED_ELEMENTS, signedElementSet);
             }
             
             if (profilePresent) {

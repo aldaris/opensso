@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.18 2009-10-27 17:23:57 asyhuang Exp $
+   $Id: famSTS.xml,v 1.19 2009-11-16 21:53:00 mallas Exp $
                                                                                 
 -->
 
@@ -403,6 +403,26 @@
                          <Value>true</Value>
                      </DefaultValues>
                </AttributeSchema>
+               <AttributeSchema
+                        name="SignedElements"
+                        type="multiple_choice"
+                        syntax="string"
+                        i18nKey="a136">
+                        <ChoiceValues>
+                            <ChoiceValuesClassName
+                            className="com.sun.identity.wss.security.ConfiguredSignedElements" />
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Body</Value>
+                            <Value>SecurityToken</Value>
+                            <Value>Timestamp</Value>
+                            <Value>To</Value>
+                            <Value>From</Value>
+                            <Value>ReplyTo</Value>
+                            <Value>Action</Value>
+                            <Value>MessageID</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
             </Global>
         </Schema>

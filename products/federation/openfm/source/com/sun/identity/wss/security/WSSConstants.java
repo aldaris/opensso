@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.14 2009-06-04 01:16:49 mallas Exp $
+ * $Id: WSSConstants.java,v 1.15 2009-11-16 21:52:58 mallas Exp $
  *
  */
 
@@ -206,6 +206,28 @@ public class WSSConstants {
     public static final String wsaMessageID = "MessageID";
     
     public static final String HASHED_USER_PASSWORD = "HashedUserPassword";
+
+    public static final String WSID_NS =
+            "http://schemas.xmlsoap.org/ws/2006/02/addressingidentity";
+
+    public static final String TAG_XML_WSID = "xmlns:wsid";
+
+    public static final String TAG_IDENTITY = "wsid:Identity";
+
+    public static final String TAG_DNSCLAIM = "wsid:DnsClaim";
+
+    public static final String IDENTITY = "Identity";
+
+    public static final String DNS_CLAIM = "DnsClaim";
+
+    public static final String SECURITY_TOKEN = "SecurityToken";
+
+    public static final String TO = "To";
+
+    public static final String FROM = "From";
+
+    public static final String REPLY_TO = "ReplyTo";
+    
         
 }
 

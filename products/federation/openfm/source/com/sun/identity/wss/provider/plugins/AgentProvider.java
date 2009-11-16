@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyght owner]"
  *
- * $Id: AgentProvider.java,v 1.40 2009-05-05 01:15:32 mallas Exp $
+ * $Id: AgentProvider.java,v 1.41 2009-11-16 21:52:58 mallas Exp $
  *
  */
 
@@ -118,6 +118,8 @@ public class AgentProvider extends ProviderConfig {
              "DetectUserTokenReplay";
      private static final String MESSAGE_REPLAY_DETECTION =
                                  "DetectMessageReplay";
+     private static final String DNS_CLAIM = "DnsClaim";
+     private static final String SIGNED_ELEMENTS = "SignedElements";
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
      private static Debug debug = ProviderUtils.debug;
@@ -166,6 +168,8 @@ public class AgentProvider extends ProviderConfig {
          attrNames.add(SIGNING_REF_TYPE);         
          attrNames.add(USER_TOKEN_DETECT_REPLAY);
          attrNames.add(MESSAGE_REPLAY_DETECTION);
+         attrNames.add(DNS_CLAIM);
+         attrNames.add(SIGNED_ELEMENTS);
      }
 
      public void init (String providerName, 
@@ -471,6 +475,22 @@ public class AgentProvider extends ProviderConfig {
                 this.detectMessageReplay = 
                         Boolean.valueOf(value).booleanValue();
             }
+        } else if (attr.equals(DNS_CLAIM)) {
+            if ((value != null) && (value.length() != 0)) {
+                this.dnsClaim = value;
+            }
+        } else if (attr.equals(SIGNED_ELEMENTS)) {
+           if (signedElements == null) {
+               signedElements = new ArrayList();
+           }
+
+           if(value == null) {
+              return;
+           }
+           StringTokenizer st = new StringTokenizer(value, ",");
+           while(st.hasMoreTokens()) {
+               signedElements.add(st.nextToken());
+           }
         } else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
@@ -660,6 +680,18 @@ public class AgentProvider extends ProviderConfig {
            config.put(MESSAGE_REPLAY_DETECTION, 
                 Boolean.toString(detectMessageReplay));
         }
+
+        if(dnsClaim != null) {
+           config.put(DNS_CLAIM, dnsClaim);
+        }
+
+        Set signedElementSet = new HashSet();
+        if(signedElements != null) {
+           Iterator iter = signedElements.iterator();
+           while(iter.hasNext()) {
+               signedElementSet.add((String)iter.next());
+           }
+        }
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();
@@ -672,8 +704,12 @@ public class AgentProvider extends ProviderConfig {
                 values.add(value);
                 attributes.put(key, values);
             }
-            if (secMechSet != null) {
+            if (secMechSet != null && !secMechSet.isEmpty()) {
                 attributes.put(SEC_MECH, secMechSet);
+            }
+
+            if (signedElementSet != null && !signedElementSet.isEmpty()) {
+                attributes.put(SIGNED_ELEMENTS, signedElementSet);
             }
             
             if(samlAttributes != null && !samlAttributes.isEmpty()) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.44 2009-10-13 23:19:47 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.45 2009-11-16 21:52:59 mallas Exp $
  *
  */
 
@@ -129,12 +129,16 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     private static String BACK_SLASH = "\\";
     private static String FORWARD_SLASH = "/";
     private static MessageAuthenticator authenticator = null;
+    private static MessageAuthorizer authorizer = null;
         
     /**
      * Property for web services authenticator.
      */
     private static final String WSS_AUTHENTICATOR =
             "com.sun.identity.wss.security.authenticator";
+
+    private static final String WSS_AUTHORIZER =
+            "com.sun.identity.wss.security.authorizer";
     
     /**
      * Property string for liberty authentication service url.
@@ -151,6 +155,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                    "com.sun.identity.wss.security.samlassertion.issuer";
     
     private static final String CLIENT_CERT = "AuthnSubjectCertificate";
+
+    private static final String CLIENT_CERT_ALIAS = "AuthnClientCertAlias";
 
     /**
      * Initializes the handler with the given configuration. 
@@ -243,7 +249,19 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 new SecureSOAPMessage(soapRequest, false);
         SecurityContext securityContext = new SecurityContext();
         securityContext.setDecryptionAlias(config.getKeyAlias());
-        securityContext.setVerificationCertAlias(config.getPublicKeyAlias());
+        String dnsClaim = secureMsg.getClientDnsClaim();
+        ProviderConfig remoteProvider = null;
+        if(dnsClaim != null) {
+           remoteProvider = WSSUtils.getConfigByDnsClaim(
+                            dnsClaim, ProviderConfig.WSC);
+           if(remoteProvider != null) {
+              String pubKeyAlias = remoteProvider.getKeyAlias();
+              securityContext.setVerificationCertAlias(pubKeyAlias);
+              sharedState.put(CLIENT_CERT_ALIAS, pubKeyAlias);
+           }
+        } else {           
+           securityContext.setVerificationCertAlias(config.getPublicKeyAlias());
+        }
         secureMsg.setSecurityContext(securityContext);
 
         if ( ((config != null) && ((config.isRequestEncryptEnabled()) ||
@@ -385,7 +403,19 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 data2,
                 null);
         }
-        
+
+        if(!getAuthorizer().authorize(subject,
+                secureMsg,
+                secureMsg.getSecurityMechanism(),
+                secureMsg.getSecurityToken(),
+                config, false)) {
+           if(debug.messageEnabled()) {
+              debug.message("SOAPRequestHandler.validateRequest: "  +
+                      " Unauthorized. "); 
+           }
+           throw new SecurityException(bundle.getString("notAuthorized"));
+        }
+
         updateSharedState(subject, sharedState);
             return subject;    
      }
@@ -447,8 +477,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             }
         }
         SecurityContext securityContext = new SecurityContext();
-        SecureSOAPMessage secureMessage =
-                new SecureSOAPMessage(soapMessage, true);
+        SecureSOAPMessage secureMessage =   new SecureSOAPMessage(soapMessage, 
+                true, config.getSignedElements());
         try {
             secureMessage.getSOAPMessage().saveChanges();
         } catch (SOAPException se) {
@@ -489,6 +519,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         secureMessage.setSecurityToken(securityToken);
         secureMessage.setSecurityMechanism(
                 SecurityMechanism.WSS_NULL_X509_TOKEN);
+        secureMessage.setSignedElements(config.getSignedElements());
 
         if ( (config != null && config.isResponseSignEnabled()) ){            
             secureMessage.sign();
@@ -502,7 +533,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             String encryptAlias = publicKeyAlias;
             if(cert != null) {
                encryptAlias =  keyProvider.getCertificateAlias(cert);
-            } 
+            } else {
+               String clientCertAlias = (String)sharedState.get(
+                                         CLIENT_CERT_ALIAS);
+               if(clientCertAlias != null) {
+                  encryptAlias = clientCertAlias;
+               }
+            }
                     
             secureMessage.encrypt(encryptAlias, 
                     config.getEncryptionAlgorithm(),
@@ -590,8 +627,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         if (((SecurityMechanism.WSS_NULL_ANONYMOUS_URI.equals(uri)) ||
                 (SecurityMechanism.WSS_TLS_ANONYMOUS_URI.equals(uri)) ||
                 (SecurityMechanism.WSS_CLIENT_TLS_ANONYMOUS_URI.equals(uri)))) {
-            secureMessage =
-                    new SecureSOAPMessage(soapMessage, true);
+            secureMessage = new SecureSOAPMessage(soapMessage, true,
+                    config.getSignedElements());
         } else {
             if (securityMechanism.isTALookupRequired()) {
                 if(debug.messageEnabled()) {
@@ -680,8 +717,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                         securityMechanism, config, subject);
             }
             
-            secureMessage = 
-                new SecureSOAPMessage(soapMessage, true);
+            secureMessage =  new SecureSOAPMessage(soapMessage, true,
+                    config.getSignedElements());
+            String dnsClaim = config.getDNSClaim();
+            if(dnsClaim != null) {
+               secureMessage.setSenderIdentity(dnsClaim);
+            }
             String refType = config.getSigningRefType();
             if(!(securityMechanism.getURI().equals(
                     SecurityMechanism.WSS_NULL_X509_TOKEN_URI)) ||
@@ -693,7 +734,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         secureMessage.setSecurityMechanism(securityMechanism);        
         secureMessage.setSecurityContext(securityContext);
-
+         
         if(config.isRequestSignEnabled()) {            
            secureMessage.sign();
         }
@@ -1328,6 +1369,30 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
     }
 
     /**
+     * Returns the configured message authenticator.
+     */
+    public static MessageAuthorizer getAuthorizer()
+            throws SecurityException {
+        if(authorizer != null) {
+           return authorizer;
+        }
+        
+        String classImpl = SystemConfigurationUtil.getProperty(
+                WSS_AUTHORIZER,
+                "com.sun.identity.wss.security.handler.DefaultAuthorizer");
+        try {
+            Class authnClass = Class.forName(classImpl);
+            authorizer = (MessageAuthorizer)authnClass.newInstance();
+        } catch (Exception ex) {
+            debug.error("SOAPRequestHandler.getAuthenticator:: Unable to " +
+                    "get the authorizer", ex);
+            throw new SecurityException(
+                    bundle.getString("authorizerInitFailed"));
+        }
+        return authorizer;
+    }
+
+    /**
      * Returns the secured <code>SOAPMessage</code> by using liberty
      * protocols.
      *
@@ -1581,6 +1646,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                         stsConfig.getSAMLAttributeNamespace());
                 pc.setIncludeMemberships(stsConfig.shouldIncludeMemberships());
                 pc.setNameIDMapper(stsConfig.getNameIDMapper());
+                pc.setDNSClaim(stsConfig.getDNSClaim());
+                pc.setSignedElements(stsConfig.getSignedElements());
 
                 return pc;
             }
@@ -1695,6 +1762,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                      stsConfig.isUserTokenDetectReplayEnabled());
              pc.setMessageReplayDetection(
                      stsConfig.isMessageReplayDetectionEnabled());
+             pc.setDNSClaim(stsConfig.getIssuer());
+             pc.setSignedElements(stsConfig.getSignedElements());
              return pc;
              
         } catch (ProviderException pe) {
@@ -1887,6 +1956,16 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
               sharedState.put(CLIENT_CERT, cert);
                       
            }
-        }        
+        }
+
+        if(sharedState.get(CLIENT_CERT) == null) {
+           //Check if thread local has it.
+           X509Certificate clientCert =
+                   (X509Certificate)ThreadLocalService.getClientCertificate();
+           if(clientCert != null) {
+              sharedState.put(CLIENT_CERT, clientCert);
+              ThreadLocalService.removeClientCertificate();
+           }
+        }
     }    
 }

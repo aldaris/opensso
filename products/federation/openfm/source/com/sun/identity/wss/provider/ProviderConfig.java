@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.30 2009-04-21 17:41:24 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.31 2009-11-16 21:52:58 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -125,6 +125,8 @@ public abstract class ProviderConfig {
     
      protected boolean detectUserTokenReplay = true;
      protected boolean detectMessageReplay = true;
+     protected String dnsClaim = null;
+     protected List signedElements = new ArrayList();
      private static Class adapterClass;
 
     /**
@@ -625,6 +627,38 @@ public abstract class ProviderConfig {
      */
     public void setValidateKerberosSignature(boolean validate) {
         this.verifyKrbSignature = validate;
+    }
+
+    /**
+     * Returns the DNS claim name.
+     * @return the DNS claim name.
+     */
+    public String getDNSClaim() {
+        return dnsClaim;
+    }
+
+    /**
+     * Sets the DNS claim name
+     * @param dnsClaim the DNS claim name
+     */
+    public void setDNSClaim(String dnsClaim) {
+        this.dnsClaim = dnsClaim;
+    }
+
+    /**
+     * Returns the list of signed elements.
+     * @return the list of signed elements.
+     */
+    public List getSignedElements() {
+        return signedElements;
+    }
+
+    /**
+     * Sets the signed elements
+     * @param signedElements the signed elements.
+     */
+    public void setSignedElements(List signedElements) {
+        this.signedElements = signedElements;
     }
   
     /**

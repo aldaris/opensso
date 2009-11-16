@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetQuote.java,v 1.4 2009-05-05 01:16:12 mallas Exp $
+ * $Id: GetQuote.java,v 1.5 2009-11-16 21:53:00 mallas Exp $
  *
  */
 package com.samples;
@@ -34,11 +34,12 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.soap.SOAPFaultException;
+import javax.xml.ws.soap.AddressingFeature;
 
 public class GetQuote extends HttpServlet {
     
     @WebServiceRef(wsdlLocation =
-        "http://localhost:8080/StockService/StockService?wsdl")
+        "http://localhost:8081/StockService/StockService?wsdl")
     @HandlerChain( file="handlers.xml", name="" )
     private com.samples.StockService service;
     
@@ -46,7 +47,8 @@ public class GetQuote extends HttpServlet {
      * Get Stock quote from WSP
      */
     public QuoteResponseType getStockQuote(String symbol) throws SOAPFaultException {
-        StockQuotePortType port = service.getStockQuotePortTypePort();
+        StockQuotePortType port = service.getStockQuotePortTypePort(
+             new AddressingFeature(true, false));
         QuoteRequestType body = new QuoteRequestType();
         body.setSymbol(symbol);
         return(port.getStockQuote(body));

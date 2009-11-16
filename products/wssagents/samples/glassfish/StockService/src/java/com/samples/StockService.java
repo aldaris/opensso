@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StockService.java,v 1.5 2009-07-23 20:04:28 mrudul_uchil Exp $
+ * $Id: StockService.java,v 1.6 2009-11-16 21:53:01 mallas Exp $
  *
  */
 package com.samples;
@@ -40,9 +40,11 @@ import java.security.Principal;
 import java.security.AccessController;
 import javax.xml.ws.WebServiceContext;
 import javax.annotation.Resource;
+import javax.xml.ws.soap.Addressing;
 
 @WebService(serviceName = "StockService", portName = "StockQuotePortTypePort", endpointInterface = "com.sun.stockquote.StockQuotePortType", targetNamespace = "http://sun.com/stockquote.wsdl", wsdlLocation = "WEB-INF/wsdl/StockService/stockservice.wsdl")
 @HandlerChain( file="handlers.xml", name="" )
+@Addressing(enabled=true, required=false)
 public class StockService implements com.sun.stockquote.StockQuotePortType {
 
     @Resource

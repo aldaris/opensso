@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.114 2009-11-10 01:31:02 bigfatrat Exp $
+ * $Id: AMSetupServlet.java,v 1.115 2009-11-16 21:52:57 mallas Exp $
  *
  */
 
@@ -2044,6 +2044,9 @@ public class AMSetupServlet extends HttpServlet {
         config.put("EncryptionAlgorithm","AES");
         config.put("EncryptionStrength","128");
         config.put("SigningRefType","DirectReference");
+        config.put("DnsClaim","wsc");
+        config.put("SignedElements","Body,SecurityToken,Timestamp,To,From," +
+                   "ReplyTo,Action,MessageID");
         config.put("AgentType","WSCAgent");
         createAgent(token, idrepo, "wsc", "wsc", "WSC", "", config);
 
@@ -2057,11 +2060,14 @@ public class AMSetupServlet extends HttpServlet {
                                   "urn:sun:wss:security:null:SAML2Token-HK," +
                                   "urn:sun:wss:security:null:SAML2Token-SV," +
                                   "urn:sun:wss:security:null:X509Token");
+        config.remove("DnsClaim");
+        config.put("DnsClaim","wsp");
         createAgent(token, idrepo, "wsp", "wsp", "WSP", "", config);
         config.remove("keepSecurityHeaders");        
 
         // Add STS Client configuration
         config.remove("AgentType");
+        config.put("DnsClaim","wsc");
         config.put("AgentType","STSAgent");
         config.remove("SecurityMech");
         config.remove("keepSecurityHeaders");

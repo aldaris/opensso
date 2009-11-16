@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.21 2009-10-13 23:19:47 mallas Exp $
+ * $Id: WSSUtils.java,v 1.22 2009-11-16 21:52:58 mallas Exp $
  *
  */
 
@@ -109,6 +109,7 @@ import com.sun.identity.xmlenc.EncryptionConstants;
 import com.sun.org.apache.xml.internal.security.encryption.EncryptedKey;
 import com.sun.org.apache.xml.internal.security.encryption.XMLCipher;
 import com.sun.org.apache.xml.internal.security.keys.KeyInfo;
+import com.sun.identity.wss.provider.ProviderConfig;
 
 /**
  * This class provides util methods for the web services security. 
@@ -1077,6 +1078,43 @@ public class WSSUtils {
              map.put(qName, list);
         }
         return map;
+    }
+
+    public static ProviderConfig getConfigByDnsClaim(String dnsClaim,
+             String agentType) {
+        try {            
+            AMIdentityRepository idRepo =
+                     new AMIdentityRepository(getAdminToken(), "/");
+            IdSearchControl control = new IdSearchControl();
+            control.setAllReturnAttributes(true);
+            control.setTimeOut(0);
+            Map kvPairMap = new HashMap();
+            Set set = new HashSet();
+            set.add(agentType);
+            kvPairMap.put(AGENT_TYPE_ATTR, set);
+            set = new HashSet();
+            set.add(dnsClaim);
+            kvPairMap.put("DnsClaim", set);
+            control.setSearchModifiers(IdSearchOpModifier.AND, kvPairMap);
+            IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
+               "*", control);
+            Set agents = results.getSearchResults();
+            if (!agents.isEmpty()) {
+                Map attrs = (Map) results.getResultAttributes();
+                AMIdentity provider = (AMIdentity) agents.iterator().next();
+                String name = provider.getName();
+                Set agentTypes = provider.getAttribute("AgentType");
+                String type = ProviderConfig.WSC;
+                if(agentTypes != null) {
+                   type = (String)agentTypes.iterator().next();
+                }
+                return ProviderConfig.getProvider(name, type);                
+            }
+            return null;
+        } catch (Exception ex) {
+            debug.error("WSSUtils.getConfigByEndpoint: Exception", ex);
+            return null;
+        }
     }
         
  }

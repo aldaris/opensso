@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.85 2009-10-27 17:23:29 asyhuang Exp $
+   $Id: AgentService.xml,v 1.86 2009-11-16 21:52:57 mallas Exp $
 
 -->
 
@@ -2882,6 +2882,35 @@
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema
+                        name="DnsClaim"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a368">
+                        <DefaultValues>
+                            <Value>wsc</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="SignedElements"
+                        type="multiple_choice"
+                        syntax="string"
+                        i18nKey="a369">
+                        <ChoiceValues>
+                            <ChoiceValuesClassName
+                            className="com.sun.identity.wss.security.ConfiguredSignedElements" />
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Body</Value>
+                            <Value>SecurityToken</Value>
+                            <Value>Timestamp</Value>
+                            <Value>To</Value>
+                            <Value>From</Value>
+                            <Value>ReplyTo</Value>
+                            <Value>Action</Value>
+                            <Value>MessageID</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
                 </SubSchema>
                 
@@ -3264,6 +3293,35 @@
                             <Value>true</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema
+                        name="DnsClaim"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a368">
+                        <DefaultValues>
+                            <Value>wsp</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="SignedElements"
+                        type="multiple_choice"
+                        syntax="string"
+                        i18nKey="a369">
+                        <ChoiceValues>
+                            <ChoiceValuesClassName
+                            className="com.sun.identity.wss.security.ConfiguredSignedElements" />
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Body</Value>
+                            <Value>SecurityToken</Value>
+                            <Value>Timestamp</Value>
+                            <Value>To</Value>
+                            <Value>From</Value>
+                            <Value>ReplyTo</Value>
+                            <Value>Action</Value>
+                            <Value>MessageID</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
                 </SubSchema>
                 
@@ -3617,7 +3675,35 @@
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
-
+                    <AttributeSchema
+                        name="DnsClaim"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a368">
+                        <DefaultValues>
+                            <Value>wsc</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="SignedElements"
+                        type="multiple_choice"
+                        syntax="string"
+                        i18nKey="a369">
+                        <ChoiceValues>
+                            <ChoiceValuesClassName
+                            className="com.sun.identity.wss.security.ConfiguredSignedElements" />
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Body</Value>
+                            <Value>SecurityToken</Value>
+                            <Value>Timestamp</Value>
+                            <Value>To</Value>
+                            <Value>From</Value>
+                            <Value>ReplyTo</Value>
+                            <Value>Action</Value>
+                            <Value>MessageID</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
                 </SubSchema>
                 

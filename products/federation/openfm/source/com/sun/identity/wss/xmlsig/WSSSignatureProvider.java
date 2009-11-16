@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.12 2009-08-29 03:06:02 mallas Exp $
+ * $Id: WSSSignatureProvider.java,v 1.13 2009-11-16 21:53:00 mallas Exp $
  *
  */
 
@@ -60,6 +60,7 @@ import com.sun.identity.wss.security.STRTransform;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.wss.security.BinarySecurityToken;
 import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.wss.security.handler.ThreadLocalService;
 import com.iplanet.security.x509.CertUtils;
 import java.lang.ClassNotFoundException;
 
@@ -1029,6 +1030,11 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                 
                 PublicKey pk = this.getX509PublicKey(doc, ki);
                 if (pk!=null) {
+                    X509Certificate cert =
+                            (X509Certificate)keystore.getCertificate(pk);
+                    if(cert != null) {
+                       ThreadLocalService.setClientCertificate(cert);
+                    }
                     if(!signature.checkSignatureValue (pk)) {
                         return false;
                     } else {

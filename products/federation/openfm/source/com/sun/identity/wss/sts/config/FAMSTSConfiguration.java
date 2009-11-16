@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSConfiguration.java,v 1.11 2009-04-21 17:41:26 mallas Exp $
+ * $Id: FAMSTSConfiguration.java,v 1.12 2009-11-16 21:52:59 mallas Exp $
  *
  */
 
@@ -90,6 +90,7 @@ public class FAMSTSConfiguration implements
     private static String authChain = null;    
     private static boolean detectUserTokenReplay = true;
     private static boolean detectMessageReplay = true;
+    private static List signedElements = null;
     
     private CallbackHandler callbackHandler;
     
@@ -140,6 +141,7 @@ public class FAMSTSConfiguration implements
     static final String AUTHENTICATION_CHAIN = "AuthenticationChain";    
     static final String USER_TOKEN_DETECT_REPLAY = "DetectUserTokenReplay";
     static final String MESSAGE_REPLAY_DETECTION = "DetectMessageReplay";
+    static final String SIGNED_ELEMENTS = "SignedElements";
 
     private static Debug debug = STSUtils.debug;
     static ConfigurationInstance ci = null;
@@ -423,6 +425,18 @@ public class FAMSTSConfiguration implements
             detectMessageReplay = 
                 Boolean.valueOf((String)values.iterator().next())
                 .booleanValue();
+        }
+
+        values = (Set)attrMap.get(SIGNED_ELEMENTS);
+        if (values != null && !values.isEmpty()) {
+            if(signedElements == null) {
+               signedElements = new ArrayList();
+               signedElements.addAll(values);
+            } else {
+               signedElements.clear();
+               signedElements.addAll(values);
+            }
+
         }
         
     }
@@ -937,5 +951,21 @@ public class FAMSTSConfiguration implements
      */
     public void setMessageReplayDetection(boolean enable) {
         this.detectMessageReplay = enable;
+    }
+
+    /**
+     * Returns the list of signed elements.
+     * @return the list of signed elements.
+     */
+    public List getSignedElements() {
+        return signedElements;
+    }
+
+    /**
+     * Sets the signed elements
+     * @param signedElements the signed elements.
+     */
+    public void setSignedElements(List signedElements) {
+        this.signedElements = signedElements;
     }
 }
