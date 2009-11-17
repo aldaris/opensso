@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageBean.java,v 1.3 2009-10-12 20:51:58 farble1670 Exp $
+ * $Id: ReferralManageBean.java,v 1.4 2009-11-17 21:32:20 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -42,7 +42,7 @@ public class ReferralManageBean implements Serializable {
     private String searchFilter = "";
     private List<FilterHolder> filterHolders = new ArrayList<FilterHolder>();
     private Map<String,ViewFilterType> viewFilterTypes;
-    private ReferralManageTableBean referralManageTableBean = new ReferralManageTableBean();
+    private ReferralManageTableBean referralManageTableBean;
     private boolean removePopupVisible = false;
     private boolean viewOptionsPopupVisible = false;
     private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
@@ -75,6 +75,10 @@ public class ReferralManageBean implements Serializable {
 
     public ReferralManageTableBean getReferralManageTableBean() {
         return referralManageTableBean;
+    }
+
+    public void setReferralManageTableBean(ReferralManageTableBean referralManageTableBean) {
+        this.referralManageTableBean = referralManageTableBean;
     }
 
     public void setViewFilterTypes(Map<String,ViewFilterType> viewFilterTypes) {

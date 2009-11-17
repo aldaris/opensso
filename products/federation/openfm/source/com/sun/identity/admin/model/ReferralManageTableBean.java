@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageTableBean.java,v 1.1 2009-08-19 05:40:53 veiming Exp $
+ * $Id: ReferralManageTableBean.java,v 1.2 2009-11-17 21:32:20 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -51,16 +51,14 @@ public class ReferralManageTableBean implements Serializable {
         comparators.put(new TableSortKey("modified", true), new ReferralBean.ModifiedComparator(true));
         comparators.put(new TableSortKey("modified", false), new ReferralBean.ModifiedComparator(false));
     }
+    
     private List<ReferralBean> referralBeans;
-    private int rows = 10;
+    private int rows;
     private TableSortKey tableSortKey = new TableSortKey("name");
-    private List<String> columnsVisible = new ArrayList<String>();
+    private List<String> columnsVisible;
 
     public ReferralManageTableBean() {
-        columnsVisible.add("description");
-        columnsVisible.add("resources");
-        columnsVisible.add("subjects");
-        columnsVisible.add("modified");
+        // nothing
     }
 
     public List<ReferralBean> getReferralBeans() {
