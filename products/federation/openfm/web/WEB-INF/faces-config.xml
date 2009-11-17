@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.27 2009-11-17 21:32:20 farble1670 Exp $
+  $Id: faces-config.xml,v 1.28 2009-11-17 21:44:54 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1993,9 +1993,40 @@
 
     <!-- application manage -->
     <managed-bean>
+        <managed-bean-name>applicationColumnsVisible</managed-bean-name>
+        <managed-bean-class>java.util.ArrayList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <list-entries>
+            <value-class>java.lang.String</value-class>
+            <value>description</value>
+            <value>applicationType</value>
+            <value>resources</value>
+            <value>actions</value>
+        </list-entries>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>applicationManageTableBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ApplicationManageTableBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>columnsVisible</property-name>
+            <value>#{applicationColumnsVisible}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>rows</property-name>
+            <value>10</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>applicationManageBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.ApplicationManageBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>applicationManageTableBean</property-name>
+            <value>#{applicationManageTableBean}</value>
+        </managed-property>
         <managed-property>
             <property-name>viewApplicationDao</property-name>
             <value>#{viewApplicationDao}</value>

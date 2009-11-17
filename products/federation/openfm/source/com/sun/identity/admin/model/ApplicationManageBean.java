@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageBean.java,v 1.6 2009-10-12 21:47:00 farble1670 Exp $
+ * $Id: ApplicationManageBean.java,v 1.7 2009-11-17 21:44:54 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -38,7 +38,7 @@ import org.apache.commons.collections.comparators.NullComparator;
 public class ApplicationManageBean implements Serializable {
     private List<ViewApplication> viewApplications;
     private ViewApplicationDao viewApplicationDao;
-    private ApplicationManageTableBean applicationManageTableBean = new ApplicationManageTableBean();
+    private ApplicationManageTableBean applicationManageTableBean;
     private boolean viewOptionsPopupVisible = false;
     private List<String> viewOptionsPopupColumnsVisible = new ArrayList<String>();
     private int viewOptionsPopupRows = 10;
@@ -65,6 +65,10 @@ public class ApplicationManageBean implements Serializable {
 
     public ApplicationManageTableBean getApplicationManageTableBean() {
         return applicationManageTableBean;
+    }
+
+    public void setApplicationManageTableBean(ApplicationManageTableBean applicationManageTableBean) {
+        this.applicationManageTableBean = applicationManageTableBean;
     }
 
     public void reset() {
