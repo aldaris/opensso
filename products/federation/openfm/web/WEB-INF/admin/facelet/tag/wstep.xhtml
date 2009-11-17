@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wstep.xhtml,v 1.1 2009-08-19 05:41:06 veiming Exp $
+   $Id: wstep.xhtml,v 1.2 2009-11-17 21:16:44 farble1670 Exp $
 
 -->
 
@@ -38,8 +38,7 @@
     <ice:panelCollapsible
         expanded="#{wizardBean.wizardStepBeans[step].expanded}"
         disabled="#{!wizardBean.wizardStepBeans[step].enabled}"
-        actionListener="#{wizardHandler.expandStepListener}"
-        visible="#{true}">
+        actionListener="#{wizardHandler.expandStepListener}">
 
         <f:attribute name="step" value="#{step}"/>
 

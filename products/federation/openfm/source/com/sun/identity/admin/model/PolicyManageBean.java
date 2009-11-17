@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManageBean.java,v 1.4 2009-11-13 20:19:18 farble1670 Exp $
+ * $Id: PolicyManageBean.java,v 1.5 2009-11-17 21:16:43 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -40,7 +40,7 @@ public class PolicyManageBean implements Serializable {
 
     private List<PrivilegeBean> privilegeBeans;
     private PolicyDao policyDao;
-    private PolicyManageTableBean policyManageTableBean = new PolicyManageTableBean();
+    private PolicyManageTableBean policyManageTableBean;
     private boolean viewOptionsPopupVisible = false;
     private boolean removePopupVisible = false;
     private boolean exportPopupVisible = false;
@@ -77,6 +77,10 @@ public class PolicyManageBean implements Serializable {
 
     public PolicyManageTableBean getPolicyManageTableBean() {
         return policyManageTableBean;
+    }
+
+    public void setPolicyManageTableBean(PolicyManageTableBean policyManageTableBean) {
+        this.policyManageTableBean = policyManageTableBean;
     }
 
     public boolean isViewOptionsPopupVisible() {

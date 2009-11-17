@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.25 2009-11-11 21:28:21 farble1670 Exp $
+  $Id: faces-config.xml,v 1.26 2009-11-17 21:16:43 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -1924,16 +1924,47 @@
     </managed-bean>
 
     <managed-bean>
+        <managed-bean-name>policyColumnsVisible</managed-bean-name>
+        <managed-bean-class>java.util.ArrayList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <list-entries>
+            <value-class>java.lang.String</value-class>
+            <value>description</value>
+            <value>resources</value>
+            <value>subject</value>
+            <value>modified</value>
+        </list-entries>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>policyManageTableBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.PolicyManageTableBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>columnsVisible</property-name>
+            <value>#{policyColumnsVisible}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>rows</property-name>
+            <value>10</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>policyManageBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.PolicyManageBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
         <managed-property>
-            <property-name>policyDao</property-name>
-            <value>#{policyDao}</value>
+            <property-name>policyManageTableBean</property-name>
+            <value>#{policyManageTableBean}</value>
         </managed-property>
         <managed-property>
             <property-name>viewFilterTypes</property-name>
             <value>#{policyFilterTypes}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>policyDao</property-name>
+            <value>#{policyDao}</value>
         </managed-property>
     </managed-bean>
 
