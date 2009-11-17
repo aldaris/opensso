@@ -133,7 +133,7 @@
     function validateADUserStorePassword() {
         field = "ADuserStorePassword";
         var callUrl = "$context$path?actionLink=setPassword";
-        var param = "password=" + $('ADuserStorePassword').value;
+        var param = "password=" + escape($('ADuserStorePassword').value);
         ie7fix++;
         callUrl = callUrl + "&ie7fix=" + ie7fix;
         AjaxUtils.doPost(null, callUrl, param, validateADUserFields, 
@@ -179,7 +179,7 @@
     function validateUserStorePassword() {
         field = "userStorePassword";
         var callUrl = "$context$path?actionLink=setPassword";
-        var param = "password=" + $('userStorePassword').value;
+        var param = "password=" + escape($('userStorePassword').value);
         ie7fix++;
         callUrl = callUrl + "&ie7fix=" + ie7fix;
         AjaxUtils.doPost(null, callUrl, param, validateUserFields, null, null);
