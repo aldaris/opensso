@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletAttrQuery.jsp,v 1.2 2009-07-24 22:53:20 madan_ranganath Exp $
+   $Id: fedletAttrQuery.jsp,v 1.3 2009-11-17 07:08:30 sean_brydon Exp $
 
    Copyright 2009 Sun Microsystems Inc. All Rights Reserved
 
@@ -44,6 +44,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.Set" %>
+<%@ page import="org.owasp.esapi.ESAPI" %>
 
 <%@ page import="com.sun.identity.cot.CircleOfTrustManager" %>
 <%@ page import="com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement" %>
@@ -156,10 +157,12 @@ function checkEmptySubjectDN() {
 	<B>Subject</B> <BR>
 	<%
             if (nameIDValue!=null){
-                out.print("<input type=hidden name=nameidvalue value=\"" + URLEncDec.encode(nameIDValue) + "\" > SAML2 Token (Transient)<br>");
+                out.print("<input type=hidden name=nameidvalue value=\"" + ESAPI.encoder().encodeForHTML(URLEncDec.encode(nameIDValue)) + "\" > SAML2 Token (Transient)<br>");
             }
             String idpEntityID = request.getParameter("idpEntityID");
+            if(idpEntityID!=null) idpEntityID = ESAPI.encoder().encodeForHTML(idpEntityID);
             String spEntityID = request.getParameter("spEntityID");
+            if(spEntityID!=null) spEntityID = ESAPI.encoder().encodeForHTML(spEntityID);
     	%>
 	<p>
             Attribute 1 <input type=text name=attr1 value=CommonName><br>
