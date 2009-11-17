@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.54 2009-11-12 17:31:59 exu Exp $
+   $Id: build-war.xml,v 1.55 2009-11-17 21:55:14 exu Exp $
 
 -->
 
@@ -100,6 +100,9 @@
 
         <copy file="${library.dir}/fedlet/index.jsp"
             tofile="${war.package.dir}/WEB-INF/fedlet/index.jsp" />
+
+        <copy file="${library.dir}/fedlet/index.html"
+            tofile="${war.package.dir}/WEB-INF/fedlet/index.html" />
 
         <copy file="${library.dir}/fedlet/logout.jsp"
             tofile="${war.package.dir}/WEB-INF/fedlet/logout.jsp" />
@@ -208,6 +211,8 @@
         <copy file="${openfm.dir}/www/jsp/validatorRpt.jsp" todir="${war.package.dir}" />
         <copy file="${openfm.dir}/www/jsp/validatorAuthFail.jsp" todir="${war.package.dir}" />
 
+        <copy file="${library.dir}/www/config/federation/index.html" todir="${war.package.dir}/config/federation" />
+
         <copy todir="${war.package.dir}/config/federation/default">
             <fileset dir="${library.dir}/www/config/federation" 
                 includes="*.jsp,*.html" />
@@ -228,14 +233,18 @@
                 includes="*" />
         </copy>
 
+        <copy file="${library.dir}/www/config/saml2/index.html" todir="${war.package.dir}/saml2" />
+
         <copy todir="${war.package.dir}/saml2/jsp">
             <fileset dir="${library.dir}/www/config/saml2"
-                includes="*.jsp" />
+                includes="*.jsp,*.html" />
         </copy>
+
+        <copy file="${library.dir}/www/config/wsfederation/index.html" todir="${war.package.dir}/wsfederation" />
 
         <copy todir="${war.package.dir}/wsfederation/jsp">
             <fileset dir="${library.dir}/www/config/wsfederation"
-                includes="*.jsp" />
+                includes="*.jsp,*.html" />
         </copy>
 
         <copy todir="${war.package.dir}/console">
