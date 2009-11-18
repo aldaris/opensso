@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationManageTableBean.java,v 1.3 2009-11-18 21:47:24 farble1670 Exp $
+ * $Id: DelegationManageTableBean.java,v 1.4 2009-11-18 23:26:52 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -51,6 +51,12 @@ public class DelegationManageTableBean implements Serializable {
         comparators.put(new TableSortKey("description", false), new DelegationBean.DescriptionComparator(false));
         comparators.put(new TableSortKey("modifier", true), new DelegationBean.ModifierComparator(true));
         comparators.put(new TableSortKey("modifier", false), new DelegationBean.ModifierComparator(false));
+        comparators.put(new TableSortKey("author", true), new DelegationBean.AuthorComparator(true));
+        comparators.put(new TableSortKey("author", false), new DelegationBean.AuthorComparator(false));
+        comparators.put(new TableSortKey("birth", true), new DelegationBean.BirthComparator(true));
+        comparators.put(new TableSortKey("birth", false), new DelegationBean.BirthComparator(false));
+        comparators.put(new TableSortKey("modified", true), new DelegationBean.ModifiedComparator(true));
+        comparators.put(new TableSortKey("modified", false), new DelegationBean.ModifiedComparator(false));
     }
 
     public DelegationManageTableBean() {
@@ -101,5 +107,17 @@ public class DelegationManageTableBean implements Serializable {
 
     public boolean isModifierColumnVisible() {
         return columnsVisible.contains("modifier");
+    }
+
+    public boolean isModifiedColumnVisible() {
+        return columnsVisible.contains("modified");
+    }
+
+    public boolean isBirthColumnVisible() {
+        return columnsVisible.contains("birth");
+    }
+
+    public boolean isAuthorColumnVisible() {
+        return columnsVisible.contains("author");
     }
 }

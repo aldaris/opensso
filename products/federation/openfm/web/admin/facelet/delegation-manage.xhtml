@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: delegation-manage.xhtml,v 1.6 2009-11-18 21:47:25 farble1670 Exp $
+   $Id: delegation-manage.xhtml,v 1.7 2009-11-18 23:26:53 farble1670 Exp $
 -->
 
 <ui:composition
@@ -221,6 +221,73 @@
                                 visible="#{true}">
                                 <ice:outputText
                                     value="#{delegationBean.modifier}"/>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{delegationManageBean.delegationManageTableBean.authorColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="author"
+                                        actionListener="#{delegationManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['delegation-manage.authorColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="policy-manage-cell"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{delegationBean.author}"/>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{delegationManageBean.delegationManageTableBean.modifiedColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="modified"
+                                        actionListener="#{delegationManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['delegation-manage.modifiedColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="policy-manage-cell"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{delegationBean.modified}">
+                                    <f:convertDateTime
+                                        dateStyle="short"
+                                        timeZone="#{timeZoneBean.timeZone.ID}"
+                                        type="both" />
+                                </ice:outputText>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{delegationManageBean.delegationManageTableBean.birthColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="birth"
+                                        actionListener="#{delegationManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['delegation-manage.birthColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="policy-manage-cell"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{delegationBean.birth}">
+                                    <f:convertDateTime
+                                        dateStyle="short"
+                                        timeZone="#{timeZoneBean.timeZone.ID}"
+                                        type="both" />
+                                </ice:outputText>
                             </ice:panelGroup>
                         </ice:column>
                     </ice:dataTable>
