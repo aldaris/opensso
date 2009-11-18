@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.50 2009-10-14 23:58:37 exu Exp $
+ * $Id: SAML2Utils.java,v 1.51 2009-11-18 03:38:14 sean_brydon Exp $
  *
  */
 
@@ -159,6 +159,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import com.sun.identity.saml2.plugins.JMQSAML2Repository;
+import org.owasp.esapi.ESAPI;
 
 /**
  * The <code>SAML2Utils</code> contains utility methods for SAML 2.0
@@ -3797,7 +3798,7 @@ public class SAML2Utils extends SAML2SDKUtils {
     public static void postToTarget(HttpServletResponse response,
         String SAMLmessageName, String SAMLmessageValue, String relayStateName,
         String relayStateValue, String targetURL) throws IOException {
-
+         
         PrintWriter out = response.getWriter();
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Cache-Control", "no-cache,no-store"); 
@@ -3807,13 +3808,17 @@ public class SAML2Utils extends SAML2SDKUtils {
         out.println("</HEAD>\n");
         out.println("<BODY onLoad=\"document.forms[0].submit()\">");
 
-        out.println("<FORM METHOD=\"POST\" ACTION=\"" + targetURL + "\">");
-        out.println("<INPUT TYPE=\"HIDDEN\" NAME=\""+ SAMLmessageName
-            + "\" " + "VALUE=\"" + SAMLmessageValue + "\">");
+        out.println("<FORM METHOD=\"POST\" ACTION=\"" 
+                + ESAPI.encoder().encodeForHTML(targetURL) + "\">");
+        out.println("<INPUT TYPE=\"HIDDEN\" NAME=\""
+                + ESAPI.encoder().encodeForHTML(SAMLmessageName)
+                + "\" " + "VALUE=\"" 
+                + ESAPI.encoder().encodeForHTML(SAMLmessageValue) + "\">");
         if (relayStateValue != null && relayStateValue.length() != 0) {
             out.println("<INPUT TYPE=\"HIDDEN\" NAME=\""+
-                relayStateName + "\" " +
-                "VALUE=\"" + relayStateValue + "\">");
+                ESAPI.encoder().encodeForHTML(relayStateName) + "\" " +
+                "VALUE=\"" + ESAPI.encoder().encodeForHTML(relayStateValue)
+                + "\">");
         }
         out.println("<NOSCRIPT><CENTER>");
         out.println("<INPUT TYPE=\"SUBMIT\" VALUE=\"" +
