@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.69 2009-10-27 05:32:47 hengming Exp $
+ * $Id: LDAPv3Repo.java,v 1.70 2009-11-18 21:01:40 ericow Exp $
  *
  */
 
@@ -123,6 +123,8 @@ public class LDAPv3Repo extends IdRepo {
     private IdRepoListener myListener = null;
 
     private static SOAPClient mySoapClient = new SOAPClient("dummy");
+
+    private String primaryDS = null;
 
     private String ldapServerName = null;
 
@@ -606,6 +608,13 @@ public class LDAPv3Repo extends IdRepo {
             }
         }
 
+        ldapServerName = ldapServer;
+        primaryDS = ldapServer;
+        int index = ldapServer.indexOf(" ");
+        if (index > 0) {
+            primaryDS = ldapServer.substring(0, index);
+        }
+
         if (debug.messageEnabled()) {
             debug.message("getLDAPServerName:LDAPv3Config_LDAP_SERVER"
                     + "; ldapServer:" + ldapServer + "; endOfList:" + endOfList
@@ -613,9 +622,8 @@ public class LDAPv3Repo extends IdRepo {
                     + "; ldapServerSet:" + ldapServerSet);
         }
 
-        ldapServerName = ldapServer;
         ldapHost = ldapServer;
-        int index = ldapServer.indexOf(':');
+        index = ldapServer.indexOf(':');
         if (index > -1) {
             ldapHost = ldapServer.substring(0, index);
             try {
@@ -725,7 +733,7 @@ public class LDAPv3Repo extends IdRepo {
             } else  {
                 ldc.setConnectTimeout(3);
             }
-            ldc.connect(ldapServerName, ldapPort, authid, authpw);
+            ldc.connect(primaryDS, ldapPort, authid, authpw);
 
             connOptions.put("referrals", new Boolean(referrals));
 
