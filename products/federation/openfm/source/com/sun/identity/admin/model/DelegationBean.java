@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationBean.java,v 1.6 2009-11-02 22:30:51 farble1670 Exp $
+ * $Id: DelegationBean.java,v 1.7 2009-11-18 17:14:31 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -31,6 +31,7 @@ import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.entitlement.ApplicationPrivilege;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.SubjectImplementation;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -39,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DelegationBean {
+public class DelegationBean implements Serializable {
 
     public List<Resource> getResources() {
         return resources;
@@ -187,9 +188,7 @@ public class DelegationBean {
         // nothing
     }
 
-    public DelegationBean(
-            ApplicationPrivilege ap,
-            Map<String, ViewApplication> viewApplications) {
+    public DelegationBean(ApplicationPrivilege ap) {
 
         // name
         name = ap.getName();

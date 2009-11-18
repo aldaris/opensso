@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: delegation-manage.xhtml,v 1.1 2009-11-18 00:53:48 farble1670 Exp $
+   $Id: delegation-manage.xhtml,v 1.2 2009-11-18 17:14:32 farble1670 Exp $
 -->
 
 <ui:composition
@@ -45,6 +45,29 @@
     <ui:define name="panel-body">
         <o:section>
             <ui:define name="section-title">
+                <ice:dataPaginator
+                    for="delegationManageTable"
+                    rowsCountVar="rowsCount"
+                    displayedRowsCountVar="displayedRowsCountVar"
+                    firstRowIndexVar="firstRowIndex"
+                    lastRowIndexVar="lastRowIndex"
+                    pageCountVar="pageCount"
+                    pageIndexVar="pageIndex">
+                    <ice:outputFormat
+                        rendered="#{!delegationManageBean.limited}"
+                        value="#{resources['delegation-manage.tableTitle']}">
+                        <f:param value="#{firstRowIndex}" />
+                        <f:param value="#{lastRowIndex}" />
+                        <f:param value="#{rowsCount}" />
+                    </ice:outputFormat>
+                    <ice:outputFormat
+                        rendered="#{delegationManageBean.limited}"
+                        value="#{resources['delegation-manage.tableTitle']}">
+                        <f:param value="#{firstRowIndex}" />
+                        <f:param value="#{lastRowIndex}" />
+                        <f:param value="#{rowsCount}*" />
+                    </ice:outputFormat>
+                </ice:dataPaginator>
             </ui:define>
             <ui:define name="section-details">
                 <ice:outputText
@@ -56,6 +79,68 @@
                 </ice:panelGrid>
             </ui:define>
             <ui:define name="section-body">
+                <ice:panelGroup
+                    style="padding-top: 10px"
+                    rendered="#{o:size(delegationManageBean.delegationBeans) == 0}">
+                    <ice:outputText
+                        value="#{resources['delegation-manage.noDelegations']}"/>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    rendered="#{o:size(delegationManageBean.delegationBeans) > 0}">
+                    <ice:dataTable
+                        id="delegationManageTable"
+                        var="delegationBean"
+                        rows="#{delegationManageBean.delegationManageTableBean.rows}"
+                        styleClass="policy-manage"
+                        value="#{delegationManageBean.delegationBeans}"
+                        sortColumn="#{delegationManageBean.delegationManageTableBean.sortKey.column}"
+                        sortAscending="#{delegationManageBean.delegationManageTableBean.sortKey.ascending}"
+                        resizable="true">
+
+                        <ice:column>
+                            <f:facet name="header">
+                                <ice:panelGrid
+                                    columns="2">
+                                    <ice:commandLink
+                                        actionListener="#{delegationManageHandler.selectAllListener}">
+                                        <ice:graphicImage
+                                            value="../image/select-all.png"/>
+                                    </ice:commandLink>
+                                    <ice:commandLink
+                                        actionListener="#{delegationManageHandler.selectNoneListener}">
+                                        <ice:graphicImage
+                                            value="../image/select-none.gif"/>
+                                    </ice:commandLink>
+                                </ice:panelGrid>
+                            </f:facet>
+                            <ice:selectBooleanCheckbox
+                                value="#{delegationBean.selected}">
+                            </ice:selectBooleanCheckbox>
+                        </ice:column>
+                        <ice:column>
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="name"
+                                        actionListener="#{delegationManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['delegation-manage.nameColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="policy-manage-cell"
+                                visible="#{true}">
+                                <ice:outputLink
+                                    styleClass="command-link"
+                                    value="delegation-edit.xhtml?delegationName=#{delegationBean.name}">
+                                    <ice:outputText
+                                        value="#{delegationBean.name}"/>
+                                </ice:outputLink>
+                            </ice:panelGroup>
+                        </ice:column>
+                    </ice:dataTable>
+                </ice:panelGroup>
             </ui:define>
         </o:section>
     </ui:define>

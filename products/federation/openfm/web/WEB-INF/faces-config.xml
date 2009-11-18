@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.30 2009-11-18 00:53:48 farble1670 Exp $
+  $Id: faces-config.xml,v 1.31 2009-11-18 17:14:32 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -88,12 +88,6 @@
         <managed-bean-name>realmDao</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.dao.RealmDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>delegationDao</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.dao.DelegationDao</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
@@ -2200,6 +2194,91 @@
         </managed-property>
     </managed-bean>
     <!-- referral manage -->
+
+    <!-- delegation manage -->
+    <managed-bean>
+        <managed-bean-name>delegationDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.DelegationDao</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>limit</property-name>
+            <value>100</value>
+        </managed-property>
+        <managed-property>
+            <property-name>timeout</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>delegationColumnsVisible</managed-bean-name>
+        <managed-bean-class>java.util.ArrayList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <list-entries>
+            <value-class>java.lang.String</value-class>
+            <value>description</value>
+            <value>resources</value>
+            <value>subject</value>
+            <value>modified</value>
+        </list-entries>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>delegationManageTableBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.DelegationManageTableBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>columnsVisible</property-name>
+            <value>#{delegationColumnsVisible}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>rows</property-name>
+            <value>10</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>delegationManageBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.DelegationManageBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>delegationManageTableBean</property-name>
+            <value>#{delegationManageTableBean}</value>
+        </managed-property>
+        <!-- TODO
+        <managed-property>
+            <property-name>viewFilterTypes</property-name>
+            <value>#{delegationFilterTypes}</value>
+        </managed-property>
+        -->
+        <managed-property>
+            <property-name>delegationDao</property-name>
+            <value>#{delegationDao}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>delegationManageHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.DelegationManageHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>delegationManageBean</property-name>
+            <value>#{delegationManageBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>delegationDao</property-name>
+            <value>#{delegationDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- policy manage -->
 
     <!-- application edit -->
     <managed-bean>

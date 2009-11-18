@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationDao.java,v 1.2 2009-11-02 22:30:50 farble1670 Exp $
+ * $Id: DelegationDao.java,v 1.3 2009-11-18 17:14:30 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -44,8 +44,17 @@ import java.util.ArrayList;
 import java.util.Map;
 import javax.security.auth.Subject;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import com.sun.identity.admin.model.SubjectFactory;
+import com.sun.identity.admin.model.FilterHolder;
+import com.sun.identity.entitlement.util.SearchFilter;
 
 public class DelegationDao implements Serializable {
+    private int timeout;
+    private int limit;
+    private boolean limited = false;
+
     public List<SubjectType> getSubjectTypes() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         Map<String, SubjectType> viewSubjectToSubjectTypeMap =
@@ -70,6 +79,17 @@ public class DelegationDao implements Serializable {
     }
 
 
+    private String getPattern(String filter) {
+        String pattern;
+        if (filter == null || filter.length() == 0) {
+            pattern = "*";
+        } else {
+            pattern = "*" + filter + "*";
+        }
+
+        return pattern;
+    }
+
     private ApplicationPrivilegeManager getApplicationPrivilegeManager() {
         SSOToken t = new Token().getSSOToken();
         Subject s = SubjectUtils.createSubject(t);
@@ -77,6 +97,52 @@ public class DelegationDao implements Serializable {
         ApplicationPrivilegeManager apm = ApplicationPrivilegeManager.getInstance(realmBean.getName(), s);
 
         return apm;
+    }
+
+    public List<DelegationBean> getDelegationBeans(String filter, List<FilterHolder> filterHolders) {
+        Set<SearchFilter> psfs = getSearchFilters(filterHolders);
+        
+        /* TODO: attributes missing in SDK
+        String pattern = getPattern(filter);
+        psfs.add(new SearchFilter(ApplicationPrivilege.NAME_ATTRIBUTE, pattern));
+        */
+        
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
+        SubjectFactory subjectFactory = SubjectFactory.getInstance();
+
+        try {
+            // TODO: limit, timeout in search call
+            Set<String> apNames = apm.search(psfs);
+            if (apNames.size() >= limit) {
+                limited = true;
+            } else {
+                limited = false;
+            }
+
+            List<DelegationBean> delegationBeans = new ArrayList<DelegationBean>();
+            for (String apName : apNames) {
+                ApplicationPrivilege ap = apm.getPrivilege(apName);
+                DelegationBean db = new DelegationBean(ap);
+                delegationBeans.add(db);
+            }
+            return delegationBeans;
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+    }
+
+    private Set<SearchFilter> getSearchFilters(List<FilterHolder> filterHolders) {
+        Set<SearchFilter> sfs = new HashSet<SearchFilter>();
+
+        for (FilterHolder fh : filterHolders) {
+            List<SearchFilter> l = fh.getViewFilter().getSearchFilters();
+            if (l != null) {
+                // TODO: list should never be null
+                sfs.addAll(l);
+            }
+        }
+
+        return sfs;
     }
 
     public void set(DelegationBean db) {
@@ -122,9 +188,43 @@ public class DelegationDao implements Serializable {
         }
     }
 
+    public void remove(String name) {
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
+
+        try {
+            apm.removePrivilege(name);
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+    }
+
     public static DelegationDao getInstance() {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         DelegationDao ddao = (DelegationDao) mbr.resolve("delegationDao");
         return ddao;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public boolean isLimited() {
+        return limited;
+    }
+
+    public void setLimited(boolean limited) {
+        this.limited = limited;
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionAction.java,v 1.2 2009-11-17 15:40:51 farble1670 Exp $
+ * $Id: PermissionAction.java,v 1.3 2009-11-18 17:14:30 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -36,11 +36,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PermissionAction {
-    private static final String CONFIG_TYPE_NONE = "_none";
-    private static final String SERVICE_REALM = "_realm";
 
     private static final Pattern LINE_PATTERN = Pattern.compile("^(.*)=(.*)/(.*)/(.*)/(.*)/(.*)$");
-
     private String service;
     private String version;
     private String type;
@@ -93,15 +90,10 @@ public class PermissionAction {
 
     public DelegationPermission toDelegationPermission() throws DelegationException {
         DelegationPermission dp = new DelegationPermission();
-        if (!service.equals(SERVICE_REALM)) {
-            dp.setServiceName(service);
-        }
-        dp.setVersion(version);
-        if (!type.equals(CONFIG_TYPE_NONE)) {
-            dp.setConfigType(type);
-        }
-        dp.setSubConfigName(subconfig);
 
+        dp.setServiceName(service);
+        dp.setConfigType(type);
+        dp.setSubConfigName(subconfig);
         Set<String> actions = Collections.singleton(accessLevel.toString());
         dp.setActions(actions);
 

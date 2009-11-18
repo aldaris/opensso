@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageTableBean.java,v 1.6 2009-11-18 17:14:31 farble1670 Exp $
+ * $Id: DelegationManageTableBean.java,v 1.1 2009-11-18 17:14:31 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -35,7 +35,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ApplicationManageTableBean implements Serializable {
+public class DelegationManageTableBean implements Serializable {
+
+    private TableSortKey sortKey = new TableSortKey("name");
+    private List<DelegationBean> delegationBeans;
+    private static Map<TableSortKey,Comparator> comparators = new HashMap<TableSortKey,Comparator>();
+    private int cellWidth = 20;
+    private List<String> columnsVisible;
+    private int rows = 10;
+
+    static {
+        comparators.put(new TableSortKey("name", true), new DelegationBean.NameComparator(true));
+        comparators.put(new TableSortKey("name", false), new DelegationBean.NameComparator(false));
+        comparators.put(new TableSortKey("description", true), new DelegationBean.DescriptionComparator(true));
+        comparators.put(new TableSortKey("description", false), new DelegationBean.DescriptionComparator(false));
+    }
+
+    public DelegationManageTableBean() {
+        // nothing
+    }
 
     public int getCellWidth() {
         return cellWidth;
@@ -49,34 +67,17 @@ public class ApplicationManageTableBean implements Serializable {
         this.columnsVisible = columnsVisible;
     }
 
+    public void setDelegationBeans(List<DelegationBean> delegationBeans) {
+        this.delegationBeans = delegationBeans;
+        sort();
+    }
+
     public int getRows() {
         return rows;
     }
 
     public void setRows(int rows) {
         this.rows = rows;
-    }
-
-    private TableSortKey sortKey = new TableSortKey("name");
-    private List<ViewApplication> viewApplications;
-    private static Map<TableSortKey,Comparator> comparators = new HashMap<TableSortKey,Comparator>();
-    private int cellWidth = 20;
-    private List<String> columnsVisible;
-    private int rows = 10;
-
-    static {
-        comparators.put(new TableSortKey("name", true), new ViewApplication.NameComparator(true));
-        comparators.put(new TableSortKey("name", false), new ViewApplication.NameComparator(false));
-        comparators.put(new TableSortKey("description", true), new ViewApplication.DescriptionComparator(true));
-        comparators.put(new TableSortKey("description", false), new ViewApplication.DescriptionComparator(false));
-        comparators.put(new TableSortKey("applicationType", true), new ViewApplication.ApplicationTypeComparator(true));
-        comparators.put(new TableSortKey("applicationType", false), new ViewApplication.ApplicationTypeComparator(false));
-        comparators.put(new TableSortKey("overrideRule", true), new ViewApplication.OverrideRuleComparator(false));
-        comparators.put(new TableSortKey("overrideRule", false), new ViewApplication.OverrideRuleComparator(false));
-    }
-
-    public ApplicationManageTableBean() {
-        // nothing
     }
 
     public TableSortKey getSortKey() {
@@ -89,12 +90,7 @@ public class ApplicationManageTableBean implements Serializable {
 
     public void sort() {
         Comparator c = comparators.get(sortKey);
-        Collections.sort(viewApplications, c);
-    }
-
-    public void setViewApplications(List<ViewApplication> viewApplications) {
-        this.viewApplications = viewApplications;
-        sort();
+        Collections.sort(delegationBeans, c);
     }
 
     public boolean isDescriptionColumnVisible() {
