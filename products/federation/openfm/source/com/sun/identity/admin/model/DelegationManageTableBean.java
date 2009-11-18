@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationManageTableBean.java,v 1.2 2009-11-18 19:03:01 farble1670 Exp $
+ * $Id: DelegationManageTableBean.java,v 1.3 2009-11-18 21:47:24 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -49,6 +49,8 @@ public class DelegationManageTableBean implements Serializable {
         comparators.put(new TableSortKey("name", false), new DelegationBean.NameComparator(false));
         comparators.put(new TableSortKey("description", true), new DelegationBean.DescriptionComparator(true));
         comparators.put(new TableSortKey("description", false), new DelegationBean.DescriptionComparator(false));
+        comparators.put(new TableSortKey("modifier", true), new DelegationBean.ModifierComparator(true));
+        comparators.put(new TableSortKey("modifier", false), new DelegationBean.ModifierComparator(false));
     }
 
     public DelegationManageTableBean() {
@@ -95,5 +97,9 @@ public class DelegationManageTableBean implements Serializable {
 
     public boolean isDescriptionColumnVisible() {
         return columnsVisible.contains("description");
+    }
+
+    public boolean isModifierColumnVisible() {
+        return columnsVisible.contains("modifier");
     }
 }

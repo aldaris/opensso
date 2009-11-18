@@ -22,16 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TableColumnComparator.java,v 1.1 2009-08-19 05:40:56 veiming Exp $
+ * $Id: TableColumnComparator.java,v 1.2 2009-11-18 21:47:24 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import org.apache.commons.collections.comparators.NullComparator;
 
 public abstract class TableColumnComparator
     implements Serializable, Comparator {
+
+    protected static final NullComparator NULL_COMPARATOR = new NullComparator();
     
     private boolean ascending;
 

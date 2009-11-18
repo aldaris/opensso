@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: delegation-manage.xhtml,v 1.5 2009-11-18 19:37:00 farble1670 Exp $
+   $Id: delegation-manage.xhtml,v 1.6 2009-11-18 21:47:25 farble1670 Exp $
 -->
 
 <ui:composition
@@ -203,6 +203,25 @@
                                         value="#{delegationBean.description}"/>
                                 </ui:define>
                             </o:tooltip>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{delegationManageBean.delegationManageTableBean.modifierColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="modifier"
+                                        actionListener="#{delegationManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['delegation-manage.modifierColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="policy-manage-cell"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{delegationBean.modifier}"/>
+                            </ice:panelGroup>
                         </ice:column>
                     </ice:dataTable>
                     <ice:panelGroup

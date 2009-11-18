@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationBean.java,v 1.7 2009-11-18 17:14:31 farble1670 Exp $
+ * $Id: DelegationBean.java,v 1.8 2009-11-18 21:47:24 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.collections.comparators.NullComparator;
 
 public class DelegationBean implements Serializable {
 
@@ -73,13 +74,13 @@ public class DelegationBean implements Serializable {
         }
 
         public int compare(Object o1, Object o2) {
-            DelegationBean rb1 = (DelegationBean) o1;
-            DelegationBean rb2 = (DelegationBean) o2;
+            DelegationBean db1 = (DelegationBean) o1;
+            DelegationBean db2 = (DelegationBean) o2;
 
             if (!isAscending()) {
-                return rb1.getName().compareTo(rb2.getName());
+                return db1.getName().compareTo(db2.getName());
             } else {
-                return rb2.getName().compareTo(rb1.getName());
+                return db2.getName().compareTo(db1.getName());
             }
         }
     }
@@ -91,13 +92,13 @@ public class DelegationBean implements Serializable {
         }
 
         public int compare(Object o1, Object o2) {
-            DelegationBean rb1 = (DelegationBean) o1;
-            DelegationBean rb2 = (DelegationBean) o2;
+            DelegationBean db1 = (DelegationBean) o1;
+            DelegationBean db2 = (DelegationBean) o2;
 
             if (!isAscending()) {
-                return rb1.getDescription().compareTo(rb2.getDescription());
+                return db1.getDescription().compareTo(db2.getDescription());
             } else {
-                return rb2.getDescription().compareTo(rb1.getDescription());
+                return db2.getDescription().compareTo(db1.getDescription());
             }
         }
     }
@@ -109,13 +110,13 @@ public class DelegationBean implements Serializable {
         }
 
         public int compare(Object o1, Object o2) {
-            DelegationBean rb1 = (DelegationBean) o1;
-            DelegationBean rb2 = (DelegationBean) o2;
+            DelegationBean db1 = (DelegationBean) o1;
+            DelegationBean db2 = (DelegationBean) o2;
 
             if (!isAscending()) {
-                return rb1.getBirth().compareTo(rb2.getBirth());
+                return NULL_COMPARATOR.compare(db1.getBirth(), db2.getBirth());
             } else {
-                return rb2.getBirth().compareTo(rb1.getBirth());
+                return NULL_COMPARATOR.compare(db2.getBirth(), db1.getBirth());
             }
         }
     }
@@ -127,13 +128,13 @@ public class DelegationBean implements Serializable {
         }
 
         public int compare(Object o1, Object o2) {
-            DelegationBean rb1 = (DelegationBean) o1;
-            DelegationBean rb2 = (DelegationBean) o2;
+            DelegationBean db1 = (DelegationBean) o1;
+            DelegationBean db2 = (DelegationBean) o2;
 
             if (!isAscending()) {
-                return rb1.getModified().compareTo(rb2.getModified());
+                return NULL_COMPARATOR.compare(db1.getModified(), db2.getModified());
             } else {
-                return rb2.getModified().compareTo(rb1.getModified());
+                return NULL_COMPARATOR.compare(db2.getModified(), db1.getModified());
             }
         }
     }
@@ -145,13 +146,13 @@ public class DelegationBean implements Serializable {
         }
 
         public int compare(Object o1, Object o2) {
-            DelegationBean rb1 = (DelegationBean) o1;
-            DelegationBean rb2 = (DelegationBean) o2;
+            DelegationBean db1 = (DelegationBean) o1;
+            DelegationBean db2 = (DelegationBean) o2;
 
             if (!isAscending()) {
-                return rb1.getAuthor().compareTo(rb2.getAuthor());
+                return NULL_COMPARATOR.compare(db1.getAuthor(), db2.getAuthor());
             } else {
-                return rb2.getAuthor().compareTo(rb1.getAuthor());
+                return NULL_COMPARATOR.compare(db2.getAuthor(), db1.getAuthor());
             }
         }
     }
@@ -163,13 +164,13 @@ public class DelegationBean implements Serializable {
         }
 
         public int compare(Object o1, Object o2) {
-            DelegationBean rb1 = (DelegationBean) o1;
-            DelegationBean rb2 = (DelegationBean) o2;
+            DelegationBean db1 = (DelegationBean) o1;
+            DelegationBean db2 = (DelegationBean) o2;
 
             if (!isAscending()) {
-                return rb1.getModifier().compareTo(rb2.getModifier());
+                return NULL_COMPARATOR.compare(db1.getModifier(), db2.getModifier());
             } else {
-                return rb2.getModifier().compareTo(rb1.getModifier());
+                return NULL_COMPARATOR.compare(db2.getModifier(), db1.getModifier());
             }
         }
     }

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: delegation-manage-view-options-popup.xhtml,v 1.1 2009-11-18 19:03:02 farble1670 Exp $
+   $Id: delegation-manage-view-options-popup.xhtml,v 1.2 2009-11-18 21:47:25 farble1670 Exp $
 
 -->
 
@@ -59,13 +59,19 @@
                     <f:selectItem
                         itemValue="description"
                         itemLabel="#{resources['delegation-manage-view-options-popup.description']}"/>
+                    <f:selectItem
+                        itemValue="modifier"
+                        itemLabel="#{resources['delegation-manage-view-options-popup.modifier']}"/>
                 </ice:selectManyCheckbox>
                 <ice:panelGrid
                     columns="2"
                     styleClass="view-options-table">
-                    <ice:checkbox 
+                    <ice:checkbox
                         for="columns-visible"
                         index="0"/>
+                    <ice:checkbox
+                        for="columns-visible"
+                        index="1"/>
                 </ice:panelGrid>
             </ice:panelGroup>
             <ice:panelGroup>
