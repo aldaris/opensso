@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLConstants.java,v 1.1 2009-08-19 05:40:37 veiming Exp $
+ * $Id: XACMLConstants.java,v 1.2 2009-11-18 23:54:25 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -35,9 +35,9 @@ public static final String XACML3_CORE_PKG
         = "com.sun.identity.entitlement.xacml3.core";
 
 public static final String PRIVILEGE_CREATED_BY 
-        = "createdBy";
+        = "sun.opensso.privilege.createdBy";
 public static final String PRIVILEGE_LAST_MODIFIED_BY 
-        = "lastModifiedBy";
+        = "sun.opensso.privilege.lastModifiedBy";
 
 public static final String XS_STRING 
         = "htp://www.w3.org/2001/XMLSchema#string";
@@ -45,9 +45,9 @@ public static final String XS_DATE_TIME
         = "htp://www.w3.org/2001/XMLSchema#dateTime";
 
 public static final String PRIVILEGE_CREATION_DATE 
-        = "creationDate";
+        = "sun.opensso.privilege.creationDate";
 public static final String PRIVILEGE_LAST_MODIFIED_DATE 
-        = "lastModifiedDate";
+        = "sun.opensso.privilege.lastModifiedDate";
 
 public static final String PREMIT_RULE_SUFFIX 
         = "permit-rule";
@@ -72,6 +72,22 @@ public static final String JSON_SUBJECT_DATATYPE
         = "urn:sun:opensso:entitlement:json-subject-type";
 public static final String SUBJECT_ISSUER 
         = "urn:sun:opensso";
+
+public static final String APPLICATION_ID 
+        = "urn:sun:opensso:application-id";
+public static final String APPLICATION_CATEGORY 
+        = "urn:sun:opensso:application-category";
+public static final String APPLICATION_MATCH 
+        = "urn:sun:opensso:application-match";
+public static final String APPLICATION_ISSUER 
+        = "urn:sun:opensso";
+
+public static final String ENTITLEMENT_NAME 
+        = "sun.opensso.entitlement.name";
+public static final String APPLICATION_NAME 
+        = "sun.opensso.entitlement.applicationName";
+public static final String REALM_NAME 
+        = "sun.opensso.privilege.realmName";
 
 public static final String XACML_RESOURCE_ID 
         = "urn:oasis:names:tc:xacml:1.0:resource:resource-id";

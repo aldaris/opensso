@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.110 2009-11-10 19:01:05 veiming Exp $
+ * $Id: AccessManager.java,v 1.111 2009-11-18 23:54:25 dillidorai Exp $
  *
  */
 
@@ -2778,5 +2778,23 @@ public class AccessManager {
         resourceStrings={
             "remove-application-privilege-resources-emptied-resources=Unable to processed this request because you have removed all the resources in the application privilege."})
     private String remove_app_priv_resources;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.ListXACML",
+        description="List entitlement policy definitions in a realm.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Name of realm."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "policynames|p|m|Names of policy. This can be a wildcard. All policy definition in the realm will be returned if this option is not provided.",
+            "outfile|o|s|Filename where policy definition will be printed to. Definition will be printed in standard output if this option is not provided."},
+        resourceStrings={
+            "list-xacml-not-supported-in-legacy-policy-mode=list-xacml not supported in legacy policy mode",
+            "get-policy-in-realm-succeed=Policy definitions were returned under realm, {0}.",
+            "get-policy-in-realm-no-policies=There were not matching policies under realm, {0}."})
+    private String list_xacml;
+    
 }
 

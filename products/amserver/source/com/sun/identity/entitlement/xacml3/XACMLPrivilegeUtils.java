@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLPrivilegeUtils.java,v 1.1 2009-08-19 05:40:37 veiming Exp $
+ * $Id: XACMLPrivilegeUtils.java,v 1.2 2009-11-18 23:54:25 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -48,6 +48,7 @@ import com.sun.identity.entitlement.xacml3.core.EffectType;
 import com.sun.identity.entitlement.xacml3.core.Match;
 import com.sun.identity.entitlement.xacml3.core.ObjectFactory;
 import com.sun.identity.entitlement.xacml3.core.Policy;
+import com.sun.identity.entitlement.xacml3.core.PolicySet;
 import com.sun.identity.entitlement.xacml3.core.Rule;
 import com.sun.identity.entitlement.xacml3.core.Target;
 import com.sun.identity.entitlement.xacml3.core.VariableDefinition;
@@ -58,6 +59,7 @@ import com.sun.identity.sm.ServiceManager;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +115,31 @@ public class XACMLPrivilegeUtils {
         return stringWriter.toString();
     }
 
+    public static String toXML(PolicySet policySet) {
+        if (policySet == null) {
+            return "";
+        }
+        StringWriter stringWriter = new StringWriter();
+        try {
+            ObjectFactory objectFactory = new ObjectFactory();
+            JAXBContext jaxbContext = JAXBContext.newInstance(
+                    XACMLConstants.XACML3_CORE_PKG);
+            JAXBElement<PolicySet> policySetElement
+                    = objectFactory.createPolicySet(policySet);
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+                    Boolean.TRUE);
+            marshaller.marshal(policySetElement, stringWriter);
+        } catch (JAXBException je) {
+            //TOODO: handle, propogate exception
+            PrivilegeManager.debug.error(
+                "JAXBException while mapping privilege to policy:", je);
+        }
+        return stringWriter.toString();
+    }
+
+    
+
     public static Policy privilegeToPolicy(Privilege privilege)  {
         Policy policy = null;
         try {
@@ -131,7 +158,7 @@ public class XACMLPrivilegeUtils {
          *
          * privilege name would map to policy id
          *
-         * appliction name would map to application category attribute
+         * application name would map to application category attribute
          *
          * entitlement resource names would map to xacml policy target
          *
@@ -157,8 +184,11 @@ public class XACMLPrivilegeUtils {
 
         String privilegeName = privilege.getName();
         String applicationName = null; 
-        if (privilege.getEntitlement() != null) {
-            applicationName = privilege.getEntitlement().getApplicationName();
+        String entitlementName = null;
+        Entitlement entitlement = privilege.getEntitlement();
+        if (entitlement != null) {
+            applicationName = entitlement.getApplicationName();
+            entitlementName = entitlement.getName();
         }
 
         String policyId = privilegeNameToPolicyId(privilegeName,
@@ -174,6 +204,30 @@ public class XACMLPrivilegeUtils {
         ObjectFactory objectFactory = new ObjectFactory();
         JAXBContext jaxbContext = JAXBContext.newInstance(
                 XACMLConstants.XACML3_CORE_PKG);
+
+        if (applicationName != null) {
+            VariableDefinition appName = new VariableDefinition();
+            vrList.add(appName);
+            appName.setVariableId(XACMLConstants.APPLICATION_NAME);
+            AttributeValue cbv = new AttributeValue();
+            cbv.setDataType(XACMLConstants.XS_STRING);
+            cbv.getContent().add(applicationName);
+            JAXBElement<AttributeValue> cbve 
+                    = objectFactory.createAttributeValue(cbv);
+            appName.setExpression(cbve);
+        }
+
+        if (entitlementName != null) {
+            VariableDefinition entName = new VariableDefinition();
+            vrList.add(entName);
+            entName.setVariableId(XACMLConstants.ENTITLEMENT_NAME);
+            AttributeValue cbv = new AttributeValue();
+            cbv.setDataType(XACMLConstants.XS_STRING);
+            cbv.getContent().add(applicationName);
+            JAXBElement<AttributeValue> cbve 
+                    = objectFactory.createAttributeValue(cbv);
+            entName.setExpression(cbve);
+        }
 
         VariableDefinition createdBy = new VariableDefinition();
         vrList.add(createdBy);
@@ -267,8 +321,6 @@ public class XACMLPrivilegeUtils {
             targetAnyOfList.add(anyOfSubject);
         }
 
-        Entitlement entitlement = privilege.getEntitlement();
-
         Set<String> resources = entitlement.getResourceNames();
 
 
@@ -312,6 +364,7 @@ public class XACMLPrivilegeUtils {
         Condition condition = eSubjectConditionToXCondition(
                 privilege.getSubject(), privilege.getCondition());
 
+        // FIXME: add it to Policy as AdviceExpressions?
         Set<ResourceAttribute> ra = privilege.getResourceAttributes();
 
         if (!permitActions.isEmpty()) {
@@ -477,6 +530,11 @@ public class XACMLPrivilegeUtils {
 
     public static AnyOf applicationNameToAnyOf(String applicationName) {
         AnyOf anyOf = new AnyOf();
+        List<AllOf> allOfList = anyOf.getAllOf();
+        AllOf allOf = new AllOf();
+        List<Match> matchList = allOf.getMatch();
+        matchList.add(applicationNameToMatch(applicationName));
+        allOfList.add(allOf);
         return anyOf;
     }
 
@@ -618,6 +676,38 @@ public class XACMLPrivilegeUtils {
         return match;
     }
 
+    public static Match applicationNameToMatch(String applicationName) {
+        if (applicationName == null | applicationName.length() == 0) {
+            return null;
+        }
+
+        Match match = new Match();
+        String matchId = XACMLConstants.APPLICATION_MATCH;
+        match.setMatchId(matchId);
+
+        AttributeValue attributeValue = new AttributeValue();
+        String dataType = XACMLConstants.XS_STRING;
+        attributeValue.setDataType(dataType);
+        attributeValue.getContent().add(applicationName);
+
+        AttributeDesignator attributeDesignator = new AttributeDesignator();
+        String category = XACMLConstants.APPLICATION_CATEGORY;
+        attributeDesignator.setCategory(category);
+        String attributeId = XACMLConstants.APPLICATION_ID;
+        attributeDesignator.setAttributeId(attributeId);
+        String dt = XACMLConstants.XS_STRING;
+        attributeDesignator.setDataType(dt);
+        String issuer = XACMLConstants.APPLICATION_ISSUER; // TODO: not a constant?
+        // attributeDesignator.setIssuer(issuer); // TODO: verify and fix
+        boolean mustBePresent = false;
+        attributeDesignator.setMustBePresent(mustBePresent);
+
+        match.setAttributeValue(attributeValue);
+        match.setAttributeDesignator(attributeDesignator);
+
+        return match;
+    }
+
     public static Condition eSubjectConditionToXCondition(
             EntitlementSubject es, EntitlementCondition ec) 
             throws JAXBException {
@@ -672,37 +762,61 @@ public class XACMLPrivilegeUtils {
     }
 
     static public Privilege policyToPrivilege(Policy policy)
-        throws EntitlementException {
-        //TODO: implement method, policyToPrivilege(Policy)
+            throws EntitlementException {
+
+        // FIXME: make more changes and test
+
         String policyId = policy.getPolicyId();
         String privilegeName = policyIdToPrivilegeName(policyId);
         String description = policy.getDescription();
 
-        //value of variable XACMLConstants.PRIVILIEGE_CREATED_BY
         String createdBy = getVariableById(policy,
                 XACMLConstants.PRIVILEGE_CREATED_BY);
 
-        //value of variable XACMLConstants.PRIVILEGE_CREATION_DATE
         long createdAt = dateStringToLong(getVariableById(policy,
                 XACMLConstants.PRIVILEGE_CREATION_DATE));
 
-        //value of variable XACMLConstants.PRIVILEGE_LAST_MODIFIED_BY
         String lastModifiedBy = getVariableById(policy,
                 XACMLConstants.PRIVILEGE_LAST_MODIFIED_BY);
 
-        //value of variable XACMLConstants.PRIVILEGE_LAST_MODFICATION_DATE
         long lastModifiedAt = dateStringToLong(getVariableById(policy,
                 XACMLConstants.PRIVILEGE_LAST_MODIFIED_DATE));
 
+        String entitlementName = getVariableById(policy, 
+                XACMLConstants.ENTITLEMENT_NAME);
+
+        String applicationName = getVariableById(policy, 
+                XACMLConstants.APPLICATION_NAME);
+
+        List<Match> policyMatches = getAllMatchesFromTarget(policy.getTarget());
+        Set<String> resourceNames = getResourceNamesFromMatches(policyMatches);
+        Set<String> excludedResourceNames = getExcludedResourceNamesFromMatches(policyMatches);
+        Map<String, Boolean> actionValues = getActionValuesFromPolicy(policy);
+
+        EntitlementSubject entitlementSubject = getEntitlementSubjectFromPolicy(policy);
+        EntitlementCondition entitlementCondition = getEntitlementConditionFromPolicy(policy);
+
+        /*
+         * Constuct entitlement from Rule target
+         * Get resource names, excluded resource names, action names from Rule Match element
+         * One Match for Action
+         * One Rule per value
+         */
         Entitlement entitlement = null;
 
+        // Get EntitlementSubject from Rule Condiiton
         //TODO: fix properly
         String user1 = "id=user11,ou=user," + ServiceManager.getBaseDN();
         EntitlementSubject es = new OpenSSOUserSubject();
         ((OpenSSOUserSubject)es).setID(user1);
 
+        // Get EntitlementCondition from Rule Condiiton
         EntitlementCondition ec = null;
 
+        // get Entitlement from Policy target, Subject from Policy target
+        // compare against those gotten from Rule
+
+        // FIXME: add support ResourceAttributes
         Set<ResourceAttribute> ras = null;
 
        
@@ -716,7 +830,7 @@ public class XACMLPrivilegeUtils {
     }
 
     public static String policyIdToPrivilegeName(String policyId) {
-        //TODO: implement policyIdToPrivilegeName(String) correctly
+        // FIXME: do some transform, not required at this time
         return policyId;
     }
 
@@ -757,4 +871,220 @@ public class XACMLPrivilegeUtils {
         return time;
     }
 
+    public static PolicySet privilegesToPolicySet(String realm, Set<Privilege> privileges) {
+        PolicySet policySet = null;
+        try {
+            policySet = privilegesToPolicySetInternal(realm, privileges);
+        } catch (JAXBException je) {
+            //TODO: log error, jaxbexception
+        }
+        return policySet; 
+    }
+
+    private static PolicySet privilegesToPolicySetInternal(String realm, 
+            Set<Privilege> privileges) throws JAXBException {
+        if (privileges == null) {
+            return null;
+        }
+        Set<Policy> policies = new HashSet<Policy>();
+        for (Privilege privilege : privileges) {
+            Policy policy = privilegeToPolicy(privilege);
+            policies.add(policy);
+        }
+        PolicySet policySet = policiesToPolicySetInternal(realm, policies);
+        return policySet; 
+    }
+
+
+    private static PolicySet policiesToPolicySetInternal(String realm, Set<Policy> policies) 
+            throws JAXBException {
+        PolicySet policySet = new PolicySet();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String currentTime = sdf.format(System.currentTimeMillis());
+        String policySetId  = realm + ":" + currentTime;
+
+        policySet.setPolicySetId(policySetId);
+
+        Version version = new Version();
+        version.setValue(sdf.format(System.currentTimeMillis()));
+        policySet.setVersion(version);
+
+        // FIXME: is there a better choice? 
+        // policySet could contain policies for different applications
+        policySet.setPolicyCombiningAlgId(XACMLConstants.XACML_RULE_DENY_OVERRIDES);
+
+        Target target = new Target();
+        policySet.setVersion(version);
+        policySet.setTarget(target);
+
+        ObjectFactory objectFactory = new ObjectFactory();
+        JAXBContext jaxbContext = JAXBContext.newInstance(
+                XACMLConstants.XACML3_CORE_PKG);
+
+       List<JAXBElement<?>> pList 
+            = policySet.getPolicySetOrPolicyOrPolicySetIdReference();
+        if (policies != null) {
+            for (Policy policy : policies) {
+                JAXBElement<Policy> policyElement
+                        = objectFactory.createPolicy(policy);
+                pList.add(policyElement);
+            }
+        }
+        return policySet;
+    }
+
+    static List<Match> getAllMatchesFromTarget(Target target) {
+        List<AnyOf> anyOfList = target.getAnyOf();
+        List<Match> matches = new ArrayList<Match>();
+        for (AnyOf anyOf : anyOfList) {
+            List<AllOf> allOfList = anyOf.getAllOf();
+            for (AllOf allOf : allOfList) {
+                List<Match> matchList = allOf.getMatch();
+                matches.addAll(matchList);
+            }
+        }
+        return matches;
+    }
+    static Set<String> getResourceNamesFromMatches(List<Match> matches) {
+        if (matches == null) {
+            return null;
+        }
+        Set<String> resourceNames = new HashSet<String>();
+        for (Match match : matches) {
+            String matchId = match.getMatchId();
+            if ((matchId != null) && matchId.indexOf(":resource-match:") != -1) {
+                AttributeValue attributeValue = match.getAttributeValue();
+                if (attributeValue != null) {
+                    List<Object> contentList = attributeValue.getContent();
+                    if ((contentList != null) && !contentList.isEmpty()) {
+                        // FIXME: log a warning if more than one element
+                        Object obj = contentList.get(0);
+                        resourceNames.add(obj.toString());
+                    }
+                }
+            }
+        }
+        return resourceNames;
+    }
+
+    static Set<String> getExcludedResourceNamesFromMatches(List<Match> matches) {
+        if (matches == null) {
+            return null;
+        }
+        Set<String> resourceNames = new HashSet<String>();
+        for (Match match : matches) {
+            String matchId = match.getMatchId();
+            if ((matchId != null) && matchId.indexOf(":resource-no-match:") != -1) {
+                AttributeValue attributeValue = match.getAttributeValue();
+                if (attributeValue != null) {
+                    List<Object> contentList = attributeValue.getContent();
+                    if ((contentList != null) && !contentList.isEmpty()) {
+                        // FIXME: log a warning if more than one element
+                        Object obj = contentList.get(0);
+                        resourceNames.add(obj.toString());
+                    }
+                }
+            }
+        }
+        return resourceNames;
+    }
+
+    static Set<String> getActionNamesFromMatches(List<Match> matches) {
+        if (matches == null) {
+            return null;
+        }
+        Set<String> actionNames = new HashSet<String>();
+        for (Match match : matches) {
+            String matchId = match.getMatchId();
+            if ((matchId != null) && matchId.indexOf(":action-match:") != -1) {
+                AttributeValue attributeValue = match.getAttributeValue();
+                if (attributeValue != null) {
+                    List<Object> contentList = attributeValue.getContent();
+                    if ((contentList != null) && !contentList.isEmpty()) {
+                        // FIXME: log a warning if more than one element
+                        Object obj = contentList.get(0);
+                        actionNames.add(obj.toString());
+                    }
+                }
+            }
+        }
+        return actionNames;
+    }
+
+    static List<Rule> getRules(Policy policy) {
+        if (policy == null) {
+            return null;
+        }
+        List<Rule> ruleList = new ArrayList<Rule>();
+        List<Object> obList = policy.getCombinerParametersOrRuleCombinerParametersOrVariableDefinition();
+        for (Object ob : obList) {
+            if (ob instanceof Rule) {
+                ruleList.add((Rule)ob);
+            }
+        }
+        return ruleList;
+    }
+
+    static Map<String, Boolean> getActionValuesFromPolicy(Policy policy) {
+        if (policy == null) {
+            return null;
+        }
+        List<Rule> rules = getRules(policy);
+        if (rules == null) {
+            return null;
+        }
+        Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
+        for (Rule rule : rules) {
+            Target target = rule.getTarget();
+            List<Match> matches = getAllMatchesFromTarget(target);
+            Set<String> actions = getActionNamesFromMatches(matches);
+            EffectType effectType = rule.getEffect();
+            for (String action : actions) {
+                actionValues.put(action,
+                        (EffectType.PERMIT == effectType) ? Boolean.TRUE : Boolean.FALSE);
+            }
+        }
+        return actionValues;
+    }
+
+    // FIXME: fill in implementation
+    static EntitlementSubject getEntitlementSubjectFromPolicy(Policy policy) {
+        if (policy == null) {
+            return null;
+        }
+        List<Rule> rules = getRules(policy);
+        if (rules == null) {
+            return null;
+        }
+        for (Rule rule : rules) {
+            Condition condition = rule.getCondition();
+            JAXBElement jaxbElement = condition.getExpression();
+            if (jaxbElement.getDeclaredType().equals(Apply.class)) {
+                Apply apply = (Apply)jaxbElement.getValue();
+                String funtionId = apply.getFunctionId();
+                List<JAXBElement<?>> expressionList = apply.getExpression();
+                for (JAXBElement jaxe : expressionList) {
+                    if (jaxe.getDeclaredType().equals(AttributeValue.class)) {
+                        Object av = jaxe.getValue();
+                        //String dataType = av.getDataType();
+                        String value = null;
+                    }
+                }
+            }
+
+        }
+        return null;
+    }
+
+    // FIXME: fill in implementation
+    static EntitlementCondition getEntitlementConditionFromPolicy(Policy policy) {
+        return null;
+    }
+
 }
+
+/*
+applicationName and entitlementName could go as varaibale definition at Policy level
+*/
