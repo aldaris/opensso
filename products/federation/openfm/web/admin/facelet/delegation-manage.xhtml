@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: delegation-manage.xhtml,v 1.3 2009-11-18 18:27:13 farble1670 Exp $
+   $Id: delegation-manage.xhtml,v 1.4 2009-11-18 19:03:01 farble1670 Exp $
 -->
 
 <ui:composition
@@ -43,6 +43,8 @@
             value="#{resources['delegation-manage.panelDetails']}" />
     </ui:define>
     <ui:define name="panel-body">
+        <ui:include
+            src="/admin/facelet/template/delegation-manage-view-options-popup.xhtml"/>
         <o:section>
             <ui:define name="section-title">
                 <ice:dataPaginator
@@ -76,6 +78,19 @@
             <ui:define name="section-links">
                 <ice:panelGrid
                     columns="5">
+                    <o:clink
+                        type="view-options"
+                        handler="#{delegationManageHandler}"
+                        listenerMethod="viewOptionsListener"/>
+                    <ice:panelGroup>
+                        <!-- TODO: need search attrs for backend -->
+                        <ice:graphicImage
+                            value="/admin/image/search.png"/>
+                        <ice:inputText
+                            styleClass="section-input"
+                            onkeyup="submitNow(this);"
+                            value="#{delegationManageBean.searchFilter}"/>
+                    </ice:panelGroup>
                 </ice:panelGrid>
             </ui:define>
             <ui:define name="section-body">
@@ -151,7 +166,94 @@
                                 </ice:outputLink>
                             </ice:panelGroup>
                         </ice:column>
+                        <ice:column
+                            rendered="#{delegationManageBean.delegationManageTableBean.descriptionColumnVisible}">
+                            <f:facet name="header">
+                                <center>
+                                    <ice:commandSortHeader
+                                        columnName="description"
+                                        actionListener="#{delegationManageHandler.sortTableListener}">
+                                        <ice:outputText
+                                            value="#{resources['delegation-manage.descriptionColumn']}"/>
+                                    </ice:commandSortHeader>
+                                </center>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="policy-manage-cell"
+                                panelTooltip="descriptionTooltip"
+                                visible="#{true}">
+                                <ice:outputText
+                                    value="#{delegationBean.description}"/>
+                            </ice:panelGroup>
+                            <o:tooltip
+                                tooltipId="descriptionTooltip"
+                                title="#{delegationeBean.name}: description">
+                                <ui:define name="body">
+                                    <ice:outputText
+                                        value="#{delegationBean.description}"/>
+                                </ui:define>
+                            </o:tooltip>
+                        </ice:column>
                     </ice:dataTable>
+                    <ice:panelGroup
+                        styleClass="limited"
+                        rendered="#{delegationManageBean.limited}">
+                        <ice:outputText
+                            value="#{resources['delegation-manage.limited']}"/>
+                    </ice:panelGroup>
+                    <center>
+                        <ice:panelGrid
+                            columns="1" >
+                            <ice:dataPaginator
+                                binding="#{delegationManageBean.dataPaginator}"
+                                for="delegationManageTable"
+                                rowsCountVar="rowsCount"
+                                displayedRowsCountVar="displayedRowsCountVar"
+                                rendered="#{o:size(delegationManageBean.delegationBeans) > delegationManageBean.delegationManageTableBean.rows}"
+                                fastStep="1"
+                                pageCountVar="pageCount"
+                                pageIndexVar="pageIndex"
+                                paginatorMaxPages="9"
+                                paginator="true">
+                                <f:facet
+                                    name="first">
+                                    <ice:graphicImage
+                                        url="/xmlhttp/css/rime/css-images/arrow-first.gif"
+                                        style="border:none;"/>
+                                </f:facet>
+                                <f:facet
+                                    name="last">
+                                    <ice:graphicImage
+                                        url="/xmlhttp/css/rime/css-images/arrow-last.gif"
+                                        style="border:none;" />
+                                </f:facet>
+                                <f:facet
+                                    name="previous">
+                                    <ice:graphicImage
+                                        url="/xmlhttp/css/rime/css-images/arrow-previous.gif"
+                                        style="border:none;" />
+                                </f:facet>
+                                <f:facet
+                                    name="next">
+                                    <ice:graphicImage
+                                        url="/xmlhttp/css/rime/css-images/arrow-next.gif"
+                                        style="border:none;" />
+                                </f:facet>
+                                <f:facet
+                                    name="fastforward">
+                                    <ice:graphicImage
+                                        url="/xmlhttp/css/rime/css-images/arrow-ff.gif"
+                                        style="border:none;" />
+                                </f:facet>
+                                <f:facet
+                                    name="fastrewind">
+                                    <ice:graphicImage
+                                        url="/xmlhttp/css/rime/css-images/arrow-fr.gif"
+                                        style="border:none;" />
+                                </f:facet>
+                            </ice:dataPaginator>
+                        </ice:panelGrid>
+                    </center>
                 </ice:panelGroup>
             </ui:define>
         </o:section>
