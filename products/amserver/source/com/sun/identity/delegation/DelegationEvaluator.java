@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.11 2008-06-25 05:43:24 qcheng Exp $
+ * $Id: DelegationEvaluator.java,v 1.12 2009-11-18 01:34:02 veiming Exp $
  *
  */
 
@@ -98,6 +98,17 @@ public class DelegationEvaluator {
         }
     }
 
+    public boolean isAllowed(
+        SSOToken token,
+        DelegationPermission permission,
+        Map envParameters,
+        boolean bSubResource
+    ) throws SSOException, DelegationException {
+        //TOFIX
+        return (bSubResource) ? true :
+            isAllowed(token, permission, envParameters);
+    }
+
     /**
      * Returns a boolean value indicating if a user has the specified
      * permission.
@@ -111,7 +122,6 @@ public class DelegationEvaluator {
      * @throws DelegationException for any other abnormal condition
      * 
      */
-
     public boolean isAllowed(SSOToken token, DelegationPermission permission,
             Map envParameters) throws SSOException, DelegationException {
 
