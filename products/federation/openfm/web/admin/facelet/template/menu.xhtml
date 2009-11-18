@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.9 2009-11-10 19:29:06 farble1670 Exp $
+   $Id: menu.xhtml,v 1.10 2009-11-18 00:53:48 farble1670 Exp $
 
 -->
 
@@ -87,6 +87,10 @@
                     rendered="#{permissionsBean.delegationCreateAllowed}"
                     value="#{resources['menu.delegationCreateItemValue']}"
                     action="delegation-create"/>
+                <ice:menuItem
+                    rendered="#{permissionsBean.delegationManageAllowed}"
+                    value="#{resources['menu.delegationManageItemValue']}"
+                    action="delegation-manage"/>
             </ice:menuItem>
         </ice:menuItem>
         <ice:menuItem

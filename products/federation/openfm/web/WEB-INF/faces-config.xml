@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.29 2009-11-17 23:20:13 farble1670 Exp $
+  $Id: faces-config.xml,v 1.30 2009-11-18 00:53:48 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -246,6 +246,7 @@
 
             <value>DELEGATION=_realm/1.0/_none/default/DELEGATE</value>
             <value>DELEGATION_CREATE=_realm/1.0/_none/default/DELEGATE</value>
+            <value>DELEGATION_MANAGE=_realm/1.0/_none/default/DELEGATE</value>
         </list-entries>
     </managed-bean>
 
@@ -2859,6 +2860,11 @@
         <navigation-case>
             <from-outcome>delegation-create</from-outcome>
             <to-view-id>/admin/facelet/delegation-create.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>delegation-manage</from-outcome>
+            <to-view-id>/admin/facelet/delegation-manage.xhtml</to-view-id>
             <redirect />
         </navigation-case>
     </navigation-rule>
