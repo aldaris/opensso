@@ -56,8 +56,6 @@ public final class Encoder {
 
 
 
-                                             6
-
 
           MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
           sha1.update(string.getBytes("UTF-8"));
