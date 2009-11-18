@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationDao.java,v 1.3 2009-11-18 17:14:30 farble1670 Exp $
+ * $Id: DelegationDao.java,v 1.4 2009-11-18 18:27:11 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -126,6 +126,20 @@ public class DelegationDao implements Serializable {
                 delegationBeans.add(db);
             }
             return delegationBeans;
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        }
+    }
+
+    public DelegationBean getDelegationBean(String name) {
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
+        SubjectFactory subjectFactory = SubjectFactory.getInstance();
+
+        try {
+            // TODO: limit, timeout in search call
+            ApplicationPrivilege ap = apm.getPrivilege(name);
+            DelegationBean db = new DelegationBean(ap);
+            return db;
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }

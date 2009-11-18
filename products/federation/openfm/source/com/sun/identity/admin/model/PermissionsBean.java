@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionsBean.java,v 1.9 2009-11-18 00:53:47 farble1670 Exp $
+ * $Id: PermissionsBean.java,v 1.10 2009-11-18 18:27:12 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -209,6 +209,10 @@ public class PermissionsBean implements Serializable {
 
     public boolean isDelegationCreateAllowed() {
         return isAllowed(DELEGATION_CREATE);
+    }
+
+    public boolean isDelegationEditAllowed() {
+        return isAllowed(DELEGATION_EDIT);
     }
 
     public boolean isDelegationManageAllowed() {

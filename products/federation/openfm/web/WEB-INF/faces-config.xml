@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.31 2009-11-18 17:14:32 farble1670 Exp $
+  $Id: faces-config.xml,v 1.32 2009-11-18 18:27:12 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -240,6 +240,7 @@
 
             <value>DELEGATION=_realm/1.0/_none/default/DELEGATE</value>
             <value>DELEGATION_CREATE=_realm/1.0/_none/default/DELEGATE</value>
+            <value>DELEGATION_EDIT=_realm/1.0/_none/default/DELEGATE</value>
             <value>DELEGATION_MANAGE=_realm/1.0/_none/default/DELEGATE</value>
         </list-entries>
     </managed-bean>
@@ -1952,6 +1953,52 @@
     </managed-bean>
     <!-- delegation create -->
 
+    <!-- delegation edit -->
+    <managed-bean>
+        <managed-bean-name>delegationEditWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.DelegationEditWizardBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>delegationName</property-name>
+            <value>#{param.delegationName}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>viewApplicationsBean</property-name>
+            <value>#{viewApplicationsBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectTypeToSubjectContainerMap</property-name>
+            <value>#{subjectTypeToSubjectContainerMap}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>nameEditable</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>steps</property-name>
+            <value>5</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>delegationEditWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.DelegationEditWizardHandler</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{delegationEditWizardBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>messagesBean</property-name>
+            <value>#{messagesBean}</value>
+        </managed-property>
+    </managed-bean>
+    <!-- delegation edit -->
+
     <!-- policy manage -->
     <managed-bean>
         <managed-bean-name>policyDao</managed-bean-name>
@@ -2939,6 +2986,11 @@
         <navigation-case>
             <from-outcome>delegation-create</from-outcome>
             <to-view-id>/admin/facelet/delegation-create.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>delegation-edit</from-outcome>
+            <to-view-id>/admin/facelet/delegation-edit.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>

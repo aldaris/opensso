@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LinkBean.java,v 1.6 2009-11-02 22:30:51 farble1670 Exp $
+ * $Id: LinkBean.java,v 1.7 2009-11-18 18:27:12 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -51,6 +51,7 @@ public abstract class LinkBean implements Serializable {
     public static final LinkBean WSC_CREATE;
     public static final LinkBean WSP_CREATE;
     public static final LinkBean DELEGATION_CREATE;
+    public static final LinkBean DELEGATION_MANAGE;
     public static final LinkBean STS_MANAGE;
 
     static {
@@ -117,6 +118,10 @@ public abstract class LinkBean implements Serializable {
         DELEGATION_CREATE = new CommandLinkBean();
         DELEGATION_CREATE.setValue("delegation-create");
         DELEGATION_CREATE.setIconUri("/admin/image/new.png");
+
+        DELEGATION_MANAGE = new CommandLinkBean();
+        DELEGATION_MANAGE.setValue("delegation-manage");
+        DELEGATION_MANAGE.setIconUri("/admin/image/manage.png");
 
         STS_MANAGE = new CommandLinkBean();
         STS_MANAGE.setValue("sts-manage");

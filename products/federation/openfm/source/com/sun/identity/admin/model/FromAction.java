@@ -15,6 +15,7 @@ public enum FromAction {
     REFERRAL_VIEW("referral-view"),
     REFERRAL_EDIT("referral-edit"),
     DELEGATION_CREATE("delegation-create"),
+    DELEGATION_EDIT("delegation-edit"),
     DELEGATION_MANAGE("delegation-manage"),
     NEWS("news"),
     FEDERATION("federation"),
@@ -47,6 +48,7 @@ public enum FromAction {
             put(REFERRAL_VIEW.getAction(), REFERRAL_VIEW);
             put(REFERRAL_EDIT.getAction(), REFERRAL_EDIT);
             put(DELEGATION_CREATE.getAction(), DELEGATION_CREATE);
+            put(DELEGATION_EDIT.getAction(), DELEGATION_EDIT);
             put(DELEGATION_MANAGE.getAction(), DELEGATION_MANAGE);
             put(SAMLV2_HOSTED_SP_CREATE.getAction(), SAMLV2_HOSTED_SP_CREATE);
             put(SAMLV2_REMOTE_SP_CREATE.getAction(), SAMLV2_REMOTE_SP_CREATE);

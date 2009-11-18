@@ -22,10 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationCreateWizardBean.java,v 1.1 2009-10-02 18:57:25 farble1670 Exp $
+ * $Id: DelegationCreateWizardBean.java,v 1.2 2009-11-18 18:27:12 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
 
 public class DelegationCreateWizardBean extends DelegationWizardBean {
+    protected void resetDelegationBean() {
+        setDelegationBean(new DelegationBean());
+    }
 }
