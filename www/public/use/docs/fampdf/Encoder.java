@@ -110,8 +110,6 @@ private static boolean isBase64(char octect) {
 private static String encode(byte[] binaryData) {
      return encode(binaryData, 0);
 }
-                                         7
-
 
 
 
@@ -168,8 +166,6 @@ private static String encode(byte[] binaryData, int maxCharsPerLine) {
 
      int encodedIndex = 0;
      int dataIndex = 0;
-                                         8
-
 
 int i = 0;
 
@@ -230,8 +226,6 @@ for (; i < numberTriplets; i++) {
      byte val2 = ((b2 & SIGN) == 0) ? (byte) (b2 >> 4)
                : (byte) ((b2) >> 4 ^ 0xf0);
      byte val3 = ((b3 & SIGN) == 0) ? (byte) (b3 >> 6)
-                                    9
-
 
                         : (byte) ((b3) >> 6 ^ 0xfc);
 
