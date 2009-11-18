@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Permission.java,v 1.11 2009-11-18 18:27:12 farble1670 Exp $
+ * $Id: Permission.java,v 1.12 2009-11-18 21:11:04 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -52,6 +52,7 @@ public enum Permission {
     APPLICATION_MANAGE,
     DELEGATION,
     DELEGATION_CREATE,
+    DELEGATION_VIEW,
     DELEGATION_EDIT,
     DELEGATION_MANAGE,
     WEB_SERVICE_SECURITY,

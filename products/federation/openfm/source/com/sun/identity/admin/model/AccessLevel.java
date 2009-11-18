@@ -22,11 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessLevel.java,v 1.1 2009-11-10 19:29:05 farble1670 Exp $
+ * $Id: AccessLevel.java,v 1.2 2009-11-18 21:11:04 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
 import com.sun.identity.console.base.model.AMAdminConstants;
+import java.util.HashSet;
+import java.util.Set;
 
 public enum AccessLevel {
 
@@ -42,5 +44,30 @@ public enum AccessLevel {
 
     public String getValue() {
         return value;
+    }
+
+    public static Set<String> toStringSet(AccessLevel[] accessLevels) {
+        Set<String> als = new HashSet<String>();
+
+        for (AccessLevel ac: accessLevels) {
+            als.add(ac.toString());
+        }
+
+        return als;
+    }
+
+    public static AccessLevel[] toAccessLevelArray(String s) {
+        String[] asa = s.split(",");
+        AccessLevel[] accessLevels = new AccessLevel[asa.length];
+        for (int i = 0; i < asa.length; i++) {
+            AccessLevel al = AccessLevel.valueOf(asa[i]);
+            if (al == null) {
+                throw new AssertionError("no access level value for: " + asa[i]);
+            }
+            accessLevels[i] = al;
+
+        }
+
+        return accessLevels;
     }
 }

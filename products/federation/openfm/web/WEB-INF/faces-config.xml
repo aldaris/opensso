@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.32 2009-11-18 18:27:12 farble1670 Exp $
+  $Id: faces-config.xml,v 1.33 2009-11-18 21:11:04 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -201,47 +201,48 @@
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
             <value-class>java.lang.String</value-class>
-            <value>HOME=_realm/1.0/_none/default/READ</value>
-            <value>NEWS=_realm/1.0/_none/default/READ</value>
+            <value>HOME=_realm::1.0::_none::default::READ</value>
+            <value>NEWS=_realm::1.0::_none::default::READ</value>
 
-            <value>FEDERATION=_realm/1.0/_none/default/READ</value>
+            <value>FEDERATION=_realm::1.0::_none::default::READ</value>
 
-            <value>WSP_CREATE=_realm/1.0/_none/default/WRITE</value>
-            <value>WSP_MANAGE=_realm/1.0/_none/default/WRITE</value>
-            <value>WSC_CREATE=_realm/1.0/_none/default/WRITE</value>
-            <value>WSC_MANAGE=_realm/1.0/_none/default/WRITE</value>
-            <value>STS_MANAGE=_realm/1.0/_none/default/WRITE</value>
+            <value>WSP_CREATE=_realm::1.0::_none::default::WRITE</value>
+            <value>WSP_MANAGE=_realm::1.0::_none::default::WRITE</value>
+            <value>WSC_CREATE=_realm::1.0::_none::default::WRITE</value>
+            <value>WSC_MANAGE=_realm::1.0::_none::default::WRITE</value>
+            <value>STS_MANAGE=_realm::1.0::_none::default::WRITE</value>
 
-            <value>WEB_SERVICE_SECURITY=_realm/1.0/_none/default/READ</value>
+            <value>WEB_SERVICE_SECURITY=_realm::1.0::_none::default::READ</value>
 
-            <value>SAMLV2_HOSTED_IDP_CREATE=_realm/1.0/_none/default/WRITE</value>
-            <value>SAMLV2_HOSTED_SP_CREATE=_realm/1.0/_none/default/WRITE</value>
-            <value>SAMLV2_REMOTE_IDP_CREATE=_realm/1.0/_none/default/WRITE</value>
-            <value>SAMLV2_REMOTE_SP_CREATE=_realm/1.0/_none/default/WRITE</value>
+            <value>SAMLV2_HOSTED_IDP_CREATE=_realm::1.0::_none::default::WRITE</value>
+            <value>SAMLV2_HOSTED_SP_CREATE=_realm::1.0::_none::default::WRITE</value>
+            <value>SAMLV2_REMOTE_IDP_CREATE=_realm::1.0::_none::default::WRITE</value>
+            <value>SAMLV2_REMOTE_SP_CREATE=_realm::1.0::_none::default::WRITE</value>
 
-            <value>ENTITLEMENTS=sunEntitlementService/1.0/_none/default/READ</value>
+            <value>ENTITLEMENTS=sunEntitlementService::1.0::_none::default::READ</value>
 
-            <value>POLICY=sunEntitlementService/1.0/_none/default/READ</value>
-            <value>POLICY_MANAGE=sunEntitlementService/1.0/_none/default/READ</value>
-            <value>POLICY_VIEW=sunEntitlementService/1.0/_none/default/READ</value>
-            <value>POLICY_CREATE=sunEntitlementService/1.0/_none/default/WRITE</value>
-            <value>POLICY_EDIT=sunEntitlementService/1.0/_none/default/WRITE</value>
+            <value>POLICY=sunEntitlementService::1.0::_none::default::READ</value>
+            <value>POLICY_MANAGE=sunEntitlementService::1.0::_none::default::READ</value>
+            <value>POLICY_VIEW=sunEntitlementService::1.0::_none::default::READ</value>
+            <value>POLICY_CREATE=sunEntitlementService::1.0::_none::default::WRITE</value>
+            <value>POLICY_EDIT=sunEntitlementService::1.0::_none::default::WRITE</value>
 
-            <value>REFERRAL=_realm/1.0/_none/default/READ</value>
-            <value>REFERRAL_MANAGE=_realm/1.0/_none/default/READ</value>
-            <value>REFERRAL_VIEW=_realm/1.0/_none/default/READ</value>
-            <value>REFERRAL_EDIT=_realm/1.0/_none/default/WRITE</value>
-            <value>REFERRAL_CREATE=_realm/1.0/_none/default/DELEGATE</value>
+            <value>REFERRAL=_realm::1.0::_none::default::READ</value>
+            <value>REFERRAL_MANAGE=_realm::1.0::_none::default::READ</value>
+            <value>REFERRAL_VIEW=_realm::1.0::_none::default::READ</value>
+            <value>REFERRAL_EDIT=_realm::1.0::_none::default::WRITE</value>
+            <value>REFERRAL_CREATE=_realm::1.0::_none::default::DELEGATE</value>
 
-            <value>APPLICATION=sunEntitlementService/1.0/_none/default/READ</value>
-            <value>APPLICATION_MANAGE=sunEntitlementService/1.0/_none/default/READ</value>
-            <value>APPLICATION_CREATE=sunEntitlementService/1.0/_none/default/WRITE</value>
-            <value>APPLICATION_EDIT=sunEntitlementService/1.0/_none/default/WRITE</value>
+            <value>APPLICATION=sunEntitlementService::1.0::_none::default::READ</value>
+            <value>APPLICATION_MANAGE=sunEntitlementService::1.0::_none::default::READ</value>
+            <value>APPLICATION_CREATE=sunEntitlementService::1.0::_none::default::WRITE</value>
+            <value>APPLICATION_EDIT=sunEntitlementService::1.0::_none::default::WRITE</value>
 
-            <value>DELEGATION=_realm/1.0/_none/default/DELEGATE</value>
-            <value>DELEGATION_CREATE=_realm/1.0/_none/default/DELEGATE</value>
-            <value>DELEGATION_EDIT=_realm/1.0/_none/default/DELEGATE</value>
-            <value>DELEGATION_MANAGE=_realm/1.0/_none/default/DELEGATE</value>
+            <value>DELEGATION=_realm::1.0::_none::default::DELEGATE</value>
+            <value>DELEGATION_CREATE=_realm::1.0::_none::default::DELEGATE</value>
+            <value>DELEGATION_VIEW=_realm::1.0::_none::default::DELEGATE</value>
+            <value>DELEGATION_EDIT=_realm::1.0::_none::default::DELEGATE</value>
+            <value>DELEGATION_MANAGE=_realm::1.0::_none::default::DELEGATE</value>
         </list-entries>
     </managed-bean>
 

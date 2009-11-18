@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionAction.java,v 1.3 2009-11-18 17:14:30 farble1670 Exp $
+ * $Id: PermissionAction.java,v 1.4 2009-11-18 21:11:03 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -37,13 +37,13 @@ import java.util.regex.Pattern;
 
 public class PermissionAction {
 
-    private static final Pattern LINE_PATTERN = Pattern.compile("^(.*)=(.*)/(.*)/(.*)/(.*)/(.*)$");
+    private static final Pattern LINE_PATTERN = Pattern.compile("^(.*)=(.*)::(.*)::(.*)::(.*)::(.*)$");
     private String service;
     private String version;
     private String type;
     private String subconfig;
     private Permission permission;
-    private AccessLevel accessLevel;
+    private AccessLevel[] accessLevels;
 
     public PermissionAction(String line) {
         Matcher matcher = LINE_PATTERN.matcher(line.trim());
@@ -60,32 +60,7 @@ public class PermissionAction {
         version = matcher.group(3);
         type = matcher.group(4);
         subconfig = matcher.group(5);
-
-        String as = matcher.group(6);
-        accessLevel = AccessLevel.valueOf(as);
-        if (accessLevel == null) {
-            throw new AssertionError("no access level value for: " + as);
-        }
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getSubconfig() {
-        return subconfig;
-    }
-
-    public Permission getPermission() {
-        return permission;
-    }
-
-    public String getService() {
-        return service;
+        accessLevels = AccessLevel.toAccessLevelArray(matcher.group(6));
     }
 
     public DelegationPermission toDelegationPermission() throws DelegationException {
@@ -94,13 +69,13 @@ public class PermissionAction {
         dp.setServiceName(service);
         dp.setConfigType(type);
         dp.setSubConfigName(subconfig);
-        Set<String> actions = Collections.singleton(accessLevel.toString());
+        Set<String> actions = AccessLevel.toStringSet(accessLevels);
         dp.setActions(actions);
 
         return dp;
     }
 
-    public AccessLevel getAccessLevel() {
-        return accessLevel;
+    public Permission getPermission() {
+        return permission;
     }
 }
