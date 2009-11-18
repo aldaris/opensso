@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetQuote.java,v 1.5 2009-11-16 21:53:00 mallas Exp $
+ * $Id: GetQuote.java,v 1.6 2009-11-18 22:06:18 mallas Exp $
  *
  */
 package com.samples;
@@ -39,7 +39,7 @@ import javax.xml.ws.soap.AddressingFeature;
 public class GetQuote extends HttpServlet {
     
     @WebServiceRef(wsdlLocation =
-        "http://localhost:8081/StockService/StockService?wsdl")
+        "http://localhost:8080/StockService/StockService?wsdl")
     @HandlerChain( file="handlers.xml", name="" )
     private com.samples.StockService service;
     
