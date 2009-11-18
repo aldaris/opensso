@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.15 2009-01-28 05:34:53 ww203982 Exp $
+ * $Id: LDAP.java,v 1.16 2009-11-18 20:50:02 qcheng Exp $
  *
  */
 
@@ -493,6 +493,19 @@ public class LDAP extends AMLoginModule {
                         ldapUtil.changePassword(oldPassword, newPassword,
                         confirmPassword);
                         newState = ldapUtil.getState();
+                        String logMsg = ldapUtil.getLogMessage();
+                        if (newState == 
+                            LDAPAuthUtils.PASSWORD_UPDATED_SUCCESSFULLY){
+                            // log change password success
+                            getLoginState("LDAP").logSuccess(
+                                "changePasswdSucceeded",
+                                "CHANGE_USER_PASSWORD_SUCCEEDED");
+                        } else if ((logMsg != null) && (newState ==
+                            LDAPAuthUtils.PASSWORD_MIN_CHARACTERS)) {
+                            // add log
+                            getLoginState("LDAP").logFailed(logMsg,
+                                "CHANGE_USER_PASSWORD_FAILED", false, null);
+                        }
                         processPasswordScreen(newState);
                         if (debug.messageEnabled()) {
                             debug.message("Password change state :" + newState);

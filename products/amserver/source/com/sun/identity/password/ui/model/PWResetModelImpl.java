@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PWResetModelImpl.java,v 1.3 2008-06-25 05:43:42 qcheng Exp $
+ * $Id: PWResetModelImpl.java,v 1.4 2009-11-18 20:51:24 qcheng Exp $
  *
  */
 
@@ -586,13 +586,25 @@ public class PWResetModelImpl
 
     /**
      * Writes to the log file formatted message.
+     *  
+     * @param msgId  Id of the message to be written
+     * @param userDN  user distinguished name
+     */ 
+    public void writeLog(String msgId, String userDN) {
+         writeLog(msgId, "", userDN);
+    }
+
+    /**
+     * Writes to the log file formatted message.
      *
-     * @param msg  message to be written
+     * @param msgId  Id of the message to be written
+     * @param msg  additional message to be written
      * @param userDN  user distinguished name
      */
-    public void writeLog(String msg, String userDN) {
+    public void writeLog(String msgId, String msg, String userDN) {
         String[] obj = {userDN};
-        logger.doLog(MessageFormat.format(getLocalizedString(msg), obj));
+        logger.doLog(MessageFormat.format(getLocalizedString(msgId), obj) 
+            + " " + msg);
     }
 
     /**

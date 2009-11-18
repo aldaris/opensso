@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Membership.java,v 1.6 2008-06-25 05:41:58 qcheng Exp $
+ * $Id: Membership.java,v 1.7 2009-11-18 20:50:24 qcheng Exp $
  *
  */
 
@@ -559,6 +559,9 @@ public class Membership extends AMLoginModule {
             return PROFILE_ERROR;
             
         } catch (IdRepoException pe) {
+            // log constraint violation message
+            getLoginState("Membership").logFailed(pe.getMessage(),
+                "CREATE_USER_PROFILE_FAILED", false, null);
             debug.error("profile exception occured: ", pe);
             return PROFILE_ERROR;
             

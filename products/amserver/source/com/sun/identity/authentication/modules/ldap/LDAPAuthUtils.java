@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.18 2009-09-04 04:30:05 222713 Exp $
+ * $Id: LDAPAuthUtils.java,v 1.19 2009-11-18 20:50:02 qcheng Exp $
  *
  */
 
@@ -91,6 +91,8 @@ public class LDAPAuthUtils {
     private Debug debug = null;
     // JSS integration
     private boolean ldapSSL = false;
+    // logging message
+    private String logMessage = null;
     
     // Resource Bundle used to get l10N message
     private ResourceBundle bundle;
@@ -523,7 +525,10 @@ public class LDAPAuthUtils {
             setState(PASSWORD_UPDATED_SUCCESSFULLY);
         } catch(LDAPException le) {
             if (le.getLDAPResultCode() ==
-            LDAPException.CONSTRAINT_VIOLATION) {
+                LDAPException.CONSTRAINT_VIOLATION) {
+                // set log message to be logged in LDAP modules
+                setLogMessage(le.getLocalizedMessage() + " : " +
+                    le.getLDAPErrorMessage());
                 setState(PASSWORD_MIN_CHARACTERS);
             } else if (le.getLDAPResultCode() == LDAPException.CONNECT_ERROR ||
             le.getLDAPResultCode() == LDAPException.SERVER_DOWN ||
@@ -542,6 +547,14 @@ public class LDAPAuthUtils {
         } finally {
             releaseConnection(modCtx);
         }
+    }
+
+    public void setLogMessage(String logMsg) {
+        this.logMessage = logMsg;
+    }
+
+    public String getLogMessage() {
+        return this.logMessage;
     }
     
     private String buildUserFilter() {

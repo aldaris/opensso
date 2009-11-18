@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PWResetQuestionModelImpl.java,v 1.2 2008-06-25 05:43:42 qcheng Exp $
+ * $Id: PWResetQuestionModelImpl.java,v 1.3 2009-11-18 20:52:18 qcheng Exp $
  *
  */
 
@@ -292,7 +292,7 @@ public class PWResetQuestionModelImpl extends PWResetModelImpl
         }
         
         if ((errorMsg != null) && (errorMsg.length() > 0)) {
-            writeLog("pwResetFail.message", uuid);
+            writeLog("pwResetFail.message", errorMsg, uuid);
             throw new PWResetException(errorMsg);
         } else if ((informationMsg != null) && (informationMsg.length() > 0)) {
             writeLog("pwResetFail.message", uuid);

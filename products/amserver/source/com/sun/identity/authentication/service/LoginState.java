@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.53 2009-11-04 22:55:25 manish_rustagi Exp $
+ * $Id: LoginState.java,v 1.54 2009-11-18 20:51:24 qcheng Exp $
  *
  */
 
@@ -4583,7 +4583,7 @@ public class LoginState {
        
        return cert;
    }     
-    
+
     /**
      * TODO-JAVADOC
      */
@@ -4635,21 +4635,73 @@ public class LoginState {
         }
         
     }
-    
+
+    /**
+     * Adds log message to authentication access log.
+     * @param msgId I18n key of the localized message.
+     * @param logId Logging message Id
+     */
+    public void logSuccess(String msgId, String logId) {
+        try {
+            String logSuccess = ad.bundle.getString(msgId);
+            ArrayList dataList = new ArrayList();
+            dataList.add(logSuccess);
+
+            String[] data = (String[])dataList.toArray(new String[0]);
+            
+            Hashtable props = new Hashtable();
+            if (client != null) {
+                props.put(LogConstants.IP_ADDR, client);
+            }
+            if (userDN != null) {
+                props.put(LogConstants.LOGIN_ID, userDN);
+            }
+            if (orgDN != null) {
+                props.put(LogConstants.DOMAIN, orgDN);
+            }
+            if (authMethName != null) {
+                props.put(LogConstants.MODULE_NAME, authMethName);
+            }
+            if (session != null) {
+                props.put(LogConstants.LOGIN_ID_SID, sid.toString());
+            }
+
+            ad.logIt(data, ad.LOG_ACCESS, logId, props);
+        } catch (Exception e) {
+            debug.message("Error creating logSuccess message", e);
+        }
+    }
+
     /**
      * Log login failed
      * @param str message for login failed
      */
     public void logFailed(String str) {
-        logFailed(str,null);
+        logFailed(str, "LOGIN_FAILED", true, null);
     }
-    
+
     /**
      * Log login failed
      * @param str message for login failed
      * @param error error message for login failed
      */
     public void logFailed(String str,String error) {
+        logFailed(str, "LOGIN_FAILED", true, error);    
+    }
+
+    
+    /**
+     * Adds log message to authentication error log.
+     * @param str localized message to be logged.
+     * @param logId logging message Id.
+     * @param appendAuthType if true, append authentication type to the logId
+     *          to form new logging message Id. for example:
+     *          "LOGIN_FAILED_LEVEL".
+     * @param error error Id to be append to logId to form new logging
+     *          message Id. for example : "LOGIN_FAILED_LEVEL_INVALIDPASSWORD"
+     */
+    public void logFailed(String str, String logId, boolean appendAuthType,
+        String error) {
         
         try {
             String logFailed = str;
@@ -4659,11 +4711,13 @@ public class LoginState {
             ArrayList dataList = new ArrayList();
             dataList.add(logFailed);
             StringBuffer messageId = new StringBuffer();
-            messageId.append("LOGIN_FAILED");
+            messageId.append(logId);
             if ((indexType != null) &&
             (indexType != AuthContext.IndexType.COMPOSITE_ADVICE)){
-                messageId.append("_").append(indexType.toString()
-                .toUpperCase());
+                if (appendAuthType) {
+                    messageId.append("_").append(indexType.toString()
+                             .toUpperCase());
+                }
                 dataList.add(indexType.toString());
                 if (indexName != null) {
                     dataList.add(indexName);
