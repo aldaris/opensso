@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: delegation-manage.xhtml,v 1.7 2009-11-18 23:26:53 farble1670 Exp $
+   $Id: delegation-manage.xhtml,v 1.8 2009-11-18 23:55:18 farble1670 Exp $
 -->
 
 <ui:composition
@@ -289,6 +289,54 @@
                                         type="both" />
                                 </ice:outputText>
                             </ice:panelGroup>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{delegationManageBean.delegationManageTableBean.resourcesColumnVisible}">
+                            <f:facet name="header">
+                                <ice:outputText
+                                    value="#{resources['delegation-manage.resourcesColumn']}"/>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="policy-manage-cell"
+                                visible="#{true}"
+                                panelTooltip="resourcesTooltip">
+                                <ice:outputText
+                                    value="#{delegationBean.resourcesToString}"/>
+                            </ice:panelGroup>
+                            <o:tooltip
+                                tooltipId="resourcesTooltip"
+                                title="#{delegationBean.name}: resources (#{o:size(delegationBean.resources)})">
+                                <ui:define name="body">
+                                    <pre>
+                                        <ice:outputText
+                                            value="#{delegationBean.resourcesToFormattedString}"/>
+                                    </pre>
+                                </ui:define>
+                            </o:tooltip>
+                        </ice:column>
+                        <ice:column
+                            rendered="#{delegationManageBean.delegationManageTableBean.subjectsColumnVisible}">
+                            <f:facet name="header">
+                                <ice:outputText
+                                    value="#{resources['delegation-manage.subjectsColumn']}"/>
+                            </f:facet>
+                            <ice:panelGroup
+                                styleClass="policy-manage-cell"
+                                visible="#{true}"
+                                panelTooltip="subjectsTooltip">
+                                <ice:outputText
+                                    value="#{delegationBean.viewSubjectsToString}"/>
+                            </ice:panelGroup>
+                            <o:tooltip
+                                tooltipId="subjectsTooltip"
+                                title="#{delegationBean.name}: subjects (#{o:size(delegationBean.viewSubjects)})">
+                                <ui:define name="body">
+                                    <pre>
+                                        <ice:outputText
+                                            value="#{delegationBean.viewSubjectsToFormattedString}"/>
+                                    </pre>
+                                </ui:define>
+                            </o:tooltip>
                         </ice:column>
                     </ice:dataTable>
                     <ice:panelGroup

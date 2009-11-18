@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationBean.java,v 1.8 2009-11-18 21:47:24 farble1670 Exp $
+ * $Id: DelegationBean.java,v 1.9 2009-11-18 23:55:17 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -307,6 +307,10 @@ public class DelegationBean implements Serializable {
         return ap;
     }
 
+    public String getResourcesToString() {
+        return new ListFormatter(resources).toString();
+    }
+
     public String getResourcesToFormattedString() {
         StringBuffer b = new StringBuffer();
         for (Iterator<Resource> i = resources.iterator(); i.hasNext();) {
@@ -325,6 +329,10 @@ public class DelegationBean implements Serializable {
         }
 
         return b.toString();
+    }
+
+    public String getViewSubjectsToString() {
+        return new ListFormatter(viewSubjects).toString();
     }
 
     public String getViewSubjectsToFormattedString() {
