@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationPrivilegeBase.java,v 1.1 2009-11-10 19:01:03 veiming Exp $
+ * $Id: ApplicationPrivilegeBase.java,v 1.2 2009-11-19 01:02:02 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
@@ -35,6 +35,7 @@ import com.sun.identity.cli.RequestContext;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.ApplicationPrivilege;
+import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.SubjectImplementation;
 import com.sun.identity.entitlement.opensso.OpenSSOGroupSubject;
 import com.sun.identity.entitlement.opensso.OpenSSOUserSubject;
@@ -148,7 +149,7 @@ public abstract class ApplicationPrivilegeBase extends AuthenticatedCommand {
     protected Map<String, Set<String>> getApplicationResourcesMap(
         RequestContext rc,
         String realm
-    ) throws CLIException {
+    ) throws CLIException, EntitlementException {
         String appName = getStringOptionValue(PARAM_APPL_NAME);
         Subject subject = SubjectUtils.createSubject(getAdminSSOToken());
 

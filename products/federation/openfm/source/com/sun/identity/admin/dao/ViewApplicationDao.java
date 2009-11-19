@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationDao.java,v 1.5 2009-09-30 22:53:34 farble1670 Exp $
+ * $Id: ViewApplicationDao.java,v 1.6 2009-11-19 01:02:04 veiming Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -104,28 +104,28 @@ public class ViewApplicationDao implements Serializable {
         Set<String> names;
         try {
             names = ApplicationManager.search(adminSubject, realmBean.getName(), sfs);
+            for (String name : names) {
+                Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
+                if (a.getResources() == null || a.getResources().size() == 0) {
+                    // TODO: log
+                    continue;
+                }
+
+                // application type
+                ViewApplicationType vat = entitlementApplicationTypeToViewApplicationTypeMap.get(a.getApplicationType().getName());
+                if (vat == null) {
+                    // TODO: log
+                    continue;
+                }
+
+                ViewApplication va = new ViewApplication(a);
+                viewApplications.put(va.getName(), va);
+            }
+
+            return viewApplications;
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }
-        for (String name : names) {
-            Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
-            if (a.getResources() == null || a.getResources().size() == 0) {
-                // TODO: log
-                continue;
-            }
-
-            // application type
-            ViewApplicationType vat = entitlementApplicationTypeToViewApplicationTypeMap.get(a.getApplicationType().getName());
-            if (vat == null) {
-                // TODO: log
-                continue;
-            }
-
-            ViewApplication va = new ViewApplication(a);
-            viewApplications.put(va.getName(), va);
-        }
-
-        return viewApplications;
     }
 
     public ViewApplication getViewApplication(String name) {
@@ -137,19 +137,23 @@ public class ViewApplicationDao implements Serializable {
 
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
 
-        Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
-        if (a.getResources() == null || a.getResources().size() == 0) {
-            return null;
-        }
+        try {
+            Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
+            if (a.getResources() == null || a.getResources().size() == 0) {
+                return null;
+            }
 
-        // application type
-        ViewApplicationType vat = entitlementApplicationTypeToViewApplicationTypeMap.get(a.getApplicationType().getName());
-        if (vat == null) {
-            return null;
+            // application type
+            ViewApplicationType vat = entitlementApplicationTypeToViewApplicationTypeMap.get(a.getApplicationType().getName());
+            if (vat == null) {
+                return null;
+            }
+    
+            ViewApplication va = new ViewApplication(a);
+            return va;
+        } catch (EntitlementException e) {
+            throw new RuntimeException(e);
         }
-
-        ViewApplication va = new ViewApplication(a);
-        return va;
     }
 
     public Application newApplication(String name, ViewApplicationType vat) {
@@ -187,11 +191,12 @@ public class ViewApplicationDao implements Serializable {
         Subject adminSubject = token.getAdminSubject();
 
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
-        Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), va.getName());
-        if (a == null) {
+        try {
+            Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), va.getName());
+            return (a != null);
+        } catch (EntitlementException e) {
             return false;
         }
-        return true;
     }
 
     public void setViewApplication(ViewApplication va) {
@@ -210,8 +215,12 @@ public class ViewApplicationDao implements Serializable {
         Token token = new Token();
         Subject adminSubject = token.getAdminSubject();
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
-        Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
-        return a;
+
+        try {
+            return ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
+        } catch (EntitlementException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static ViewApplicationDao getInstance() {

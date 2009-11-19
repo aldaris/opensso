@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationPrivilegeManager.java,v 1.3 2009-11-05 21:13:46 veiming Exp $
+ * $Id: ApplicationPrivilegeManager.java,v 1.4 2009-11-19 01:02:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -116,7 +116,14 @@ public abstract class ApplicationPrivilegeManager {
      * privilege of a given action.
      */
     public abstract boolean hasPrivilege(Privilege p,
-        ApplicationPrivilege.Action action);
+        ApplicationPrivilege.Action action
+    ) throws EntitlementException;
+
+
+    public abstract boolean hasPrivilege(
+        Application app,
+        ApplicationPrivilege.Action action
+    ) throws EntitlementException;
 
     /**
      * Returns <code>true</code> if the subject has permission to a
@@ -128,7 +135,8 @@ public abstract class ApplicationPrivilegeManager {
      * referral privilege of a given action.
      */
     public abstract boolean hasPrivilege(ReferralPrivilege p,
-        ApplicationPrivilege.Action action);
+        ApplicationPrivilege.Action action
+    ) throws EntitlementException;
 
     /**
      * Returns a set of resources for an application and an action.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOPolicyDataStore.java,v 1.4 2009-10-22 21:03:34 veiming Exp $
+ * $Id: OpenSSOPolicyDataStore.java,v 1.5 2009-11-19 01:02:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -37,6 +37,7 @@ import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.PolicyDataStore;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException;
@@ -222,7 +223,9 @@ public class OpenSSOPolicyDataStore extends PolicyDataStore {
         String realm,
         String name
     ) throws EntitlementException {
-        SSOToken adminToken = SubjectUtils.getSSOToken(adminSubject);
+        SSOToken adminToken =
+            (adminSubject == PrivilegeManager.superAdminSubject) ?
+                dsameUserToken : SubjectUtils.getSSOToken(adminSubject);
         
         if (adminToken == null) {
             Object[] params = {name};

@@ -28,6 +28,7 @@
 package com.sun.identity.cli.entitlement;
 
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
@@ -35,6 +36,7 @@ import com.sun.identity.cli.RequestContext;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.ApplicationType;
+import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.log.Level;
 import java.text.MessageFormat;
 import java.util.Map;
@@ -58,19 +60,27 @@ public class ShowApplication extends ApplicationImpl {
         String[] params = {realm, appName};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
             "ATTEMPT_SHOW_APPLICATION", params);
-        Application appl = ApplicationManager.getApplication(getAdminSubject(),
-            realm, appName);
-        IOutput writer = getOutputWriter();
+        try {
+            Application appl = ApplicationManager.getApplication(
+                getAdminSubject(),
+                realm, appName);
+            IOutput writer = getOutputWriter();
 
-        if (appl == null) {
-            Object[] param = {appName};
-            writer.printlnMessage(MessageFormat.format(getResourceString(
-                "show-application-not-found"), param));
-        } else {
-            displayAttrs(writer, appl);
+            if (appl == null) {
+                Object[] param = {appName};
+                writer.printlnMessage(MessageFormat.format(getResourceString(
+                    "show-application-not-found"), param));
+            } else {
+                displayAttrs(writer, appl);
+            }
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "SUCCEEDED_SHOW_APPLICATION", params);
+        } catch (EntitlementException ex) {
+            String[] paramsEx = {realm, appName, ex.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "FAILED_SHOW_APPLICATION", paramsEx);
+            throw new CLIException(ex, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
-        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-            "SUCCEEDED_SHOW_APPLICATION", params);
     }
 
     private void displayAttrs(IOutput writer, Application appl) {

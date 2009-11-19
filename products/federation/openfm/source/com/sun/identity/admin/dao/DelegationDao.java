@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationDao.java,v 1.4 2009-11-18 18:27:11 farble1670 Exp $
+ * $Id: DelegationDao.java,v 1.5 2009-11-19 01:02:04 veiming Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -65,17 +65,21 @@ public class DelegationDao implements Serializable {
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
         List<SubjectType> subjectTypes = new ArrayList<SubjectType>();
 
-        Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), "sunAMDelegationService");
-        if (a.getResources() == null || a.getResources().size() == 0) {
+        try {
+            Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), "sunAMDelegationService");
+            if (a.getResources() == null || a.getResources().size() == 0) {
+                return subjectTypes;
+            }
+
+            for (String ess: a.getSubjects()) {
+                SubjectType st = viewSubjectToSubjectTypeMap.get(ess);
+                subjectTypes.add(st);
+            }
+
             return subjectTypes;
+        } catch (EntitlementException e) {
+            throw new RuntimeException(e);
         }
-
-        for (String ess: a.getSubjects()) {
-            SubjectType st = viewSubjectToSubjectTypeMap.get(ess);
-            subjectTypes.add(st);
-        }
-
-        return subjectTypes;
     }
 
 

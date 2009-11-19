@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.7 2009-10-28 04:22:03 hengming Exp $
+ * $Id: EntitlementService.java,v 1.8 2009-11-19 01:02:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -551,8 +551,24 @@ public class EntitlementService extends EntitlementConfiguration {
                 throw new EntitlementException(225);
             }
 
+            Application appl = ApplicationManager.getApplication(
+                PrivilegeManager.superAdminSubject, realm, applicationName);
+            if (appl != null) {
+                appl.addAttributeNames(names);
+            }
+
             ServiceConfig applConf = getApplicationSubConfig(token, realm,
                 applicationName);
+            String parentRealm = realm;
+            while (applConf == null) {
+                parentRealm = getParentRealm(parentRealm);
+                if (parentRealm == null) {
+                    break;
+                }
+                applConf = getApplicationSubConfig(token, parentRealm,
+                    applicationName);
+            }
+
             if (applConf != null) {
                 Set<String> orig = (Set<String>)
                     applConf.getAttributes().get(ATTR_NAME_SUBJECT_ATTR_NAMES);
@@ -694,27 +710,6 @@ public class EntitlementService extends EntitlementConfiguration {
     }
 
     /**
-     * Removes application.
-     *
-     * @param name name of application to be removed.
-     * @param resources Resource name to be removed.
-     * @throws EntitlementException if application cannot be removed.
-     */
-    public void removeApplication(String name, Set<String> resources)
-        throws EntitlementException {
-        Application appl = getApplication(name);
-        if (appl != null) {
-            Application store = getStorableApplication(appl, false);
-
-            if (store.getResources().isEmpty()) {
-                removeApplication(name);
-            } else {
-                storeApplication(appl, false);
-            }
-        }
-    }
-
-    /**
      * Removes application type.
      *
      * @param name name of application type to be removed.
@@ -773,7 +768,6 @@ public class EntitlementService extends EntitlementConfiguration {
         return sc;
     }
 
-
     /**
      * Stores the application to data store.
      *
@@ -782,23 +776,12 @@ public class EntitlementService extends EntitlementConfiguration {
      */
     public void storeApplication(Application appl)
         throws EntitlementException {
-        storeApplication(appl, true);
-    }
-    
-    /**
-     * Stores the application to data store.
-     *
-     * @param application Application object.
-     * @throws EntitlementException if application cannot be stored.
-     */
-    public void storeApplication(Application appl, boolean add)
-        throws EntitlementException {
         SSOToken token = SubjectUtils.getSSOToken(getAdminSubject());
         try {
             createApplicationCollectionConfig(realm);
             String dn = getApplicationDN(appl.getName(), realm);
             SMSEntry s = new SMSEntry(token, dn);
-            s.setAttributes(getApplicationData(appl, add));
+            s.setAttributes(getApplicationData(appl));
 
             String[] logParams = {realm, appl.getName()};
             OpenSSOLogger.log(OpenSSOLogger.LogLevel.MESSAGE, Level.INFO,
@@ -909,49 +892,8 @@ public class EntitlementService extends EntitlementConfiguration {
         return results;
     }
 
-    private Application getStorableApplication(Application app, boolean add) {
-        Application existing = getRawApplication(app.getName());
-        Map<String, Integer> existingRes = (existing != null) ?
-            getResourceCount(existing.getResources()) :
-            Collections.EMPTY_MAP;
-        Set<String> resources = app.getResources();
-        Set<String> res = new HashSet<String>();
-
-        if (resources != null) {
-            for (String r : resources) {
-                if (add) {
-                    int cnt = (existingRes.containsKey(r)) ?
-                        existingRes.get(r) +1 : 1;
-                    res.add(cnt + "\t" + r);
-                } else {
-                    int cnt = (existingRes.containsKey(r)) ?
-                        existingRes.get(r) -1 : 0;
-                    if (cnt > 0) {
-                        res.add(cnt + "\t" + r);
-                    }
-                }
-            }
-            for (String r : existingRes.keySet()) {
-               if (!resources.contains(r)) {
-                   int cnt = existingRes.get(r);
-                   res.add(cnt + "\t" + r);
-               }
-            }
-        } else {
-            for (String r : existingRes.keySet()) {
-                int cnt = existingRes.get(r);
-                res.add(cnt + "\t" + r);
-            }
-        }
-        Application clone = app.clone();
-        clone.setResources(res);
-        return clone;
-    }
-
-    private Map<String, Set<String>> getApplicationData(Application appl,
-        boolean add) {
-        Application app = getStorableApplication(appl, add);
-        Set<String> resources = app.getResources();
+    private Map<String, Set<String>> getApplicationData(Application appl) {
+        Set<String> resources = appl.getResources();
 
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         Set<String> setServiceID = new HashSet<String>(2);
@@ -966,14 +908,14 @@ public class EntitlementService extends EntitlementConfiguration {
         Set<String> data = new HashSet<String>();
         map.put(SMSEntry.ATTR_KEYVAL, data);
         data.add(CONFIG_APPLICATIONTYPE + '=' +
-            app.getApplicationType().getName());
+            appl.getApplicationType().getName());
         if (appl.getDescription() != null) {
             data.add(CONFIG_APPLICATION_DESC + "=" + appl.getDescription());
         } else {
             data.add(CONFIG_APPLICATION_DESC + "=");
         }
 
-        for (String s : getActionSet(app.getActions())) {
+        for (String s : getActionSet(appl.getActions())) {
             data.add(CONFIG_ACTIONS + "=" + s);
         }
 
@@ -986,9 +928,9 @@ public class EntitlementService extends EntitlementConfiguration {
         }
 
         data.add(CONFIG_ENTITLEMENT_COMBINER + "=" +
-            app.getEntitlementCombiner().getClass().getName());
+            appl.getEntitlementCombiner().getClass().getName());
 
-        Set<String> conditions = app.getConditions();
+        Set<String> conditions = appl.getConditions();
         if ((conditions != null) && !conditions.isEmpty()) {
             for (String c : conditions) {
                 data.add(CONFIG_CONDITIONS + "=" + c);
@@ -997,7 +939,7 @@ public class EntitlementService extends EntitlementConfiguration {
             data.add(CONFIG_CONDITIONS + "=");
         }
 
-        Set<String> subjects = app.getSubjects();
+        Set<String> subjects = appl.getSubjects();
         if ((subjects != null) && !subjects.isEmpty()) {
             for (String s : subjects) {
                 data.add(CONFIG_SUBJECTS + "=" + s);
@@ -1006,25 +948,25 @@ public class EntitlementService extends EntitlementConfiguration {
             data.add(CONFIG_SUBJECTS + "=");
         }
 
-        ISaveIndex sIndex = app.getSaveIndex();
+        ISaveIndex sIndex = appl.getSaveIndex();
         if (sIndex != null) {
             String saveIndexClassName = sIndex.getClass().getName();
             data.add(CONFIG_SAVE_INDEX_IMPL + "=" + saveIndexClassName);
         }
 
-        ISearchIndex searchIndex = app.getSearchIndex();
+        ISearchIndex searchIndex = appl.getSearchIndex();
         if (searchIndex != null) {
             String searchIndexClassName = searchIndex.getClass().getName();
             data.add(CONFIG_SEARCH_INDEX_IMPL + "=" + searchIndexClassName);
         }
 
-        ResourceName recComp = app.getResourceComparator();
+        ResourceName recComp = appl.getResourceComparator();
         if (recComp != null) {
             String resCompClassName = recComp.getClass().getName();
             data.add(CONFIG_RESOURCE_COMP_IMPL + "=" + resCompClassName);
         }
 
-        Set<String> sbjAttributes = app.getAttributeNames();
+        Set<String> sbjAttributes = appl.getAttributeNames();
         if ((sbjAttributes != null) && !sbjAttributes.isEmpty()) {
             for (String s : sbjAttributes) {
                 data.add(ATTR_NAME_SUBJECT_ATTR_NAMES + "=" + s);
@@ -1033,7 +975,7 @@ public class EntitlementService extends EntitlementConfiguration {
             data.add(ATTR_NAME_SUBJECT_ATTR_NAMES + "=");
         }
 
-        for (String m : app.getMetaData()) {
+        for (String m : appl.getMetaData()) {
             data.add(ATTR_NAME_META + "=" + m);
         }
         map.put("ou", getApplicationIndices(appl));
@@ -1195,34 +1137,12 @@ public class EntitlementService extends EntitlementConfiguration {
      */
     public Set<String> getSubjectAttributeNames(String application) {
         try {
-            SSOToken token = SubjectUtils.getSSOToken(getAdminSubject());
-
-            if (token == null) {
-                PrivilegeManager.debug.error(
-                    "EntitlementService.getSubjectAttributeNames: " +
-                    "admin sso token is absent", null);
-            } else {
-                ServiceConfig applConfig = getApplicationSubConfig(
-                    token, realm, application);
-                if (applConfig != null) {
-                    Application app = createApplication(realm, application,
-                        applConfig.getAttributes());
-                    return app.getAttributeNames();
-                }
+            Application app = ApplicationManager.getApplication(
+                PrivilegeManager.superAdminSubject, realm, application);
+            if (app != null) {
+                return app.getAttributeNames();
             }
         } catch (EntitlementException ex) {
-            PrivilegeManager.debug.error(
-                "EntitlementService.getSubjectAttributeNames", ex);
-        } catch (InstantiationException ex) {
-            PrivilegeManager.debug.error(
-                "EntitlementService.getSubjectAttributeNames", ex);
-        } catch (IllegalAccessException ex) {
-            PrivilegeManager.debug.error(
-                "EntitlementService.getSubjectAttributeNames", ex);
-        } catch (SMSException ex) {
-            PrivilegeManager.debug.error(
-                "EntitlementService.getSubjectAttributeNames", ex);
-        } catch (SSOException ex) {
             PrivilegeManager.debug.error(
                 "EntitlementService.getSubjectAttributeNames", ex);
         }
@@ -1521,5 +1441,46 @@ public class EntitlementService extends EntitlementConfiguration {
                 //ignore
             }
         }
+    }
+
+    public Set<String> getParentAndPeerRealmNames()
+        throws EntitlementException {
+        try {
+            Set<String> results = new HashSet<String>();
+            OrganizationConfigManager mgr = new OrganizationConfigManager(
+                adminToken, realm);
+            mgr = mgr.getParentOrgConfigManager();
+            String parentRealm = DNMapper.orgNameToRealmName(
+                mgr.getOrganizationName());
+            results.add(parentRealm);
+            Set<String> orgNames = mgr.getSubOrganizationNames();
+
+            for (String o : orgNames) {
+                results.add(DNMapper.orgNameToRealmName(o));
+            }
+
+            return results;
+        } catch (SMSException ex) {
+            PrivilegeManager.debug.error("EntitlementService.getSubRealmNames",
+                ex);
+            throw new EntitlementException(227);
+        }
+    }
+
+    private String getParentRealm(String realm) {
+        if (realm.equals("/")) {
+            return null;
+        }
+
+        int idx = realm.indexOf("/");
+        if (idx == -1) {
+            return null;
+        }
+
+        return (idx == 0) ? "/" : realm.substring(0, idx);
+    }
+
+    public String getRealmName(String realm) {
+        return DNMapper.orgNameToRealmName(realm);
     }
 }

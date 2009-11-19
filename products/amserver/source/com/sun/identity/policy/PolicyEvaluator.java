@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.16 2009-11-05 21:13:48 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.17 2009-11-19 01:02:03 veiming Exp $
  *
  */
 
@@ -536,10 +536,10 @@ public class PolicyEvaluator {
 
         String realmName = (DN.isDN(realm)) ?
             DNMapper.orgNameToRealmName(realm) : realm;
-        Application appl = ApplicationManager.getApplication(
-            PrivilegeManager.superAdminSubject,
-            realmName, serviceTypeName);
         try {
+            Application appl = ApplicationManager.getApplication(
+                PrivilegeManager.superAdminSubject,
+                realmName, serviceTypeName);
             resourceName = appl.getResourceComparator().canonicalize(
                 resourceName);
         } catch (EntitlementException e) {
@@ -767,8 +767,8 @@ public class PolicyEvaluator {
         }
 
         try {
-            return (PolicyManager.isMigratedToEntitlementService()) ? Realm(
-                token, resourceName, actionNames,
+            return (PolicyManager.isMigratedToEntitlementService()) ? 
+                getPolicyDecisionE(token, resourceName, actionNames,
                 envParameters) : getPolicyDecisionO(token, resourceName,
                 actionNames,
                 envParameters, visitedOrgs);
@@ -797,7 +797,7 @@ public class PolicyEvaluator {
      * @exception SSOException single-sign-on token invalid or expired
      * @exception PolicyException if any policy evaluation error.
      */
-    private PolicyDecision Realm(
+    private PolicyDecision getPolicyDecisionE(
         SSOToken token, String resourceName, Set actionNames,
         Map envParameters)
         throws PolicyException, SSOException {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPrivilege.java,v 1.1 2009-08-19 05:40:33 veiming Exp $
+ * $Id: IPrivilege.java,v 1.2 2009-11-19 01:02:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -52,7 +52,8 @@ public interface IPrivilege {
      */
     ResourceSaveIndexes getResourceSaveIndexes(
         Subject adminSubject,
-        String realm);
+        String realm
+    ) throws EntitlementException;
     
     /**
      * Returns a list of entitlement for a given subject, resource name

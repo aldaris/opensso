@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.8 2009-11-12 18:37:38 veiming Exp $
+ * $Id: Privilege.java,v 1.9 2009-11-19 01:02:03 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -723,7 +723,7 @@ public abstract class Privilege implements IPrivilege {
      */
     public ResourceSaveIndexes getResourceSaveIndexes(
         Subject adminSubject,
-        String realm) {
+        String realm) throws EntitlementException {
         return (entitlement != null) ? entitlement.getResourceSaveIndexes(
             adminSubject, realm) : null;
     }

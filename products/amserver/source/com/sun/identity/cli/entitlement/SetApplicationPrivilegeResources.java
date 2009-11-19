@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetApplicationPrivilegeResources.java,v 1.1 2009-11-10 19:01:04 veiming Exp $
+ * $Id: SetApplicationPrivilegeResources.java,v 1.2 2009-11-19 01:02:02 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
@@ -60,23 +60,24 @@ public class SetApplicationPrivilegeResources extends ApplicationPrivilegeBase {
         String realm = getStringOptionValue(IArgument.REALM_NAME);
         String name = getStringOptionValue(PARAM_NAME);
         String[] params = {realm, name};
-        Map<String, Set<String>> mapAppToResources =
-            getApplicationResourcesMap(rc, realm);
-        boolean bAdd = isOptionSet(PARAM_ADD);
-
-        Subject userSubject = SubjectUtils.createSubject(
-            getAdminSSOToken());
-        ApplicationPrivilegeManager apm =
-            ApplicationPrivilegeManager.getInstance(realm, userSubject);
-        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-            "ATTEMPT_UPDATE_APPLICATION_PRIVILEGE", params);
 
         try {
+            Map<String, Set<String>> mapAppToResources =
+                getApplicationResourcesMap(rc, realm);
+            boolean bAdd = isOptionSet(PARAM_ADD);
+
+            Subject userSubject = SubjectUtils.createSubject(
+                getAdminSSOToken());
+            ApplicationPrivilegeManager apm =
+                ApplicationPrivilegeManager.getInstance(realm, userSubject);
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "ATTEMPT_UPDATE_APPLICATION_PRIVILEGE", params);
+
             ApplicationPrivilege appPrivilege = apm.getPrivilege(name);
             Map<String, Set<String>> origAppToResources =
                 getApplicationToResources(appPrivilege);
-            Map map = (bAdd) ? mergeMap(origAppToResources, mapAppToResources):
-                mapAppToResources;
+            Map map = (bAdd) ? mergeMap(origAppToResources, mapAppToResources)
+                : mapAppToResources;
             appPrivilege.setApplicationResources(map);
             apm.replacePrivilege(appPrivilege);
             

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateApplicationPrivilege.java,v 1.1 2009-11-10 19:01:03 veiming Exp $
+ * $Id: CreateApplicationPrivilege.java,v 1.2 2009-11-19 01:02:02 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
@@ -69,20 +69,21 @@ public class CreateApplicationPrivilege extends ApplicationPrivilegeBase {
         String description = getStringOptionValue(PARAM_DESCRIPTION);
         ApplicationPrivilege.PossibleAction actions = getActions();
         Set<SubjectImplementation> subjects = getSubjects(rc);
-        Map<String, Set<String>> mapAppToResources =
-            getApplicationResourcesMap(rc, realm);
-        Subject userSubject = SubjectUtils.createSubject(
-            getAdminSSOToken());
-        ApplicationPrivilegeManager apm =
-            ApplicationPrivilegeManager.getInstance(realm, userSubject);
-        ApplicationPrivilege appPrivilege = new ApplicationPrivilege(name);
-        appPrivilege.setDescription(description);
-        appPrivilege.setActionValues(actions);
-        appPrivilege.setApplicationResources(mapAppToResources);
+
         try {
+            Map<String, Set<String>> mapAppToResources =
+                getApplicationResourcesMap(rc, realm);
+            Subject userSubject = SubjectUtils.createSubject(
+                getAdminSSOToken());
+            ApplicationPrivilegeManager apm =
+                ApplicationPrivilegeManager.getInstance(realm, userSubject);
+            ApplicationPrivilege appPrivilege = new ApplicationPrivilege(name);
+            appPrivilege.setDescription(description);
+            appPrivilege.setActionValues(actions);
+            appPrivilege.setApplicationResources(mapAppToResources);
             appPrivilege.setSubject(subjects);
             apm.addPrivilege(appPrivilege);
-            
+
             Object[] msgParam = {name};
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString("create-application-privilege-succeeded"),

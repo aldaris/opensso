@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.4 2009-11-12 01:11:06 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.5 2009-11-19 01:02:02 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -92,7 +92,7 @@ public final class ApplicationManager {
     public static Set<String> getApplicationNames(
         Subject adminSubject,
         String realm
-    ) {
+    ) throws EntitlementException {
         Set<Application> appls = getApplications(adminSubject, realm);
         Set<String> results = new HashSet<String>();
         for (Application appl : appls) {
@@ -101,7 +101,12 @@ public final class ApplicationManager {
         return results;
     }
 
-    private static Set<Application> getAllApplication(String realm) {
+    private static Set<Application> getAllApplication(String realm) 
+        throws EntitlementException {
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            PrivilegeManager.superAdminSubject, realm);
+        realm = ec.getRealmName(realm);
+
         readWriteLock.readLock().lock();
         try {
             Set<Application> appls = applications.get(realm);
@@ -116,12 +121,13 @@ public final class ApplicationManager {
         try {
             Set<Application> appls = applications.get(realm);
             if (appls == null) {
-                EntitlementConfiguration ec =
-                    EntitlementConfiguration.getInstance(
-                    PrivilegeManager.superAdminSubject, realm);
                 appls = ec.getApplications();
                 applications.put(realm, appls);
             }
+
+            ReferredApplicationManager mgr =
+                ReferredApplicationManager.getInstance();
+            appls.addAll(mgr.getReferredApplications(realm));
             return appls;
         } finally {
             readWriteLock.writeLock().unlock();
@@ -129,7 +135,7 @@ public final class ApplicationManager {
     }
 
     private static Set<Application> getApplications(Subject adminSubject,
-        String realm) {
+        String realm) throws EntitlementException {
         Set<Application> appls = getAllApplication(realm);
 
         if (adminSubject == PrivilegeManager.superAdminSubject) {
@@ -168,7 +174,7 @@ public final class ApplicationManager {
     public static Application getApplicationForEvaluation(
         String realm,
         String name
-    ) {
+    ) throws EntitlementException {
         return getApplication(PrivilegeManager.superAdminSubject, realm,
             name);
     }
@@ -186,7 +192,7 @@ public final class ApplicationManager {
         Subject adminSubject,
         String realm,
         String name
-    ) {
+    ) throws EntitlementException {
         if ((name == null) || (name.length() == 0)) {
             name = ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
         }
@@ -271,6 +277,10 @@ public final class ApplicationManager {
             throw new EntitlementException(326);
         }
 
+        if (isReferredApplication(realm, application)) {
+            throw new EntitlementException(228);
+        }
+
         validateApplication(adminSubject, realm, application);
         Date date = new Date();
         Set<Principal> principals = adminSubject.getPrincipals();
@@ -292,6 +302,20 @@ public final class ApplicationManager {
             adminSubject, realm);
         ec.storeApplication(application);
         clearCache(realm);
+    }
+
+    private static boolean isReferredApplication(
+        String realm,
+        Application application) throws EntitlementException {
+        Set<ReferredApplication> referredAppls =
+            ReferredApplicationManager.getInstance().getReferredApplications(
+            realm);
+        for (ReferredApplication ra : referredAppls) {
+            if (ra.getName().equals(application.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean hasAccessToApplication(
@@ -317,7 +341,7 @@ public final class ApplicationManager {
     private static boolean isNewApplication(
         String realm,
         Application application
-    ) {
+    ) throws EntitlementException {
         Set<Application> existingAppls = getAllApplication(realm);
         String applName = application.getName();
 
@@ -410,11 +434,7 @@ public final class ApplicationManager {
             throw new EntitlementException(280, params);
         }
 
-        Application clone = appl.refers(referRealm, resources);
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            adminSubject, referRealm);
-        ec.storeApplication(clone);
-        clearCache(referRealm);
+        ReferredApplicationManager.getInstance().clearCache(referRealm);
     }
 
     /**
@@ -443,9 +463,7 @@ public final class ApplicationManager {
             throw new EntitlementException(326);
         }
 
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            adminSubject, referRealm);
-        ec.removeApplication(applicationName, resources);
+        ReferredApplicationManager.getInstance().clearCache(referRealm);
     }
 
     /**

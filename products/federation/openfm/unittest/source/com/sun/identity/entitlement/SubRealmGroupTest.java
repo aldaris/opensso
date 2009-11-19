@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubRealmGroupTest.java,v 1.2 2009-11-12 18:37:40 veiming Exp $
+ * $Id: SubRealmGroupTest.java,v 1.3 2009-11-19 01:02:04 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -34,7 +34,6 @@ import com.sun.identity.entitlement.opensso.OpenSSOGroupSubject;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.entitlement.util.IdRepoUtils;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.OrganizationConfigManager;
@@ -120,13 +119,10 @@ public class SubRealmGroupTest {
         throws SMSException, EntitlementException, SSOException,
             IdRepoException, InterruptedException {
 
-
         OrganizationConfigManager orgMgr = new OrganizationConfigManager(
             adminToken, "/");
-
         orgMgr.createSubOrganization(subRealm.substring(1),
             Collections.EMPTY_MAP);
-
 
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
         Set<String> set = new HashSet<String>();
@@ -148,14 +144,9 @@ public class SubRealmGroupTest {
         actions.put("GET", Boolean.TRUE);
         Entitlement ent = new Entitlement(APPL_NAME, url, actions);
 
-        AMIdentityRepository amir = new AMIdentityRepository(adminToken,
-            subRealm);
-        AMIdentity realmID = amir.getRealmIdentity();
-        String groupuuid = "id=" + group1.getName() + ",ou=" +
-            group1.getType().getName() + "," + realmID.getRealm();
-
         Set<EntitlementSubject> esSet = new HashSet<EntitlementSubject>();
-        EntitlementSubject es1 = new OpenSSOGroupSubject(groupuuid);
+        EntitlementSubject es1 = new OpenSSOGroupSubject(
+            group1.getUniversalId());
         esSet.add(es1);
 
         EntitlementSubject eSubject = new OrSubject(esSet);
@@ -164,7 +155,6 @@ public class SubRealmGroupTest {
         privilege.setEntitlement(ent);
         privilege.setSubject(eSubject);
         pm.addPrivilege(privilege);
-        Thread.sleep(1000);
     }
 
     @AfterClass

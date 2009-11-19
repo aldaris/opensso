@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.3 2009-11-05 21:13:46 veiming Exp $
+ * $Id: Application.java,v 1.4 2009-11-19 01:02:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -484,6 +484,20 @@ public class Application implements Cloneable {
     }
 
     /**
+     * Adds attribute names.
+     *
+     * @param names Attribute names.
+     */
+    public void addAttributeNames(Set<String> names) {
+        if (names != null) {
+            if (attributeNames == null) {
+                attributeNames = new HashSet<String>();
+            }
+            attributeNames.addAll(names);
+        }
+    }
+
+    /**
      * Returns save index
      *
      * @return save index
@@ -708,5 +722,9 @@ public class Application implements Cloneable {
                 }
             }
         }
+    }
+
+    protected void setRealm(String realm) {
+        this.realm = realm;
     }
 }

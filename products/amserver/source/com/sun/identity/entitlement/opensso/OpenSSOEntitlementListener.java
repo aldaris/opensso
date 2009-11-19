@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOEntitlementListener.java,v 1.2 2009-11-05 21:13:47 veiming Exp $
+ * $Id: OpenSSOEntitlementListener.java,v 1.3 2009-11-19 01:02:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -161,7 +161,8 @@ public class OpenSSOEntitlementListener
         return globalSchema.getAttributeSchema(ATTR_NAME);
     }
 
-    private boolean doesApplicationExist(String applName) {
+    private boolean doesApplicationExist(String applName) 
+        throws EntitlementException {
         Set<String> names = ApplicationManager.getApplicationNames(
             PrivilegeManager.superAdminSubject, "/");
         return names.contains(applName);

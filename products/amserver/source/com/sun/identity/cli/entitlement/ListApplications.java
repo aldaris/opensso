@@ -22,17 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListApplications.java,v 1.1 2009-08-19 05:40:31 veiming Exp $
+ * $Id: ListApplications.java,v 1.2 2009-11-19 01:02:02 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
 
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.entitlement.ApplicationManager;
+import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.log.Level;
 import java.util.Set;
 
@@ -52,19 +54,26 @@ public class ListApplications extends ApplicationImpl {
         String[] params = {realm};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
             "ATTEMPT_LIST_APPLICATIONS", params);
-        Set<String> names = ApplicationManager.getApplicationNames(
-            getAdminSubject(), realm);
-        IOutput writer = getOutputWriter();
+        try {
+            Set<String> names = ApplicationManager.getApplicationNames(
+                getAdminSubject(), realm);
+            IOutput writer = getOutputWriter();
 
-        if ((names == null) || names.isEmpty()) {
-            writer.printlnMessage(getResourceString(
-                "list-applications-no-entries"));
-        } else {
-            for (String n : names) {
-                writer.printlnMessage(n);
+            if ((names == null) || names.isEmpty()) {
+                writer.printlnMessage(getResourceString(
+                    "list-applications-no-entries"));
+            } else {
+                for (String n : names) {
+                    writer.printlnMessage(n);
+                }
             }
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "SUCCEEDED_LIST_APPLICATIONS", params);
+        } catch (EntitlementException ex) {
+            String[] paramsEx = {realm, ex.getMessage()};
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "FAILED_LIST_APPLICATIONS", paramsEx);
+            throw new CLIException(ex, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
-        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-            "SUCCEEDED_LIST_APPLICATIONS", params);
     }
 }

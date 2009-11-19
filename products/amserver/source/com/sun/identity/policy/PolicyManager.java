@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.16 2009-11-05 21:13:48 veiming Exp $
+ * $Id: PolicyManager.java,v 1.17 2009-11-19 01:02:03 veiming Exp $
  *
  */
 
@@ -1613,9 +1613,14 @@ public final class PolicyManager {
     }
 
     public Set getManagedResourceNamesE(String serviceName) {
-        Application appl = ApplicationManager.getApplication(
-            PrivilegeManager.superAdminSubject, org, serviceName);
-        return (appl == null) ? Collections.EMPTY_SET : appl.getResources();
+        try {
+            Application appl = ApplicationManager.getApplication(
+                PrivilegeManager.superAdminSubject, org, serviceName);
+            return (appl == null) ? Collections.EMPTY_SET : appl.getResources();
+        } catch (EntitlementException ex) {
+            debug.error("PolicyManager.getManagedResourceNamesE", ex);
+            return Collections.EMPTY_SET;
+        }
     }
 
 

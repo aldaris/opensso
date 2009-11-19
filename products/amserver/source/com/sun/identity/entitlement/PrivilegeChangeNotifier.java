@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeChangeNotifier.java,v 1.2 2009-11-05 21:13:46 veiming Exp $
+ * $Id: PrivilegeChangeNotifier.java,v 1.3 2009-11-19 01:02:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -93,7 +93,7 @@ public class PrivilegeChangeNotifier {
         String realm,
         EntitlementListener l,
         String applicationName,
-        Set<String> resources) {
+        Set<String> resources) throws EntitlementException {
         Map<String, Set<String>> map = l.getMapAppToRes();
 
         for (String appName : map.keySet()) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilegeManager.java,v 1.5 2009-11-05 21:13:46 veiming Exp $
+ * $Id: ReferralPrivilegeManager.java,v 1.6 2009-11-19 01:02:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,6 +30,7 @@ package com.sun.identity.entitlement;
 import com.sun.identity.entitlement.interfaces.ResourceName;
 import com.sun.identity.entitlement.util.SearchFilter;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -203,6 +204,7 @@ public final class ReferralPrivilegeManager {
         PolicyDataStore pdb = PolicyDataStore.getInstance();
         pdb.removeReferral(adminSubject, realm, referral);
         pdb.addReferral(adminSubject, realm, referral);
+        ReferredApplicationManager.getInstance().clearCache(realm);
         notifyPrivilegeChanged(orig, referral);
     }
 
@@ -290,4 +292,56 @@ public final class ReferralPrivilegeManager {
             }
         }
     }
+
+    /**
+     * Returns the referred privileges for a given realm.
+     */
+    public Map<String, Set<ReferralPrivilege>> getReferredPrivileges(
+        String targetRealm
+    ) throws EntitlementException {
+        if ((realm == null) || (realm.trim().length() == 0) ||
+            (realm.trim().equals("/"))) {
+            return Collections.EMPTY_MAP;
+        }
+
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            PrivilegeManager.superAdminSubject, realm);
+        Set<String> names = ec.getParentAndPeerRealmNames();
+        targetRealm = ec.getRealmName(targetRealm);
+        Map<String, Set<ReferralPrivilege>> results = new
+            HashMap<String, Set<ReferralPrivilege>>();
+        
+        for (String name : names) {
+            if (!name.startsWith("/")) {
+                name = "/" + name;
+            }
+            results.put(name, getReferredPrivileges(name, targetRealm));
+        }
+
+        return results;
+    }
+
+    private Set<ReferralPrivilege> getReferredPrivileges(
+        String baseRealm,
+        String targetRealm
+    ) throws EntitlementException {
+        ReferralPrivilegeManager mgr = new ReferralPrivilegeManager(baseRealm,
+            PrivilegeManager.superAdminSubject);
+        Set<String> names = mgr.searchReferralPrivilegeNames(
+            Collections.EMPTY_SET);
+        Set<ReferralPrivilege> results = new HashSet<ReferralPrivilege>();
+
+        for (String name : names) {
+            ReferralPrivilege p = mgr.getReferral(name);
+            for (String r : p.getRealms()) {
+                if (r.equalsIgnoreCase(targetRealm)) {
+                    results.add(p);
+                    break;
+                }
+            }
+        }
+
+        return results;
+    }
+
 }

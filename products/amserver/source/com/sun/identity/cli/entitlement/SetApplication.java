@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetApplication.java,v 1.1 2009-08-19 05:40:31 veiming Exp $
+ * $Id: SetApplication.java,v 1.2 2009-11-19 01:02:02 veiming Exp $
  */
 
 package com.sun.identity.cli.entitlement;
@@ -73,17 +73,17 @@ public class SetApplication extends ApplicationImpl {
             "ATTEMPT_SET_APPLICATION", params);
 
         Subject adminSubject = getAdminSubject();
-        Application appl = ApplicationManager.getApplication(adminSubject,
-            realm, appName);
-        Object[] param = {appName};
-
-        if (appl == null) {
-            throw new CLIException(MessageFormat.format(getResourceString(
-                "set-application-not-found"), param),
-                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
-        }
-
         try {
+            Application appl = ApplicationManager.getApplication(adminSubject,
+                realm, appName);
+            Object[] param = {appName};
+
+            if (appl == null) {
+                throw new CLIException(MessageFormat.format(getResourceString(
+                    "set-application-not-found"), param),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+
             setApplicationAttributes(appl, attributeValues, false);
             ApplicationManager.saveApplication(getAdminSubject(), realm, appl);
             getOutputWriter().printlnMessage(

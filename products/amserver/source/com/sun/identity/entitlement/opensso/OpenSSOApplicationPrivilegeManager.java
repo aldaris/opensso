@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.5 2009-11-19 00:08:52 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.6 2009-11-19 01:02:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -44,6 +44,8 @@ import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
+import com.sun.identity.entitlement.ReferredApplication;
+import com.sun.identity.entitlement.ReferredApplicationManager;
 import com.sun.identity.entitlement.ResourceMatch;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
@@ -606,7 +608,7 @@ public class OpenSSOApplicationPrivilegeManager extends
     public boolean hasPrivilege(
         Privilege p,
         ApplicationPrivilege.Action action
-    ) {
+    ) throws EntitlementException {
         if (isPolicyAdmin()) {
             return true;
         }
@@ -618,12 +620,45 @@ public class OpenSSOApplicationPrivilegeManager extends
     public boolean hasPrivilege(
         ReferralPrivilege p,
         ApplicationPrivilege.Action action
-    ) {
+    ) throws EntitlementException {
         if (isPolicyAdmin()) {
             return true;
         }
         Permission permission = getPermissionObject(action);
         return permission.hasPermission(p);
+    }
+
+    @Override
+    public boolean hasPrivilege(
+        Application app,
+        ApplicationPrivilege.Action action
+    ) throws EntitlementException {
+        if (action.equals(ApplicationPrivilege.Action.READ)) {
+            if (isReferredApplication(app)) {
+                return true;
+            }
+            Permission permission = getPermissionObject(action);
+            return permission.hasPermission(app);
+        } else {
+            if (isReferredApplication(app)) {
+                return false;
+            }
+            return isPolicyAdmin();
+        }
+    }
+
+    private boolean isReferredApplication(Application app)
+        throws EntitlementException {
+        Set<ReferredApplication> appls =
+            ReferredApplicationManager.getInstance().getReferredApplications(
+            realm);
+        String name = app.getName();
+        for (ReferredApplication a : appls) {
+            if (a.getName().equals(name)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -667,7 +702,7 @@ public class OpenSSOApplicationPrivilegeManager extends
         private String resourcePrefix;
 
         private Permission(Set<String> action, boolean bPolicyAdmin,
-            String resourcePrefix) {
+            String resourcePrefix) throws EntitlementException {
             this.actions = new HashSet<String>();
             this.actions.addAll(action);
             this.bPolicyAdmin = bPolicyAdmin;
@@ -713,7 +748,8 @@ public class OpenSSOApplicationPrivilegeManager extends
             return appNameToResourceNames.get(applName);
         }
 
-        private Map<String, Set<String>> getAllResourceNamesInAllAppls() {
+        private Map<String, Set<String>> getAllResourceNamesInAllAppls() 
+            throws EntitlementException {
             Map<String, Set<String>> map = new HashMap<String, Set<String>>();
             Set<String> applNames = ApplicationManager.getApplicationNames(
                 PrivilegeManager.superAdminSubject, realm);
@@ -760,7 +796,13 @@ public class OpenSSOApplicationPrivilegeManager extends
                 ent.getResourceNames());
         }
 
-        private boolean hasPermission(Privilege privilege) {
+        private boolean hasPermission(Application application)
+            throws EntitlementException {
+            return appNameToResourceNames.containsKey(application.getName());
+        }
+
+        private boolean hasPermission(Privilege privilege) 
+            throws EntitlementException {
             Entitlement ent = privilege.getEntitlement();
             String applName = ent.getApplicationName();
             Application appl = ApplicationManager.getApplication(
@@ -784,7 +826,8 @@ public class OpenSSOApplicationPrivilegeManager extends
             return true;
         }
 
-        private boolean hasPermission(ReferralPrivilege privilege) {
+        private boolean hasPermission(ReferralPrivilege privilege) 
+            throws EntitlementException {
             Map<String, Set<String>> map =
                 privilege.getMapApplNameToResources();
 

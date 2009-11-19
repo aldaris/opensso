@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.4 2009-11-05 21:13:46 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.5 2009-11-19 01:02:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -256,7 +256,7 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
     public ResourceSaveIndexes getResourceSaveIndexes(
         Subject adminSubject,
         String realm
-    ) {
+    ) throws EntitlementException {
         ResourceSaveIndexes result = null;
 
         for (String app : mapApplNameToResources.keySet()) {
@@ -398,7 +398,7 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
     private ResourceName getResourceComparator(
         Subject adminSubject,
         String realm,
-        String applName) {
+        String applName) throws EntitlementException {
         Application appl = ApplicationManager.getApplication(
             PrivilegeManager.superAdminSubject, realm, applName);
         return appl.getResourceComparator();
@@ -518,7 +518,7 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
     public Set<String> getApplicationTypeNames(
         Subject adminSubject,
         String realm
-    ) {
+    ) throws EntitlementException {
         Set<String> results = new HashSet<String>();
         for (String a : mapApplNameToResources.keySet()) {
             Application appl = ApplicationManager.getApplication(

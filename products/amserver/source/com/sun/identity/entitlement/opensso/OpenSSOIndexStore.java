@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.7 2009-11-18 01:05:57 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.8 2009-11-19 01:02:03 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -42,6 +42,7 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
+import com.sun.identity.entitlement.ReferredApplicationManager;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SequentialThreadPool;
 import com.sun.identity.entitlement.SubjectAttributesManager;
@@ -591,7 +592,8 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
             numOfEntries * (2), sortResults, ascendingOrder);
     }
 
-    private String getResourceSearchFilter(Map<String, Set<String>> map) {
+    private String getResourceSearchFilter(Map<String, Set<String>> map) 
+        throws EntitlementException {
         StringBuilder buff = new StringBuilder();
 
         for (String applName : map.keySet()) {
@@ -945,6 +947,7 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 // Realm has been deleted, clear the indexCaches &
                 indexCaches.remove(orgName);
                 referralIndexCaches.remove(orgName);
+                ReferredApplicationManager.getInstance().clearCache();
             }
         }
     }

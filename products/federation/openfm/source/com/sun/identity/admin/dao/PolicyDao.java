@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDao.java,v 1.6 2009-11-13 20:19:18 farble1670 Exp $
+ * $Id: PolicyDao.java,v 1.7 2009-11-19 01:02:04 veiming Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -234,20 +234,24 @@ public class PolicyDao implements Serializable {
         Subject adminSubject = new Token().getAdminSubject();
 
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
-        Application app = e.getApplication(adminSubject, realmBean.getName());
-        Set<String> validActionName = app.getActions().keySet();
+        try {
+            Application app = e.getApplication(adminSubject, realmBean.getName());
+            Set<String> validActionName = app.getActions().keySet();
 
-        Map<String, Boolean> actionValues = e.getActionValues();
+            Map<String, Boolean> actionValues = e.getActionValues();
 
-        for (String actionName : actionValues.keySet()) {
-            if (!validActionName.contains(actionName)) {
-                try {
-                    app.addAction(actionName, actionValues.get(actionName));
-                } catch (EntitlementException ee) {
-                    throw new RuntimeException(ee);
+            for (String actionName : actionValues.keySet()) {
+                if (!validActionName.contains(actionName)) {
+                    try {
+                        app.addAction(actionName, actionValues.get(actionName));
+                    } catch (EntitlementException ee) {
+                        throw new RuntimeException(ee);
+                    }
                 }
             }
-        }
+        } catch (EntitlementException ee) {
+            throw new RuntimeException(ee);
+        } 
     }
 
     public void modifyPrivilege(Privilege p) {

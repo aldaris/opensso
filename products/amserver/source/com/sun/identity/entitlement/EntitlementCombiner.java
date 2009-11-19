@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCombiner.java,v 1.2 2009-11-05 21:13:46 veiming Exp $
+ * $Id: EntitlementCombiner.java,v 1.3 2009-11-19 01:02:03 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -74,7 +74,7 @@ public abstract class EntitlementCombiner {
         String resourceName,
         Set<String> actions,
         boolean isRecursive
-    ) {
+    ) throws EntitlementException {
         this.resourceName = resourceName;
         this.isRecursive = isRecursive;
         this.actions = new HashSet<String>();
