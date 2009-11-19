@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.17 2009-05-08 00:49:55 hengming Exp $
+ * $Id: SOAPClient.java,v 1.18 2009-11-19 18:17:28 bhavnab Exp $
  *
  */
 
@@ -826,13 +826,27 @@ public class SOAPClient {
             Exception exception = null;
             if ((resourceBundleName != null) && (exceptionCode != null)) {
                 try {
-                    Class[] params = {String.class, String.class, 
-                            Object[].class};
-                    Constructor ctr = clazz.getConstructor(params);
-                    
-                    Object[] objs = {resourceBundleName, exceptionCode,
-                    (messageArgs != null) ? messageArgs.toArray() : null};
-                    exception = (Exception)ctr.newInstance(objs);
+                   if (clazz.getName().equals(
+                         "com.sun.identity.idm.IdRepoException") &&
+                       ldapErrorCode > 0)
+                   {
+                        Class[] params = {String.class, String.class,
+                                String.class, Object[].class};
+                        Constructor ctr = clazz.getConstructor(params);
+
+                        Object[] objs = {resourceBundleName, exceptionCode,
+                             String.valueOf(ldapErrorCode),
+                          (messageArgs != null) ? messageArgs.toArray() : null};
+                        exception = (Exception)ctr.newInstance(objs);
+                   } else {
+                       Class[] params = {String.class, String.class, 
+                               Object[].class};
+                       Constructor ctr = clazz.getConstructor(params);
+                       
+                       Object[] objs = {resourceBundleName, exceptionCode,
+                       (messageArgs != null) ? messageArgs.toArray() : null};
+                       exception = (Exception)ctr.newInstance(objs);
+                   }
                 } catch (NoSuchMethodException e) {
                     // ignore
                 } catch (SecurityException e) {
