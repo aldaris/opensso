@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoModelImpl.java,v 1.2 2008-06-25 05:43:12 qcheng Exp $
+ * $Id: IDRepoModelImpl.java,v 1.3 2009-11-19 23:46:00 asyhuang Exp $
  *
  */
 
 package com.sun.identity.console.realm.model;
 
+import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.shared.locale.Locale;
 import com.iplanet.jato.view.html.OptionList;
 import com.iplanet.sso.SSOException;
@@ -40,6 +41,7 @@ import com.sun.identity.console.base.model.AMResBundleCacher;
 import com.sun.identity.console.delegation.model.DelegationConfig;
 import com.sun.identity.console.property.PropertyXMLBuilder;
 import com.sun.identity.idm.IdConstants;
+import com.sun.identity.idm.common.IdRepoUtils;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.ServiceConfig;
@@ -54,6 +56,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 /* - LOG COMPLETE - */
@@ -233,7 +236,11 @@ public class IDRepoModelImpl
         } catch (SSOException e) {
             debug.warning("IDRepoModelImpl.getDefaultAttributeValues", e);
         }
-
+        
+        if((values!=null) && IdRepoUtils.hasIdRepoSchema(type)){
+            values.put("idRepoLoadSchema", Collections.EMPTY_SET);
+        }
+        
         return (values != null) ? values : Collections.EMPTY_MAP;
     }
 
@@ -289,7 +296,9 @@ public class IDRepoModelImpl
     ) throws AMConsoleException {
         String[] params = {realmName, idRepoName, idRepoType};
         logEvent("ATTEMPT_CREATE_ID_REPO", params);
-
+        
+        values.remove("idRepoLoadSchema");
+        
         try {
             ServiceConfigManager svcCfgMgr = new ServiceConfigManager(
                 IdConstants.REPO_SERVICE, getUserSSOToken());
@@ -409,6 +418,8 @@ public class IDRepoModelImpl
         String[] params = {realmName, idRepoName};
         logEvent("ATTEMPT_MODIFY_ID_REPO", params);
 
+        values.remove("idRepoLoadSchema");
+        
         try {
             ServiceConfigManager svcCfgMgr = new ServiceConfigManager(
                 IdConstants.REPO_SERVICE, getUserSSOToken());
@@ -453,4 +464,16 @@ public class IDRepoModelImpl
             throw new AMConsoleException(getErrorString(e));
         }
     }
+
+    public void loadIdRepoSchema(String idRepoName,
+        String realm, ServletContext servletCtx)
+        throws AMConsoleException {
+        try {
+            IdRepoUtils.loadIdRepoSchema(getUserSSOToken(), idRepoName, realm, servletCtx);
+        } catch (IdRepoException ex) {
+            throw new AMConsoleException(getErrorString(ex));
+        }
+
+    }
+
 }

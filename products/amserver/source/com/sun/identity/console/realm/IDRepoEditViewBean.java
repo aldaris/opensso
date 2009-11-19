@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoEditViewBean.java,v 1.3 2008-12-15 17:25:30 goodearth Exp $
+ * $Id: IDRepoEditViewBean.java,v 1.4 2009-11-19 23:45:59 asyhuang Exp $
  *
  */
 
@@ -37,11 +37,16 @@ import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.realm.model.IDRepoModel;
 import com.sun.identity.idm.IdConstants;
+import com.sun.identity.idm.common.IdRepoUtils;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import javax.servlet.ServletContext;
 
 public class IDRepoEditViewBean
     extends IDRepoOpViewBeanBase
@@ -140,11 +145,31 @@ public class IDRepoEditViewBean
 
         if (idRepoName.trim().length() > 0) {
             try {
+                boolean LoadSchema = false;
                 Map values = prop.getAttributeValues(defaultValues.keySet());
                 String realmName = (String)getPageSessionAttribute(
                     AMAdminConstants.CURRENT_REALM);
                 values.remove(IdConstants.SERVICE_ATTRS);
+
+                Set set = (HashSet) values.get("idRepoLoadSchema");
+                if( set != null){
+                    Iterator i = set.iterator();
+                    if(i.hasNext()){
+                        String loadingSchemaFlag = (String) i.next();
+                        if(loadingSchemaFlag.equals("true") &&
+                            IdRepoUtils.hasIdRepoSchema(idRepoType)){
+                            LoadSchema=true;
+                        }
+                    }
+                }
+
                 model.editIDRepo(realmName, idRepoName, values);
+
+                if(LoadSchema==true){
+                    ServletContext servletCtx = event.getRequestContext().getServletContext();
+                    model.loadIdRepoSchema(idRepoName,realmName,servletCtx);
+                }
+
                 setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                     "message.updated");
             } catch (AMConsoleException e) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoModel.java,v 1.2 2008-06-25 05:43:12 qcheng Exp $
+ * $Id: IDRepoModel.java,v 1.3 2009-11-19 23:46:00 asyhuang Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMConsoleException;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.ServletContext;
 
 /* - NEED NOT LOG - */
 
@@ -149,4 +150,8 @@ public interface IDRepoModel
      */
     String getIDRepoType(String realmName, String idRepoName)
         throws AMConsoleException;
+
+    void loadIdRepoSchema(String idRepoName, String realmName, ServletContext servletCtx)
+        throws AMConsoleException;
+
 }
