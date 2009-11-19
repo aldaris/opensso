@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.12 2009-11-18 01:34:02 veiming Exp $
+ * $Id: DelegationEvaluator.java,v 1.13 2009-11-19 00:08:50 veiming Exp $
  *
  */
 
@@ -31,16 +31,25 @@ package com.sun.identity.delegation;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.delegation.interfaces.DelegationInterface;
+import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.entitlement.Entitlement;
+import com.sun.identity.entitlement.EntitlementConfiguration;
+import com.sun.identity.entitlement.Evaluator;
+import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.sm.DNMapper;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * The <code>DelegationEvaluator</code> class provides interfaces to evaluate
@@ -104,9 +113,61 @@ public class DelegationEvaluator {
         Map envParameters,
         boolean bSubResource
     ) throws SSOException, DelegationException {
-        //TOFIX
-        return (bSubResource) ? true :
-            isAllowed(token, permission, envParameters);
+        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+            PrivilegeManager.superAdminSubject, "/");
+        if (!ec.migratedToEntitlementService()) {
+            return false;
+        }
+
+        if (!bSubResource) {
+            return isAllowed(token, permission, envParameters);
+        }
+
+        StringBuilder buff = new StringBuilder();
+        buff.append("sms://");
+        if (permission.orgName != null) {
+            buff.append(permission.orgName).append("/");
+        }
+        if (permission.getServiceName() != null) {
+            buff.append(permission.getServiceName()).append("/");
+        }
+        if (permission.getVersion() != null) {
+            buff.append(permission.getVersion()).append("/");
+        }
+        if (permission.getConfigType() != null) {
+            buff.append(permission.getConfigType()).append("/");
+        }
+        if (permission.getSubConfigName() != null) {
+            buff.append(permission.getSubConfigName());
+        }
+        try {
+            Evaluator eval = new Evaluator(PrivilegeManager.superAdminSubject,
+                DelegationManager.DELEGATION_SERVICE);
+            List<Entitlement> results = eval.evaluate(
+                DNMapper.orgNameToDN(PolicyManager.DELEGATION_REALM),
+                SubjectUtils.createSubject(token), buff.toString(),
+                envParameters, true);
+
+            List<String> copiedActions = new ArrayList<String>();
+            copiedActions.addAll(permission.getActions());
+
+            for (Entitlement e : results) {
+                for (int i = copiedActions.size() -1; i >= 0; --i) {
+                    String action = copiedActions.get(i);
+                    Boolean result = e.getActionValue(action);
+                    if ((result != null) && result) {
+                        copiedActions.remove(i);
+                    }
+                }
+                if (copiedActions.isEmpty()) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (EntitlementException ex) {
+            debug.error("DelegationEvaluator.isAllowed", ex);
+            throw new DelegationException(ex);
+        }
     }
 
     /**
@@ -131,8 +192,6 @@ public class DelegationEvaluator {
             AMIdentity user = null;
             try {
                 user = new AMIdentity(token);
-                //AMIdentity adminUserId = 
-                //    new AMIdentity(token, adminUser, IdType.USER, "/", null);
                 if (((privilegedUser != null) && user.equals(privilegedUser)) ||
                     (installTime && adminUserSet.contains(
                     DNUtils.normalizeDN(token.getPrincipal().getName()))) ||

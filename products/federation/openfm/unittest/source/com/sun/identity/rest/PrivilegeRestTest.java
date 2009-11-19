@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeRestTest.java,v 1.1 2009-11-12 18:37:36 veiming Exp $
+ * $Id: PrivilegeRestTest.java,v 1.2 2009-11-19 00:08:53 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -155,7 +155,6 @@ public class PrivilegeRestTest {
         form.add("privilege.json", privilege.toMinimalJSONObject());
         result = webClient
             .path(PRIVILEGE_NAME)
-            .queryParam("admin", adminToken.getTokenID().toString())
             .queryParam("subject", hashedTokenId)
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationPrivilege.java,v 1.2 2009-10-29 19:05:18 veiming Exp $
+ * $Id: ApplicationPrivilege.java,v 1.3 2009-11-19 00:08:51 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -140,6 +140,42 @@ public class ApplicationPrivilege {
      */
     public long getLastModifiedDate() {
         return lastModifiedDate;
+    }
+
+    /**
+     * Sets creation date.
+     *
+     * @param date creation date.
+     */
+    public void setCreationDate(long date) {
+        creationDate = date;
+    }
+
+    /**
+     * Sets last modified date.
+     *
+     * @param date last modified date.
+     */
+    public void setLastModifiedDate(long date) {
+        lastModifiedDate = date;
+    }
+
+    /**
+     * Sets the user ID who last modified the policy.
+     *
+     * @param lastModifiedBy user ID who last modified the policy.
+     */
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    /**
+     * Sets the user ID who created the policy.
+     *
+     * @param createdBy user ID who created the policy.
+     */
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     /**

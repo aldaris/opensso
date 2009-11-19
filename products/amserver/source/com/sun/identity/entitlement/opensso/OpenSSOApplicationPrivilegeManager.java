@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.4 2009-11-05 21:13:47 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.5 2009-11-19 00:08:52 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -62,7 +62,7 @@ import java.security.AccessController;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
- import java.util.HashSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -71,7 +71,8 @@ import javax.security.auth.Subject;
 
 public class OpenSSOApplicationPrivilegeManager extends
     ApplicationPrivilegeManager {
-    private static final String RESOURCE_PREFIX = "/entitlements/1.0";
+    private static final String RESOURCE_PREFIX =
+        "/sunEntitlementService/1.0/application/default/application";
     private static final String APPL_NAME = 
         DelegationManager.DELEGATION_SERVICE;
 
@@ -250,6 +251,10 @@ public class OpenSSOApplicationPrivilegeManager extends
         throws EntitlementException {
         ApplicationPrivilege ap = new ApplicationPrivilege(p.getName());
         ap.setDescription(p.getDescription());
+        ap.setCreatedBy(p.getCreatedBy());
+        ap.setCreationDate(p.getCreationDate());
+        ap.setLastModifiedBy(p.getLastModifiedBy());
+        ap.setLastModifiedDate(p.getLastModifiedDate());
         Entitlement ent = p.getEntitlement();
         Set<String> resourceNames = ent.getResourceNames();
         Map<String, Set<String>> mapAppToRes =

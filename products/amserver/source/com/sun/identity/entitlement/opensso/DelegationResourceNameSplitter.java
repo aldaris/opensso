@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationResourceNameSplitter.java,v 1.1 2009-10-01 00:18:34 veiming Exp $
+ * $Id: DelegationResourceNameSplitter.java,v 1.2 2009-11-19 00:08:51 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -47,12 +47,17 @@ public class DelegationResourceNameSplitter extends
             return super.getIndexes(resource);
         }
 
+        String rootSuffix = SMSEntry.getRootSuffix();
         String dn = match.group(2);
+
+        if (dn.trim().length() == 0) {
+            dn = rootSuffix;
+        }
+
         String prefix = match.group(1);
         String suffix = match.group(3);
 
         if (DN.isDN(dn)) {
-            String rootSuffix = SMSEntry.getRootSuffix();
             DN rootDN = new DN(rootSuffix);
 
             if (rootDN.equals(new DN(dn))) {
