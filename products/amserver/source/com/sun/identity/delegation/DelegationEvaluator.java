@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.13 2009-11-19 00:08:50 veiming Exp $
+ * $Id: DelegationEvaluator.java,v 1.14 2009-11-19 21:36:09 veiming Exp $
  *
  */
 
@@ -117,6 +117,18 @@ public class DelegationEvaluator {
             PrivilegeManager.superAdminSubject, "/");
         if (!ec.migratedToEntitlementService()) {
             return false;
+        }
+
+        try {
+            AMIdentity user = new AMIdentity(token);
+            if (((privilegedUser != null) && user.equals(privilegedUser)) ||
+                (installTime && adminUserSet.contains(
+                DNUtils.normalizeDN(token.getPrincipal().getName()))) ||
+                user.equals(adminUserId) ) {
+                return true;
+            }
+        } catch (IdRepoException ide) {
+            throw (new DelegationException(ide.getMessage()));
         }
 
         if (!bSubResource) {
