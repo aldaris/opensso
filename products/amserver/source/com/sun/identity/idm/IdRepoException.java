@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoException.java,v 1.7 2009-01-28 05:34:59 ww203982 Exp $
+ * $Id: IdRepoException.java,v 1.8 2009-11-19 18:18:47 bhavnab Exp $
  *
  */
 
@@ -83,6 +83,37 @@ public class IdRepoException extends Exception implements L10NMessage {
     public IdRepoException(String msg, String errorCode) {
         message = msg;
         this.errorCode = errorCode;
+    }
+
+   /**
+     * This constructor is used to pass the localized error message At this
+     * level, the locale of the caller is not known and it is not possible to
+     * throw localized error message at this level. Instead this constructor
+     * provides Resource Bundle name ,error code and LDAP error code ( in case
+     * of LDAP related exception for correctly locating the
+     * error message. The default <code>getMessage()</code> will always return
+     * English messages only. This is in consistent with current JRE.
+     *
+     * @param rbName
+     *            Resource bundle Name to be used for getting localized error
+     *            message.
+     * @param errorCode
+     *            Key to resource bundle. You can use <code>ResourceBundle rb =
+     *        ResourceBunde.getBundle(rbName,locale);
+     *        String localizedStr = rb.getString(errorCode)</code>.
+     * @param ldapErrCode
+     *            ldap error code
+     * @param args
+     *            arguments to message. If it is not present pass the as null.
+     */
+    public IdRepoException(String rbName, String errorCode,
+        String ldapErrCode,Object[] args)
+    {
+        this.bundleName = rbName;
+        this.errorCode = errorCode;
+        this.ldapErrCode = ldapErrCode;
+        this.args = args;
+        this.message = getL10NMessage(java.util.Locale.ENGLISH);
     }
 
     /**
