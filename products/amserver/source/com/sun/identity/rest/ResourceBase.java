@@ -19,11 +19,12 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceBase.java,v 1.1 2009-11-12 18:37:35 veiming Exp $
+ * $Id: ResourceBase.java,v 1.2 2009-11-19 00:10:38 qcheng Exp $
  */
 
 package com.sun.identity.rest;
 
+import com.sun.identity.coretoken.CoreTokenException;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeManager;
@@ -162,6 +163,14 @@ public abstract class ResourceBase {
                   .entity(e.getLocalizedMessage(getUserLocale(headers)))
                   .type("text/plain; charset=UTF-8").build());
         }
+    }
+
+    protected WebApplicationException getWebApplicationException(
+        HttpHeaders headers, CoreTokenException e) {
+        throw new WebApplicationException (
+              Response.status(e.getHttpStatusCode())
+              .entity(e.getLocalizedMessage(getUserLocale(headers)))
+              .type("text/plain; charset=UTF-8").build());
     }
 
     protected WebApplicationException getWebApplicationException(
