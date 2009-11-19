@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationManageTableBean.java,v 1.5 2009-11-18 23:55:17 farble1670 Exp $
+ * $Id: DelegationManageTableBean.java,v 1.6 2009-11-19 00:07:07 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -127,5 +127,9 @@ public class DelegationManageTableBean implements Serializable {
 
     public boolean isSubjectsColumnVisible() {
         return columnsVisible.contains("subjects");
+    }
+
+    public boolean isActionsColumnVisible() {
+        return columnsVisible.contains("actions");
     }
 }

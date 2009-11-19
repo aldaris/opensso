@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.33 2009-11-18 21:11:04 farble1670 Exp $
+  $Id: faces-config.xml,v 1.34 2009-11-19 00:07:08 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2266,7 +2266,7 @@
             <value-class>java.lang.String</value-class>
             <value>description</value>
             <value>resources</value>
-            <value>subject</value>
+            <value>subjects</value>
             <value>modified</value>
         </list-entries>
     </managed-bean>
