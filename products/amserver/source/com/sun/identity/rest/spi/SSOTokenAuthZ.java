@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenAuthZ.java,v 1.1 2009-11-12 18:37:35 veiming Exp $
+ * $Id: SSOTokenAuthZ.java,v 1.2 2009-11-19 19:29:09 veiming Exp $
  */
 
 package com.sun.identity.rest.spi;
@@ -90,7 +90,7 @@ public class SSOTokenAuthZ implements IAuthorization {
                 SSOToken token = SubjectUtils.getSSOToken(clientSubject);
 
                 DelegationPermission permission = new DelegationPermission(
-                    "/", "entitlement", "1.0", "application",
+                    "/", "sunEntitlementService", "1.0", "application",
                     getURI(request), getAction(request), null);
                 if (!eval.isAllowed(token, permission,
                     Collections.EMPTY_MAP)) {

@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: defaultDelegationPolicies.xml,v 1.14 2009-11-12 18:37:39 veiming Exp $
+  $Id: defaultDelegationPolicies.xml,v 1.15 2009-11-19 19:29:10 veiming Exp $
 
 -->
                                                                                 
@@ -187,7 +187,7 @@ End of comment for "notAttributes" AttributeValuePair -->
 <Policy name="@SM_ROOT_SUFFIX_HAT@^^EntitlementEval" referralPolicy="false" active="true" >
     <Rule name="delegation-rule1">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/decision" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/decision" />
         <AttributeValuePair>
             <Attribute name="READ" />
             <Value>allow</Value>
@@ -195,7 +195,7 @@ End of comment for "notAttributes" AttributeValuePair -->
     </Rule>
     <Rule name="delegation-rule2">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/decisions" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/decisions" />
         <AttributeValuePair>
             <Attribute name="READ" />
             <Value>allow</Value>
@@ -203,7 +203,7 @@ End of comment for "notAttributes" AttributeValuePair -->
     </Rule>
     <Rule name="delegation-rule3">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/entitlement" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/entitlement" />
         <AttributeValuePair>
             <Attribute name="READ" />
             <Value>allow</Value>
@@ -211,7 +211,7 @@ End of comment for "notAttributes" AttributeValuePair -->
     </Rule>
     <Rule name="delegation-rule4">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/entitlements" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/entitlements" />
         <AttributeValuePair>
             <Attribute name="READ" />
             <Value>allow</Value>
@@ -219,7 +219,7 @@ End of comment for "notAttributes" AttributeValuePair -->
     </Rule>
     <Rule name="delegation-rule5">
         <ServiceName name="sunAMDelegationService" />
-        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/listener/*" />
+        <ResourceName name="sms://@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/listener/*" />
         <AttributeValuePair>
             <Attribute name="MODIFY" />
             <Value>allow</Value>

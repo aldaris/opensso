@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amDelegation.xml,v 1.12 2009-11-17 00:49:47 veiming Exp $
+   $Id: amDelegation.xml,v 1.13 2009-11-19 19:29:11 veiming Exp $
   
 -->
 
@@ -251,21 +251,22 @@
                         </AttributeValuePair>
                     </SubConfiguration>
 
-                    <SubConfiguration name="EntitlementAllREST" id="Permission">
+                    <SubConfiguration name="EntitlementAdmin" id="Permission">
                         <AttributeValuePair>
                             <Attribute name="resource" />
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/*</Value>
+                            <Value>*REALM/sunEntitlementService/*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="actions" />
                             <Value>READ</Value>
                             <Value>MODIFY</Value>
+                            <Value>DELEGATION</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="EntitlementRESTDecision" id="Permission">
                         <AttributeValuePair>
                             <Attribute name="resource" />
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/decision</Value>
+                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/decision</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="actions" />
@@ -275,7 +276,7 @@
                     <SubConfiguration name="EntitlementRESTDecisions" id="Permission">
                         <AttributeValuePair>
                             <Attribute name="resource" />
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/decisions</Value>
+                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/decisions</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="actions" />
@@ -285,7 +286,7 @@
                     <SubConfiguration name="EntitlementRESTEntitlement" id="Permission">
                         <AttributeValuePair>
                             <Attribute name="resource" />
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/entitlement</Value>
+                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/entitlement</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="actions" />
@@ -295,7 +296,7 @@
                     <SubConfiguration name="EntitlementRESTEntitlements" id="Permission">
                         <AttributeValuePair>
                             <Attribute name="resource" />
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/entitlements</Value>
+                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/entitlements</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="actions" />
@@ -305,7 +306,7 @@
                     <SubConfiguration name="EntitlementRESTPrivilegeWrite" id="Permission">
                         <AttributeValuePair>
                             <Attribute name="resource" />
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/privilege/*</Value>
+                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/privilege/*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="actions" />
@@ -316,7 +317,7 @@
                     <SubConfiguration name="EntitlementRESTPrivilegeRead" id="Permission">
                         <AttributeValuePair>
                             <Attribute name="resource" />
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/entitlement/1.0/application/ws/1/entitlement/privilege/*</Value>
+                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/privilege/*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="actions" />
@@ -329,7 +330,6 @@
                         <AttributeValuePair>
                             <Attribute name="listOfPermissions" />
                             <Value>RealmAdmin</Value>
-                            <Value>EntitlementAllREST</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="defaultSubjectInLegacyMode" />
@@ -342,7 +342,7 @@
                             <Value>PolicyAdmin</Value>
                             <Value>RealmReadOnly</Value>
                             <Value>DatastoresReadOnly</Value>
-                            <Value>EntitlementAllREST</Value>
+                            <Value>EntitlementAdmin</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="defaultSubjectInLegacyMode" />
