@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationDao.java,v 1.5 2009-11-19 01:02:04 veiming Exp $
+ * $Id: DelegationDao.java,v 1.6 2009-11-19 01:06:08 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import javax.security.auth.Subject;
 import java.util.List;
+import java.util.Collections;
 import java.util.Set;
 import java.util.HashSet;
 import com.sun.identity.admin.model.SubjectFactory;
@@ -103,14 +104,14 @@ public class DelegationDao implements Serializable {
         return apm;
     }
 
-    public List<DelegationBean> getDelegationBeans(String filter, List<FilterHolder> filterHolders) {
-        Set<SearchFilter> psfs = getSearchFilters(filterHolders);
-        
+    public List<DelegationBean> getDelegationBeans(String filter, List<FilterHolder> filterHolders) {        
         /* TODO: attributes missing in SDK
+        Set<SearchFilter> psfs = getSearchFilters(filterHolders);
         String pattern = getPattern(filter);
         psfs.add(new SearchFilter(ApplicationPrivilege.NAME_ATTRIBUTE, pattern));
         */
-        
+        Set<SearchFilter> psfs = Collections.EMPTY_SET;
+
         ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
         SubjectFactory subjectFactory = SubjectFactory.getInstance();
 

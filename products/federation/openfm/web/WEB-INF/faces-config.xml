@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.34 2009-11-19 00:07:08 farble1670 Exp $
+  $Id: faces-config.xml,v 1.35 2009-11-19 01:06:10 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -2293,12 +2293,10 @@
             <property-name>delegationManageTableBean</property-name>
             <value>#{delegationManageTableBean}</value>
         </managed-property>
-        <!-- TODO
         <managed-property>
             <property-name>viewFilterTypes</property-name>
             <value>#{delegationFilterTypes}</value>
         </managed-property>
-        -->
         <managed-property>
             <property-name>delegationDao</property-name>
             <value>#{delegationDao}</value>
@@ -2488,6 +2486,104 @@
         </map-entries>
     </managed-bean>
     <!-- policy filter types -->
+
+    <!-- delegation filter types -->
+    <managed-bean>
+        <managed-bean-name>birthDelegationFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.BirthDelegationFilterType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>birth</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/filter-birth.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>modifiedDelegationFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ModifiedDelegationFilterType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>modified</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/filter-modified.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>authorDelegationFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.AuthorDelegationFilterType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>author</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/filter-author.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>modifierDelegationFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ModifierDelegationFilterType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>modifier</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/filter-modifier.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>descriptionDelegationFilterType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.DescriptionDelegationFilterType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>description</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/filter-description.xhtml</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>delegationFilterTypes</managed-bean-name>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <map-entries>
+            <key-class>java.lang.String</key-class>
+            <value-class>com.sun.identity.admin.model.ViewFilterType</value-class>
+            <map-entry>
+                <key>#{descriptionDelegationFilterType.name}</key>
+                <value>#{descriptionDelegationFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{birthDelegationFilterType.name}</key>
+                <value>#{birthDelegationFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{authorDelegationFilterType.name}</key>
+                <value>#{authorDelegationFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{modifiedDelegationFilterType.name}</key>
+                <value>#{modifiedDelegationFilterType}</value>
+            </map-entry>
+            <map-entry>
+                <key>#{modifierDelegationFilterType.name}</key>
+                <value>#{modifierDelegationFilterType}</value>
+            </map-entry>
+        </map-entries>
+    </managed-bean>
+    <!-- delegation filter types -->
 
     <!-- application filter types -->
     <managed-bean>

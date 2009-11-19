@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: delegation-manage.xhtml,v 1.9 2009-11-19 00:07:08 farble1670 Exp $
+   $Id: delegation-manage.xhtml,v 1.10 2009-11-19 01:06:10 farble1670 Exp $
 -->
 
 <ui:composition
@@ -104,6 +104,8 @@
                 </ice:panelGrid>
             </ui:define>
             <ui:define name="section-body">
+                <ui:include
+                    src="/admin/facelet/template/delegation-manage-filters.xhtml"/>
                 <ice:panelGroup
                     style="padding-top: 10px"
                     rendered="#{o:size(delegationManageBean.delegationBeans) == 0}">
