@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMRecordJMQPersister.java,v 1.6 2009-03-06 05:32:09 222713 Exp $
+ * $Id: FAMRecordJMQPersister.java,v 1.7 2009-11-19 22:34:55 weisun2 Exp $
  *
  */
 
@@ -232,6 +232,11 @@ public class FAMRecordJMQPersister implements FAMRecordPersister,
        
        // Write Primary key   
        String pKey = famRecord.getPrimaryKey(); 
+       if (op.equals(FAMRecord.READ)) {
+           if (pKey == null || pKey.length() <= 0 || pKey.length() > 256) {
+               return null;
+           }
+       }
        if (pKey != null && (!pKey.equals(""))) {
            msg.writeLong(pKey.length());
            msg.writeBytes(pKey.getBytes());
