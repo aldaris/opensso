@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionAction.java,v 1.4 2009-11-18 21:11:03 farble1670 Exp $
+ * $Id: PermissionAction.java,v 1.5 2009-11-19 22:27:30 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.sun.identity.admin.model.RealmBean;
 
 public class PermissionAction {
 
@@ -63,10 +64,12 @@ public class PermissionAction {
         accessLevels = AccessLevel.toAccessLevelArray(matcher.group(6));
     }
 
-    public DelegationPermission toDelegationPermission() throws DelegationException {
+    public DelegationPermission toDelegationPermission(RealmBean realmBean) throws DelegationException {
         DelegationPermission dp = new DelegationPermission();
 
+        dp.setOrganizationName(realmBean.getName());
         dp.setServiceName(service);
+        dp.setVersion(version);
         dp.setConfigType(type);
         dp.setSubConfigName(subconfig);
         Set<String> actions = AccessLevel.toStringSet(accessLevels);
