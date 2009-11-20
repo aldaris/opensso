@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.22 2009-11-03 00:53:02 madan_ranganath Exp $
+ * $Id: FMSessionProvider.java,v 1.23 2009-11-20 00:30:40 exu Exp $
  *
  */
 
@@ -60,6 +60,7 @@ import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.debug.Debug;
 
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
+import com.sun.identity.shared.StringUtils;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
@@ -84,7 +85,7 @@ public class FMSessionProvider implements SessionProvider {
     public static final String RANDOM_SECRET = "randomSecret";
 
     private static final String AUTH_TYPE = "AuthType";
-    private static final String PROPERTY_VALUES_SEPARATOR = ":::";
+    private static final String PROPERTY_VALUES_SEPARATOR = "|";
     private static ResourceBundle bundle =
         Locale.getInstallResourceBundle("fmSessionProvider");
     private static Debug debug = Debug.getInstance("libPlugins");;
@@ -346,7 +347,8 @@ public class FMSessionProvider implements SessionProvider {
                     continue;
                 }
                 String keyVal = (String) info.get(keyName);
-                ssoToken.setProperty(keyName, keyVal);
+                ssoToken.setProperty(keyName, 
+                    StringUtils.getEscapedValue(keyVal));
             }
         } catch (SSOException se) {
             throw new SessionException(se);
@@ -501,14 +503,14 @@ public class FMSessionProvider implements SessionProvider {
             return;
         }
         String propValue = null;
-        // TODO: need to escape PROPERTY_VALUES_SEPARATOR in "values"
         if (values.length == 1) {
-            propValue = values[0];
+            propValue = StringUtils.getEscapedValue(values[0]);
         } else {
-            StringBuffer buffer = new StringBuffer(values[0]);
+            StringBuffer buffer = new StringBuffer(
+                StringUtils.getEscapedValue(values[0]));
             for (int i=1; i<values.length; i++) {
                 buffer.append(PROPERTY_VALUES_SEPARATOR).
-                    append(values[i]);
+                    append(StringUtils.getEscapedValue(values[i]));
             }
             propValue = buffer.toString();
         }
@@ -570,7 +572,11 @@ public class FMSessionProvider implements SessionProvider {
             }
             return retValues;
         }            
-        return values.split("\\"+PROPERTY_VALUES_SEPARATOR);        
+        String[] returnVals = values.split("\\"+PROPERTY_VALUES_SEPARATOR);
+        for (int i= 0; i < returnVals.length; i++) {
+            returnVals[i] = StringUtils.getUnescapedValue(returnVals[i]);
+        }
+        return returnVals; 
     }
 
     /*

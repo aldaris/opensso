@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringUtils.java,v 1.2 2009-11-11 17:14:52 huacui Exp $
+ * $Id: StringUtils.java,v 1.3 2009-11-20 00:30:40 exu Exp $
  *
  */
 
@@ -72,4 +72,16 @@ public class StringUtils {
         return null;
     }
 
+    /**
+     * Returns special character un-escaped string.
+     *
+     * @param value special character escaped string.
+     * @return un-escaped string.
+     */
+    public static String getUnescapedValue(String value) {
+        if (value != null) {
+            return value.replaceAll(ESCAPE_DELIMITER, PROPERTY_VALUE_DELIMITER).                replaceAll(ESCAPE_AMPERSAND, AMPERSAND);
+        }
+        return null;
+    }
 }
