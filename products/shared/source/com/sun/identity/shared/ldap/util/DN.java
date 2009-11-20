@@ -55,7 +55,7 @@ public final class DN implements Serializable {
      * List of RDNs. DN consists of one or more RDNs.
      * RDNs follow RFC1485 order.
      */
-    private Vector m_rdns = new Vector();
+    private List m_rdns = Collections.synchronizedList(new LinkedList());
 
     /**
      * Type specifying a DN in the RFC format.
@@ -93,7 +93,6 @@ public final class DN implements Serializable {
      * @param dn string representation of the distinguished name
      */
     public DN(String dn) {
-
         String neutralDN = neutralizeEscapes(dn);
         if (neutralDN == null) {
             return; // malformed
@@ -102,25 +101,30 @@ public final class DN implements Serializable {
         // RFC1485
         if (neutralDN.indexOf(',') != -1 || neutralDN.indexOf(';') != -1) {
             parseRDNs(neutralDN, dn, ",;");
-        }
-        else if (dn.indexOf('/') != -1) { /* OSF */
-            m_dnType = OSF;
-            StringTokenizer st = new StringTokenizer(dn, "/");
-            Vector rdns = new Vector();
-            while (st.hasMoreTokens()) {
-                String rdn = st.nextToken();
-                if (RDN.isRDN(rdn))
-                    rdns.addElement(new RDN(rdn));
-                else
-                    return;
+        } else {
+            if (dn.indexOf('/') != -1) { /* OSF */
+                m_dnType = OSF;
+                StringTokenizer st = new StringTokenizer(dn, "/");
+                LinkedList rdns = new LinkedList();
+                while (st.hasMoreTokens()) {
+                    String rdn = st.nextToken();
+                    RDN rdnObject = new RDN(rdn);
+                    if (rdnObject.isRDN()) {
+                        rdns.add(rdnObject);
+                    } else {
+                        return;
+                    }
+                }
+                /* reverse the RDNs order */
+                while (rdns.size() > 0) {
+                    m_rdns.add(rdns.removeLast());
+                }
+            } else {
+                RDN rdn = new RDN(dn);
+                if (rdn.isRDN()) {
+                    m_rdns.add(rdn);
+                }
             }
-            /* reverse the RDNs order */
-            for (int i = rdns.size() - 1; i >= 0; i--) {
-                m_rdns.addElement(rdns.elementAt(i));
-            }        
-        }        
-        else if (RDN.isRDN(dn)) {
-            m_rdns.addElement(new RDN(dn));
         }
     }
 
@@ -160,10 +164,10 @@ public final class DN implements Serializable {
             endIdx = startIdx + neutralRDN.length();
             rdn = new RDN (dn.substring(startIdx, endIdx));
             if (rdn.getTypes() != null) {
-                m_rdns.addElement(rdn);
+                m_rdns.add(rdn);
             }
             else { // malformed rdn
-                m_rdns.removeAllElements();
+                m_rdns.clear();
                 return;
             }
             startIdx = endIdx + 1;
@@ -180,7 +184,7 @@ public final class DN implements Serializable {
      * @see com.sun.identity.shared.ldap.util.RDN
      */
     public void addRDNToFront(RDN rdn) {
-        m_rdns.insertElementAt(rdn, 0);
+        m_rdns.add(0, rdn);
     }
 
     /**
@@ -192,7 +196,7 @@ public final class DN implements Serializable {
      * @see com.sun.identity.shared.ldap.util.RDN
      */
     public void addRDNToBack(RDN rdn) {
-        m_rdns.addElement(rdn);
+        m_rdns.add(rdn);
     }
 
     /**
@@ -256,7 +260,7 @@ public final class DN implements Serializable {
      * @return a list of the components of this DN.
      * @see com.sun.identity.shared.ldap.util.RDN
      */
-    public Vector getRDNs() {
+    public List getRDNs() {
         return m_rdns;
     }
 
@@ -267,16 +271,21 @@ public final class DN implements Serializable {
      * and equals sign (for example, "cn=") from each component
      */
     public String[] explodeDN(boolean noTypes) {
-        if (m_rdns.size() == 0)
-            return null;
-        String str[] = new String[m_rdns.size()];
-        for (int i = 0; i < m_rdns.size(); i++) {
-            if (noTypes)
-                str[i] = ((RDN)m_rdns.elementAt(i)).getValue();
-            else
-                str[i] = ((RDN)m_rdns.elementAt(i)).toString();
+        synchronized (m_rdns) {
+            if (m_rdns.size() == 0) {
+                return null;
+            }
+            String str[] = new String[m_rdns.size()];
+            int i = 0;
+            for (Iterator iter = m_rdns.iterator(); iter.hasNext(); i++) {
+                if (noTypes) {
+                    str[i] = ((RDN) iter.next()).getValue();
+                } else {
+                    str[i] = ((RDN) iter.next()).toString();
+                }
+            }
+            return str;
         }
-        return str;
     }
 
     /**
@@ -292,29 +301,34 @@ public final class DN implements Serializable {
      * @return the DN in RFC 1485 format.
      */
     public String toRFCString() {
-        String dn = "";
-        for (int i = 0; i < m_rdns.size(); i++) {
-            if (i != 0)
-                dn += ",";
-            dn = dn + ((RDN)m_rdns.elementAt(i)).toString();
+        StringBuffer buf = new StringBuffer();
+        synchronized (m_rdns) {
+            for (Iterator iter = m_rdns.iterator(); iter.hasNext();) {
+                buf.append(((RDN) iter.next()).toString());
+                if (iter.hasNext()) {
+                    buf.append(",");
+                }
+            }
         }
-        return dn;
+        return buf.toString();
     }
 
     /**
      * Returns the DN in OSF format.
      * @return the DN in OSF format.
      */
+
     public String toOSFString() {
-        String dn = "";
-        for (int i = 0; i < m_rdns.size(); i++) {
-            if (i != 0) {
-                dn = "/" + dn;
+        StringBuffer buf = new StringBuffer();
+        synchronized (m_rdns) {
+            for (Iterator iter = m_rdns.iterator(); iter.hasNext();) {
+                buf.insert(0, ((RDN) iter.next()).toString());
+                if (iter.hasNext()) {
+                    buf.insert(0, "/");
+                }
             }
-            RDN rdn = (RDN)m_rdns.elementAt(i);
-            dn = rdn.toString() + dn;
         }
-        return dn;
+        return buf.toString();
     }
 
     /**
@@ -347,6 +361,15 @@ public final class DN implements Serializable {
     }
 
     /**
+     * Determines if the given string is an distinguished name or
+     * not.
+     * @return <code>true</code> or <code>false</code>.
+     */
+    public boolean isDN() {
+        return (countRDNs() > 0);
+    }
+
+    /**
      * Determines if the current DN is equal to the specified DN.
      * @param dn DN to compare against the current DN
      * @return <code>true</code> if the two DNs are the same.
@@ -372,8 +395,12 @@ public final class DN implements Serializable {
      */
     public DN getParent() {
         DN newdn = new DN();
-        for (int i = m_rdns.size() - 1; i > 0; i--) {
-            newdn.addRDN((RDN)m_rdns.elementAt(i));
+        synchronized (m_rdns) {
+            int i = m_rdns.size() - 1;
+            for (ListIterator iter = m_rdns.listIterator(m_rdns.size()); i > 0;
+                i--) {
+                newdn.addRDN((RDN) iter.previous());
+            }
         }
         return newdn;
     }
@@ -434,25 +461,20 @@ public final class DN implements Serializable {
      */
 
     public boolean isDescendantOf(DN dn) {
-
-        Vector rdns1 = dn.m_rdns;
-
-        Vector rdns2 = this.m_rdns;
-
-        int i = rdns1.size() - 1;
-        int j = rdns2.size() - 1;
-        
-        if ((j < i) || (equals(dn) == true)) 
-          return false;
-
-        for (; i>=0 && j>=0; i--, j--) {
-            RDN rdn1 = (RDN)rdns1.elementAt(i);
-            RDN rdn2 = (RDN)rdns2.elementAt(j);
+        List rdns1 = dn.m_rdns;
+        List rdns2 = this.m_rdns;
+        if ((rdns2.size() < rdns1.size()) || equals(dn)) {
+            return false;
+        }
+        ListIterator iter1 = rdns1.listIterator(rdns1.size());
+        ListIterator iter2 = rdns2.listIterator(rdns2.size());
+        for (; iter1.hasPrevious() && iter2.hasPrevious();) {
+            RDN rdn1 = (RDN) iter1.previous();
+            RDN rdn2 = (RDN) iter2.previous();
             if (!rdn2.equals(rdn1)) {
                 return false;
             }
         }
-
         return true;
     }
 

@@ -24,6 +24,7 @@ package com.sun.identity.shared.ldap.client;
 import java.util.*;
 import com.sun.identity.shared.ldap.ber.stream.*;
 import java.io.*;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
 
 /**
  * This class implements the extended match filter.
@@ -116,6 +117,74 @@ public class JDAPFilterExtensible extends JDAPFilter {
 
         BERTag element = new BERTag( m_tag, seq, true );
         return element;
+    }
+
+    public int addLDAPFilter(LinkedList bytesList) {
+        String value = m_value;
+        String defs = m_type;
+        /* Need either ':dn' or ':'oid */
+        int colonIndex = defs.lastIndexOf(':');
+        if ( colonIndex == -1 ) {
+            return 0;
+        }
+        /* Is it dn or oid? */
+        boolean isDN = false;
+        String oid = null;
+        if ( defs.regionMatches( true, colonIndex+1, "dn", 0, 2 ) ) {
+            isDN = true;
+        } else {
+            oid = defs.substring( colonIndex+1 );
+        }
+        /* Any more? */
+        defs = defs.substring( 0, colonIndex );
+        colonIndex = defs.lastIndexOf(':');
+        if ( colonIndex >= 0 ) {
+            /* Is it dn or oid? */
+            if ( defs.regionMatches( true, colonIndex+1, "dn", 0, 2 ) ) {
+                isDN = true;
+            } else {
+                oid = defs.substring( colonIndex+1 );
+            }
+        }
+        byte[] tempBytes;
+        byte[] tempTag;
+        int Length = 0;
+        // add isDN tag
+        Length += LDAPRequestParser.addBoolean(bytesList, isDN);
+        tempTag = new byte[1];
+        tempTag[0] = (byte) BERElement.CONTEXT|BERElement.MRA_DNATTRS;
+        bytesList.addFirst(tempTag);
+        Length++;
+        // add value
+        Length += LDAPRequestParser.addOctetString(bytesList, value);
+        tempTag = new byte[1];
+        tempTag[0] = (byte) BERElement.CONTEXT|BERElement.MRA_VALUE;
+        bytesList.addFirst(tempTag);
+        Length++;
+        /* Was there an attribute description? */
+        if (defs.length() > 0) {
+            Length += LDAPRequestParser.addOctetString(bytesList, defs);
+            tempTag = new byte[1];
+            tempTag[0] = (byte) (BERElement.CONTEXT|BERElement.MRA_TYPE);
+            bytesList.addFirst(tempTag);
+            Length++;
+        }
+        /* Was there an oid? */
+        if ( oid != null ) {
+            Length += LDAPRequestParser.addOctetString(bytesList, oid);
+            tempTag = new byte[1];
+            tempTag[0] = (byte) (BERTag.CONTEXT|BERTag.MRA_OID);
+            bytesList.addFirst(tempTag);
+            Length++;
+        }
+        tempBytes = LDAPRequestParser.getLengthBytes(Length);
+        bytesList.addFirst(tempBytes);
+        Length += tempBytes.length;
+        tempTag = new byte[1];
+        tempTag[0] = (byte) m_tag;
+        bytesList.addFirst(tempTag);
+        Length++;
+        return Length;
     }
 
     /**

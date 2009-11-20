@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.19 2009-01-28 05:35:02 ww203982 Exp $
+ * $Id: AMSetupDSConfig.java,v 1.20 2009-11-20 23:52:55 ww203982 Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSSchema;
 import java.util.Iterator;
+import java.util.List;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -178,12 +179,11 @@ public class AMSetupDSConfig {
     private String canonicalize(String nSuffix) {
         StringBuffer buff = new StringBuffer(1024);
         DN dn = new DN(nSuffix);
-        Vector rdns = dn.getRDNs();
-        int sz = rdns.size();
-        for (int i = 0; i < sz; i++) {
-            RDN rdn = (RDN)rdns.get(i);
+        List rdns = dn.getRDNs();
+        for (Iterator iter = rdns.iterator(); iter.hasNext();) {
+            RDN rdn = (RDN) iter.next();
             buff.append(LDAPDN.escapeRDN(rdn.toString()));
-            if (i < sz - 1) {
+            if (iter.hasNext()) {
                 buff.append(",");
             }
         }

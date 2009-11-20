@@ -21,6 +21,7 @@
  */
 package com.sun.identity.shared.ldap;
 
+import com.sun.identity.shared.ldap.ber.stream.BERElement;
 import java.util.*;
 
 /**
@@ -33,6 +34,12 @@ public class LDAPEntry implements java.io.Serializable {
     static final long serialVersionUID = -5563306228920012807L;
     private String dn = null;
     private LDAPAttributeSet attrSet = null;
+
+    private byte[] content = null;
+    private int[] offset;
+    public static final short OBJECT_NAME = 2;
+    public static final short ATTR_SET = 3;
+    protected short offsetIndex;
 
     /**
      * Constructs an empty entry.
@@ -64,15 +71,178 @@ public class LDAPEntry implements java.io.Serializable {
         attrSet = attrs;
     }
 
+    protected LDAPEntry (byte[] content, int[] offset) {
+        this.content = content;
+        this.offset = offset;
+        this.offsetIndex = OBJECT_NAME;
+    }
+
+    protected synchronized void parseComponent(final short index) {
+        if ((content == null) || (offsetIndex == LDAPMessage.END)) {
+            return;
+        }
+        int[] bytesProcessed = new int[1];
+        bytesProcessed[0] = 0;
+        switch (index) {
+            case OBJECT_NAME:
+                if (offsetIndex != OBJECT_NAME) {
+                    return;
+                }
+                if (((int) content[offset[0]]) == BERElement.OCTETSTRING) {
+                    offset[0]++;
+                    bytesProcessed[0]++;
+                    dn = LDAPParameterParser.parseOctetString(content,
+                        offset, bytesProcessed);
+                    offsetIndex = ATTR_SET;
+                } else {
+                    if (((int) content[offset[0]]) == (BERElement.OCTETSTRING |
+                        BERElement.CONSTRUCTED)) {
+                        offset[0]++;
+                        bytesProcessed[0]++;
+                        dn = LDAPParameterParser.parseOctetStringList(content,
+                            offset, bytesProcessed);
+                        offsetIndex = ATTR_SET;
+                    }
+                }
+                return;
+            case ATTR_SET:
+                if (offsetIndex == OBJECT_NAME) {
+                    parseComponent(OBJECT_NAME);
+                }
+                if (offsetIndex != ATTR_SET) {
+                    return;
+                }
+                if (((int) content[offset[0]]) == BERElement.SEQUENCE) {
+                    offset[0]++;
+                    bytesProcessed[0]++;
+                    int length = LDAPParameterParser.getLengthOctets(content,
+                        offset, bytesProcessed);
+                    bytesProcessed[0] = 0;
+                    LinkedList attrs = new LinkedList();
+                    while ((length > bytesProcessed[0]) || (length == -1)) {
+                        if ((length == -1) && (content[offset[0]] ==
+                            BERElement.EOC)) {
+                            offset[0] += 2;
+                            bytesProcessed[0] += 2;
+                            break;
+                        }
+                        if (((int) content[offset[0]]) ==
+                            BERElement.SEQUENCE) {
+                            offset[0]++;
+                            bytesProcessed[0]++;
+                            int attrLength =
+                                LDAPParameterParser.getLengthOctets(
+                                content, offset, bytesProcessed);
+                            int[] attrBytesProcessed = new int[1];
+                            attrBytesProcessed[0] = 0;
+                            LinkedList set = new LinkedList();
+                            String name = null;
+                            while ((attrLength > attrBytesProcessed[0]) ||
+                                (attrLength == -1)) {
+                                if ((attrLength == -1) && (content[offset[0]]
+                                    == BERElement.EOC)) {
+                                    offset[0] += 2;
+                                    attrBytesProcessed[0] += 2;
+                                    break;
+                                }
+                                if ((((int) content[offset[0]]) ==
+                                    BERElement.OCTETSTRING) ||
+                                    (((int) content[offset[0]]) ==
+                                    (BERElement.OCTETSTRING |
+                                    BERElement.CONSTRUCTED))) {
+                                    if (((int) content[offset[0]]) ==
+                                        BERElement.OCTETSTRING) {
+                                        offset[0]++;
+                                        attrBytesProcessed[0]++;
+                                        name = LDAPParameterParser
+                                            .parseOctetString(content, offset,
+                                            attrBytesProcessed);
+                                    } else {
+                                        offset[0]++;
+                                        attrBytesProcessed[0]++;
+                                        name =LDAPParameterParser
+                                            .parseOctetStringList(content,
+                                            offset, attrBytesProcessed);
+                                    }
+                                    if (((int) content[offset[0]]) ==
+                                        BERElement.SET) {
+                                        offset[0]++;
+                                        attrBytesProcessed[0]++;
+                                        int setLength = LDAPParameterParser
+                                            .getLengthOctets(content, offset,
+                                            attrBytesProcessed);
+                                        int[] setBytesProcessed = new int[1];
+                                        setBytesProcessed[0] = 0;
+                                        while ((setLength >
+                                            setBytesProcessed[0]) ||
+                                            (setLength == -1)) {
+                                            if ((setLength == -1) &&
+                                                (content[offset[0]] ==
+                                                BERElement.EOC)) {
+                                                offset[0] += 2;
+                                                setBytesProcessed[0] += 2;
+                                                break;
+                                            }
+                                            if (((int) content[offset[0]]) ==
+                                                BERElement.OCTETSTRING) {
+                                                offset[0]++;
+                                                setBytesProcessed[0]++;
+                                                set.add(LDAPParameterParser
+                                                    .parseOctetBytes(content,
+                                                    offset, setBytesProcessed));
+                                            } else {
+                                                if (((int) content[offset[0]])
+                                                    == (BERElement.OCTETSTRING
+                                                    | BERElement.CONSTRUCTED)) {
+                                                    offset[0]++;
+                                                    setBytesProcessed[0]++;
+                                                    set.add(LDAPParameterParser
+                                                        .parseOctetBytesList(
+                                                        content,
+                                                        offset,
+                                                        setBytesProcessed));
+                                                }
+                                            }
+                                        }
+                                        attrBytesProcessed[0] +=
+                                            setBytesProcessed[0];
+                                    }
+                                }
+                            }
+                            bytesProcessed[0] += attrBytesProcessed[0];
+                            LDAPAttribute attr = new LDAPAttribute(name);
+                            attr.setValues(set.toArray(new Object[0]));
+                            attrs.add(attr);
+                        }
+                    }
+                    if (!attrs.isEmpty()) {
+                        LDAPAttribute[] array = (LDAPAttribute[])
+                            attrs.toArray(new LDAPAttribute[0]);
+                        attrSet = new LDAPAttributeSet(array);
+                    } else {
+                        attrSet = new LDAPAttributeSet();
+                    }
+                    offsetIndex = LDAPMessage.END;
+                    content = null;
+                }
+        }            
+    }
+
     /**
      * Returns the distinguished name of the current entry.
      * @return distinguished name of the current entry.
      */
     public String getDN() {
+        if ((content != null) && (offsetIndex == OBJECT_NAME)) {
+            parseComponent(OBJECT_NAME);
+        }
         return dn;
     }
 
     void setDN(String name) {
+        if ((content != null) && (offsetIndex == OBJECT_NAME)) {
+            parseComponent(OBJECT_NAME);
+        }
         dn = name;
     }
 
@@ -82,6 +252,9 @@ public class LDAPEntry implements java.io.Serializable {
      * @see com.sun.identity.shared.ldap.LDAPAttributeSet
      */
     public LDAPAttributeSet getAttributeSet() {
+        if ((content != null) && (offsetIndex != LDAPMessage.END)) {
+            parseComponent(ATTR_SET);
+        }
         return attrSet;
     }
 
@@ -124,6 +297,9 @@ public class LDAPEntry implements java.io.Serializable {
      * @see com.sun.identity.shared.ldap.LDAPAttributeSet#getSubset
      */
     public LDAPAttributeSet getAttributeSet(String subtype) {
+        if ((content != null) && (offsetIndex != LDAPMessage.END)) {
+            parseComponent(ATTR_SET);
+        }
         return attrSet.getSubset(subtype);
     }
 
@@ -142,6 +318,9 @@ public class LDAPEntry implements java.io.Serializable {
      * @see com.sun.identity.shared.ldap.LDAPAttribute
      */
     public LDAPAttribute getAttribute(String attrName) {
+        if ((content != null) && (offsetIndex != LDAPMessage.END)) {
+            parseComponent(ATTR_SET);
+        }
         return attrSet.getAttribute(attrName);
     }
 
@@ -173,6 +352,9 @@ public class LDAPEntry implements java.io.Serializable {
      * @see com.sun.identity.shared.ldap.LDAPAttribute
      */
     public LDAPAttribute getAttribute( String attrName, String lang ) {
+        if ((content != null) && (offsetIndex != LDAPMessage.END)) {
+            parseComponent(ATTR_SET);
+        }
         return attrSet.getAttribute( attrName, lang );
     }
 
@@ -194,6 +376,9 @@ public class LDAPEntry implements java.io.Serializable {
      */
     public String toString() {
         StringBuffer sb = new StringBuffer("LDAPEntry: ");
+        if ((content != null) && (offsetIndex != LDAPMessage.END)) {
+            parseComponent(ATTR_SET);
+        }
         if ( dn != null ) {
             sb.append(dn);
             sb.append("; ");

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNMapper.java,v 1.12 2009-08-31 19:45:14 veiming Exp $
+ * $Id: DNMapper.java,v 1.13 2009-11-20 23:52:56 ww203982 Exp $
  *
  */
 
@@ -85,10 +85,11 @@ public class DNMapper {
          * "ou=services" is present in the orgName. If not add it to the
          * orgName.
          */
-        if (DN.isDN(orgName)) {
+        DN orgdnObject = new DN(orgName);
+        if (orgdnObject.isDN()) {
             // If orgName is either the baseDN or root service's DN
             // return the baseDN
-            orgdn = new DN(orgName).toRFCString();
+            orgdn = orgdnObject.toRFCString();
             String orgdnlc = orgdn.toLowerCase();
 
             // Check if orgdn is a hidden internal realm, if so return
@@ -257,7 +258,8 @@ public class DNMapper {
         ) {
             return "/";
         }
-        if (!DN.isDN(orgName)) {
+        DN orgdnObject = new DN(orgName);
+        if (!orgdnObject.isDN()) {
             return orgName;
         }
 
@@ -268,7 +270,7 @@ public class DNMapper {
         resultSet.add(orgName);
 
         // Check if orgName ends with baseDN or serviceDN
-        String orgdn = (new DN(orgName)).toRFCString();
+        String orgdn = orgdnObject.toRFCString();
         String orgdnlc = orgdn.toLowerCase();
         Set returnSet = null;
 

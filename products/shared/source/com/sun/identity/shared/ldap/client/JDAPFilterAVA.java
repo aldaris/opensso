@@ -24,6 +24,7 @@ package com.sun.identity.shared.ldap.client;
 import java.util.*;
 import com.sun.identity.shared.ldap.ber.stream.*;
 import java.io.*;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
 
 /**
  * This class implements the attribute value assertion filter.
@@ -64,4 +65,17 @@ public abstract class JDAPFilterAVA extends JDAPFilter {
         BERTag element = new BERTag(m_tag, m_ava.getBERElement(), true);
         return element;
     }
+
+    public int addLDAPFilter(LinkedList bytesList) {
+        int Length = m_ava.addLDAPFilter(bytesList);
+        // remove the element tag for Tag
+        bytesList.removeFirst();
+        Length--;
+        byte[] tempTag = new byte[1];
+        tempTag[0] = (byte) m_tag;
+        bytesList.addFirst(tempTag);
+        Length++;
+        return Length;
+    }
+
 }

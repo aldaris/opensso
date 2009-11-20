@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPFilterCondition.java,v 1.7 2009-01-28 05:35:01 ww203982 Exp $
+ * $Id: LDAPFilterCondition.java,v 1.8 2009-11-20 23:52:55 ww203982 Exp $
  *
  */
 
@@ -44,6 +44,9 @@ import com.sun.identity.shared.ldap.LDAPSearchConstraints;
 import com.sun.identity.shared.ldap.LDAPSearchResults;
 import com.sun.identity.shared.ldap.util.ConnectionPool;
 import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPBindRequest;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
+import com.sun.identity.shared.ldap.LDAPSearchRequest;
 
 import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.policy.interfaces.Condition;
@@ -403,21 +406,26 @@ public class LDAPFilterCondition implements Condition {
         boolean filterSatisfied = false;
         String[] attrs = { userRDNAttrName };      
 
-        // search the remote ldap 
-        LDAPConnection ld = connPool.getConnection();
-        LDAPSearchConstraints constraints 
-                               = ld.getSearchConstraints();
-        constraints.setMaxResults(maxResults);
-        constraints.setServerTimeLimit(timeLimit);
+        // search the remote ldap         
+        LDAPConnection ld = null;
         try {
-            // connect to the server to authenticate
-            ld.authenticate(authid, authpw);
-            LDAPSearchResults res = ld.search(baseDN, 
-                                              userSearchScope,
-                                              searchFilter,
-                                              attrs,
-                                              false,
-                                              constraints);
+            LDAPSearchResults res = null;
+            LDAPBindRequest bindRequest = LDAPRequestParser.parseBindRequest(
+                authid, authpw);
+            LDAPSearchRequest searchRequest =
+                LDAPRequestParser.parseSearchRequest(baseDN, userSearchScope,
+                searchFilter, attrs, false, timeLimit,
+                LDAPRequestParser.DEFAULT_DEREFERENCE, maxResults);
+            try {
+                ld = connPool.getConnection();
+                // connect to the server to authenticate
+                ld.authenticate(bindRequest);
+                res = ld.search(searchRequest);
+            } finally {
+                if (ld != null) {
+                    connPool.close(ld);
+                }
+            }
             if (res.hasMoreElements()) {
                 filterSatisfied =true;
             }
@@ -439,9 +447,6 @@ public class LDAPFilterCondition implements Condition {
             } else { 
                 throw (new PolicyException(errorMsg));
             }
-        } finally { 
-            // release the ldap connection back to the pool
-            connPool.close(ld); 
         }
 
         if (debug.messageEnabled()) {

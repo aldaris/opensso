@@ -496,6 +496,34 @@ public class LDAPAttribute implements java.io.Serializable {
         }
     }
 
+    protected int addLDAPAttribute(LinkedList bytesList) {
+        byte[] tempBytes;
+        int localLength = 0;
+        for (int i = values.length - 1; i >= 0; i--) {
+            tempBytes = (byte[]) values[i];
+            localLength += LDAPRequestParser.addOctetBytes(bytesList,
+                tempBytes);
+            bytesList.addFirst(BERElement.OCTETSTRING_BYTES);
+            localLength++;
+        }
+        tempBytes = LDAPRequestParser.getLengthBytes(localLength);
+        bytesList.addFirst(tempBytes);
+        localLength += tempBytes.length;
+        bytesList.addFirst(BERElement.SET_BYTES);
+        localLength++;
+        // add name
+        localLength += LDAPRequestParser.addOctetString(bytesList, getName());
+        bytesList.addFirst(BERElement.OCTETSTRING_BYTES);
+        localLength++;
+        // add whole ldap attribute length
+        tempBytes = LDAPRequestParser.getLengthBytes(localLength);
+        bytesList.addFirst(tempBytes);
+        localLength += tempBytes.length;
+        bytesList.addFirst(BERElement.SEQUENCE_BYTES);
+        localLength++;
+        return localLength;
+    }
+
     /**
      * Retrieves the string representation of attribute parameters.
      * @return string representation parameters.

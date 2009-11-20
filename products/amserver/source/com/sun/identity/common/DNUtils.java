@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNUtils.java,v 1.5 2009-01-28 05:34:56 ww203982 Exp $
+ * $Id: DNUtils.java,v 1.6 2009-11-20 23:52:54 ww203982 Exp $
  *
  */
 
@@ -41,9 +41,13 @@ public class DNUtils {
      *         format otherwise returns null.
      */
     public static String normalizeDN(String dn) {
+        return normalizeDN(new DN(dn));
+    }
+
+    public static String normalizeDN(DN dn) {
         String newDN = null;
         if (dn != null) {
-            newDN = new DN(dn).toRFCString().toLowerCase();
+            newDN = dn.toRFCString().toLowerCase();
             // in case dn is not a DN, the return value will be "".
             if (newDN.length() == 0) {
                 newDN = null;

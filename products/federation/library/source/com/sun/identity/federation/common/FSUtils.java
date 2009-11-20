@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSUtils.java,v 1.9 2009-11-03 00:50:05 madan_ranganath Exp $
+ * $Id: FSUtils.java,v 1.10 2009-11-20 23:52:57 ww203982 Exp $
  *
  */
 
@@ -50,6 +50,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -496,11 +497,11 @@ public class FSUtils {
         if (orgDN == null || orgDN.length() == 0) {
             return "/";
         }
-        if (DN.isDN(orgDN)) {
-            DN orgdn = new DN(orgDN);
-            Vector rdn = orgdn.getRDNs();
+        DN orgdn = new DN(orgDN);
+        if (orgdn.isDN()) {
+            List rdn = orgdn.getRDNs();
             if ((rdn != null) && (rdn.size() > 0)) {
-                return ((RDN)rdn.firstElement()).getValues()[0];
+                return ((RDN) rdn.get(0)).getValues()[0];
             }
         } else {
             // should be realm name

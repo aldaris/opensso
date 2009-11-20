@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.14 2009-01-28 05:35:01 ww203982 Exp $
+ * $Id: PolicyUtils.java,v 1.15 2009-11-20 23:52:55 ww203982 Exp $
  *
  */
 
@@ -55,6 +55,8 @@ import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -733,8 +735,8 @@ public class PolicyUtils {
                 StringTokenizer st = new StringTokenizer(principalsString, "|");
                 while (st.hasMoreTokens()) {
                     String principalName = (String) st.nextToken();
-                    if (DN.isDN(principalName)) {
-                        DN ldapDN = new DN(principalName);
+                    DN ldapDN = new DN(principalName);
+                    if (ldapDN.isDN()) {
                         String[] components = ldapDN.explodeDN(true);
                         if (components == null || components.length < 1) {
                             continue;
@@ -924,23 +926,21 @@ public class PolicyUtils {
          * Given a value of cn=Accounting Managers,ou=groups,dc=iplanet,dc=com,
          * this method returns com > iplanet > groups > Accounting Managers
          */
-        if (!DN.isDN(strDN)) {
+        DN dn = new DN(strDN);
+        if (!dn.isDN()) {
             displayString = strDN;
         } else {
             StringBuffer buff = new StringBuffer(1024);
-            DN dn = new DN(strDN);
-            Vector rdns = dn.getRDNs();
-            int sz = rdns.size();
-
-            for (int i = sz-1; i >= 0; --i) {
-                RDN rdn = (RDN)rdns.get(i);
+            List rdns = dn.getRDNs();
+            for (ListIterator iter = rdns.listIterator(rdns.size());
+                iter.hasPrevious();) {
+                RDN rdn = (RDN) iter.previous();
                 buff.append(rdn.getValues()[0]);
 
-                if (i > 0) {
+                if (iter.hasPrevious()) {
                     buff.append(" > ");
                 }
             }
-
             displayString = buff.toString();
         }
         return displayString;

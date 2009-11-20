@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUsers.java,v 1.6 2009-01-28 05:35:01 ww203982 Exp $
+ * $Id: LDAPUsers.java,v 1.7 2009-11-20 23:52:55 ww203982 Exp $
  *
  */
 
@@ -51,6 +51,9 @@ import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.NameNotFoundException;
 import com.sun.identity.policy.InvalidNameException;
 import com.sun.identity.policy.interfaces.Subject;
+import com.sun.identity.shared.ldap.LDAPBindRequest;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
+import com.sun.identity.shared.ldap.LDAPSearchRequest;
 
 /**
  * This class respresents a group of LDAP users
@@ -257,21 +260,27 @@ public class LDAPUsers implements Subject {
         String searchFilter = getSearchFilter(pattern);
         String[] attrs = { userRDNAttrName };
         Set validUserDNs = new HashSet();
-        LDAPConnection ld = connPool.getConnection();
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(maxResults);
-        constraints.setServerTimeLimit(timeLimit);
+        LDAPConnection ld = null;
         int status = ValidValues.SUCCESS;
 
         try {
-            // connect to the server to authenticate
-            ld.authenticate(authid, authpw);
-            LDAPSearchResults res = ld.search(baseDN, 
-                                              userSearchScope,
-                                              searchFilter,
-                                              attrs,
-                                              false,
-                                              constraints);
+            LDAPSearchResults res = null;
+            LDAPBindRequest bindRequest = LDAPRequestParser.parseBindRequest(
+                authid, authpw);
+            LDAPSearchRequest searchRequest =
+                LDAPRequestParser.parseSearchRequest(baseDN, userSearchScope,
+                searchFilter, attrs, false, timeLimit,
+                LDAPRequestParser.DEFAULT_DEREFERENCE, maxResults);
+            try {
+                ld = connPool.getConnection();
+                // connect to the server to authenticate            
+                ld.authenticate(bindRequest);
+                res = ld.search(searchRequest);
+            } finally {
+                if (ld != null) {
+                    connPool.close(ld); 
+                }
+            }
             while (res.hasMoreElements()) {
                 try {
                     LDAPEntry entry = res.next();
@@ -320,11 +329,7 @@ public class LDAPUsers implements Subject {
             } else { 
                 throw (new PolicyException(errorMsg));
             }
-        } finally { 
-            // release the ldap connection back to the pool
-            connPool.close(ld); 
         }
-
         return(new ValidValues(status, validUserDNs));
     }
 
@@ -354,16 +359,26 @@ public class LDAPUsers implements Subject {
 
         Set results = new HashSet();
         String searchFilter = getSearchFilter(pattern);
-        LDAPConnection ld = connPool.getConnection();
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(maxResults);
-        constraints.setServerTimeLimit(timeLimit);
+        LDAPConnection ld = null;
         int status = ValidValues.SUCCESS;
 
         try {
-            ld.authenticate(authid, authpw);
-            LDAPSearchResults res = ld.search(baseDN, userSearchScope,
-                searchFilter, attributeNames, false, constraints);
+            LDAPBindRequest bindRequest = LDAPRequestParser.parseBindRequest(
+                authid, authpw);
+            LDAPSearchRequest searchRequest =
+                LDAPRequestParser.parseSearchRequest(baseDN, userSearchScope,           
+                searchFilter, attributeNames, false, timeLimit,
+                LDAPRequestParser.DEFAULT_DEREFERENCE, maxResults);
+            LDAPSearchResults res = null;
+            try {
+                ld = connPool.getConnection();
+                ld.authenticate(bindRequest);
+                res = ld.search(searchRequest);
+            } finally {
+                if (ld != null) {
+                    connPool.close(ld);
+                }
+            }
             Map map = new HashMap();
             results.add(map);
 
@@ -415,11 +430,7 @@ public class LDAPUsers implements Subject {
             }
         } catch (Exception e) {
             throw (new PolicyException(e));
-        } finally {
-            // release the ldap connection back to the pool
-            connPool.close(ld);
         }
-
         return new ValidValues(status, results);
     }
 
@@ -749,22 +760,27 @@ public class LDAPUsers implements Subject {
                 + searchFilter);
             }
                
-            String[] attrs = { userRDNAttrName };      
+            String[] attrs = { userRDNAttrName };     
             // search the remote ldap and find out the user DN
-            LDAPConnection ld = connPool.getConnection();
-            LDAPSearchConstraints constraints 
-                                   = ld.getSearchConstraints();
-            constraints.setMaxResults(maxResults);
-            constraints.setServerTimeLimit(timeLimit);
+            LDAPConnection ld = null;
             try {
-                // connect to the server to authenticate
-                ld.authenticate(authid, authpw);
-                LDAPSearchResults res = ld.search(baseDN, 
-                                                  userSearchScope,
-                                                  searchFilter,
-                                                  attrs,
-                                                  false,
-                                                  constraints);
+                LDAPBindRequest bindRequest =
+                    LDAPRequestParser.parseBindRequest(authid, authpw);
+                LDAPSearchRequest searchRequest =
+                    LDAPRequestParser.parseSearchRequest(baseDN,
+                    userSearchScope, searchFilter, attrs, false, timeLimit,
+                    LDAPRequestParser.DEFAULT_DEREFERENCE, maxResults);
+                LDAPSearchResults res = null;
+                try {
+                    ld = connPool.getConnection();
+                    // connect to the server to authenticate
+                    ld.authenticate(bindRequest);
+                    res = ld.search(searchRequest);
+                } finally {
+                    if (ld != null) {
+                        connPool.close(ld);
+                    }
+                }
                 while (res.hasMoreElements()) {
                     try {
                         LDAPEntry entry = res.next();
@@ -816,9 +832,6 @@ public class LDAPUsers implements Subject {
                 }
             } catch (Exception e) {
                 throw (new PolicyException(e));
-            } finally {
-                // release ldap connection back to the pool 
-                connPool.close(ld);
             }
             
             // check if the user belongs to any of the selected users

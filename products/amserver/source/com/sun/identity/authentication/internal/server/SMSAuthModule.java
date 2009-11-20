@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSAuthModule.java,v 1.7 2009-01-28 05:34:53 ww203982 Exp $
+ * $Id: SMSAuthModule.java,v 1.8 2009-11-20 23:52:52 ww203982 Exp $
  *
  */
 
@@ -208,9 +208,10 @@ public class SMSAuthModule implements LoginModule {
                 debug.message("SMSAuthModule::login() For authentication: "
                         + "Username: " + username + " Password: <present>");
             }
-            if (com.sun.identity.shared.ldap.util.DN.isDN(username)) {
+            DN userDNObject = new DN(username);
+            if (userDNObject.isDN()) {
                 userDN = username;
-                username = (new DN(userDN)).explodeDN(true)[0];
+                username = userDNObject.explodeDN(true)[0];
             } else {
                 userDN = (String) userNameToDN.get(username);
                 if (userDN == null && !loadedInternalUsers) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.13 2009-01-28 05:34:47 ww203982 Exp $
+ * $Id: AMObjectImpl.java,v 1.14 2009-11-20 23:52:51 ww203982 Exp $
  *
  */
 
@@ -1012,7 +1012,7 @@ class AMObjectImpl implements AMObject {
 
         DN dn = new DN(entryDN);
         String parentDN = dn.getParent().toString();
-        String name = ((RDN) dn.getRDNs().firstElement()).getValues()[0];
+        String name = ((RDN) dn.getRDNs().get(0)).getValues()[0];
 
         // validateAttributeUniqueness(true);
         if (profileType == USER) {
@@ -3158,13 +3158,13 @@ class AMObjectImpl implements AMObject {
 
             int index2 = aci.lastIndexOf("\"");
             DN roleDN = new DN(aci.substring(index + 8, index2));
-            String roleName = ((RDN) roleDN.getRDNs().firstElement())
+            String roleName = ((RDN) roleDN.getRDNs().get(0))
                     .getValues()[0];
 
             String tmpdn = roleName.replace('_', ',');
 
-            if (DN.isDN(tmpdn)) {
-                DN tmpDN = new DN(tmpdn);
+            DN tmpDN = new DN(tmpdn);
+            if (tmpDN.isDN()) {
 
                 if (!tmpDN.equals(thisDN)) {
                     if (tmpDN.isDescendantOf(thisDN)) {

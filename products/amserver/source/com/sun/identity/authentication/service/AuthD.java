@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.21 2009-01-28 05:34:54 ww203982 Exp $
+ * $Id: AuthD.java,v 1.22 2009-11-20 23:52:53 ww203982 Exp $
  *
  */
 
@@ -944,8 +944,8 @@ public class AuthD  {
             authSession.setProperty("Organization", defaultOrg);
             authSession.setProperty("Host",
                 authSession.getID().getSessionServer());
-            if (DN.isDN(clientID)) {
-                DN dn = new DN(clientID);
+            DN dn = new DN(clientID);
+            if (dn.isDN()) {
                 String[] tokens = dn.explodeDN(true);
                 String id = "id=" + tokens[0] + ",ou=user," + 
                     ServiceManager.getBaseDN();

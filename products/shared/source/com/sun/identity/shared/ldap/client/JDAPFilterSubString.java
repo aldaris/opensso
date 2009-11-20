@@ -24,6 +24,7 @@ package com.sun.identity.shared.ldap.client;
 import java.util.*;
 import com.sun.identity.shared.ldap.ber.stream.*;
 import java.io.*;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
 
 /**
  * This class implements the filter substring.
@@ -119,6 +120,66 @@ public class JDAPFilterSubString extends JDAPFilter {
         BERTag element = new BERTag(BERTag.CONSTRUCTED|BERTag.CONTEXT|4,
           seq, true);
         return element;
+    }
+
+    public int addLDAPFilter(LinkedList bytesList) {
+        int Length = 0;
+        byte[] tempTag;
+        byte[] tempBytes;
+        for (int i = m_final.size() - 1; i >= 0; i--) {
+            String val = (String)m_final.elementAt(i);
+            if (val == null) {
+                continue;
+            }
+            Length += LDAPRequestParser.addOctetBytes(bytesList,
+                JDAPFilterOpers.getOctetString(val).getValue());
+            tempTag = new byte[1];
+            tempTag[0] = (byte) (BERElement.CONTEXT | 2);
+            bytesList.addFirst(tempTag);
+            Length++;
+        }
+        for (int i = m_any.size() - 1; i >= 0; i--) {
+            String val = (String)m_any.elementAt(i);
+            if (val == null) {
+                continue;
+            }
+            Length += LDAPRequestParser.addOctetBytes(bytesList,
+                JDAPFilterOpers.getOctetString(val).getValue());
+            tempTag = new byte[1];
+            tempTag[0] = (byte) (BERElement.CONTEXT | 1);
+            bytesList.addFirst(tempTag);
+            Length++;
+        }
+        for (int i = m_initial.size() - 1; i >= 0; i--) {
+            String val = (String)m_initial.elementAt(i);
+            if (val == null) {
+                continue;
+            }
+            Length += LDAPRequestParser.addOctetBytes(bytesList,
+                JDAPFilterOpers.getOctetString(val).getValue());
+            tempTag = new byte[1];
+            tempTag[0] = (byte) (BERElement.CONTEXT | 0);
+            bytesList.addFirst(tempTag);
+            Length++;
+        }
+        tempBytes = LDAPRequestParser.getLengthBytes(Length);
+        bytesList.addFirst(tempBytes);
+        Length += tempBytes.length;
+        bytesList.addFirst(BERElement.SEQUENCE_BYTES);
+        Length++;
+        // add type
+        Length += LDAPRequestParser.addOctetString(bytesList, m_type);
+        bytesList.addFirst(BERElement.OCTETSTRING_BYTES);
+        Length++;
+        // add length for the whole message
+        tempBytes = LDAPRequestParser.getLengthBytes(Length);
+        bytesList.addFirst(tempBytes);
+        Length += tempBytes.length;
+        tempTag = new byte[1];
+        tempTag[0] = (byte) (BERElement.CONSTRUCTED | BERElement.CONTEXT | 4);
+        bytesList.addFirst(tempTag);
+        Length++;
+        return Length;
     }
 
     /**

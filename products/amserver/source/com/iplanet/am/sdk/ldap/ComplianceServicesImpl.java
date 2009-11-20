@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ComplianceServicesImpl.java,v 1.9 2009-01-28 05:34:48 ww203982 Exp $
+ * $Id: ComplianceServicesImpl.java,v 1.10 2009-11-20 23:52:51 ww203982 Exp $
  *
  */
 
@@ -173,7 +173,7 @@ public class ComplianceServicesImpl implements AMConstants, IComplianceServices
         String groupName = (String) roleToGroupMap.get(dn.toString());
         if (groupName == null) { // If not, a org level admin-role
             String roleName = ((RDN) 
-                    dn.getRDNs().firstElement()).getValues()[0];
+                    dn.getRDNs().get(0)).getValues()[0];
             groupName = (String) roleToGroupMap.get(roleName);
             if (debug.messageEnabled()) {
                 debug.message("Compliance.getGroupRoleFromDN():"

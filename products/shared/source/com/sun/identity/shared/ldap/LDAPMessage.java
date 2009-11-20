@@ -23,6 +23,7 @@ package com.sun.identity.shared.ldap;
 
 import java.util.*;
 import com.sun.identity.shared.ldap.client.opers.*;
+import com.sun.identity.shared.ldap.client.JDAPBERTagDecoder;
 import com.sun.identity.shared.ldap.ber.stream.*;
 import java.io.*;
 import java.net.*;
@@ -77,13 +78,27 @@ public class LDAPMessage implements java.io.Serializable {
     public final static int LDAP_SEARCH_RESULT_REFERENCE_MESSAGE = 27;
     public final static int LDAP_EXTENDED_RESPONSE_MESSAGE = 28;
     public final static int LDAP_RESPONSE_MESSAGE = 29;
+
+    private static JDAPBERTagDecoder decoder = new JDAPBERTagDecoder();
+    public static final Integer SEQUENCE = new Integer(BERElement.SEQUENCE);
+    public static final Integer SET = new Integer(BERElement.SET);
+    public static final Integer[] EXPECTED_ROOT_TAG = {SEQUENCE, new
+        Integer(BERElement.INTEGER)};
+    public static final short END = 0;
+    public static final short CONTROLS = 1;
         
     /**
      * Internal variables
      */
-    private int m_msgid;
-    private JDAPProtocolOp m_protocolOp = null;
-    private LDAPControl m_controls[] = null;  
+    protected JDAPProtocolOp m_protocolOp = null;
+    protected LDAPControl m_controls[] = null;
+    protected int[] offset;
+    protected byte[] content = null;
+    protected int messageContentLength;
+    protected int messageBytesProcessed;
+    protected int m_msgid;
+    protected int m_type;
+    protected boolean controlsParsed;
     
     /**
      * Constructs a ldap message.
@@ -101,10 +116,236 @@ public class LDAPMessage implements java.io.Serializable {
         m_controls = controls; /* LDAPv3 additions */        
     }
 
+    protected LDAPMessage(int msgid, int type, int messageContentLength,
+        byte[] content) {
+        m_msgid = msgid;
+        m_type = type;
+        this.offset = new int[1];
+        this.offset[0] = 0;
+        this.messageContentLength = messageContentLength;
+        this.content = content;
+        this.messageBytesProcessed = 0;
+        this.controlsParsed = false;
+    }
+
     public int getMessageType() {
         return LDAP_SEND_REQUEST_MESSAGE;
     }
-    
+
+    protected static LDAPMessage getLDAPMessage(InputStream stream,
+        int[] bytesRead, int[] bytesProcessed) throws IOException,
+        LDAPException {
+        int msgid = -1;
+        int tag;
+        bytesRead[0] = 0;
+        int messageLength = 0;
+        int tagIndex = 0;
+        LDAPMessage msg = null;
+        boolean invalid = false;
+        do {
+            bytesProcessed[0] = 0;
+            tag = stream.read();
+            if (tag == -1) {
+                throw new IOException();
+            }
+            bytesRead[0]++;
+            bytesProcessed[0]++;
+            if ((tagIndex < EXPECTED_ROOT_TAG.length) &&
+                (EXPECTED_ROOT_TAG[tagIndex].intValue() != tag)) {
+                invalid = true;
+            } else {
+                tagIndex++;
+            }
+            switch (tag) {
+                case BERElement.SEQUENCE:
+                    if (invalid) {
+                        throw new IOException("invalid tag " + tag);
+                    } else {
+                        messageLength = LDAPParameterParser.getLengthOctets(
+                            stream, bytesRead, bytesProcessed);
+                    }
+                    break;
+                case BERElement.INTEGER:
+                    if (invalid) {
+                        throw new IOException("invalid tag " + tag);
+                    } else {
+                        msgid = LDAPParameterParser.parseInt(stream, bytesRead,
+                            bytesProcessed);
+                    }
+                    if (messageLength >= bytesProcessed[0]) {
+                        messageLength -= bytesProcessed[0];
+                    }
+                    break;
+                default:
+                    int contentLength = LDAPParameterParser.getLengthOctets(
+                        stream, bytesRead, bytesProcessed);
+                    if (messageLength >= bytesProcessed[0]) {
+                        messageLength -= bytesProcessed[0];
+                    }
+                    if (messageLength > 0) {
+                        byte[] messageContent = new byte[messageLength];
+                        int length = 0;
+                        int messageOffset = 0;
+                        while ((length = stream.read(messageContent,
+                            messageOffset, messageLength)) != -1) {
+                            messageLength -= length;
+                            messageOffset += length;
+                            if (messageLength == 0) {
+                                break;
+                            }
+                        }
+                        msg = LDAPMessageTagDecoder.decodeResponseMessageTag(
+                            tag, msgid, contentLength, messageContent);
+                    } else {
+                        BERSequence seq = new BERSequence();
+                        seq.addElement(new BERInteger(msgid));
+                        seq.addElement(-1, decoder, stream, bytesRead); 
+                        msg = LDAPMessage.parseMessage(seq);
+                    }
+            }
+        } while(tagIndex <= EXPECTED_ROOT_TAG.length);
+        return (LDAPMessage) msg;
+    }
+
+    public boolean equals(Object obj) {
+        LDAPMessage msg = null;
+        if (obj instanceof LDAPMessage) {
+            msg = (LDAPMessage) obj;
+        } else {
+            return false;
+        }
+
+        if (getMessageType() != msg.getMessageType()) {
+            return false;
+        }
+        if (getType() != msg.getType()) {
+            return false;
+        }
+        if (getMessageID() != msg.getMessageID()) {
+            return false;
+        }
+        LDAPControl[] thisControl = getControls();
+        LDAPControl[] otherControl = msg.getControls();
+        if (thisControl != null) {
+            if (otherControl != null) {
+                if (thisControl.length != otherControl.length) {
+                    return false;
+                } else {
+                    for (int i = 0; i < thisControl.length; i++) {
+                        if (!thisControl[i].toString().equals(
+                            otherControl[i].toString())) {
+                            return false;
+                        }
+                    }
+                }
+            } else {
+                return false;
+            }
+        } else {
+            if (otherControl != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected synchronized void parseControls() {
+        int[] controlsOffset = new int[1];
+        if (messageContentLength == -1) {
+            controlsOffset[0] = offset[0];
+        } else {
+            controlsOffset[0] = messageContentLength;
+        }
+        if (controlsOffset[0] < content.length) {
+            if ((content[controlsOffset[0]] & 0xff) == 0xa0) {
+                int[] controlsBytesProcessed = new int[1];
+                controlsBytesProcessed[0] = 0;
+                controlsOffset[0]++;
+                int length = LDAPParameterParser.getLengthOctets(content,
+                    controlsOffset, controlsBytesProcessed);
+                LinkedList controls = new LinkedList();
+                controlsBytesProcessed[0] = 0;
+                while ((length > controlsBytesProcessed[0]) ||
+                    (length == -1)) {
+                    if (length == -1) {
+                        if (content[controlsOffset[0]] == BERElement.EOC) {
+                            controlsOffset[0] += 2;
+                            controlsBytesProcessed[0] += 2;
+                            break;
+                        }
+                    }
+                    if (content[controlsOffset[0]] == BERElement.SEQUENCE) {
+                        controlsOffset[0]++;
+                        controlsBytesProcessed[0]++;
+                        int controlLength =
+                            LDAPParameterParser.getLengthOctets(content,
+                            controlsOffset, controlsBytesProcessed);
+                        String oid = null;
+                        if (content[controlsOffset[0]] ==
+                            BERElement.OCTETSTRING) {
+                            controlsOffset[0]++;
+                            controlsBytesProcessed[0]++;
+                            oid = LDAPParameterParser.parseOctetString(content,
+                                controlsOffset, controlsBytesProcessed);
+                        } else {
+                            if (content[controlsOffset[0]] ==
+                                (BERElement.OCTETSTRING |
+                                BERElement.CONSTRUCTED)) {
+                                controlsOffset[0]++;
+                                controlsBytesProcessed[0]++;
+                                oid = LDAPParameterParser.parseOctetStringList(
+                                    content, controlsOffset,
+                                    controlsBytesProcessed);
+                            }
+                        }
+                        boolean critical = false;
+                        if (content[controlsOffset[0]] == BERElement.BOOLEAN) {
+                            controlsOffset[0]++;
+                            controlsBytesProcessed[0]++;
+                            critical = LDAPParameterParser.parseBoolean(
+                                content, controlsOffset,
+                                controlsBytesProcessed);
+                        }
+                        byte[] value = null;
+                        if (content[controlsOffset[0]] ==
+                            BERElement.OCTETSTRING) {
+                            controlsOffset[0]++;
+                            controlsBytesProcessed[0]++;
+                            value = LDAPParameterParser.parseOctetBytes(
+                                content, controlsOffset,
+                                controlsBytesProcessed);
+                        } else {
+                            if (content[controlsOffset[0]] ==
+                                (BERElement.OCTETSTRING |
+                                BERElement.CONSTRUCTED)) {
+                                controlsOffset[0]++;
+                                controlsBytesProcessed[0]++;
+                                value = LDAPParameterParser
+                                    .parseOctetBytesList(
+                                    content, controlsOffset,
+                                    controlsBytesProcessed);
+                            }
+                        }
+                        controls.add(LDAPControl.createControl(oid, critical,
+                            value));
+                        if (controlLength == -1) {
+                            if (content[controlsOffset[0]] == BERElement.EOC) {
+                                controlsOffset[0] += 2;
+                                controlsBytesProcessed[0] += 2;
+                            }
+                        }
+                    }
+                }
+                if (!controls.isEmpty()) {
+                    m_controls = (LDAPControl[]) controls.toArray(
+                        new LDAPControl[0]);
+                }
+                controls = null;
+            }
+        }
+        controlsParsed = true;
+    }
+
     /**
      * Creates a ldap message from a BERElement. This method is used
      * to parse LDAP response messages
@@ -207,14 +448,18 @@ public class LDAPMessage implements java.io.Serializable {
      * @return message type.
      */
     public int getType(){
-        return m_protocolOp.getType();
+        if (m_protocolOp == null) {
+            return m_type;
+        } else {
+            return m_protocolOp.getType();
+        }
     }
 
     /**
      * Retrieves the protocol operation.
      * @return protocol operation.
      */
-    JDAPProtocolOp getProtocolOp() {
+    protected JDAPProtocolOp getProtocolOp() {
         return m_protocolOp;
     }
 
@@ -234,7 +479,10 @@ public class LDAPMessage implements java.io.Serializable {
         BERSequence seq = new BERSequence();
         BERInteger i = new BERInteger(m_msgid);
         seq.addElement(i);
-        BERElement e = m_protocolOp.getBERElement();
+        BERElement e = null;
+        if (m_protocolOp != null) {
+            e = m_protocolOp.getBERElement();
+        }
         if (e == null) {
             throw new IOException("Bad BER element");
         }
@@ -250,6 +498,10 @@ public class LDAPMessage implements java.io.Serializable {
         seq.write(s);
     }
 
+    protected String getString() {
+        return "";
+    }
+
     /**
      * Returns string representation of an LDAP message.
      * @return LDAP message.
@@ -258,8 +510,11 @@ public class LDAPMessage implements java.io.Serializable {
         StringBuffer sb = new StringBuffer("[LDAPMessage] ");
         sb.append(m_msgid);
         sb.append(" ");
-        sb.append(m_protocolOp.toString());
-
+        if (m_protocolOp != null) {
+            sb.append(m_protocolOp.toString());
+        } else {
+            sb.append(getString());
+        }
         for (int i =0; m_controls != null && i < m_controls.length; i++) {
             sb.append(" ");
             sb.append(m_controls[i].toString());
@@ -276,12 +531,16 @@ public class LDAPMessage implements java.io.Serializable {
         StringBuffer sb = new StringBuffer(" op=");
         sb.append(m_msgid);
         sb.append(" ");
-        sb.append(m_protocolOp.toString());
-
+        if (m_protocolOp != null) {
+            sb.append(m_protocolOp.toString());
+        } else {
+            sb.append(getString());
+        }
         for (int i =0; m_controls != null && i < m_controls.length; i++) {
             sb.append(" ");
             sb.append(m_controls[i].toString());
         }
         return sb;
     }
+
 }

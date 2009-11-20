@@ -29,6 +29,7 @@ import com.sun.identity.shared.ldap.util.*;
 import java.io.*;
 import java.net.*;
 import java.text.SimpleDateFormat;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * Multiple LDAPConnection clones can share a single physical connection,
@@ -243,13 +244,14 @@ class LDAPConnThread implements Runnable {
             return m_highMsgId;
     }
 
+
     /**
      * Sends LDAP request via this connection thread.
      * @param request request to send
      * @param toNotify response listener to invoke when the response
      *          is ready
      */
-    int sendRequest (LDAPConnection conn, JDAPProtocolOp request,
+    protected int sendRequest (LDAPConnection conn, JDAPProtocolOp request,
         LDAPMessageQueue toNotify, LDAPConstraints cons)
          throws LDAPException {
         
@@ -258,10 +260,9 @@ class LDAPConnThread implements Runnable {
                                        LDAPException.SERVER_DOWN );
         }
 
-        int msgId = allocateId();
+        int msgId = allocateId();                
         LDAPMessage msg = 
-            new LDAPMessage(msgId, request, cons.getServerControls());
-
+            new LDAPMessage(msgId, request, cons.getServerControls());        
         if ( toNotify != null ) {
             /* Only worry about toNotify if we expect a response... */
             m_requests.put (new Integer (msgId), toNotify);
@@ -272,8 +273,36 @@ class LDAPConnThread implements Runnable {
 
             toNotify.addRequest(msgId, conn, this, cons.getTimeLimit());
         }
-
         if (!sendRequest(msg, /*ignoreErrors=*/false)) {
+            throw new LDAPException("Server or network error",
+                                     LDAPException.SERVER_DOWN);
+        }
+        return msgId;
+    }
+
+
+    protected int sendRequest (LDAPConnection conn, LDAPRequest request,
+        LDAPMessageQueue toNotify, LDAPConstraints cons)
+         throws LDAPException {
+
+        if (m_thread == null) {
+            throw new LDAPException ( "Not connected to a server",
+                                       LDAPException.SERVER_DOWN );
+        }
+
+        int msgId = allocateId();
+        if ( toNotify != null ) {
+            /* Only worry about toNotify if we expect a response... */
+            m_requests.put (new Integer (msgId), toNotify);
+
+            /* Notify the backlog checker that there may be another outstanding
+               request */
+            resultRetrieved();
+
+            toNotify.addRequest(msgId, conn, this, cons.getTimeLimit());
+        }
+        if (!sendRequest(msgId, request, cons.getServerControls(),
+            /*ignoreErrors=*/false)) {
             throw new LDAPException("Server or network error",
                                      LDAPException.SERVER_DOWN);
         }
@@ -285,8 +314,89 @@ class LDAPConnThread implements Runnable {
             try {
                 if (m_traceOutput != null) {
                     logTraceMessage(msg.toTraceString());
-                }                    
+                }                   
                 msg.write (m_serverOutput);
+                m_serverOutput.flush();
+                return true;
+            }
+            catch (IOException e) {
+                if (!ignoreErrors) {
+                    networkError(e);
+                }
+            }
+            catch (NullPointerException e) {
+                // m_serverOutput is null bacause of network error
+                if (!ignoreErrors) {
+                    if (m_thread != null) {
+                        throw e;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
+    private boolean sendRequest (int msgId, LDAPRequest request,
+        LDAPControl controls[], boolean ignoreErrors) {
+        synchronized( m_sendRequestLock ) {
+            try {
+                if (m_traceOutput != null) {
+                    //logTraceMessage(msg.toTraceString());
+                }
+                int totalLength = 0;
+                byte[] controlsLength = null;
+                if (controls != null) {
+                    // calculate total controls length
+                    for (int i = 0; i < controls.length; i++) {
+                        totalLength += controls[i].getBytesSize();
+                    }                
+                    // parse length for controls
+                    controlsLength = LDAPRequestParser.getLengthBytes(
+                        totalLength);
+                    // controls length + contorls length length + tag
+                    totalLength += (controlsLength.length + 1);
+                }
+                // controls + content length
+                totalLength += request.getBytesSize();
+                byte[] msgIdBytes = LDAPRequestParser.getIntBytes(msgId);
+                byte[] msgIdLength = LDAPRequestParser.getLengthBytes(
+                    msgIdBytes.length);
+                // controls + content length + msg id length
+                totalLength += (msgIdBytes.length + msgIdLength.length + 1);
+                byte[] totalMessageLength = LDAPRequestParser.getLengthBytes(
+                    totalLength);
+                // write sequence tag
+                m_serverOutput.write(BERElement.SEQUENCE);
+                // write total message length
+                m_serverOutput.write(totalMessageLength);
+                // write msg id tag
+                m_serverOutput.write(BERElement.INTEGER);
+                // write msg id length
+                m_serverOutput.write(msgIdLength);
+                // write msg int
+                m_serverOutput.write(msgIdBytes);                      
+                // write content
+                LinkedList requestContents = request.getBytesLinkedList();
+                for (Iterator iter = requestContents.iterator();
+                    iter.hasNext();) {
+                    m_serverOutput.write((byte[]) iter.next());
+                }
+                if (controls != null) {
+                    // write controls tag
+                    m_serverOutput.write(BERElement.CONTEXT |
+                        BERElement.CONSTRUCTED | 0);
+                    // write controls length
+                    m_serverOutput.write(controlsLength);
+                    // write controls content
+                    for (int i = 0; i < controls.length; i++) {
+                        LinkedList controlBytes =
+                            controls[i].getBytesLinkedList();
+                        for (Iterator iter = controlBytes.iterator();
+                            iter.hasNext();) {
+                            m_serverOutput.write((byte[]) iter.next());
+                        }
+                    }
+                }
                 m_serverOutput.flush();
                 return true;
             }
@@ -534,7 +644,7 @@ class LDAPConnThread implements Runnable {
     public void run() {
 
         LDAPMessage msg = null;
-        JDAPBERTagDecoder decoder = new JDAPBERTagDecoder();
+        int[] bytesProcessed = new int[1];
         int[] nread = new int[1];        
 
         while (Thread.currentThread() == m_thread) {
@@ -546,12 +656,9 @@ class LDAPConnThread implements Runnable {
                     checkBacklog();
                 }
 
-                nread[0] = 0;                
-                BERElement element = BERElement.getElement(decoder,
-                                                           m_serverInput,
-                                                           nread);
-                msg = LDAPMessage.parseMessage(element);
-
+                nread[0] = 0;
+                msg = LDAPMessage.getLDAPMessage(m_serverInput, nread,
+                    bytesProcessed);
                 if (m_traceOutput != null) {
                     logTraceMessage(msg.toTraceString());
                 }                    
@@ -560,8 +667,6 @@ class LDAPConnThread implements Runnable {
                 // entry, thereby avoiding serialization of the entry stored in the
                 // cache
                 processResponse (msg, nread[0]);
-                Thread.yield();                
-
             } catch (Exception e)  {
                 if (Thread.currentThread() == m_thread) {
                     networkError(e);
@@ -579,7 +684,7 @@ class LDAPConnThread implements Runnable {
      * associated with the LDAP msgId.
      * @param msg New message from LDAP server
      */
-    private void processResponse (LDAPMessage msg, int size) {        
+    private void processResponse (LDAPMessage msg, int size) {       
         Integer messageID = new Integer (msg.getMessageID());        
         LDAPMessageQueue l = (LDAPMessageQueue)m_requests.get (messageID);        
         if (l == null) {            
@@ -590,10 +695,11 @@ class LDAPConnThread implements Runnable {
             LDAPMessageQueue.LDAP_SEARCH_LISTENER)) {            
             cacheSearchResult((LDAPSearchListener)l, msg, size);
         }   
-                
         l.addMessage (msg);
 
-        if (msg.getMessageType() == LDAPMessage.LDAP_RESPONSE_MESSAGE) { 
+        if ((msg.getMessageType() == LDAPMessage.LDAP_RESPONSE_MESSAGE) ||
+            (msg.getMessageType() ==
+            LDAPMessage.LDAP_EXTENDED_RESPONSE_MESSAGE)) { 
             m_requests.remove (messageID);            
             if (m_requests.size() == 0) {                
                 m_backlogCheckCounter = BACKLOG_CHKCNT;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDPartnerAccountMapper.java,v 1.3 2009-01-28 05:35:10 ww203982 Exp $
+ * $Id: NameIDPartnerAccountMapper.java,v 1.4 2009-11-20 23:52:57 ww203982 Exp $
  *
  */
 
@@ -69,8 +69,8 @@ public class NameIDPartnerAccountMapper extends DefaultPartnerAccountMapper {
     }
 
     private String getUserName(String name) {
-        if (DN.isDN(name)) {
-            DN dn1 = new DN(name);
+        DN dn1 = new DN(name);
+        if (dn1.isDN()) {
             String[] eDN = dn1.explodeDN(true);
             return removeAt(eDN[0]);
         } else {

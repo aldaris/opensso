@@ -76,39 +76,45 @@ public final class RDN implements java.io.Serializable {
         if (index <= 0)
             return;
 
-        Vector values = new Vector();
-        Vector types = new Vector();
-
-        types.addElement( rdn.substring( 0, index ).trim() );
+        LinkedList values = new LinkedList();
+        LinkedList types = new LinkedList();
+        String tempType = rdn.substring( 0, index ).trim();
+        String tempValue = null;
+        if (isValidType(tempType)) {
+            types.add(tempType);
+        } else {
+            return; // malformed
+        }
         next_plus = neutralRDN.indexOf( '+', index ); 
         while ( next_plus != -1 ) {
             m_ismultivalued = true;
-            values.addElement( rdn.substring( index + 1, next_plus).trim() );
+            tempValue = rdn.substring( index + 1, next_plus).trim();
+            if (isValidValue(tempValue)) {
+                values.add(tempValue);
+            } else {
+                return; // malformed
+            }
             index = neutralRDN.indexOf( "=", next_plus + 1 );
             if ( index == -1 ) {
                 // malformed RDN?
                 return;
             }
-            types.addElement( rdn.substring( next_plus + 1, index ).trim() );
+            tempType = rdn.substring( next_plus + 1, index ).trim();
+            if (isValidType(tempType)) {
+                types.add(tempType);
+            } else {
+                return; // malformed
+            }
             next_plus = neutralRDN.indexOf('+', index );
         }    
-        values.addElement( rdn.substring( index + 1 ).trim() );
-        
-        m_type = new String[types.size()];
-        m_value = new String[values.size()];
-
-        for( int i = 0; i < types.size(); i++ ) {
-            m_type[i] = (String)types.elementAt( i );
-            if (!isValidType(m_type[i])) {
-                m_type = m_value = null;
-                return; // malformed
-            }
-            m_value[i] = (String)values.elementAt( i );
-            if (!isValidValue(m_value[i])) {
-                m_type = m_value = null;
-                return; // malformed
-            }
+        tempValue = rdn.substring( index + 1 ).trim();
+        if (isValidValue(tempValue)) {
+            values.add(tempValue);
+        } else {
+            return; // malformed
         }
+        m_type = (String[]) types.toArray(new String[0]);
+        m_value = (String[]) values.toArray(new String[0]);
     }
     
     /**
@@ -274,7 +280,9 @@ public final class RDN implements java.io.Serializable {
             if ( i != 0) {
                 buf.append(" + ");
             }
-            buf.append( m_type[i] + "=" + m_value[i]);
+            buf.append( m_type[i]);
+            buf.append("=");
+            buf.append(m_value[i]);
         }
 
         return buf.toString();
@@ -288,6 +296,14 @@ public final class RDN implements java.io.Serializable {
     public static boolean isRDN(String rdn) {
         RDN newrdn = new RDN(rdn);
         return ((newrdn.getTypes() != null) && (newrdn.getValues() != null));
+    }
+
+    /**
+      * Determines if the specified string is a distinguished name component.
+      * @return <code>true</code> if the string is a distinguished name component.
+      */
+    public boolean isRDN() {
+        return ((getTypes() != null) && (getValues() != null));
     }
 
     /**

@@ -221,6 +221,7 @@ public class LDAPConnection
     private Vector m_responseListeners;
     private Vector m_searchListeners;
 
+    private LDAPBindRequest m_request;
     private String m_boundDN;
     private String m_boundPasswd;
     private int m_protocolVersion = LDAP_VERSION;
@@ -1199,6 +1200,10 @@ public class LDAPConnection
         authenticate(m_protocolVersion, dn, passwd, m_defaultConstraints);
     }
 
+    public void authenticate(LDAPBindRequest request) throws LDAPException {
+        authenticate(request, m_defaultConstraints);
+    }
+
     /**
      * Authenticates to the LDAP server (to which you are currently
      * connected) using the specified name and password. The
@@ -1224,6 +1229,11 @@ public class LDAPConnection
     public void authenticate(String dn, String passwd,
       LDAPSearchConstraints cons) throws LDAPException {
         authenticate(dn, passwd, (LDAPConstraints)cons);
+    }
+
+    public void authenticate(LDAPBindRequest request,
+        LDAPSearchConstraints cons) throws LDAPException {
+        authenticate(request, (LDAPConstraints) cons);
     }
 
     /**
@@ -1261,10 +1271,21 @@ public class LDAPConnection
      */
     public void authenticate(int version, String dn, String passwd,
       LDAPConstraints cons) throws LDAPException {
+        m_request = null;
         m_protocolVersion = version;
         m_boundDN = dn;
         m_boundPasswd = passwd;        
         forceNonSharedConnection();        
+        simpleBind(cons);
+    }
+
+    public void authenticate(LDAPBindRequest request, LDAPConstraints cons)
+        throws LDAPException {
+        m_request = request;
+        m_protocolVersion = request.getVersion();
+        m_boundDN = request.getDN();
+        m_boundPasswd = request.getPassword();
+        forceNonSharedConnection();
         simpleBind(cons);
     }
 
@@ -1438,7 +1459,7 @@ public class LDAPConnection
         if (cons == null) {
             cons = m_defaultConstraints;
         }
-
+        m_request = null;
         m_boundDN = dn;
         m_boundPasswd = passwd;
         m_protocolVersion = version;
@@ -1453,6 +1474,28 @@ public class LDAPConnection
             listener, cons);
 
         return listener;                
+    }
+
+    public LDAPResponseListener authenticate(LDAPBindRequest request,
+        LDAPResponseListener listener, LDAPConstraints cons) throws
+        LDAPException {
+        if (cons == null) {
+            cons = m_defaultConstraints;
+        }
+        m_request = request;
+        m_boundDN = request.getDN();
+        m_boundPasswd = request.getPassword();
+        m_protocolVersion = request.getVersion();
+
+        forceNonSharedConnection();
+
+        if ((listener == null) || (!listener.isAsynchOp())) {
+            listener = new LDAPResponseListener(/*asynchOp=*/true);
+        }
+
+        sendRequest(request, listener, cons);
+
+        return listener;
     }
     
     /**
@@ -1485,6 +1528,11 @@ public class LDAPConnection
                                              LDAPResponseListener listener) 
                                              throws LDAPException {    
         return authenticate( version, dn, passwd, listener, m_defaultConstraints );
+    }
+
+    public LDAPResponseListener authenticate(LDAPBindRequest request,
+        LDAPResponseListener listener) throws LDAPException {
+        return authenticate(request, listener, m_defaultConstraints);
     }
     
     /** 
@@ -1530,6 +1578,10 @@ public class LDAPConnection
         authenticate(m_protocolVersion, dn, passwd, m_defaultConstraints);
     }
 
+    public void bind(LDAPBindRequest request) throws LDAPException {
+        authenticate(request, m_defaultConstraints);
+    }
+
     /**
      * Authenticates to the LDAP server (to which you are currently
      * connected) using the specified name and password. The
@@ -1546,6 +1598,11 @@ public class LDAPConnection
     public void bind(String dn, String passwd,
                      LDAPConstraints cons) throws LDAPException {
         authenticate(m_protocolVersion, dn, passwd, cons);
+    }
+
+    public void bind(LDAPBindRequest request,
+                     LDAPConstraints cons) throws LDAPException {
+        authenticate(request, cons);
     }
 
     /**
@@ -1764,9 +1821,13 @@ public class LDAPConnection
             m_referralConnection = null;
             
             setBound(false);
-            sendRequest(new JDAPBindRequest(m_protocolVersion, m_boundDN,
+            if (m_request != null) {
+                sendRequest(m_request, myListener, cons);
+            } else {
+                sendRequest(new JDAPBindRequest(m_protocolVersion, m_boundDN,
                                             m_boundPasswd),
                         myListener, cons);
+            }
             checkMsg( myListener.getResponse() );
 
             setBound(true);
@@ -1777,13 +1838,13 @@ public class LDAPConnection
         }
     }
 
+
     /**
      * Send a request to the server
      */
     protected synchronized int sendRequest(JDAPProtocolOp oper,
         LDAPMessageQueue myListener, LDAPConstraints cons) throws
         LDAPException {
-
         boolean requestSent=false;
         boolean restoreTried=false;
         int msgId = -1;
@@ -1836,6 +1897,65 @@ public class LDAPConnection
                 LDAPException.OTHER);
         }
         return msgId;
+    }
+
+    /**
+     * Send a request to the server
+     */
+    protected synchronized int sendRequest(LDAPRequest request,
+        LDAPMessageQueue myListener, LDAPConstraints cons) throws
+        LDAPException {
+
+        boolean requestSent=false;
+        boolean restoreTried=false;
+        int msgId = -1;
+
+        while (!requestSent) {
+
+            try {
+                msgId = m_thread.sendRequest(this, request, myListener, cons);
+
+                /**
+                  * In Java, a lost socket connected is often not detected until
+                  * a read is attempted following a write. Wait for the response
+                  * from the server to be sure the connection is really there.
+                  */
+                if (!myListener.isAsynchOp()) {
+                    myListener.waitFirstMessage(msgId);
+                }
+
+                requestSent=true;
+            }
+
+            catch (IllegalArgumentException e) {
+                throw new LDAPException(e.getMessage(), LDAPException.PARAM_ERROR);
+            }
+            catch(NullPointerException e) {
+                if (isConnected() || restoreTried) {
+                    break; // give up 
+                }
+                // else try to restore the connection
+            }
+            catch (LDAPException e) {
+                if (e.getLDAPResultCode() != e.SERVER_DOWN || restoreTried) {
+                    throw e; // give up
+                }
+                // else try to restore the connection
+            }
+            // Try to restore the connection if needed, but no more then once
+            if (!requestSent && !restoreTried) {
+                restoreTried = true;
+                myListener.reset();
+                boolean rebind = !(request.getType() ==
+                    JDAPProtocolOp.BIND_REQUEST);
+                restoreConnection(rebind);
+             }
+         }
+         if (!requestSent) {
+             throw new LDAPException("Failed to send request",
+                 LDAPException.OTHER);
+         }
+         return msgId;
     }
 
     /**
@@ -2000,6 +2120,10 @@ public class LDAPConnection
         return read (DN, null, m_defaultConstraints);
     }
 
+    public LDAPEntry read(LDAPSearchRequest request) throws LDAPException {
+        return read (request, m_defaultConstraints);
+    }
+
     /**
      * Reads the entry for the specified distiguished name (DN) and retrieves all
      * attributes for the entry. This method allows the user to specify the
@@ -2126,9 +2250,26 @@ public class LDAPConnection
         LDAPEntry entry = results.next();
         
         // cleanup required for referral connections
-        while (results.hasMoreElements()) {
+        /*while (results.hasMoreElements()) {
             results.nextElement();
+        }*/
+        
+        return entry;
+    }
+
+    public LDAPEntry read (LDAPSearchRequest request,
+        LDAPSearchConstraints cons) throws LDAPException {
+        LDAPSearchResults results =
+            search (request, cons);
+        if (results == null) {
+            return null;
         }
+        LDAPEntry entry = results.next();
+        
+        // cleanup required for referral connections
+        /*while (results.hasMoreElements()) {
+            results.nextElement();
+        }*/
         
         return entry;
     }
@@ -2442,6 +2583,11 @@ public class LDAPConnection
         return search( base, scope, filter, attrs, attrsOnly, m_defaultConstraints);
     }
 
+    public LDAPSearchResults search(LDAPSearchRequest request)
+        throws LDAPException {
+        return search(request, m_defaultConstraints);
+    }
+
     /**
      * Performs the search specified by the criteria that you enter.
      * This method also allows you to specify constraints for the search
@@ -2642,6 +2788,148 @@ public class LDAPConnection
         return returnValue;
     }
 
+    public LDAPSearchResults search(LDAPSearchRequest request,
+        LDAPSearchConstraints cons)
+        throws LDAPException {
+        if (cons == null) {
+            cons = m_defaultConstraints;
+        }
+
+        LDAPSearchResults returnValue =
+            new LDAPSearchResults(this, cons, request.getBaseDN(),
+                request.getScope(), request.getFilter(),
+                request.getAttributes(), request.getAttributesOnly());
+        Vector cacheValue = null;
+        Long key = null;
+        boolean isKeyValid = true;
+
+        try {
+            // get entry from cache which is a vector of JDAPMessages
+            if (m_cache != null) {
+                // create key for cache entry using search arguments
+                
+                key = m_cache.createKey(getHost(), getPort(),
+                    request.getBaseDN(), request.getFilter(),
+                    request.getScope(), request.getAttributes(), m_boundDN,
+                    cons);
+
+                cacheValue = (Vector)m_cache.getEntry(key);
+
+                if (cacheValue != null) {
+                    return (new LDAPSearchResults(cacheValue, this, cons,
+                        request.getBaseDN(), request.getScope(),
+                        request.getFilter(), request.getAttributes(),
+                        request.getAttributesOnly()));
+                }                
+            }
+        } catch (LDAPException e) {
+            isKeyValid = false;
+            printDebug("Exception: "+e);
+        }
+        ////??
+        //catch (Exception ex) {//
+           //ex.printStackTrace(System.out);// 
+        //}//
+
+        checkConnection(/*rebind=*/true);
+
+        /* Is this a persistent search? */
+        boolean isPersistentSearch = false;
+        LDAPControl[] controls =
+            (LDAPControl[])getOption(LDAPv3.SERVERCONTROLS, cons);
+        for (int i = 0; (controls != null) && (i < controls.length); i++) {
+            if ( controls[i].getType() ==
+                 com.sun.identity.shared.ldap.LDAPControl.LDAP_PERSIST_SEARCH_CONTROL) {
+                isPersistentSearch = true;
+                break;
+            }
+        }
+
+        // Persistent search is an asynchronous operation
+        LDAPSearchListener myListener = isPersistentSearch ? new LDAPSearchListener(/*asynchOp=*/true, cons) :
+                                        getSearchListener ( cons );
+
+        int deref = request.getDereference();
+
+        // if using cache, then need to add the key to the search listener.
+        if ((m_cache != null) && (isKeyValid)) {
+            myListener.setKey(key);
+
+        }
+        int msgId;
+        try {
+            msgId = sendRequest (request, myListener, cons);
+        }
+        catch (LDAPException e) {
+            myListener = null;
+            throw e;                    
+        }
+
+        /* For a persistent search, don't wait for a first result, because
+           there may be none at this time if changesOnly was specified in
+           the control.
+        */
+        if ( isPersistentSearch ) {
+            returnValue.associatePersistentSearch (myListener);
+
+        } else if ( cons.getBatchSize() == 0 ) {
+            /* Synchronous search if all requested at once */
+            try {
+                /* Block until all results are in */
+                Vector allResponses = myListener.completeSearchOperation(
+                    msgId);                
+                LDAPMessage response = (LDAPMessage) allResponses.remove(
+                    allResponses.size() - 1);
+                Enumeration results = allResponses.elements();
+                checkSearchMsg(returnValue, response, cons,
+                    request.getBaseDN(), request.getScope(),
+                    request.getFilter(), request.getAttributes(),
+                    request.getAttributesOnly());                
+
+                while (results.hasMoreElements ()) {
+                    LDAPMessage msg = (LDAPMessage)results.nextElement();
+
+                    checkSearchMsg(returnValue, msg, cons, request.getBaseDN(),
+                        request.getScope(), request.getFilter(),
+                        request.getAttributes(), request.getAttributesOnly());
+                }
+            } finally {
+                releaseSearchListener (myListener);
+            }
+        } else {
+            /*
+            * Asynchronous to retrieve one at a time, check to make sure
+            * the search didn't fail
+            */
+            LDAPMessage firstResult = myListener.getResponse();
+            if (firstResult.getMessageType() ==
+                LDAPMessage.LDAP_RESPONSE_MESSAGE) {
+                try {
+                    checkSearchMsg(returnValue, firstResult, cons,
+                        request.getBaseDN(), request.getScope(),
+                        request.getFilter(),
+                        request.getAttributes(), request.getAttributesOnly());
+                } finally {
+                    releaseSearchListener (myListener);
+                }
+            } else {
+                try {
+                    checkSearchMsg(returnValue, firstResult, cons,
+                        request.getBaseDN(), request.getScope(),
+                        request.getFilter(), request.getAttributes(),
+                        request.getAttributesOnly());
+                } catch ( LDAPException ex ) {
+                    myListener = null;
+                    throw ex;
+                }
+
+                /* we let this listener get garbage collected.. */
+                returnValue.associate (myListener, firstResult.getMessageID());
+            }
+        }
+        return returnValue;
+    }
+
     void checkSearchMsg(LDAPSearchResults value, LDAPMessage msg,
         LDAPSearchConstraints cons, String dn, int scope, String filter,
         String attrs[], boolean attrsOnly) throws LDAPException {
@@ -2651,7 +2939,7 @@ public class LDAPConnection
         try {
             checkMsg (msg);
             // not the JDAPResult
-            if (msg.getProtocolOp().getType() != JDAPProtocolOp.SEARCH_RESULT) {
+            if (msg.getType() != JDAPProtocolOp.SEARCH_RESULT) {
                 value.add (msg);
             }
         } catch (LDAPReferralException e) {
@@ -2662,7 +2950,7 @@ public class LDAPConnection
                     scope, filter, attrs, attrsOnly, null, null, null, res);
             }
             catch (LDAPException ex) {
-                if (msg.getProtocolOp().getType() ==
+                if (msg.getType() ==
                     JDAPProtocolOp.SEARCH_RESULT_REFERENCE) {
                     // Ignore Search Result Referral Errors ?
                     if (cons.getReferralErrors() == cons.REFERRAL_ERROR_CONTINUE) {
@@ -2736,6 +3024,11 @@ public class LDAPConnection
         return compare(DN, attr, m_defaultConstraints);
     }
 
+    public boolean compare(LDAPCompareRequest request)
+        throws LDAPException {
+        return compare(request, m_defaultConstraints);
+    }
+
     public boolean compare( String DN, LDAPAttribute attr,
         LDAPConstraints cons) throws LDAPException {
         checkConnection(/*rebind=*/true);
@@ -2775,6 +3068,42 @@ public class LDAPConnection
         return false; /* this should never be executed */
     }
 
+    public boolean compare(LDAPCompareRequest request,
+        LDAPConstraints cons) throws LDAPException {
+        checkConnection(/*rebind=*/true);
+
+        LDAPResponseListener myListener = getResponseListener ();
+        LDAPMessage response;
+        try {
+            sendRequest (request, myListener, cons);
+            response = myListener.getResponse ();
+
+            int resultCode = ((LDAPResponse)response).getResultCode();
+            if (resultCode == JDAPResult.COMPARE_FALSE) {
+                return false;
+            }
+            if (resultCode == JDAPResult.COMPARE_TRUE) {
+                return true;
+            }
+
+            checkMsg (response);
+
+        } catch (LDAPReferralException e) {
+            Vector res = new Vector();
+            performReferrals(e, cons, JDAPProtocolOp.COMPARE_REQUEST,
+                request.getDN(), 0, null, null, false, null, null,
+                request.getLDAPAttribute(), res);
+            boolean bool = false;
+            if (res.size() > 0) {
+               bool = ((Boolean)res.elementAt(0)).booleanValue();
+            }
+            return bool;
+        } finally {
+            releaseResponseListener (myListener);
+        }
+        return false; /* this should never be executed */
+    }
+
     /**
      * @deprecated Please use the method signature where <CODE>cons</CODE> is
      * <CODE>LDAPConstraints</CODE> instead of <CODE>LDAPSearchConstraints</CODE>
@@ -2784,6 +3113,11 @@ public class LDAPConnection
         return compare(DN, attr, (LDAPConstraints) cons);
     }        
     
+    public boolean compare(LDAPCompareRequest request,
+        LDAPSearchConstraints cons) throws LDAPException {
+        return compare(request, (LDAPConstraints) cons);
+    }
+
     /**
      * Adds an entry to the directory. <P>
      *
@@ -2842,6 +3176,10 @@ public class LDAPConnection
         add(entry, m_defaultConstraints);
     }
 
+    public void add(LDAPAddRequest request) throws LDAPException {
+        add(request, m_defaultConstraints);
+    }
+
     /**
      * Adds an entry to the directory and allows you to specify preferences
      * for this LDAP add operation by using an
@@ -2883,6 +3221,25 @@ public class LDAPConnection
         }
     }
 
+    public void add(LDAPAddRequest request, LDAPConstraints cons )
+        throws LDAPException {
+        checkConnection(/*rebind=*/true);
+
+        LDAPResponseListener myListener = getResponseListener ();
+        LDAPMessage response;
+        try {
+            sendRequest (request, myListener, cons);
+            response = myListener.getResponse();
+            checkMsg (response);
+        } catch (LDAPReferralException e) {
+            performReferrals(e, cons, JDAPProtocolOp.ADD_REQUEST,
+                null, 0, null, null, false, null, request.getLDAPEntry(), null,
+                null);
+        } finally {
+            releaseResponseListener (myListener);
+        }
+    }
+
     /**
      * @deprecated Please use the method signature where <CODE>cons</CODE> is
      * <CODE>LDAPConstraints</CODE> instead of <CODE>LDAPSearchConstraints</CODE>
@@ -2890,6 +3247,11 @@ public class LDAPConnection
     public void add( LDAPEntry entry, LDAPSearchConstraints cons )
         throws LDAPException {
         add(entry, (LDAPConstraints) cons);
+    }
+
+    public void add(LDAPAddRequest request, LDAPSearchConstraints cons )
+        throws LDAPException {
+        add(request, (LDAPConstraints) cons);
     }
 
     /**
@@ -2911,6 +3273,12 @@ public class LDAPConnection
         throws LDAPException {
 
         return extendedOperation(op, m_defaultConstraints);
+    }
+
+    public LDAPExtendedOperation extendedOperation(LDAPExtendedRequest request)
+        throws LDAPException {
+
+        return extendedOperation(request, m_defaultConstraints);
     }
 
     /**
@@ -2957,6 +3325,31 @@ public class LDAPConnection
         return new LDAPExtendedOperation( resultID, results );
     }
 
+    public LDAPExtendedOperation extendedOperation(LDAPExtendedRequest request,
+                                                   LDAPConstraints cons)
+        throws LDAPException {
+        checkConnection(/*rebind=*/true);
+
+        LDAPResponseListener myListener = getResponseListener ();
+        LDAPMessage response = null;
+        byte[] results = null;
+        String resultID;
+
+        try {
+            sendRequest (request, myListener, cons );
+            response = myListener.getResponse();
+            checkMsg (response);
+            LDAPExtendedResponse res = (LDAPExtendedResponse)response;
+            results = res.getValue();
+            resultID = res.getID();
+        } catch (LDAPReferralException e) {
+            return performExtendedReferrals(e, cons, request);
+        } finally {
+            releaseResponseListener (myListener);
+        }
+        return new LDAPExtendedOperation( resultID, results );
+    }
+
     /**
      * @deprecated Please use the method signature where <CODE>cons</CODE> is
      * <CODE>LDAPConstraints</CODE> instead of <CODE>LDAPSearchConstraints</CODE>
@@ -2966,6 +3359,13 @@ public class LDAPConnection
         throws LDAPException {
 
         return extendedOperation(op, (LDAPConstraints)cons);
+    }
+
+    public LDAPExtendedOperation extendedOperation(LDAPExtendedRequest request,
+                                                   LDAPSearchConstraints cons)
+        throws LDAPException {
+
+        return extendedOperation(request, (LDAPConstraints)cons);
     }
 
     /**
@@ -3003,6 +3403,10 @@ public class LDAPConnection
         modify(DN, mod, m_defaultConstraints);
     }
 
+    public void modify(LDAPModifyRequest request) throws LDAPException {
+        modify(request, m_defaultConstraints);
+    }
+
    /**
     * Makes a single change to an existing entry in the directory and
     * allows you to specify preferences for this LDAP modify operation
@@ -3033,6 +3437,11 @@ public class LDAPConnection
         LDAPSearchConstraints cons ) throws LDAPException {
         modify (DN, mod, (LDAPConstraints)cons);
     }        
+
+    public void modify(LDAPModifyRequest request,
+        LDAPSearchConstraints cons) throws LDAPException {
+        modify(request, (LDAPConstraints)cons);
+    }
 
     /**
      * Makes a set of changes to an existing entry in the directory.
@@ -3169,6 +3578,25 @@ public class LDAPConnection
          }
     }
 
+    public void modify (LDAPModifyRequest request,
+         LDAPConstraints cons) throws LDAPException {
+         checkConnection(/*rebind=*/true);
+
+         LDAPResponseListener myListener = getResponseListener ();
+         LDAPMessage response = null;
+         try {
+             sendRequest (request, myListener, cons);
+             response = myListener.getResponse();
+             checkMsg (response);
+         } catch (LDAPReferralException e) {
+             performReferrals(e, cons, JDAPProtocolOp.MODIFY_REQUEST,
+                 request.getDN(), 0, null, null, false,
+                 request.getLDAPModification(), null, null, null);
+         } finally {
+             releaseResponseListener (myListener);
+         }
+    }
+
     /**
      * @deprecated Please use the method signature where <CODE>cons</CODE> is
      * <CODE>LDAPConstraints</CODE> instead of <CODE>LDAPSearchConstraints</CODE>
@@ -3197,6 +3625,10 @@ public class LDAPConnection
      */
     public void delete( String DN ) throws LDAPException {
         delete(DN, m_defaultConstraints);
+    }
+
+    public void delete(LDAPDeleteRequest request) throws LDAPException {
+        delete(request, m_defaultConstraints);
     }
 
     /**
@@ -3232,6 +3664,24 @@ public class LDAPConnection
         }
     }
 
+    public void delete(LDAPDeleteRequest request, LDAPConstraints cons )
+        throws LDAPException {
+        checkConnection(/*rebind=*/true);
+
+        LDAPResponseListener myListener = getResponseListener ();
+        LDAPMessage response;
+        try {
+            sendRequest (request, myListener, cons);
+            response = myListener.getResponse();
+            checkMsg (response);
+        } catch (LDAPReferralException e) {
+            performReferrals(e, cons, JDAPProtocolOp.DEL_REQUEST,
+                request.getDN(), 0, null, null, false, null, null, null, null);
+        } finally {
+            releaseResponseListener (myListener);
+        }
+    }
+
     /**
      * @deprecated Please use the method signature where <CODE>cons</CODE> is
      * <CODE>LDAPConstraints</CODE> instead of <CODE>LDAPSearchConstraints</CODE>
@@ -3239,6 +3689,11 @@ public class LDAPConnection
     public void delete( String DN, LDAPSearchConstraints cons )
         throws LDAPException {
         delete(DN, (LDAPConstraints)cons);
+    }
+
+    public void delete(LDAPDeleteRequest request, LDAPSearchConstraints cons )
+        throws LDAPException {
+        delete(request, (LDAPConstraints)cons);
     }
 
     /**
@@ -3278,6 +3733,11 @@ public class LDAPConnection
         rename(DN, newRDN, null, deleteOldRDN);
     }
 
+    public void rename (LDAPModifyRDNRequest request)
+        throws LDAPException {
+        rename(request, m_defaultConstraints);
+    }
+
     /**
      * Renames an existing entry in the directory. <P>
      *
@@ -3315,7 +3775,7 @@ public class LDAPConnection
                         LDAPConstraints cons )
         throws LDAPException {
         rename(DN, newRDN, null, deleteOldRDN, cons);
-    }
+    }    
 
     /**
      * @deprecated Please use the method signature where <CODE>cons</CODE> is
@@ -3410,6 +3870,24 @@ public class LDAPConnection
         }
     }
 
+    public void rename (LDAPModifyRDNRequest request, LDAPConstraints cons)
+        throws LDAPException {
+        checkConnection(/*rebind=*/true);
+
+        LDAPResponseListener myListener = getResponseListener ();
+        try {
+            sendRequest (request, myListener, cons);
+            LDAPMessage response = myListener.getResponse();
+            checkMsg (response);
+        } catch (LDAPReferralException e) {
+            performReferrals(e, cons, JDAPProtocolOp.MODIFY_RDN_REQUEST,
+                request.getOldDN(), 0, request.getNewRDN(), null,
+                request.getDeleteOldDN(), null, null, null, null);
+        } finally {
+            releaseResponseListener (myListener);
+        }
+    }
+
     /**
      * @deprecated Please use the method signature where <CODE>cons</CODE> is
      * <CODE>LDAPConstraints</CODE> instead of <CODE>LDAPSearchConstraints</CODE>
@@ -3422,6 +3900,12 @@ public class LDAPConnection
         throws LDAPException {
         rename(DN, newRDN, newParentDN, deleteOldRDN, (LDAPConstraints)cons);
     }        
+
+    public void rename (LDAPModifyRDNRequest request,
+                           LDAPSearchConstraints cons)
+        throws LDAPException {
+        rename(request, (LDAPConstraints)cons);
+    }
 
     /**
      * Adds an entry to the directory.
@@ -3441,6 +3925,12 @@ public class LDAPConnection
                                     LDAPResponseListener listener)
                                     throws LDAPException{    
         return add(entry, listener, m_defaultConstraints);
+    }
+
+    public LDAPResponseListener add(LDAPAddRequest request,
+                                    LDAPResponseListener listener)
+                                    throws LDAPException{    
+        return add(request, listener, m_defaultConstraints);
     }
  
     /**
@@ -3488,6 +3978,25 @@ public class LDAPConnection
         return listener;
     }
 
+    public LDAPResponseListener add(LDAPAddRequest request,
+                                    LDAPResponseListener listener,
+                                    LDAPConstraints cons)
+                                    throws LDAPException {
+
+        if (cons == null) {
+            cons = m_defaultConstraints;
+        }
+        
+        checkConnection(/*rebind=*/true);
+
+        if ((listener == null) || (!listener.isAsynchOp())){                        
+            listener = new LDAPResponseListener(/*asynchOp=*/true);
+        }
+
+        sendRequest (request, listener, cons);        
+        return listener;
+    }
+
     /**
      * Authenticates to the LDAP server (to which the object is currently
      * connected) using the specified name and password. If the object
@@ -3515,6 +4024,12 @@ public class LDAPConnection
                                      LDAPResponseListener listener)
                                      throws LDAPException {        
         return bind(version, dn, passwd, listener, m_defaultConstraints);
+    }
+
+    public LDAPResponseListener bind(LDAPBindRequest request,
+                                     LDAPResponseListener listener)
+                                     throws LDAPException {
+        return bind(request, listener, m_defaultConstraints);
     }
 
     /**
@@ -3578,6 +4093,13 @@ public class LDAPConnection
         return bind( m_protocolVersion, dn, passwd, listener, cons );
     }
 
+    public LDAPResponseListener bind(LDAPBindRequest request,                                 
+                                     LDAPResponseListener listener,
+                                     LDAPConstraints cons)
+                                     throws LDAPException {
+        return bind(request, listener, cons );
+    }
+
     /**
      * Authenticates to the LDAP server (to which the object is currently
      * connected) using the specified name and password and allows you
@@ -3611,7 +4133,7 @@ public class LDAPConnection
                                      throws LDAPException{
         return authenticate( version, dn, passwd, listener, cons );
     }
-    
+
     /**
      * Deletes the entry for the specified DN from the directory.
      * 
@@ -3629,6 +4151,12 @@ public class LDAPConnection
                                        LDAPResponseListener listener)
                                        throws LDAPException {            
         return delete(dn, listener, m_defaultConstraints);
+    }
+
+    public LDAPResponseListener delete(LDAPDeleteRequest request,
+                                       LDAPResponseListener listener)
+                                       throws LDAPException {            
+        return delete(request, listener, m_defaultConstraints);
     }
 
     /**
@@ -3662,6 +4190,25 @@ public class LDAPConnection
         
         return listener;        
     }
+
+    public LDAPResponseListener delete(LDAPDeleteRequest request,
+                                      LDAPResponseListener listener,
+                                      LDAPConstraints cons)
+                                       throws LDAPException {
+        if (cons == null) {
+            cons = m_defaultConstraints;
+        }
+
+        checkConnection(/*rebind=*/true);
+
+        if ((listener == null) || (!listener.isAsynchOp())) {            
+            listener = new LDAPResponseListener(/*asynchOp=*/true);
+        }
+
+        sendRequest (request, listener, cons);        
+        
+        return listener;        
+    }
     
     /**
      * Makes a single change to an existing entry in the directory.
@@ -3687,6 +4234,12 @@ public class LDAPConnection
         return modify(dn, mod, listener, m_defaultConstraints);
     }
     
+    public LDAPResponseListener modify(LDAPModifyRequest request,
+                                       LDAPResponseListener listener)
+                                       throws LDAPException {       
+        return modify(request, listener, m_defaultConstraints);
+    }
+
     /**
      * Makes a single change to an existing entry in the directory.
      * For example, changes the value of an attribute, adds a new attribute
@@ -3724,6 +4277,24 @@ public class LDAPConnection
         LDAPModification[] modList = { mod };
 
         sendRequest (new JDAPModifyRequest (dn, modList), listener, cons);                
+        return listener;        
+    }
+
+    public LDAPResponseListener modify(LDAPModifyRequest request,
+                                       LDAPResponseListener listener,
+                                       LDAPConstraints cons)
+                                       throws LDAPException {
+        if (cons == null) {
+            cons = m_defaultConstraints;
+        }
+
+        checkConnection(/*rebind=*/true);
+
+        if ((listener == null) || (!listener.isAsynchOp())) {            
+            listener = new LDAPResponseListener(/*asynchOp=*/true);
+        }
+
+        sendRequest (request, listener, cons);                
         return listener;        
     }
 
@@ -3813,6 +4384,12 @@ public class LDAPConnection
         return rename(dn, newRdn, deleteOldRdn, listener, m_defaultConstraints);
     }
 
+    public LDAPResponseListener rename(LDAPModifyRDNRequest request,
+                                       LDAPResponseListener listener)
+                                       throws LDAPException{    
+        return rename(request, listener, m_defaultConstraints);
+    }
+
     /**
      * Renames an existing entry in the directory.
      * 
@@ -3849,6 +4426,26 @@ public class LDAPConnection
         
         sendRequest (new JDAPModifyRDNRequest (dn, newRdn, deleteOldRdn),
                      listener, cons);
+        
+        return listener;       
+    }
+
+    public LDAPResponseListener rename(LDAPModifyRDNRequest request,
+                                       LDAPResponseListener listener,
+                                       LDAPConstraints cons)
+                                       throws LDAPException {    
+        if (cons == null) {
+            cons = m_defaultConstraints;
+        }
+        
+        checkConnection(/*rebind=*/true);
+
+        if ((listener == null) || (!listener.isAsynchOp())) {
+            listener = new LDAPResponseListener(/*asynchOp=*/true);
+        }
+
+        
+        sendRequest (request, listener, cons);
         
         return listener;       
     }
@@ -3891,6 +4488,12 @@ public class LDAPConnection
                                      throws LDAPException {        
         return search(base, scope, filter, attrs, typesOnly,
                       listener, m_defaultConstraints);
+    }
+
+    public LDAPSearchListener search(LDAPSearchRequest request,
+                                     LDAPSearchListener listener)
+                                     throws LDAPException {        
+        return search(request, listener, m_defaultConstraints);
     }
 
     /**
@@ -3958,6 +4561,24 @@ public class LDAPConnection
         sendRequest (request, listener, cons);
         return listener;                
     }
+
+    public LDAPSearchListener search(LDAPSearchRequest request,
+                                     LDAPSearchListener listener,
+                                     LDAPSearchConstraints cons)
+                                     throws LDAPException {
+        if (cons == null) {
+            cons = m_defaultConstraints;
+        }
+
+        checkConnection(/*rebind=*/true);
+        
+        if ((listener == null) || (!listener.isAsynchOp())) {
+            listener = new LDAPSearchListener(/*asynchOp=*/true, cons);
+        }       
+        
+        sendRequest (request, listener, cons);
+        return listener;                
+    }
     
     /**
      * Compare an attribute value with one in the directory. The result can 
@@ -3979,6 +4600,12 @@ public class LDAPConnection
                                         LDAPResponseListener listener)
                                         throws LDAPException {
         return compare(dn, attr, listener, m_defaultConstraints);
+    }
+
+    public LDAPResponseListener compare(LDAPCompareRequest request,
+                                        LDAPResponseListener listener)
+                                        throws LDAPException {
+        return compare(request, listener, m_defaultConstraints);
     }
     
     /**
@@ -4017,6 +4644,24 @@ public class LDAPConnection
         JDAPAVA ava = new JDAPAVA(attr.getName(), val);
                 
         sendRequest (new JDAPCompareRequest (dn, ava), listener, cons);
+        return listener;        
+    }
+
+    public LDAPResponseListener compare(LDAPCompareRequest request,
+                                        LDAPResponseListener listener,
+                                        LDAPConstraints cons) 
+                                        throws LDAPException {
+        if (cons == null) {
+            cons = m_defaultConstraints;
+        }
+        
+        checkConnection(/*rebind=*/true);
+
+        if ((listener == null) || (!listener.isAsynchOp())) {
+            listener = new LDAPResponseListener(/*asynchOp=*/true);            
+        }
+              
+        sendRequest (request, listener, cons);
         return listener;        
     }
     
@@ -4855,8 +5500,10 @@ public class LDAPConnection
           setResponseControls(Thread.currentThread(), msgID, null);
       } 
     
-      if (m.getProtocolOp() instanceof JDAPResult) {
-          JDAPResult response = (JDAPResult)(m.getProtocolOp());
+      if ((m.getMessageType() == LDAPMessage.LDAP_RESPONSE_MESSAGE) ||
+          (m.getMessageType() ==
+              LDAPMessage.LDAP_EXTENDED_RESPONSE_MESSAGE)) {     
+          LDAPResponse response = (LDAPResponse) m; 
           int resultCode = response.getResultCode ();
 
           if (resultCode == JDAPResult.SUCCESS) {
@@ -4876,11 +5523,9 @@ public class LDAPConnection
                 response.getErrorMessage(),
                 response.getMatchedDN());
           }
-
-      } else if (m.getProtocolOp().getType() ==
-          JDAPProtocolOp.SEARCH_RESULT_REFERENCE) {
+      } else if (m.getType() == JDAPProtocolOp.SEARCH_RESULT_REFERENCE) {
           String[] referrals =
-            ((JDAPSearchResultReference)m.getProtocolOp()).getUrls();
+            ((LDAPSearchResultReference)m).getUrls();
           throw new LDAPReferralException ("referral",
                                            JDAPResult.SUCCESS, referrals);
       } else {
@@ -5259,6 +5904,37 @@ public class LDAPConnection
         referralRebind(connection, cons);
         LDAPExtendedOperation results =
             connection.extendedOperation( op );
+        connection.disconnect();
+        return results; /* return right away if operation is successful */
+        
+    }
+
+    private LDAPExtendedOperation performExtendedReferrals(
+        LDAPReferralException e,
+        LDAPConstraints cons, LDAPExtendedRequest request)
+        throws LDAPException {
+
+        if (cons.getHopLimit() <= 0) {
+            throw new LDAPException("exceed hop limit",
+                                    e.getLDAPResultCode(),
+                                    e.getLDAPErrorMessage());
+        }
+        if (!cons.getReferrals()) {
+            throw e;
+        }
+
+        LDAPUrl u[] = e.getURLs();
+        // If there are no referrals (because the server isn't configured to
+        // return one), give up here
+        if ( u == null || u.length == 0) {
+            return null;
+        }
+        adjustReferrals(u);
+        
+        LDAPConnection connection = referralConnect( u, cons);
+        referralRebind(connection, cons);
+        LDAPExtendedOperation results =
+            connection.extendedOperation(request);
         connection.disconnect();
         return results; /* return right away if operation is successful */
         

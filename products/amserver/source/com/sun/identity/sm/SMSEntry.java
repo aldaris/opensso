@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.51 2009-10-28 04:24:26 hengming Exp $
+ * $Id: SMSEntry.java,v 1.52 2009-11-20 23:52:56 ww203982 Exp $
  *
  */
 
@@ -1572,9 +1572,9 @@ public class SMSEntry implements Cloneable {
             // eg., if root_suffix is dn=iplanet, dn=com then the normalized
             // dn is dc=iplanet,dc=com.
             String tokenName = token.getPrincipal().getName();
-            if (DN.isDN(tokenName)) {
-                String normTok = (new DN(tokenName)).toRFCString()
-                        .toLowerCase();
+            DN tokendn = new DN(tokenName);
+            if (tokendn.isDN()) {
+                String normTok = tokendn.toRFCString().toLowerCase();
                 if (specialUserSet.contains(normTok)) {
                     /* 
                     if (debug.messageEnabled()) {
@@ -1643,9 +1643,9 @@ public class SMSEntry implements Cloneable {
             // eg., if root_suffix is dn=iplanet, dn=com then the normalized
             // dn is dc=iplanet,dc=com.
             String tokenName = token.getPrincipal().getName();
-            if (DN.isDN(tokenName)) {
-                String normTok = (new DN(tokenName)).toRFCString()
-                        .toLowerCase();
+            DN tokendn = new DN(tokenName);
+            if (tokendn.isDN()) {
+                String normTok = tokendn.toRFCString().toLowerCase();
                 if (specialUserSet.contains(normTok)) {
                     /*
                     if (debug.messageEnabled()) {

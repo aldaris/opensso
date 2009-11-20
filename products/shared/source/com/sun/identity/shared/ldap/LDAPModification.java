@@ -23,6 +23,8 @@ package com.sun.identity.shared.ldap;
 
 import com.sun.identity.shared.ldap.ber.stream.*;
 
+import java.util.LinkedList;
+
 /**
  * Specifies changes to be made to the values of an attribute.  The change is
  * specified in terms of the following aspects:
@@ -119,6 +121,24 @@ public class LDAPModification implements java.io.Serializable {
         seq.addElement(new BEREnumerated(operation));
         seq.addElement(attribute.getBERElement());
         return seq;
+    }
+
+    protected int addLDAPModification(LinkedList bytesList) {
+        byte[] tempBytes;
+        int Length = 0;
+        if (attribute != null) {
+            Length += attribute.addLDAPAttribute(bytesList);
+        }
+        Length += LDAPRequestParser.addInt(bytesList, operation);
+        bytesList.addFirst(BERElement.ENUMERATED_BYTES);
+        Length++;
+        tempBytes = LDAPRequestParser.getLengthBytes(Length);
+        bytesList.addFirst(tempBytes);
+        Length += tempBytes.length;
+        bytesList.addFirst(BERElement.SEQUENCE_BYTES);
+        Length++;
+        tempBytes = null;
+        return Length;
     }
 
     /**

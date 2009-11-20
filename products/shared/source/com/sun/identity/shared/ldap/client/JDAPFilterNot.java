@@ -24,6 +24,7 @@ package com.sun.identity.shared.ldap.client;
 import java.util.*;
 import com.sun.identity.shared.ldap.ber.stream.*;
 import java.io.*;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
 
 /**
  * This class implements the filter not.
@@ -57,6 +58,18 @@ public class JDAPFilterNot extends JDAPFilter {
         BERTag element = new BERTag(BERTag.CONSTRUCTED|BERTag.CONTEXT|2,
           m_filter.getBERElement(), false /* true */);
         return element;
+    }
+
+    public int addLDAPFilter(LinkedList bytesList) {
+        int Length = m_filter.addLDAPFilter(bytesList);
+        byte[] tempBytes = LDAPRequestParser.getLengthBytes(Length);
+        bytesList.addFirst(tempBytes);
+        Length += tempBytes.length;
+        byte[] tempTag = new byte[1];
+        tempTag[0] = (byte) (BERTag.CONSTRUCTED | BERTag.CONTEXT | 2);
+        bytesList.addFirst(tempTag);
+        Length++;
+        return Length;
     }
 
     /**

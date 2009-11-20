@@ -247,6 +247,8 @@ public abstract class JDAPFilter {
      */
     public abstract BERElement getBERElement();
 
+    public abstract int addLDAPFilter(LinkedList bytesList);
+
     /**
      * Retrieves the string representation of filter.
      * @return string representation of filter

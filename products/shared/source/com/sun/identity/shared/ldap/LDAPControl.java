@@ -189,6 +189,10 @@ public class LDAPControl implements Cloneable, java.io.Serializable {
     public static final int LDAP_PASSWORD_EXPIRED_CONTROL = 9;
     public static final int LDAP_PASSWORD_EXPIRING_CONTROL = 10;
     
+    private LinkedList bytesList = null;
+    private int bytesLength = 0;
+    private static JDAPBERTagDecoder decoder = new JDAPBERTagDecoder();
+
     /**
      * Default constructor for the <CODE>LDAPControl</CODE> class.
      */
@@ -261,6 +265,45 @@ public class LDAPControl implements Cloneable, java.io.Serializable {
             seq.addElement(new BEROctetString (m_value, 0, m_value.length));
         }
         return seq;
+    }
+
+    public int getBytesSize() {
+        if (bytesList == null) {
+            getBytesLinkedList();
+        }
+        return bytesLength;
+    }
+
+    public LinkedList getBytesLinkedList() {
+        if (bytesList == null) {
+            bytesList = new LinkedList();
+            bytesLength = 0;
+            // add value
+            if ((m_value == null) || (m_value.length < 1)) {
+                bytesLength += LDAPRequestParser.addOctetBytes(bytesList,
+                    null);
+            } else {
+                bytesLength += LDAPRequestParser.addOctetBytes(bytesList,
+                    m_value);
+            }
+            bytesList.addFirst(BERElement.OCTETSTRING_BYTES);
+            bytesLength++;
+            // add boolean
+            bytesLength += LDAPRequestParser.addBoolean(bytesList, m_critical);
+            bytesList.addFirst(BERElement.BOOLEAN_BYTES);
+            bytesLength++;
+            // add oid
+            bytesLength += LDAPRequestParser.addOctetString(bytesList, m_oid);
+            bytesList.addFirst(BERElement.OCTETSTRING_BYTES);
+            bytesLength++;
+            // add length for the control
+            byte[] tempBytes = LDAPRequestParser.getLengthBytes(bytesLength);
+            bytesList.addFirst(tempBytes);
+            bytesLength += tempBytes.length;
+            bytesList.addFirst(BERElement.SEQUENCE_BYTES);
+            bytesLength++;
+        }
+        return bytesList;
     }
     
     /** 
@@ -440,8 +483,7 @@ public class LDAPControl implements Cloneable, java.io.Serializable {
     public static LDAPControl[] newInstance(byte[] data) throws IOException {
         
         int[] bread = { 0 };
-	
-  	BERElement el = BERElement.getElement(new JDAPBERTagDecoder(), 
+  	BERElement el = BERElement.getElement(decoder,
                                           new ByteArrayInputStream(data),
                                           bread);
 

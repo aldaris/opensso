@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.33 2009-09-28 21:47:33 ww203982 Exp $
+ * $Id: IdUtils.java,v 1.34 2009-11-20 23:52:54 ww203982 Exp $
  *
  */
 
@@ -287,7 +287,8 @@ public final class IdUtils {
      */
     public static AMIdentity getIdentity(SSOToken token, String amsdkdn,
         String realm) throws IdRepoException {
-        if (amsdkdn == null || !DN.isDN(amsdkdn)) {
+        DN amsdkdnObject = null;
+        if (amsdkdn == null || !(amsdkdnObject = new DN(amsdkdn)).isDN()) {
             Object[] args = { amsdkdn };
             throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
                 "215", args));
@@ -296,7 +297,7 @@ public final class IdUtils {
         // Try constructing the identity object
         if (amsdkdn.toLowerCase().startsWith("id=")) {
             try {
-                return (new AMIdentity(token, amsdkdn));
+                return (new AMIdentity(amsdkdnObject, token));
             } catch (IdRepoException ide) {
                 // this could be a AMSDK DN. Follow the AMSDK rules
                 if (debug.messageEnabled()) {
@@ -309,9 +310,9 @@ public final class IdUtils {
 
         // Check for Special Users
         initializeSpecialUsers();
-        if (specialUsers.contains(DNUtils.normalizeDN(amsdkdn))) {
-            return (new AMIdentity(token, LDAPDN.explodeDN(amsdkdn, true)[0],
-                IdType.USER, ROOT_SUFFIX, amsdkdn));
+        if (specialUsers.contains(DNUtils.normalizeDN(amsdkdnObject))) {
+            return (new AMIdentity(amsdkdnObject, token, LDAPDN.explodeDN(
+                amsdkdnObject, true)[0], IdType.USER, ROOT_SUFFIX));
         }
 
         // Since "amsdkdn" is not a UUID, check if realm has AMSDK configured
@@ -358,7 +359,7 @@ public final class IdUtils {
             type = getType(AMStoreConnection.getObjectName(sdkType));
             name = AMConstants.CONTAINER_DEFAULT_TEMPLATE_ROLE;
             if (!type.equals(IdType.REALM)) {
-                name = LDAPDN.explodeDN(amsdkdn, true)[0];
+                name = LDAPDN.explodeDN(amsdkdnObject, true)[0];
             }
         } catch (AMException ame) {
             // Debug the message and return null
@@ -398,7 +399,7 @@ public final class IdUtils {
             amsdkdn = ROOT_SUFFIX;
         }
 
-        return (new AMIdentity(token, name, type, srealm, amsdkdn));
+        return (new AMIdentity(amsdkdnObject, token, name, type, srealm));
     }
 
     /**

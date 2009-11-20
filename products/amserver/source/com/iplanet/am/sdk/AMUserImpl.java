@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMUserImpl.java,v 1.6 2009-01-28 05:34:47 ww203982 Exp $
+ * $Id: AMUserImpl.java,v 1.7 2009-11-20 23:52:51 ww203982 Exp $
  *
  */
 
@@ -134,10 +134,10 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         getAMStoreConnection();
         while (iter.hasNext()) {
             String nsrole = (String) iter.next();
-            if (!normdns.contains((new DN(nsrole)).toRFCString().toLowerCase()))
+            DN nsroleDN = new DN(nsrole);
+            if (!normdns.contains(nsroleDN.toRFCString().toLowerCase()))
             {
-                DN nsroleDN = new DN(nsrole);
-                RDN rdn = (RDN) nsroleDN.getRDNs().firstElement();
+                RDN rdn = (RDN) nsroleDN.getRDNs().get(0);
                 if (!rdn.equals(ContainerDefaultTemplateRoleRDN)
                         && isAMManagedRole(nsrole)) {
                     result.add(nsroleDN.toString());
@@ -194,7 +194,10 @@ class AMUserImpl extends AMObjectImpl implements AMUser {
         while (iter.hasNext()) {
             String nsrole = (String) iter.next();
             DN nsroleDN = new DN(nsrole);
-            RDN rdn = (RDN) nsroleDN.getRDNs().firstElement();
+            /**/
+            //RDN rdn = (RDN) nsroleDN.getRDNs().firstElement();
+            RDN rdn = (RDN) nsroleDN.getRDNs().get(0);
+            /**/
 
             if (!rdn.equals(ContainerDefaultTemplateRoleRDN)
                     && isAMManagedRole(nsrole)) {

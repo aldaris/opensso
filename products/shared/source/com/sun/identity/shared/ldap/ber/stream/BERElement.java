@@ -54,6 +54,25 @@ public abstract class BERElement implements Serializable {
     public final static int GRAPHICSTRING = 0x19;
     public final static int VISIBLESTRING = 0x1A;
     public final static int GENERALSTRING = 0x1B;
+    public final static byte[] BOOLEAN_BYTES = {(byte) 0x01};
+    public final static byte[] INTEGER_BYTES = {(byte) 0x02};
+    public final static byte[] BITSTRING_BYTES = {(byte) 0x03};
+    public final static byte[] OCTETSTRING_BYTES = {(byte) 0x04};
+    public final static byte[] NULL_BYTES = {(byte) 0x05};
+    public final static byte[] OBJECTID_BYTES = {(byte) 0x06};
+    public final static byte[] REAL_BYTES = {(byte) 0x09};
+    public final static byte[] ENUMERATED_BYTES = {(byte) 0x0a};
+    public final static byte[] SET_BYTES = {(byte) 0x31};          /* always constructed */
+    public final static byte[] SEQUENCE_BYTES = {(byte) 0x30};     /* always constructed */
+    public final static byte[] NUMERICSTRING_BYTES = {(byte) 0x12};
+    public final static byte[] PRINTABLESTRING_BYTES = {(byte) 0x13};
+    public final static byte[] TELETEXSTRING_BYTES = {(byte) 0x14};
+    public final static byte[] VIDEOTEXSTRING_BYTES = {(byte) 0x15};
+    public final static byte[] IA5STRING_BYTES = {(byte) 0x16};
+    public final static byte[] UTCTIME_BYTES = {(byte) 0x17};
+    public final static byte[] GRAPHICSTRING_BYTES = {(byte) 0x19};
+    public final static byte[] VISIBLESTRING_BYTES = {(byte) 0x1A};
+    public final static byte[] GENERALSTRING_BYTES = {(byte) 0x1B};
 
     /**
     * Internal (non-transmitted) tags.

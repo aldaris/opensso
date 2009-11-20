@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPGroups.java,v 1.7 2009-01-28 05:35:01 ww203982 Exp $
+ * $Id: LDAPGroups.java,v 1.8 2009-11-20 23:52:55 ww203982 Exp $
  *
  */
 
@@ -52,6 +52,9 @@ import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.NameNotFoundException;
 import com.sun.identity.policy.InvalidNameException;
 import com.sun.identity.policy.interfaces.Subject;
+import com.sun.identity.shared.ldap.LDAPBindRequest;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
+import com.sun.identity.shared.ldap.LDAPSearchRequest;
 
 /**
  * This class respresents a group of LDAP groups
@@ -288,20 +291,26 @@ public class LDAPGroups implements Subject {
         }
        
         String[] attrs = { groupRDNAttrName };
-        LDAPConnection ld = connPool.getConnection();
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(maxResults);
-        constraints.setServerTimeLimit(timeLimit);
+        LDAPConnection ld = null;
         int status = ValidValues.SUCCESS;
         try {
-            // connect to the server to authenticate
-            ld.authenticate(authid, authpw);
-            LDAPSearchResults res = ld.search(baseDN, 
-                                              groupSearchScope,
-                                              searchFilter,
-                                              attrs,
-                                              false,
-                                              constraints);
+            LDAPSearchResults res = null;
+            LDAPBindRequest bindRequest =
+                LDAPRequestParser.parseBindRequest(authid, authpw);
+            LDAPSearchRequest searchRequest =
+                LDAPRequestParser.parseSearchRequest(baseDN, groupSearchScope,
+                searchFilter, attrs, false, timeLimit,
+                LDAPRequestParser.DEFAULT_DEREFERENCE, maxResults);
+            try {
+                ld = connPool.getConnection();
+                // connect to the server to authenticate
+                ld.authenticate(bindRequest);
+                res = ld.search(searchRequest);
+            } finally {
+                if (ld != null) {
+                    connPool.close(ld);
+                }
+            }
             while (res.hasMoreElements()) {
                 try {
                     LDAPEntry entry = res.next();
@@ -352,9 +361,6 @@ public class LDAPGroups implements Subject {
             }
         } catch (Exception e) {
             throw (new PolicyException(e));
-        } finally { 
-            // release the ldap connection back to the pool
-            connPool.close(ld); 
         }
         return(new ValidValues(status, validGroupDNs));
     }
@@ -578,20 +584,28 @@ public class LDAPGroups implements Subject {
         }
         String tokenID = token.getTokenID().toString();
         boolean groupMatch = false;
-        LDAPConnection ld = connPool.getConnection();
+        LDAPConnection ld = null;
         LDAPEntry groupEntry = null;
         try {
-           // connect to the server to authenticate
-           ld.authenticate(authid, authpw);
-           // get the group entry based on its DN
-           groupEntry = ld.read(groupName);
+           LDAPBindRequest bindRequest =
+               LDAPRequestParser.parseBindRequest(authid, authpw);
+           LDAPSearchRequest readRequest =
+               LDAPRequestParser.parseReadRequest(groupName);
+           try {
+               ld = connPool.getConnection();
+               // connect to the server to authenticate
+               ld.authenticate(bindRequest);
+               // get the group entry based on its DN
+               groupEntry = ld.read(readRequest);
+           } finally {
+               if (ld != null) {
+                   connPool.close(ld);
+               }
+           }
         } catch (Exception e) {
             debug.warning("LDAPGroups: invalid group name " 
                     + groupName + " specified in the policy definition.");
             return false;
-        } finally { 
-            // release the ldap connection back to the pool
-            connPool.close(ld); 
         }
 
         if (debug.messageEnabled()) {
@@ -687,14 +701,9 @@ public class LDAPGroups implements Subject {
     private Set findDynamicGroupMembersByUrl(LDAPUrl url, String userRDN) 
         throws PolicyException {
 
-        LDAPConnection ld = connPool.getConnection();
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(maxResults);
-        constraints.setServerTimeLimit(timeLimit);
+        LDAPConnection ld = null;
         Set groupMemberDNs = new HashSet();
         try {
-            // connect to the server to authenticate
-            ld.authenticate(authid, authpw);
             // Need to pass the user dn in the filter
             StringBuffer filter = new StringBuffer(25);
             filter.append("(&").append(userRDN);
@@ -709,12 +718,22 @@ public class LDAPGroups implements Subject {
                 debug.message("search filter in LDAPGroups : " + filter);
             }
             String[] attrs = { userRDNAttrName };
-            LDAPSearchResults res = ld.search(url.getDN(),
-                                              url.getScope(),
-                                              filter.toString(),
-                                              attrs,
-                                              false,
-                                              constraints);
+            LDAPSearchResults res = null;
+            LDAPBindRequest bindRequest = LDAPRequestParser.parseBindRequest(
+                authid, authpw);
+            LDAPSearchRequest searchRequest =
+                LDAPRequestParser.parseSearchRequest(url.getDN(),            
+                url.getScope(), filter.toString(), attrs, false, timeLimit,
+                LDAPRequestParser.DEFAULT_DEREFERENCE, maxResults);
+            try {
+                ld = connPool.getConnection();
+                ld.authenticate(bindRequest);            
+                res = ld.search(searchRequest);
+            } finally {
+                if (ld != null) {
+                    connPool.close(ld);
+                }
+            }
             while (res.hasMoreElements()) {
                 try {
                     LDAPEntry entry = res.next();
@@ -744,11 +763,7 @@ public class LDAPGroups implements Subject {
             }
         } catch (Exception e) {
             throw (new PolicyException(e));
-        } finally {
-            // release the ldap connection back to the pool
-            connPool.close(ld);
         }
-
         return groupMemberDNs;
     }
 
@@ -836,21 +851,25 @@ public class LDAPGroups implements Subject {
             }
             
             String[] attrs = { userRDNAttrName }; 
-            // search the remote ldap and find out the user DN
-            LDAPConnection ld = connPool.getConnection();
-            LDAPSearchConstraints constraints = 
-                                           ld.getSearchConstraints();
-            constraints.setMaxResults(maxResults);
-            constraints.setServerTimeLimit(timeLimit);
+            LDAPConnection ld = null;
             try {
-                // connect to the server to authenticate
-                ld.authenticate(authid, authpw);
-                LDAPSearchResults res = ld.search(baseDN, 
-                                                  userSearchScope,
-                                                  searchFilter,
-                                                  attrs,
-                                                  false,
-                                                  constraints);
+                LDAPBindRequest bindRequest =
+                    LDAPRequestParser.parseBindRequest(authid, authpw);
+                LDAPSearchRequest searchRequest =
+                    LDAPRequestParser.parseSearchRequest(baseDN,
+                    userSearchScope, searchFilter, attrs, false, timeLimit,
+                    LDAPRequestParser.DEFAULT_DEREFERENCE, maxResults);
+                LDAPSearchResults res = null;
+                try {
+                    ld = connPool.getConnection();
+                    // connect to the server to authenticate
+                    ld.authenticate(bindRequest);                
+                    res = ld.search(searchRequest);
+                } finally {
+                    if (ld != null) {
+                        connPool.close(ld);
+                    }
+                }
                 while (res.hasMoreElements()) {
                     try {
                         LDAPEntry entry = res.next();
@@ -902,11 +921,7 @@ public class LDAPGroups implements Subject {
                 }
             } catch (Exception e) {
                 throw (new PolicyException(e));
-            } finally {
-                // release the ldap connection back to the pool
-                connPool.close(ld);
-            } 
-            
+            }
             // check if the user belongs to any of the selected groups
             if (qualifiedUserDNs.size() > 0) {
                 if (debug.messageEnabled()) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.19 2009-11-18 20:50:02 qcheng Exp $
+ * $Id: LDAPAuthUtils.java,v 1.20 2009-11-20 23:52:52 ww203982 Exp $
  *
  */
 
@@ -61,6 +61,10 @@ import com.sun.identity.shared.ldap.LDAPModificationSet;
 import com.sun.identity.shared.ldap.LDAPRebind;
 import com.sun.identity.shared.ldap.LDAPRebindAuth;
 import com.sun.identity.shared.ldap.LDAPReferralException;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
+import com.sun.identity.shared.ldap.LDAPBindRequest;
+import com.sun.identity.shared.ldap.LDAPModifyRequest;
+import com.sun.identity.shared.ldap.LDAPSearchRequest;
 import com.sun.identity.shared.ldap.LDAPSearchResults;
 import com.sun.identity.shared.ldap.LDAPSearchConstraints;
 import com.sun.identity.shared.ldap.controls.LDAPPasswordExpiredControl;
@@ -514,14 +518,24 @@ public class LDAPAuthUtils {
         }
         LDAPConnection  modCtx = null;
         try {
-            modCtx = getConnection();
-            modCtx.authenticate(version,userDN,oldPwd);
-            setDefaultReferralCredentials(modCtx);
             LDAPModificationSet mods =new LDAPModificationSet();
             LDAPAttribute attrPwd = new LDAPAttribute("userpassword",
-            password);
+                password);
             mods.add(LDAPModification.REPLACE,attrPwd);
-            modCtx.modify(userDN,mods);
+            try {
+                LDAPBindRequest bindRequest =
+                    LDAPRequestParser.parseBindRequest(version, userDN, oldPwd);
+                LDAPModifyRequest modRequest =
+                    LDAPRequestParser.parseModifyRequest(userDN, mods);
+                modCtx = getConnection();
+                modCtx.authenticate(bindRequest);
+                setDefaultReferralCredentials(modCtx);
+                modCtx.modify(modRequest);
+            } finally {
+                if (modCtx != null) {
+                    releaseConnection(modCtx);
+                }
+            }
             setState(PASSWORD_UPDATED_SUCCESSFULLY);
         } catch(LDAPException le) {
             if (le.getLDAPResultCode() ==
@@ -543,10 +557,7 @@ public class LDAPAuthUtils {
                 setState(PASSWORD_NOT_UPDATE);
             }
             debug.error("Cannot update : ",le);
-            
-        } finally {
-            releaseConnection(modCtx);
-        }
+        }    
     }
 
     public void setLogMessage(String logMsg) {
@@ -593,8 +604,13 @@ public class LDAPAuthUtils {
         
         if (searchScope == LDAPConnection.SCOPE_BASE) {
             if (userSearchAttrs.size() == 1) {
-                userDN = (String)userSearchAttrs.iterator().next() +
-                "=" + userId + "," + baseDN;
+                StringBuffer dnBuffer = new StringBuffer();
+                dnBuffer.append((String) userSearchAttrs.iterator().next());
+                dnBuffer.append("=");
+                dnBuffer.append(userId);
+                dnBuffer.append(",");
+                dnBuffer.append(baseDN);
+                userDN = dnBuffer.toString();
                 if (debug.messageEnabled()) {
                     debug.message("searchForUser, searchScope = BASE," +
                     "userDN =" + userDN);
@@ -645,8 +661,6 @@ public class LDAPAuthUtils {
                 searchFilter + "\nscope = " + searchScope);
             }
             
-            ldc = getAdminConnection();
-            
             // Search
             int userAttrSize=0;
             if (attrs == null) {
@@ -672,8 +686,17 @@ public class LDAPAuthUtils {
                 debug.message("userAttrSize is : " + userAttrSize);
             }
             
-            LDAPSearchResults results = ldc.search(baseDN, searchScope,
-            searchFilter, attrs, false);
+            LDAPSearchResults results = null;
+            LDAPSearchRequest request = LDAPRequestParser.parseSearchRequest(
+                baseDN, searchScope, searchFilter, attrs, false);
+            try {
+                ldc = getAdminConnection();
+                results = ldc.search(request);
+            } finally {
+                if (ldc != null) {
+                    releaseAdminConnection(ldc);
+                }
+            }
             int userMatches = 0;
             LDAPEntry entry = null;
             boolean userNamingValueSet=false;
@@ -769,8 +792,6 @@ public class LDAPAuthUtils {
                 setState(USER_NOT_FOUND);
                 return;
             }
-        } finally {
-            releaseAdminConnection(ldc);
         }
     }
     
@@ -781,39 +802,47 @@ public class LDAPAuthUtils {
      */
     private void authenticate() throws LDAPUtilException {
         LDAPConnection ldc = null;
+        LDAPControl[] controls = null;
         try {
+            try {
+            LDAPBindRequest request = LDAPRequestParser.parseBindRequest(
+                version,userDN, userPassword);
             ldc = getConnection();
-            ldc.authenticate(version,userDN, userPassword);
-            
-                /* Were any controls returned? */
-            if ( ldc != null ) {
-                int seconds = checkControls(ldc);
-                switch(seconds) {
-                    case NO_PASSWORD_CONTROLS:
-                        debug.message("No controls returned");
-                        setState(SUCCESS);
-                        break;
-                    case PASSWORD_EXPIRED:
-                        if(debug.messageEnabled()){
-                            debug.message(
-                                "Password expired and must be reset" );
-                        }
-                        setState(PASSWORD_RESET_STATE);
-                        break;
-                    default:
-                        setExpTime(seconds);
-                        if (debug.messageEnabled()) {
-                            debug.message("Password expires in " + seconds +
-                            " seconds");
-                        }
-                        setState(PASSWORD_EXPIRING);
+                ldc.authenticate(request);
+                controls = ldc.getResponseControls();
+            } finally {
+                if (ldc != null) {
+                    releaseConnection(ldc);
                 }
+            }
+            
+            /* Were any controls returned? */
+            int seconds = checkControls(controls);
+            switch(seconds) {
+                case NO_PASSWORD_CONTROLS:
+                    debug.message("No controls returned");
+                    setState(SUCCESS);
+                    break;
+                case PASSWORD_EXPIRED:
+                    if(debug.messageEnabled()){
+                        debug.message(
+                            "Password expired and must be reset" );
+                    }
+                    setState(PASSWORD_RESET_STATE);
+                    break;
+                default:
+                    setExpTime(seconds);
+                    if (debug.messageEnabled()) {
+                        debug.message("Password expires in " + seconds +
+                        " seconds");
+                    }
+                    setState(PASSWORD_EXPIRING);
             }
             
         } catch(LDAPException e) {
             if (e.getLDAPResultCode() ==
             LDAPException.INVALID_CREDENTIALS) {
-                if ( checkControls(ldc) ==  PASSWORD_EXPIRED) {
+                if (checkControls(controls) == PASSWORD_EXPIRED) {
                     if(debug.messageEnabled()){
                         debug.message( "Password expired and must be reset" );
                     }
@@ -864,10 +893,7 @@ public class LDAPAuthUtils {
                 }
                 throw new LDAPUtilException("FAuth", (Object[])null);
             }
-            
-        } finally {
-            releaseConnection(ldc);
-        }
+        }    
     }
     
     /**
@@ -877,8 +903,7 @@ public class LDAPAuthUtils {
      * @return PASSWOR_EXPIRED if password has expired
      * @return number of seconds until expiration if password is going to expire
      */
-    private int checkControls(LDAPConnection ld) {
-        LDAPControl[] controls = ld.getResponseControls();
+    private int checkControls(LDAPControl[] controls) {
         int status = NO_PASSWORD_CONTROLS;
         if ((controls != null) && (controls.length >= 1)) {
             LDAPPasswordExpiringControl expgControl = null;

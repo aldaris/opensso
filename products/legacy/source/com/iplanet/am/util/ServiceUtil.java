@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceUtil.java,v 1.3 2009-01-28 05:35:11 ww203982 Exp $
+ * $Id: ServiceUtil.java,v 1.4 2009-11-20 23:52:57 ww203982 Exp $
  *
  */
 
@@ -60,6 +60,11 @@ import com.sun.identity.shared.ldap.LDAPModificationSet;
 import com.sun.identity.shared.ldap.LDAPSearchConstraints;
 import com.sun.identity.shared.ldap.LDAPSearchResults;
 import com.sun.identity.shared.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
+import com.sun.identity.shared.ldap.LDAPDeleteRequest;
+import com.sun.identity.shared.ldap.LDAPModifyRequest;
+import com.sun.identity.shared.ldap.LDAPSearchRequest;
+
 
 /**
  * The <code>ServiceUtil</code> class provides methods to
@@ -406,44 +411,59 @@ public class ServiceUtil {
     private LDAPSearchResults searchResults(String baseDN, String filter,
 					    int scope, String attrs[])
         throws Exception {
-
-	LDAPConnection ldapConnect = getConnection();
-	LDAPSearchConstraints constraints = 
-		ldapConnect.getSearchConstraints();
-
+        LDAPConnection ldapConnect = null;
         try {
-	    // Get the sub entries
-	    return ldapConnect.search(baseDN, scope, filter, attrs, false,
-				      constraints);
-
+            LDAPSearchRequest request = LDAPRequestParser.parseSearchRequest(
+                baseDN, scope, filter, attrs, false);
+            try {
+                ldapConnect = getConnection();
+	        // Get the sub entries
+                return ldapConnect.search(request);
+            } finally {
+                if (ldapConnect != null) {
+                    dlayer.releaseConnection(ldapConnect);
+                }
+            }
         } catch (Exception e) {
 	   throw (new Exception(e.toString()));
-        } finally {
-	   dlayer.releaseConnection(ldapConnect);
         }
     }
 
 
     private void modify(String dn, LDAPModificationSet attrs) throws Exception { 
-        LDAPConnection ldapConn = getConnection();
+        LDAPConnection ldapConn = null;
 	try {
-	    ldapConn.modify(dn, attrs);
+            LDAPModifyRequest request = LDAPRequestParser.parseModifyRequest(
+                dn, attrs);
+            try {
+                ldapConn = getConnection();
+	        ldapConn.modify(request);
+            } finally {
+                if (ldapConn != null) {
+                    dlayer.releaseConnection(ldapConn);
+                }
+            }
         } catch (Exception e) {
 	   throw new Exception(e.toString());
-        } finally {
-	   dlayer.releaseConnection(ldapConn);
         }
     }
 
 
     private void delete(String dn) throws Exception {
-        LDAPConnection ldapConn = getConnection();
+        LDAPConnection ldapConn = null;
 	try {
-            ldapConn.delete(dn);
+            LDAPDeleteRequest request = LDAPRequestParser.parseDeleteRequest(
+                dn);
+            try {
+                ldapConn = getConnection();
+                ldapConn.delete(request);
+            } finally {
+                if (ldapConn != null) {
+                    dlayer.releaseConnection(ldapConn);
+                }
+            }
         } catch(Exception e) {
 	    throw new Exception(e.toString());
-        } finally {
-          dlayer.releaseConnection(ldapConn);
         }
     }
 

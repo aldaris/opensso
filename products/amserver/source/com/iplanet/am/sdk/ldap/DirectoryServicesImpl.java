@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.13 2009-07-02 20:26:15 hengming Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.14 2009-11-20 23:52:51 ww203982 Exp $
  *
  */
 
@@ -212,7 +212,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
         DN dn = getExceptionDN(e);
         String entryName = "";
         if (dn != null) {
-            entryName = ((RDN) dn.getRDNs().firstElement()).getValues()[0];
+            entryName = ((RDN) dn.getRDNs().get(0)).getValues()[0];
         }
         return entryName;
     }
@@ -225,8 +225,9 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             int index = msg.indexOf("::");
             if (index != -1) {
                 String errorDN = msg.substring(0, index);
-                if (DN.isDN(errorDN)) {
-                    dn = new DN(errorDN);
+                dn = new DN(errorDN);
+                if (!dn.isDN()) {
+                    dn = null;
                 }
             }
         }
@@ -858,13 +859,13 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
      */
     public String getOrganizationDN(SSOToken token, String entryDN)
             throws AMException {
-        if (entryDN.length() == 0 || !DN.isDN(entryDN)) {
+        DN dnObject = new DN(entryDN);
+        if (entryDN.length() == 0 || !dnObject.isDN()) {
             debug.error("DirectoryServicesImpl.getOrganizationDN() Invalid DN: "
                     + entryDN);
             throw new AMException(token, "157");
         }
 
-        DN dnObject = new DN(entryDN);
         String organizationDN = null;
         while (organizationDN == null || organizationDN.length() == 0) {
             String childDN = dnObject.toString();
@@ -2830,8 +2831,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             return new AMException(AMSDKBundle.getString("461", args, locale),
                     "461", args);
         }
-        String entryName = ((RDN) errorDN.getRDNs().firstElement())
-            .getValues()[0];
+        String entryName = ((RDN) errorDN.getRDNs().get(0)).getValues()[0];
 
         String errorCode = null;
         if (errorDN.equals(targetDN)) {

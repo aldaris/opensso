@@ -40,7 +40,7 @@ public class JDAPFilterOpers {
      * Returns the octetString for the given string
      * @return The octetString for the given string
      */
-    static BEROctetString getOctetString(String str) {
+    public static BEROctetString getOctetString(String str) {
         if (str.indexOf(escapeKey) >= 0) {
             byte[] byteVal = JDAPFilterOpers.getByteValues(str);
             return new BEROctetString(byteVal);

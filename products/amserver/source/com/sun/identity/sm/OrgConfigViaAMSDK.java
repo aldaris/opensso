@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.13 2009-01-28 05:35:03 ww203982 Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.14 2009-11-20 23:52:56 ww203982 Exp $
  *
  */
 
@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -892,7 +893,7 @@ public class OrgConfigViaAMSDK {
         DN result = new DN();
         result.setDNType(DN.RFC);
         DN dn = new DN(orgUnitDN);
-        Vector rdns = dn.getRDNs();
+        List rdns = dn.getRDNs();
         for(Iterator iter = rdns.iterator();iter.hasNext();) {
             String relDN = ((RDN)iter.next()).toString();
             if(relDN.startsWith(ou)) {

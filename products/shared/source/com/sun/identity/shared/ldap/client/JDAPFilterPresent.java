@@ -24,6 +24,7 @@ package com.sun.identity.shared.ldap.client;
 import java.util.*;
 import com.sun.identity.shared.ldap.ber.stream.*;
 import java.io.*;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
 
 /**
  * This class implements the filter present.
@@ -57,6 +58,15 @@ public class JDAPFilterPresent extends JDAPFilter {
         BEROctetString s = new BEROctetString(m_type);
         BERTag element = new BERTag(BERTag.CONTEXT|7, s, true);
         return element;
+    }
+
+    public int addLDAPFilter(LinkedList bytesList) {
+        int Length = LDAPRequestParser.addOctetString(bytesList, m_type);
+        byte[] tempTag = new byte[1];
+        tempTag[0] = (byte) (BERTag.CONTEXT | 7);
+        bytesList.addFirst(tempTag);
+        Length++;
+        return Length;
     }
 
     /**

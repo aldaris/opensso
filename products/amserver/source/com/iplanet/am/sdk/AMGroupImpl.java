@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMGroupImpl.java,v 1.6 2009-01-28 05:34:47 ww203982 Exp $
+ * $Id: AMGroupImpl.java,v 1.7 2009-11-20 23:52:51 ww203982 Exp $
  *
  */
 
@@ -130,7 +130,7 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
                 Iterator iter = usersSet.iterator();
                 while (iter.hasNext()) {
                     DN userDN = new DN((String) iter.next());
-                    RDN userRDN = (RDN) userDN.getRDNs().firstElement();
+                    RDN userRDN = (RDN) userDN.getRDNs().get(0);
                     String userName = userRDN.getValues()[0];
                     if (userName.endsWith(pattern)) {
                         resultSet.add(userDN.toString());
@@ -145,7 +145,7 @@ abstract class AMGroupImpl extends AMObjectImpl implements AMGroup {
                 Iterator iter = usersSet.iterator();
                 while (iter.hasNext()) {
                     DN userDN = new DN((String) iter.next());
-                    RDN userRDN = (RDN) userDN.getRDNs().firstElement();
+                    RDN userRDN = (RDN) userDN.getRDNs().get(0);
                     String userName = userRDN.getValues()[0];
                     if (userName.startsWith(pattern)) {
                         resultSet.add(userDN.toString());

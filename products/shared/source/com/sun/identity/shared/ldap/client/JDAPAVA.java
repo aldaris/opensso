@@ -24,6 +24,7 @@ package com.sun.identity.shared.ldap.client;
 import java.util.*;
 import java.io.*;
 import com.sun.identity.shared.ldap.ber.stream.*;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
 
 /**
  * This class implements the attribute value assertion.
@@ -81,6 +82,23 @@ public class JDAPAVA {
         seq.addElement(JDAPFilterOpers.getOctetString(m_val));
 
         return seq;
+    }
+
+    public int addLDAPFilter(LinkedList bytesList) {
+        int Length = 0;
+        byte[] tempBytes = JDAPFilterOpers.getOctetString(m_val).getValue();
+        Length += LDAPRequestParser.addOctetBytes(bytesList, tempBytes);
+        bytesList.addFirst(BERElement.OCTETSTRING_BYTES);
+        Length++;
+        Length += LDAPRequestParser.addOctetString(bytesList, m_type);
+        bytesList.addFirst(BERElement.OCTETSTRING_BYTES);
+        Length++;
+        tempBytes = LDAPRequestParser.getLengthBytes(Length);
+        bytesList.addFirst(tempBytes);
+        Length += tempBytes.length;
+        bytesList.addFirst(BERElement.SEQUENCE_BYTES);
+        Length++;
+        return Length;
     }
 
     /**

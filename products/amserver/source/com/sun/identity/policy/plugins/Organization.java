@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Organization.java,v 1.8 2009-01-28 05:35:01 ww203982 Exp $
+ * $Id: Organization.java,v 1.9 2009-11-20 23:52:55 ww203982 Exp $
  *
  */
 
@@ -51,6 +51,9 @@ import com.sun.identity.policy.SubjectEvaluationCache;
 import com.sun.identity.policy.PolicyEvaluator;
 import com.sun.identity.policy.InvalidNameException;
 import com.sun.identity.policy.interfaces.Subject;
+import com.sun.identity.shared.ldap.LDAPBindRequest;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
+import com.sun.identity.shared.ldap.LDAPSearchRequest;
 
 /**
  * This class respresents a group of OpenSSO organizations.
@@ -283,23 +286,29 @@ public class Organization implements Subject {
             "Organization.getValidValues(): organization search filter is: " 
             + searchFilter);
         }
-      
+
         String[] attrs = { orgRDNAttrName };
-        LDAPConnection ld = connPool.getConnection();
-        LDAPSearchConstraints constraints = ld.getSearchConstraints();
-        constraints.setMaxResults(maxResults);
-        constraints.setServerTimeLimit(timeLimit);
+        LDAPConnection ld = null;
         Set validOrgDNs = new HashSet();
         int status = ValidValues.SUCCESS;
         try {
-            // connect to the server to authenticate
-            ld.authenticate(authid, authpw);
-            LDAPSearchResults res = ld.search(baseDN, 
-                                              orgSearchScope,
-                                              searchFilter,
-                                              attrs,
-                                              false,
-                                              constraints);
+            LDAPSearchResults res = null;
+            LDAPBindRequest bindRequest = LDAPRequestParser.parseBindRequest(
+                authid, authpw);
+            LDAPSearchRequest searchRequest =
+                LDAPRequestParser.parseSearchRequest(baseDN, orgSearchScope,
+                searchFilter, attrs, false, timeLimit,
+                LDAPRequestParser.DEFAULT_DEREFERENCE, maxResults);
+            try {
+                ld = connPool.getConnection();
+                // connect to the server to authenticate
+                ld.authenticate(bindRequest);
+                res = ld.search(searchRequest);
+            } finally {
+                if ( ld != null) {
+                    connPool.close(ld);
+                }
+            }
             while (res.hasMoreElements()) {
                 try {
                     LDAPEntry entry = res.next();
@@ -350,11 +359,7 @@ public class Organization implements Subject {
             }
         } catch (Exception e) {
             throw (new PolicyException(e));
-        } finally { 
-            // release the ldap connection back to the pool
-            connPool.close(ld); 
         }
-
         if (debug.messageEnabled()) {
             debug.message("Organization.getValidValues(): return set=" 
                            + validOrgDNs.toString());
@@ -657,21 +662,26 @@ public class Organization implements Subject {
             }
                     
             String[] attrs = { userRDNAttrName }; 
-            // search the remote ldap and find out the user DN
-            LDAPConnection ld = connPool.getConnection();
-            LDAPSearchConstraints constraints = 
-                                      ld.getSearchConstraints();
-            constraints.setMaxResults(maxResults);
-            constraints.setServerTimeLimit(timeLimit);
+            // search the remote ldap and find out the user DN          
+            LDAPConnection ld = null;
             try {
-                // connect to the server to authenticate
-                ld.authenticate(authid, authpw);
-                LDAPSearchResults res = ld.search(baseDN, 
-                                                  userSearchScope,
-                                                  searchFilter,
-                                                  attrs,
-                                                  false,
-                                                  constraints);
+                LDAPSearchResults res = null;
+                LDAPBindRequest bindRequest =
+                    LDAPRequestParser.parseBindRequest(authid, authpw);
+                LDAPSearchRequest searchRequest =
+                    LDAPRequestParser.parseSearchRequest(baseDN,
+                    userSearchScope, searchFilter, attrs, false, timeLimit,
+                    LDAPRequestParser.DEFAULT_DEREFERENCE, maxResults);
+                try {
+                    ld = connPool.getConnection();
+                    // connect to the server to authenticate                
+                    ld.authenticate(bindRequest);
+                    res = ld.search(searchRequest);
+                } finally {
+                    if (ld != null) {
+                        connPool.close(ld);
+                    }
+                }
                 while (res.hasMoreElements()) {
                     try {
                         LDAPEntry entry = res.next();
@@ -723,11 +733,7 @@ public class Organization implements Subject {
                 }
             } catch (Exception e) {
                 throw (new PolicyException(e));
-            } finally {
-                // release the ldap connection back to the pool
-                connPool.close(ld);
             }
-       
             if (qualifiedUserDNs.size() > 0) {
                 if (debug.messageEnabled()) {
                     debug.message(

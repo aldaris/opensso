@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.18 2009-07-02 20:27:01 hengming Exp $
+ * $Id: DataLayer.java,v 1.19 2009-11-20 23:52:52 ww203982 Exp $
  *
  */
 
@@ -59,9 +59,15 @@ import com.sun.identity.shared.ldap.LDAPControl;
 import com.sun.identity.shared.ldap.LDAPEntry;
 import com.sun.identity.shared.ldap.LDAPException;
 import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
 import com.sun.identity.shared.ldap.LDAPSchema;
 import com.sun.identity.shared.ldap.LDAPSchemaElement;
 import com.sun.identity.shared.ldap.LDAPSearchConstraints;
+import com.sun.identity.shared.ldap.LDAPAddRequest;
+import com.sun.identity.shared.ldap.LDAPDeleteRequest;
+import com.sun.identity.shared.ldap.LDAPModifyRequest;
+import com.sun.identity.shared.ldap.LDAPModifyRDNRequest;
+import com.sun.identity.shared.ldap.LDAPSearchRequest;
 import com.sun.identity.shared.ldap.LDAPSearchResults;
 import com.sun.identity.shared.ldap.LDAPSortKey;
 import com.sun.identity.shared.ldap.controls.LDAPProxiedAuthControl;
@@ -272,14 +278,14 @@ public class DataLayer implements java.io.Serializable {
         if (debug.messageEnabled()) {
             debug.message("Invoking _ldapPool.getConnection()");
         }
-        LDAPConnection conn = _ldapPool.getConnection();
-        if (debug.messageEnabled()) {
-            debug.message("Got Connection : " + conn);
-        }
 
         // proxy as given principal
         LDAPProxiedAuthControl proxyCtrl = new LDAPProxiedAuthControl(principal
                 .getName(), true);
+        LDAPConnection conn = _ldapPool.getConnection();
+        if (debug.messageEnabled()) {
+            debug.message("Got Connection : " + conn);
+        }
         LDAPSearchConstraints cons = conn.getSearchConstraints();
         cons.setServerControls(proxyCtrl);
         conn.setSearchConstraints(cons);
@@ -366,14 +372,12 @@ public class DataLayer implements java.io.Serializable {
         Guid guid,
         String attrName
     ) {
-        LDAPConnection conn = null;
         String id = guid.getDn();
-
+        LDAPEntry ldapEntry = null;
+        LDAPSearchRequest request =
+            LDAPRequestParser.parseReadRequest(id);
         try {
-            conn = getConnection(principal);
-            LDAPEntry ldapEntry = readLDAPEntry(conn, id, null);
-            LDAPAttribute attr = ldapEntry.getAttribute(attrName);
-            return attr.getStringValueArray();
+            ldapEntry = readLDAPEntry(principal, request);
         } catch (Exception e) {
             if (debug.warningEnabled()) {
                 debug.warning(
@@ -381,9 +385,9 @@ public class DataLayer implements java.io.Serializable {
                                 + id, e);
             }
             return null;
-        } finally {
-            releaseConnection(conn);
         }
+        LDAPAttribute attr = ldapEntry.getAttribute(attrName);           
+        return attr.getStringValueArray();
     }
 
     /**
@@ -400,28 +404,26 @@ public class DataLayer implements java.io.Serializable {
         Guid guid,
         String attrName
     ) {
-        LDAPConnection conn = null;
         String id = guid.getDn();
-
+        LDAPEntry ldapEntry = null;
         try {
             String[] attrNames = new String[1];
             attrNames[0] = attrName;
-            conn = getConnection(principal);
-            LDAPEntry ldapEntry = readLDAPEntry(conn, id, attrNames);
-            LDAPAttribute ldapAttr = ldapEntry.getAttribute(attrName);
-            if (ldapAttr == null) {
-                return null;
-            } else {
-                return new Attr(ldapAttr);
-            }
+            LDAPSearchRequest request = LDAPRequestParser.parseReadRequest(id,
+                attrNames);
+            ldapEntry = readLDAPEntry(principal, request);
         } catch (Exception e) {
             if (debug.warningEnabled()) {
                 debug.warning("Exception in DataLayer.getAttribute for DN: "
                         + id, e);
             }
             return null;
-        } finally {
-            releaseConnection(conn);
+        }
+        LDAPAttribute ldapAttr = ldapEntry.getAttribute(attrName);
+        if (ldapAttr == null) {
+            return null;
+        } else {
+            return new Attr(ldapAttr);
         }
     }
 
@@ -441,34 +443,31 @@ public class DataLayer implements java.io.Serializable {
         Collection attrNames
     ) {
         Collection attributes = new ArrayList();
-        LDAPConnection conn = null;
         String id = guid.getDn();
-
+        LDAPSearchRequest request = LDAPRequestParser.parseReadRequest(id,
+            (String[]) attrNames.toArray(EMPTY_STRING_ARRAY));
+        LDAPEntry ldapEntry = null;
         try {
-            conn = getConnection(principal);
-            LDAPEntry ldapEntry = readLDAPEntry(conn, id, (String[]) attrNames
-                    .toArray(EMPTY_STRING_ARRAY));
-            if (ldapEntry == null) {
-                debug.warning("No attributes returned may not have " +
-                        "permission to read");
-                return Collections.EMPTY_SET;
-            }
-            Iterator iter = attrNames.iterator();
-            while (iter.hasNext()) {
-                String attrName = (String) iter.next();
-                LDAPAttribute ldapAttribute = ldapEntry.getAttribute(attrName);
-                if (ldapAttribute != null) {
-                    attributes.add(new Attr(ldapAttribute));
-                }
-            }
+            ldapEntry = readLDAPEntry(principal, request);
         } catch (Exception e) {
             if (debug.warningEnabled()) {
                 debug.warning("Exception in DataLayer.getAttributes for DN: "
                         + id, e);
             }
             return null;
-        } finally {
-            releaseConnection(conn);
+        }
+        if (ldapEntry == null) {
+            debug.warning("No attributes returned may not have " +
+                "permission to read");
+            return Collections.EMPTY_SET;
+        }
+        Iterator iter = attrNames.iterator();
+        while (iter.hasNext()) {
+            String attrName = (String) iter.next();
+            LDAPAttribute ldapAttribute = ldapEntry.getAttribute(attrName);
+            if (ldapAttribute != null) {
+                attributes.add(new Attr(ldapAttribute));
+            }
         }
         return attributes;
     }
@@ -495,7 +494,8 @@ public class DataLayer implements java.io.Serializable {
         int errorCode = 0;
 
         try {
-            conn = getConnection(principal);
+            LDAPEntry entry = new LDAPEntry(id, attrSet.toLDAPAttributeSet());
+            LDAPAddRequest request = LDAPRequestParser.parseAddRequest(entry);
             int retry = 0;
             while (retry <= connNumRetry) {
                 if (debug.messageEnabled()) {
@@ -503,12 +503,13 @@ public class DataLayer implements java.io.Serializable {
                 }
 
                 try {
-                    LDAPEntry entry = new LDAPEntry(id, attrSet
-                            .toLDAPAttributeSet());
-                    conn.add(entry);
+                    conn = getConnection(principal);
+                    conn.add(request);
                     return;
                 } catch (LDAPException e) {
                     errorCode = e.getLDAPResultCode();
+                    releaseConnection(conn, errorCode);
+                    conn = null;
                     if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
                             || retry == connNumRetry) {
                         throw e;
@@ -539,7 +540,9 @@ public class DataLayer implements java.io.Serializable {
                         IUMSConstants.UNABLE_TO_ADD_ENTRY, args), e);
             }
         } finally {
-            releaseConnection(conn, errorCode);
+            if (conn != null) {
+                releaseConnection(conn);
+            }
         }
     }
 
@@ -568,7 +571,8 @@ public class DataLayer implements java.io.Serializable {
         int errorCode = 0;
 
         try {
-            conn = getConnection(principal);
+            LDAPDeleteRequest request =
+                LDAPRequestParser.parseDeleteRequest(id);
             int retry = 0;
             while (retry <= connNumRetry) {
                 if (debug.messageEnabled()) {
@@ -576,10 +580,13 @@ public class DataLayer implements java.io.Serializable {
                 }
 
                 try {
-                    conn.delete(id);
+                    conn = getConnection(principal);
+                    conn.delete(request);
                     return;
                 } catch (LDAPException e) {
                     errorCode = e.getLDAPResultCode();
+                    releaseConnection(conn, errorCode);
+                    conn = null;
                     if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
                             || retry == connNumRetry) {
                         throw e;
@@ -607,7 +614,9 @@ public class DataLayer implements java.io.Serializable {
                         IUMSConstants.UNABLE_TO_DELETE_ENTRY, args), e);
             }
         } finally {
-            releaseConnection(conn, errorCode);
+            if (conn != null) {
+                releaseConnection(conn);
+            }
         }
     }
 
@@ -647,17 +656,13 @@ public class DataLayer implements java.io.Serializable {
         Guid guid,
         String attrNames[]
     ) throws EntryNotFoundException, UMSException {
-        LDAPConnection conn = null;
         String id = guid.getDn();
         LDAPEntry entry = null;
+        LDAPSearchRequest request = LDAPRequestParser.parseReadRequest(id,
+            attrNames);
 
         try {
-            conn = getConnection(principal);
-            if (attrNames == null) {
-                entry = readLDAPEntry(conn, id, null);
-            } else {
-                entry = readLDAPEntry(conn, id, attrNames);
-            }
+            entry = readLDAPEntry(principal, request);
         } catch (LDAPException e) {
             if (debug.warningEnabled()) {
                 debug.warning("Exception in DataLayer.read for DN: " + id);
@@ -672,8 +677,6 @@ public class DataLayer implements java.io.Serializable {
                 throw new UMSException(i18n.getString(
                         IUMSConstants.UNABLE_TO_READ_ENTRY, args), e);
             }
-        } finally {
-            releaseConnection(conn);
         }
 
         if (entry == null) {
@@ -698,7 +701,9 @@ public class DataLayer implements java.io.Serializable {
         int errorCode = 0;
 
         try {
-            conn = getConnection(principal);
+            LDAPModifyRDNRequest request =
+                LDAPRequestParser.parseModifyRDNRequest(id, newName,
+                deleteOldName);
             int retry = 0;
             while (retry <= connNumRetry) {
                 if (debug.messageEnabled()) {
@@ -706,10 +711,13 @@ public class DataLayer implements java.io.Serializable {
                 }
 
                 try {
-                    conn.rename(id, newName, deleteOldName);
+                    conn = getConnection(principal);
+                    conn.rename(request);
                     return;
                 } catch (LDAPException e) {
                     errorCode = e.getLDAPResultCode();
+                    releaseConnection(conn, errorCode);
+                    conn = null;
                     if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
                             || retry == connNumRetry) {
                         throw e;
@@ -735,7 +743,9 @@ public class DataLayer implements java.io.Serializable {
                 throw new UMSException(id, e);
             }
         } finally {
-            releaseConnection(conn, errorCode);
+            if (conn != null) {
+                releaseConnection(conn);
+            }
         }
     }
 
@@ -761,7 +771,8 @@ public class DataLayer implements java.io.Serializable {
         int errorCode = 0;
 
         try {
-            conn = getConnection(principal);
+            LDAPModifyRequest request = LDAPRequestParser.parseModifyRequest(
+                id, modSet);
             int retry = 0;
             while (retry <= connNumRetry) {
                 if (debug.messageEnabled()) {
@@ -769,10 +780,13 @@ public class DataLayer implements java.io.Serializable {
                 }
 
                 try {
-                    conn.modify(id, modSet);
+                    conn = getConnection(principal);
+                    conn.modify(request);
                     return;
                 } catch (LDAPException e) {
                     errorCode = e.getLDAPResultCode();
+                    releaseConnection(conn, errorCode);
+                    conn = null;
                     if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
                             || retry == connNumRetry) {
                         throw e;
@@ -798,7 +812,9 @@ public class DataLayer implements java.io.Serializable {
                 throw new UMSException(id, e);
             }
         } finally {
-            releaseConnection(conn, errorCode);
+            if (conn != null) {
+                releaseConnection(conn);
+            }
         }
     }
 
@@ -938,7 +954,7 @@ public class DataLayer implements java.io.Serializable {
                     }
                 }
             }
-
+            
             constraints = conn.getSearchConstraints();
             LDAPControl[] existingCtrls = constraints.getServerControls();
 
@@ -1113,8 +1129,6 @@ public class DataLayer implements java.io.Serializable {
                 throw new UMSException(msg, e);
             }
 
-        } finally {
-            // releaseConnection(conn);
         }
     }
 
@@ -1165,13 +1179,13 @@ public class DataLayer implements java.io.Serializable {
         int errorCode = 0;
 
         try {
-            conn = getConnection(principal);
-
+            LDAPSearchRequest request = LDAPRequestParser.parseReadRequest(
+                "fake=fake");
+            conn = getConnection(principal);            
             // disable the checking of attribute syntax quoting and the
             // read on ""
             conn.setProperty(DSConfigMgr.SCHEMA_BUG_PROPERTY,
                     DSConfigMgr.VAL_STANDARD);
-
             int retry = 0;
             while (retry <= connNumRetry) {
                 if (debug.messageEnabled()) {
@@ -1183,7 +1197,7 @@ public class DataLayer implements java.io.Serializable {
                     // reconnect. So use read to force it to reconnect
                     if (retry > 0) {
                         try {
-                            conn.read("fake=fake");
+                            conn.read(request);
                         } catch (Exception ex) {
                         }
                     }
@@ -1192,6 +1206,8 @@ public class DataLayer implements java.io.Serializable {
                     return dirSchema;
                 } catch (LDAPException e) {
                     errorCode = e.getLDAPResultCode();
+                    releaseConnection(conn, errorCode);
+                    conn = null;
                     if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
                             || retry == connNumRetry) {
                         throw e;
@@ -1213,7 +1229,9 @@ public class DataLayer implements java.io.Serializable {
                 throw new UMSException(m_host, e);
             }
         } finally {
-            releaseConnection(conn, errorCode);
+            if (conn != null) {
+                releaseConnection(conn);
+            }
         }
 
         return dirSchema;
@@ -1245,8 +1263,10 @@ public class DataLayer implements java.io.Serializable {
                 "standard");
             schemaElement.add(conn, "cn=schema");
         } catch (LDAPException e) {
-            debug.error("Exception in DataLayer.addSchema: ", e);
             int errorCode = e.getLDAPResultCode();
+            releaseConnection(conn, errorCode);
+            conn = null;
+            debug.error("Exception in DataLayer.addSchema: ", e);
             switch (errorCode) {
             case LDAPException.ATTRIBUTE_OR_VALUE_EXISTS:
                 throw new SchemaElementAlreadyExistsException(schemaElement
@@ -1257,7 +1277,9 @@ public class DataLayer implements java.io.Serializable {
                 throw new UMSException(schemaElement.getName(), e);
             }
         } finally {
-            releaseConnection(conn);
+            if (conn != null) {
+                releaseConnection(conn);
+            }
         }
     }
 
@@ -1287,8 +1309,10 @@ public class DataLayer implements java.io.Serializable {
             schemaElement.remove(conn, "cn=schema");
 
         } catch (LDAPException e) {
-            debug.error("Exception in DataLayer.removeSchema:", e);
             int errorCode = e.getLDAPResultCode();
+            releaseConnection(conn, errorCode);
+            conn = null;
+            debug.error("Exception in DataLayer.removeSchema:", e);
             switch (errorCode) {
             case LDAPException.INSUFFICIENT_ACCESS_RIGHTS:
                 throw new AccessRightsException(schemaElement.getName(), e);
@@ -1296,7 +1320,9 @@ public class DataLayer implements java.io.Serializable {
                 throw new UMSException(schemaElement.getName(), e);
             }
         } finally {
-            releaseConnection(conn);
+            if (conn != null) {
+                releaseConnection(conn);
+            }
         }
     }
 
@@ -1386,6 +1412,64 @@ public class DataLayer implements java.io.Serializable {
 
         throw ldapEx;
     }
+
+    public LDAPEntry readLDAPEntry(java.security.Principal principal,
+        LDAPSearchRequest request) throws LDAPException {
+
+        LDAPException ldapEx = null;
+        int retry = 0;
+        int connRetry = 0;
+        LDAPConnection ld = null;
+        while (retry <= replicaRetryNum && connRetry <= connNumRetry) {
+            if (debug.messageEnabled()) {
+                debug.message("DataLayer.readLDAPEntry: connRetry: "
+                        + connRetry);
+                debug.message("DataLayer.readLDAPEntry: retry: " + retry);
+            }
+            try {
+                ld = getConnection(principal);
+                return ld.read(request);
+            } catch (LDAPException e) {
+                int errorCode = e.getLDAPResultCode();
+                releaseConnection(ld, errorCode);
+                ld = null;
+                if (errorCode == LDAPException.NO_SUCH_OBJECT) {
+                    if (debug.messageEnabled()) {
+                        debug.message("Replica: entry not found: " +
+                            request.getBaseDN() + " retry: " + retry);
+                    }
+                    if (retry == replicaRetryNum) {
+                        ldapEx = e;
+                    } else {
+                        try {
+                            Thread.sleep(replicaRetryInterval);
+                        } catch (Exception ex) {
+                        }
+                    }
+                    retry++;
+                } else if (retryErrorCodes.contains("" + errorCode)) {
+                    if (connRetry == connNumRetry) {
+                        ldapEx = e;
+                    } else {
+                        try {
+                            Thread.sleep(connRetryInterval);
+                        } catch (Exception ex) {
+                        }
+                    }
+                    connRetry++;
+                } else {
+                    throw e;
+                }
+            } finally {
+                if (ld != null) {
+                    releaseConnection(ld);
+                }
+            }
+        }
+
+        throw ldapEx;
+    }
+
 
     /**
      * Initialize the pool shared by all DataLayer object(s).

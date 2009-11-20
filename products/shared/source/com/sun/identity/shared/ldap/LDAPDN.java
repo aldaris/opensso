@@ -47,8 +47,11 @@ public class LDAPDN {
      * @see com.sun.identity.shared.ldap.LDAPDN#explodeRDN(java.lang.String, boolean)
      */
     public static String[] explodeDN (String dn, boolean noTypes) {
-        DN name = new DN(dn);
-        return name.explodeDN(noTypes);
+        return explodeDN(new DN(dn), noTypes);
+    }
+
+    public static String[] explodeDN (DN dn, boolean noTypes) {
+        return dn.explodeDN(noTypes);
     }
 
     /**
@@ -60,12 +63,15 @@ public class LDAPDN {
      * @see com.sun.identity.shared.ldap.LDAPDN#explodeDN(java.lang.String, boolean)
      */
     public static String[] explodeRDN (String rdn, boolean noTypes) {
-        RDN name = new RDN(rdn);
+        return explodeRDN(new RDN(rdn), noTypes);
+    }
+
+    public static String[] explodeRDN (RDN rdn, boolean noTypes) {
         if ( noTypes ) {
-            return name.getValues();
+            return rdn.getValues();
         } else {
             String[] str = new String[1];
-            str[0] = name.toString();
+            str[0] = rdn.toString();
             return str;
         }
     }
@@ -191,7 +197,11 @@ public class LDAPDN {
      * @return the normalized DN
      */
     public static String normalize(String dn) {
-        return (new DN(dn)).toString();
+        return normalize(new DN(dn));
+    }
+
+    public static String normalize(DN dn) {
+        return dn.toString();
     }
     
     /** 

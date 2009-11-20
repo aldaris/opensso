@@ -58,6 +58,31 @@ public class BERSequence extends BERConstruct {
         super(decoder, stream, bytes_read);
     }
 
+    public void addElement(int contentLength, BERTagDecoder decoder,
+        InputStream stream, int[] bytes_read) throws IOException {
+        int contents_length = contentLength;
+        int[] component_length = new int[1];
+        if (contents_length == -1) {
+            /* Constructed - indefinite length */
+            BERElement element = null;
+            do {
+                component_length[0] = 0;
+                element = getElement(decoder, stream, component_length);
+                if (element != null) {
+                    addElement(element);
+                }
+            } while (element != null);
+        } else {
+            /* Constructed - definite length */
+            bytes_read[0] += contents_length;
+            while (contents_length > 0) {
+                component_length[0] = 0;
+                addElement(getElement(decoder, stream,component_length));
+                contents_length -= component_length[0];
+            }
+        }
+    }
+
     /**
      * Gets the element type.
      * @return element type.

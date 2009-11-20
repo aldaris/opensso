@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedRemoteServicesImpl.java,v 1.5 2009-01-28 05:34:48 ww203982 Exp $
+ * $Id: CachedRemoteServicesImpl.java,v 1.6 2009-11-20 23:52:52 ww203982 Exp $
  *
  */
 
@@ -455,14 +455,14 @@ public class CachedRemoteServicesImpl extends RemoteServicesImpl implements
      */
     public String getOrganizationDN(SSOToken token, String entryDN)
             throws AMException {
-        if (entryDN.length() == 0 || !DN.isDN(entryDN)) {
+        DN dnObject = new DN(entryDN);
+        if (entryDN.length() == 0 || !dnObject.isDN()) {
             getDebug().error(
                     "CachedRemoteServicesImpl.getOrganizationDN() "
                             + "Invalid DN: " + entryDN);
             throw new AMException(token, "157");
         }
 
-        DN dnObject = new DN(entryDN);
         String organizationDN = "";
         Set childDNSet = new HashSet();
         boolean errorCondition = false;

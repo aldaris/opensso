@@ -24,6 +24,7 @@ package com.sun.identity.shared.ldap.client;
 import java.util.*;
 import com.sun.identity.shared.ldap.ber.stream.*;
 import java.io.*;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
 
 /**
  * This class implements the base class of filter "and" and filter "or".
@@ -70,6 +71,22 @@ public abstract class JDAPFilterSet extends JDAPFilter {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    public int addLDAPFilter(LinkedList bytesList) {
+        int Length = 0;
+        for (int i = m_set.size() - 1; i >= 0; i--) {
+            JDAPFilter f = (JDAPFilter) m_set.elementAt(i);
+            Length += f.addLDAPFilter(bytesList);            
+        }
+        byte[] tempBytes = LDAPRequestParser.getLengthBytes(Length);
+        bytesList.addFirst(tempBytes);
+        Length += tempBytes.length;
+        byte[] tempTag = new byte[1];
+        tempTag[0] = (byte) m_tag;
+        bytesList.addFirst(tempTag);
+        Length++;
+        return Length;
     }
 
     /**
