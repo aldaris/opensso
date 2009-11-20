@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.55 2009-11-17 21:55:14 exu Exp $
+   $Id: build-war.xml,v 1.56 2009-11-20 20:17:37 huacui Exp $
 
 -->
 
@@ -38,6 +38,7 @@
     </fail>
 
     <import file="../../wssagents/wssagents.xml" />
+    <import file="../../oauth/oauth.xml" />
     <property name="war.package.dir" location="${openfm.built.war.dir}/package"/>
     <property name="war.webinf.classes.dir" location="${openfm.built.war.dir}/package/WEB-INF/classes"/>
     <property name="war.packageweb.dir" location="${openfm.built.war.dir}/packageweb"/>
@@ -153,6 +154,9 @@
             <fileset dir="${openfm.res.dir}" includes="*.properties" />
             <fileset dir="${library.xml.dir}" includes="*.xsl" />
         </copy>
+        <copy todir="${war.package.dir}/WEB-INF/classes">
+            <fileset dir="${oauth.config.res.dir}" includes="*.properties" />
+        </copy>
         <copy file="${fedlibrary.dist.dir}/idpdiscovery.jar"
             tofile="${war.package.dir}/WEB-INF/lib/idpdiscovery.jar" />
         <copy file="${fedlibrary.dist.dir}/openfedlib.jar"
@@ -165,6 +169,9 @@
         <ant dir="${wssagents.basedir}" target="jars" />
         <copy todir="${war.package.dir}/WEB-INF/lib"
               file="${wssagents.dist.dir}/openssowssproviders.jar"/>
+              
+        <copy todir="${war.package.dir}/WEB-INF/lib"
+              file="${oauth.dist.dir}/oauthservice.jar"/>
               
         <copy todir="${war.package.dir}/config/auth/default">
             <fileset dir="${openfm.authmodule.xml.dir}" includes="*.xml" />
@@ -245,6 +252,11 @@
         <copy todir="${war.package.dir}/wsfederation/jsp">
             <fileset dir="${library.dir}/www/config/wsfederation"
                 includes="*.jsp,*.html" />
+        </copy>
+
+        <copy todir="${war.package.dir}/oauth">
+            <fileset dir="${oauth.www.dir}/jsp"
+                includes="*.jsp" />
         </copy>
 
         <copy todir="${war.package.dir}/console">

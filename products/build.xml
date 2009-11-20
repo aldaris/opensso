@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.54 2009-10-12 16:27:11 bigfatrat Exp $
+   $Id: build.xml,v 1.55 2009-11-20 20:11:26 huacui Exp $
 
 -->
 
@@ -72,6 +72,7 @@
         <mkdir dir="${prd.nightly.dist.dir}" />
         <antcall target="amserver-nightly" />
         <antcall target="fedlibrary-nightly" />
+        <antcall target="oauth-nightly" />
         <antcall target="openfm-nightly" />
         <antcall target="upgrade-nightly" />
         <antcall target="remove-amserver-bits" />
@@ -150,6 +151,11 @@
         </copy>
    </target>
         
+    <target name="oauth-nightly">
+        <ant antfile="${oauth.base.dir}/build.xml" inheritRefs="true"
+            target="all" />
+   </target>
+        
     <target name="openfm-nightly">
         <copy file="${amserver.dist.dir}/amAdminTools.zip"
             todir="${openfm.extlib.dir}"  />
@@ -172,6 +178,8 @@
         <copy file="${amserver.dist.dir}/amclientsdk.jar"
             todir="${openfm.extlib.dir}"  />
         <copy file="${amserver.dist.dir}/opensso-amserver.war"
+            todir="${openfm.extlib.dir}"  />
+        <copy file="${oauth.dist.dir}/oauthservice.jar"
             todir="${openfm.extlib.dir}"  />
             
         <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"
@@ -279,6 +287,8 @@
         <ant antfile="${amserver.base.dir}/build.xml" inheritRefs="true"
             target="clean" />
         <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
+            target="clean" />
+        <ant antfile="${oauth.base.dir}/build.xml" inheritRefs="true"
             target="clean" />
         <ant antfile="${fm.base.dir}/build.xml" inheritRefs="true"
             target="clean" />
