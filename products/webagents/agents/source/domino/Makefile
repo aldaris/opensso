@@ -35,6 +35,7 @@ ifeq ($(OS_ARCH), WINNT)
 LIB_NAME := amdomino
 endif
 
+
 EXPORTED_LIBS := $(LIB_NAME)$(SO_EXT)
 LIB_MAPFILE := $(LIB_NAME)$(MAPFILE_EXT)
 
@@ -85,22 +86,20 @@ $(EXPORTED_LIBS): $(OBJS) $(LIB_MAPFILE)
 
 endif
 
-ifeq ($(OS_ARCH), WINNT)
-DOMINO_LIB := $(LIB_NAME)$(SO_EXT)
-LIB_MAPFILE := dominoagent$(MAPFILE_EXT)
-CFLAGS += -Zp -DW32 -DWIN32 -DXP_WIN32 -D_WINDOWS -D_REENTRANT -DUSE_THREADSAFE_INTERFACES -DAM_STATIC_LIB
-INCLUDE_FLAGS := -I$(DEST_INC_DIR)  -I$(DOMINO_INC_DIR)
-LDFLAGS += ../../../am/source/am_web.res -L$(DOMINO_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(NSS_LIB_DIR) -L$(LIBXML_LIB_DIR)
-LDFLAGS += $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG) -L$(DEST_LIB_DIR)
-LDLIBS += -luser32 -lamsdk_static -lns-httpd40 -llibnspr4 -llibplds4 -llibplc4 -lnss3 -lssl3 -llibxml2
- 
-all: depends export_libs 
 
-$(EXPORTED_LIBS): $(OBJS) $(LIB_MAPFILE)
-	echo "dest inc dir :" $(DEST_INC_DIR)
-	echo "domino dir :" $(DOMINO_INC_DIR)
+ifeq ($(OS_ARCH), WINNT)
+
+CFLAGS += -Zp -I$(DOMINO_INC_DIR) -I$(DEST_INC_DIR) -DW32 -DWIN32 -DXP_WIN32 -D_WINDOWS -D_REENTRANT -DUSE_THREADSAFE_INTERFACES -DAM_STATIC_LIB
+LDFLAGS += ../../../am/source/am_web.res -L$(NSS_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR) -L$(DOMINO_LIB_DIR)/mswin32
+LDFLAGS += $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG) -L$(DEST_LIB_DIR)
+LDLIBS += -lamsdk_static -lnotes -ladvapi32 -lws2_32 -lnss3 -lssl3 -llibnspr4 -llibplc4 -llibxml2 -luser32
+
+all: depends export_libs
+
+$(EXPORTED_LIBS): $(OBJS)  $(LIB_MAPFILE)
 	$(MAKE_SHARED_LIB)
-endif
+
+endif 
 
 
 ### AIX

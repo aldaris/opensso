@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: domino_agent.c,v 1.2 2009-11-12 20:06:05 leiming Exp $
+ * $Id: domino_agent.c,v 1.3 2009-11-20 21:34:55 leiming Exp $
  *
  *
  */ 
@@ -2034,6 +2034,7 @@ filterRawRequest(FilterContext *context, FilterRawRequest *rawRequest) {
         req_params.method = method;
         req_params.path_info = path_info;
         req_params.client_ip = client_ip;
+        req_params.client_hostname = NULL;
         req_params.cookie_header_val = cookie_header_val;
 
         // Set functions for processing access check result.
@@ -2181,7 +2182,6 @@ filterAuthorize(FilterContext *context, FilterAuthorize *fAuthZ)
 }
 
 
-#ifndef WINDOWS 
 #include <sys/types.h> 
 #include <sys/stat.h>
 #define AGENT_CONFIG_PATH_FILE "dsame.conf"
@@ -2256,7 +2256,6 @@ static am_status_t get_properties_file_path()
     free(read_str);
     return (AM_SUCCESS);
 }
-#endif
 
 /**
  * Gets called on the kFilterResponse event.
@@ -2378,7 +2377,7 @@ init_agent() {
     //End of modifications for the server restart bug
 
 
-    if ((get_properties_file_path()) != AM_SUCCESS) {
+    if ((sts=get_properties_file_path()) != AM_SUCCESS) {
         am_web_log_error(
             "%s: getting agent's config/bootstrap files' paths failed!",
             thisfunc);
