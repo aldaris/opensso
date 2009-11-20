@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wss_agent_configurator.xml,v 1.1 2009-11-10 08:37:30 mrudul_uchil Exp $
+   $Id: wss_agent_configurator.xml,v 1.2 2009-11-20 18:00:13 mrudul_uchil Exp $
 
 -->
 
@@ -85,6 +85,9 @@
             addproperty="app.package"
         />
 
+        <property name="amconfig.file" location="${wss.basedir}/config/AMConfig.properties.template"/>
+        <available file="${amconfig.file}" property="amconfig.file.template.exists"/>
+        <antcall target="amconfig-backup" />
         <copy file="${wss.basedir}/config/AMConfig.properties"
               tofile="${wss.basedir}/config/AMConfig.properties.template" />
 
@@ -95,8 +98,6 @@
                 <arg value="${wss.basedir}/config/AMConfig.properties.template"/>
                 <arg value="${wss.basedir}/config/AMConfig.properties"/>
         </java>
-
-        <delete file="${wss.basedir}/config/AMConfig.properties.template" />
 
         <java classname="com.sun.identity.setup.ParseInputData" fork="true">
                 <classpath refid="build.class.path"/>
@@ -167,6 +168,10 @@
     </target>
 
     <target name="merge-webxml" if="do.wsc">
+        <property name="web.file" location="${wss.war.packages.dir}/WEB-INF/web.xml.backup"/>
+        <available file="${web.file}" property="web.file.exists"/>
+        <antcall target="web-xml-backup" />
+
         <copy file="${wss.war.packages.dir}/WEB-INF/web.xml"
               tofile="${wss.war.packages.dir}/WEB-INF/web.xml.backup"/>
         <java classname="com.sun.identity.setup.InsertWebXMLContent" fork="true">
@@ -182,6 +187,16 @@
             <arg value="${wss.war.packages.dir}/WEB-INF/web.xml" />
         </java>
         
+    </target>
+
+    <target name="web-xml-backup" if="web.file.exists">
+        <copy file="${wss.war.packages.dir}/WEB-INF/web.xml.backup"
+              tofile="${wss.war.packages.dir}/WEB-INF/web.xml" overwrite="true"/>
+    </target>
+
+    <target name="amconfig-backup" if="amconfig.file.template.exists">
+        <copy file="${wss.basedir}/config/AMConfig.properties.template"
+              tofile="${wss.basedir}/config/AMConfig.properties" overwrite="true"/>
     </target>
 
     <target name="usage">

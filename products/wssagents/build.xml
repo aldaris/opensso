@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.31 2009-11-11 17:20:26 huacui Exp $
+   $Id: build.xml,v 1.32 2009-11-20 18:00:11 mrudul_uchil Exp $
 
 -->
 
@@ -271,6 +271,18 @@
             file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="@AM_COOKIE_NAME@"
             replace="iPlanetDirectoryPro"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="@CONFIGURATION_PROVIDER_CLASS@"
+            replace="com.sun.identity.plugin.configuration.impl.ConfigurationInstanceImpl"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="@DATASTORE_PROVIDER_CLASS@"
+            replace="com.sun.identity.plugin.datastore.impl.IdRepoDataStoreProvider"/>
+        <replaceregexp byline="true"
+            file="${zip.temp.dir}/config/AMConfig.properties.template"
+            match="@SESSION_PROVIDER_CLASS@"
+            replace="com.sun.identity.plugin.session.impl.FMSessionProvider"/>
         <replaceregexp byline="true"
             file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="com.sun.identity.saml.xmlsig.keystore=@BASE_DIR@/keystore.jks"
