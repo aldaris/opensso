@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationCreateWizardHandler.java,v 1.4 2009-11-19 22:27:31 farble1670 Exp $
+ * $Id: DelegationCreateWizardHandler.java,v 1.5 2009-11-20 18:34:24 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -32,6 +32,8 @@ import com.sun.identity.admin.model.DelegationWizardStep;
 import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.NameDelegationWizardStepValidator;
 import com.sun.identity.admin.model.NextPopupBean;
+import com.sun.identity.admin.model.ResourcesDelegationWizardStepValidator;
+import com.sun.identity.admin.model.SubjectsDelegationWizardStepValidator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,8 @@ public class DelegationCreateWizardHandler extends DelegationWizardHandler {
     @Override
     public void initWizardStepValidators() {
         getWizardStepValidators()[DelegationWizardStep.NAME.toInt()] = new NameDelegationWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[DelegationWizardStep.RESOURCES.toInt()] = new ResourcesDelegationWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[DelegationWizardStep.SUBJECTS.toInt()] = new SubjectsDelegationWizardStepValidator(getWizardBean());
     }
 
     public void doFinishNext() {
