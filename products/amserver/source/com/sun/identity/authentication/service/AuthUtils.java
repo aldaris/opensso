@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.28 2009-11-04 22:51:38 manish_rustagi Exp $
+ * $Id: AuthUtils.java,v 1.29 2009-11-20 04:41:56 222713 Exp $
  *
  */
 
@@ -1052,7 +1052,7 @@ public class AuthUtils extends AuthClientUtils {
             
             if ((orgName == null) && (sess == null)) {
                 utilDebug.error("Cannot create authcontext with null org " );
-                throw new AuthException(AMAuthErrorCode.AUTH_ERROR, null);
+                throw new AuthException(AMAuthErrorCode.AUTH_TIMEOUT, null);
             } else if (orgName == null) {
                 orgName = sess.getClientDomain();
             }
