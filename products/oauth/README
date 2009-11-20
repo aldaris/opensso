@@ -1,0 +1,61 @@
+------------------------------------------------------------------------
+README file for OpenSSO OAuth Token Service
+------------------------------------------------------------------------
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+
+The contents of this file are subject to the terms
+of the Common Development and Distribution License
+(the License). You may not use this file except in
+compliance with the License.
+
+You can obtain a copy of the License at
+https://opensso.dev.java.net/public/CDDLv1.0.html or
+opensso/legal/CDDLv1.0.txt
+See the License for the specific language governing
+permission and limitations under the License.
+
+When distributing Covered Code, include this CDDL
+Header Notice in each file and include the License file
+at opensso/legal/CDDLv1.0.txt.
+If applicable, add the following below the CDDL Header,
+with the fields enclosed by brackets [] replaced by
+your own identifying information:
+"Portions Copyrighted [year] [name of copyright owner]"
+
+$Id: README,v 1.1 2009-11-20 19:19:27 huacui Exp $
+
+------------------------------------------------------------------------
+
+Overview
+--------
+
+The OpenSSO OAuth Token Service supports OAuth Core 1.0 spec in terms 
+of OAuth token management, including OAuth consumer registration,
+OAuth request token management/authorization, and OAuth access
+token management. The OpenSSO OAuth Token Service is embedded with 
+the OpenSSO server. 
+
+
+OAuth Token Service URLs
+------------------------
+
+Consumer Registration/Deletion URL:
+http(s)://host:port/deploy-uri/oauth/index.jsp
+
+Request Token URL: 
+http(s)://host:port/deploy-uri/resources/1/oauth/get_request_token
+
+Request Token Authorization URL: 
+http(s)://host:port/deploy-uri/oauth/userconsole.jsp
+
+Access Token URL: 
+http(s)://host:port/deploy-uri/resources/1/oauth/get_access_token
+
+
+OAuth Token Service Samples
+---------------------------
+The samples for the OAuth Token Service are located in samples 
+subdirectory. Please refer to its README file for details.
+
