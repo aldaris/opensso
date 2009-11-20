@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.27 2009-10-14 23:59:41 exu Exp $
+ * $Id: SPSSOFederate.java,v 1.28 2009-11-20 21:41:16 exu Exp $
  *
  */
 
@@ -746,9 +746,11 @@ public class SPSSOFederate {
                 ProtocolFactory.getInstance().createAuthnRequest();    
          if (!isForECP) {
              if ((destinationURI == null) || (destinationURI.length() == 0)) {
-                 authnReq.setDestination(ssourl);
+                 authnReq.setDestination(XMLUtils.escapeSpecialCharacters(
+                     ssourl));
              } else {
-                 authnReq.setDestination(destinationURI);
+                 authnReq.setDestination(XMLUtils.escapeSpecialCharacters(
+                     destinationURI));
              }
          }
          authnReq.setConsent(consent);
@@ -756,7 +758,8 @@ public class SPSSOFederate {
          authnReq.setForceAuthn(isforceAuthn);
          authnReq.setAttributeConsumingServiceIndex(attrIndex);
          authnReq.setAssertionConsumerServiceIndex(acsIndex);
-         authnReq.setAssertionConsumerServiceURL(XMLUtils.escapeSpecialCharacters(acsURL));
+         authnReq.setAssertionConsumerServiceURL(
+              XMLUtils.escapeSpecialCharacters(acsURL));
          authnReq.setProtocolBinding(protocolBinding);
          authnReq.setIssuer(issuer);
          authnReq.setNameIDPolicy(nameIDPolicy);

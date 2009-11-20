@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.17 2009-06-12 22:21:40 mallas Exp $
+ * $Id: IDPProxyUtil.java,v 1.18 2009-11-20 21:41:16 exu Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml2.assertion.AuthnContext;
 import com.sun.identity.saml2.assertion.Assertion;
@@ -329,7 +330,7 @@ public class IDPProxyUtil {
             String dest = SPSSOFederate.getSSOURL(ssoServiceList,
                 SAML2Constants.HTTP_REDIRECT);
              
-            newRequest.setDestination(dest); 
+            newRequest.setDestination(XMLUtils.escapeSpecialCharacters(dest)); 
             newRequest.setConsent(origRequest.getConsent());
             newRequest.setIsPassive(origRequest.isPassive());
             newRequest.setForceAuthn(origRequest.isForceAuthn());

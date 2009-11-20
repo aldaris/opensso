@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.25 2009-10-14 23:59:39 exu Exp $
+ * $Id: IDPSingleLogout.java,v 1.26 2009-11-20 21:41:16 exu Exp $
  *
  */
 
@@ -68,6 +68,7 @@ import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Status;
 import com.sun.identity.saml2.protocol.StatusCode;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 
 
 /**
@@ -561,7 +562,7 @@ public class IDPSingleLogout {
         // participant
        
         String location = getSingleLogoutLocation(spEntityID, realm, binding); 
-        logoutRes.setDestination(location); 
+        logoutRes.setDestination(XMLUtils.escapeSpecialCharacters(location)); 
         
         // call multi-federation protocol processing
         // this is SP initiated HTTP based single logout
@@ -1009,7 +1010,8 @@ public class IDPSingleLogout {
                 logoutRes.getIssuer().getValue());
             
             if (location != null && logoutRes != null) {
-                logoutRes.setDestination(location); 
+                logoutRes.setDestination(XMLUtils.escapeSpecialCharacters(
+                    location)); 
                 IDPCache.idpSessionsByIndices.remove(idpSessionIndex);
                 if ((agent != null) && agent.isRunning() && (saml2Svc != null)){
                     saml2Svc.setIdpSessionCount(
@@ -1492,8 +1494,8 @@ public class IDPSingleLogout {
                     SessionManager.getProvider().getPrincipalName(session);
                 boolean isSOAPInitiated = binding.equals(SAML2Constants.SOAP) 
                     ? true : false;
-                logRes.setDestination(getSingleLogoutLocation(spEntity, realm,
-                    binding));
+                logRes.setDestination(XMLUtils.escapeSpecialCharacters(
+                    getSingleLogoutLocation(spEntity, realm, binding)));
                 debug.message("IDPSingleLogout.processLogReq : call MP");
                 int retStat = SingleLogoutManager.getInstance().
                     doIDPSingleLogout(set, sessUser, request, response, 
@@ -1676,7 +1678,8 @@ public class IDPSingleLogout {
             dest.setID(src.getID());
             dest.setVersion(src.getVersion());
             dest.setIssueInstant(src.getIssueInstant());
-            dest.setDestination(src.getDestination());
+            dest.setDestination(XMLUtils.escapeSpecialCharacters(
+                src.getDestination()));
             dest.setConsent(src.getConsent());
             // TODO : handle signature in case of list of session case
         } catch(SAML2Exception ex) {

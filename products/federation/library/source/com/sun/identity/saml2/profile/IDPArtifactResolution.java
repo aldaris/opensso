@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.12 2009-10-14 23:58:38 exu Exp $
+ * $Id: IDPArtifactResolution.java,v 1.13 2009-11-20 21:41:16 exu Exp $
  *
  */
 
 package com.sun.identity.saml2.profile;
 
 import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml2.assertion.AssertionFactory;
@@ -430,7 +431,7 @@ public class IDPArtifactResolution {
         artResponse.setIssueInstant(new Date());
         artResponse.setAny(res.toXMLString(true,true));
         artResponse.setIssuer(issuer);
-        artResponse.setDestination(acsURL); 
+        artResponse.setDestination(XMLUtils.escapeSpecialCharacters(acsURL)); 
         
         String wantArtifactResponseSigned = 
            SAML2Utils.getAttributeValueFromSSOConfig(

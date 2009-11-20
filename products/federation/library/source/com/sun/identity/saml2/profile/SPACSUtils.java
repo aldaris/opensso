@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.47 2009-10-14 23:59:40 exu Exp $
+ * $Id: SPACSUtils.java,v 1.48 2009-11-20 21:41:16 exu Exp $
  *
  */
 
@@ -341,7 +341,7 @@ public class SPACSUtils {
             resolve.setVersion(SAML2Constants.VERSION_2_0);
             resolve.setIssueInstant(new Date());
             resolve.setArtifact(art);
-            resolve.setDestination(location);
+            resolve.setDestination(XMLUtils.escapeSpecialCharacters(location));
             Issuer issuer = AssertionFactory.getInstance().createIssuer();
             issuer.setValue(hostEntityId);
             resolve.setIssuer(issuer);

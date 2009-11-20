@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ManageNameIDRequestInfo.java,v 1.3 2008-06-25 05:47:54 qcheng Exp $
+ * $Id: ManageNameIDRequestInfo.java,v 1.4 2009-11-20 21:41:16 exu Exp $
  *
  */
 
@@ -123,6 +123,7 @@ public class ManageNameIDRequestInfo extends CacheObject {
     protected HttpServletResponse getServletResponse() {
         return response;
     }
+
     /**
      * Returns the session parameter value.
      *

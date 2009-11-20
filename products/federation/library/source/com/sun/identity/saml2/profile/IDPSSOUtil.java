@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.54 2009-10-14 23:59:39 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.55 2009-11-20 21:41:16 exu Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.saml2.profile;
 
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.DateUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
@@ -705,7 +706,7 @@ public class IDPSSOUtil {
         Issuer issuer = AssertionFactory.getInstance().createIssuer();
         issuer.setValue(idpEntityID);
         res.setIssuer(issuer);
-        res.setDestination(acsURL); 
+        res.setDestination(XMLUtils.escapeSpecialCharacters(acsURL)); 
         return res;
     }
 
@@ -1488,7 +1489,7 @@ public class IDPSSOUtil {
         SubjectConfirmationData scd = AssertionFactory.getInstance().
             createSubjectConfirmationData();
 
-        scd.setRecipient(acsURL);
+        scd.setRecipient(XMLUtils.escapeSpecialCharacters(acsURL));
     
         if (inResponseTo != null) {        
             scd.setInResponseTo(inResponseTo);

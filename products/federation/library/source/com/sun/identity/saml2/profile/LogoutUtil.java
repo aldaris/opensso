@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutUtil.java,v 1.15 2009-06-17 03:09:13 exu Exp $
+ * $Id: LogoutUtil.java,v 1.16 2009-11-20 21:41:16 exu Exp $
  *
  */
 
@@ -200,7 +200,8 @@ public class LogoutUtil {
                                hostEntityRole, recipientEntityID);
 
         // set optional attributes / elements
-        logoutReq.setDestination(destinationURI);
+        logoutReq.setDestination(XMLUtils.escapeSpecialCharacters(
+            destinationURI));
         logoutReq.setConsent(consent);
         logoutReq.setIssuer(issuer);  
         if (hostEntityRole.equals(SAML2Constants.IDP_ROLE)) {
@@ -251,7 +252,8 @@ public class LogoutUtil {
                 "Recipient's single logout service location = " +
                 location);
             if (destinationURI == null || (destinationURI.length() == 0)) { 
-                logoutReq.setDestination(location);
+                logoutReq.setDestination(XMLUtils.escapeSpecialCharacters(
+                    location));
             }  
         }
 

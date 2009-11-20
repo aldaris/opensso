@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.24 2009-10-14 23:58:38 exu Exp $
+ * $Id: DoManageNameID.java,v 1.25 2009-11-20 21:41:16 exu Exp $
  *
  */
 
@@ -268,7 +268,7 @@ public class DoManageNameID {
                     realm, hostEntityID, hostEntityRole,
                     SAML2Constants.DEFAULT_RELAY_STATE);
             }      
-            mniRequest.setDestination(mniURL); 
+            mniRequest.setDestination(XMLUtils.escapeSpecialCharacters(mniURL));
             saveMNIRequestInfo(request, response, paramsMap, mniRequest,
                 relayState, hostEntityRole, session);
 
@@ -1219,7 +1219,8 @@ public class DoManageNameID {
             mniResponse.setIssueInstant(new Date());
             mniResponse.setIssuer(SAML2Utils.createIssuer(hostEntityID)); 
             if (destination != null && (destination.length() != 0)) {
-                mniResponse.setDestination(destination);
+                mniResponse.setDestination(
+                    XMLUtils.escapeSpecialCharacters(destination));
             }
         } catch (SAML2Exception e) {
             debug.error("Error : ", e);
@@ -1267,7 +1268,8 @@ public class DoManageNameID {
                     mniResXMLString);
                 debug.message(method + "Relay State is : " + relayState);
             }
-            mniResponse.setDestination(mniURL);    
+            mniResponse.setDestination(XMLUtils.escapeSpecialCharacters(
+                mniURL));    
             boolean needToSign = false; 
             if (hostEntityRole.equalsIgnoreCase(SAML2Constants.IDP_ROLE)) {
                 needToSign = 
@@ -1336,7 +1338,8 @@ public class DoManageNameID {
         
         mniRequest.setID(SAML2Utils.generateID());
         mniRequest.setVersion(SAML2Constants.VERSION_2_0);
-        mniRequest.setDestination(destination);
+        mniRequest.setDestination(XMLUtils.escapeSpecialCharacters(
+            destination));
         mniRequest.setIssuer(SAML2Utils.createIssuer(hostEntityID));
         mniRequest.setIssueInstant(new Date());
         setNameIDForMNIRequest(mniRequest, nameID, changeID, realm,

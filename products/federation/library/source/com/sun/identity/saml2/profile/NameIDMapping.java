@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDMapping.java,v 1.5 2008-12-03 00:32:31 hengming Exp $
+ * $Id: NameIDMapping.java,v 1.6 2009-11-20 21:41:16 exu Exp $
  *
  */
 
@@ -70,6 +70,8 @@ import com.sun.identity.saml2.protocol.NameIDMappingResponse;
 import com.sun.identity.saml2.protocol.NameIDPolicy;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Status;
+
+import com.sun.identity.shared.xml.XMLUtils;
 
 /**
  * This class provides methods to send or processs
@@ -319,7 +321,8 @@ public class NameIDMapping {
         
         nimRequest.setID(SAML2Utils.generateID());
         nimRequest.setVersion(SAML2Constants.VERSION_2_0);
-        nimRequest.setDestination(destination);
+        nimRequest.setDestination(XMLUtils.escapeSpecialCharacters(
+            destination));
         nimRequest.setIssuer(SAML2Utils.createIssuer(spEntityID));
         nimRequest.setIssueInstant(new Date());
 

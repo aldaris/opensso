@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.27 2009-10-14 23:59:41 exu Exp $
+ * $Id: SPSingleLogout.java,v 1.28 2009-11-20 21:41:16 exu Exp $
  *
  */
 
@@ -61,6 +61,7 @@ import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 
 
 import java.security.AccessController;
@@ -904,14 +905,16 @@ public class SPSingleLogout {
             LogoutResponse logoutRespon =
                 processLogoutRequest(logoutReq, spEntityID, realm,
                 request, response, false, false, binding, true);
-            logoutRespon.setDestination(location);
+            logoutRespon.setDestination(XMLUtils.escapeSpecialCharacters(
+                location));
             IDPProxyUtil.sendIDPInitProxyLogoutRequest(request, response,
                  logoutRespon, location, spEntityID, idpEntityID, binding);
         } else {
             LogoutResponse logoutRes = processLogoutRequest(
                 logoutReq, spEntityID, realm,
                 request, response, true, binding, true);
-            logoutRes.setDestination(location);
+            logoutRes.setDestination(XMLUtils.escapeSpecialCharacters(
+                location));
 
             LogoutUtil.sendSLOResponse(response, logoutRes, location,
                 relayState, realm, spEntityID, SAML2Constants.SP_ROLE,
@@ -1403,7 +1406,8 @@ public class SPSingleLogout {
             dest.setID(src.getID());
             dest.setVersion(src.getVersion());
             dest.setIssueInstant(src.getIssueInstant());        
-            dest.setDestination(src.getDestination());
+            dest.setDestination(XMLUtils.escapeSpecialCharacters(
+                src.getDestination()));
             dest.setConsent(src.getConsent());
         } catch(SAML2Exception ex) {
             debug.error("SPLogoutUtil.copyAndMakeMutable:", ex);
