@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validator.jsp,v 1.7 2009-02-26 22:39:33 veiming Exp $
+   $Id: validator.jsp,v 1.8 2009-11-20 22:45:57 ggennaro Exp $
 
 --%>
 
@@ -343,11 +343,23 @@ function singleLogin() {
     document.getElementById('sso').style.display = 'none';
     document.getElementById('ssoProcessing').style.display = '';
 <%
-    if (validator != null) {
-        out.println("top.gotoURL('" + validator.getSSOURL() +
-            "&RelayState=" + URLEncoder.encode(serverURL +
-            "/validatorStatus.jsp?s=sso&v=1&sendRedirectForValidationNow=true") + "');");
-        out.println("top.showFooter('validate.footer.single.login');");
+    if (validator != null ) {
+        
+        if( validator.isSalesforceSP() ) {
+        
+            // SF doesn't support relay states outside of their domain
+            out.println("top.gotoURL('" + validator.getSSOURL() + "');");
+            out.println("top.showFooter('validate.footer.single.login');");
+
+        } else {
+            
+            out.println("top.gotoURL('" + validator.getSSOURL() +
+                    "&RelayState=" + URLEncoder.encode(serverURL +
+                    "/validatorStatus.jsp?s=sso&v=1&sendRedirectForValidationNow=true") + "');");
+            out.println("top.showFooter('validate.footer.single.login');");
+
+        }
+        
     }
 %>
     window.scrollTo(0, 250);

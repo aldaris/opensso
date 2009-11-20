@@ -22,22 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidateSAML2.java,v 1.3 2009-01-05 23:23:24 veiming Exp $
+ * $Id: ValidateSAML2.java,v 1.4 2009-11-20 22:45:57 ggennaro Exp $
  *
  */
 
 package com.sun.identity.workflow;
 
-import com.sun.identity.saml2.common.SAML2Utils;
-import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
-import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
-import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
-import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
-import com.sun.identity.saml2.jaxb.metadata.SingleLogoutServiceElement;
-import com.sun.identity.saml2.jaxb.metadata.SingleSignOnServiceElement;
-import com.sun.identity.saml2.meta.SAML2MetaException;
-import com.sun.identity.saml2.meta.SAML2MetaManager;
-import com.sun.identity.shared.locale.Locale;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -48,6 +38,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.common.SAML2Utils;
+import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.SingleLogoutServiceElement;
+import com.sun.identity.saml2.jaxb.metadata.SingleSignOnServiceElement;
+import com.sun.identity.saml2.meta.SAML2MetaException;
+import com.sun.identity.saml2.meta.SAML2MetaManager;
+import com.sun.identity.shared.locale.Locale;
 
 public class ValidateSAML2 {
     private static final String LOGIN_URL = "/UI/Login";
@@ -275,6 +277,26 @@ public class ValidateSAML2 {
         return bFedlet;
     }
     
+    public boolean isGoogleSP() {
+        if( this.spEntityId != null ) {
+            if( this.spEntityId.contains("google.com") ) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public boolean isSalesforceSP() {
+        if( this.spEntityId != null ) {
+            if( this.spEntityId.contains("salesforce.com") ) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     public boolean isIDPHosted() {
         return (idpMetaAlias != null) && (idpMetaAlias.length() > 0);
     }
@@ -284,14 +306,23 @@ public class ValidateSAML2 {
             
             try {
                 if (bFedlet) {
-                    String url = idpBaseURL + "/idpssoinit?" +
-                        "NameIDFormat=" +
-                        URLEncoder.encode(
-                            "urn:oasis:names:tc:SAML:2.0:nameid-format:transient", "UTF-8") +
-                        "&metaAlias=" + URLEncoder.encode(idpMetaAlias, "UTF-8") +
-                        "&spEntityID=" + URLEncoder.encode(spEntityId, "UTF-8") +
-                        "&binding=" + URLEncoder.encode(
-                            "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "UTF-8");
+                    String url = idpBaseURL + "/idpssoinit";
+                    
+                    url += "?metaAlias=" 
+                        + URLEncoder.encode(idpMetaAlias, "UTF-8") 
+                        + "&spEntityID=" 
+                        + URLEncoder.encode(spEntityId, "UTF-8") 
+                        + "&binding=" 
+                        + URLEncoder.encode("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "UTF-8");
+
+                    if( isGoogleSP() ) {
+                        url += "&NameIDFormat=" 
+                            + URLEncoder.encode(SAML2Constants.NAMEID_FORMAT_NAMESPACE_V_1_1 + "unspecified", "UTF-8");
+                    } else if( !isSalesforceSP() ){
+                        url += "&NameIDFormat=" 
+                            + URLEncoder.encode(SAML2Constants.NAMEID_FORMAT_NAMESPACE + "transient", "UTF-8");
+                    }
+                                        
                     return url;
                 } else {
                     return idpBaseURL + "/idpssoinit?metaAlias=" + 
