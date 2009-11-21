@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.37 2009-11-09 21:36:04 lakshman_abburi Exp $
+ * $Id: AuthClientUtils.java,v 1.38 2009-11-21 02:08:04 manish_rustagi Exp $
  *
  */
 
@@ -297,7 +297,7 @@ public class AuthClientUtils {
                             String parameter = str.substring(0,index);
                             String parameterValue = str.substring(index+1);
                             data.put(parameter, 
-                            Locale.URLDecodeField(parameterValue, encoding, utilDebug));                            
+                            getCharDecodedField(parameterValue, encoding, utilDebug));                            
                         } 
                     }          
             	}            	
@@ -311,10 +311,10 @@ public class AuthClientUtils {
              	    }
                 }
                 data.put(name, 
-                    Locale.URLDecodeField(value, encoding, utilDebug));             	   
+                    getCharDecodedField(value, encoding, utilDebug));             	   
             }else{
                 data.put(name, 
-                    Locale.URLDecodeField(value, encoding, utilDebug));
+                    getCharDecodedField(value, encoding, utilDebug));
             }
         }// while
         return (data);
@@ -718,7 +718,8 @@ public class AuthClientUtils {
                 indexType = AuthContext.IndexType.LEVEL;
             } else if (strIndexType.equalsIgnoreCase("composite_advice")) {
                 indexType = AuthContext.IndexType.COMPOSITE_ADVICE;
-            }            
+            }
+
         }
         if (utilDebug.messageEnabled()) {
             utilDebug.message("getIndexType : IndexType = " + indexType);
@@ -1527,6 +1528,8 @@ public class AuthClientUtils {
     public static String constructLoginURL(HttpServletRequest request) {
         StringBuffer loginURL = new StringBuffer(serviceURI);
         String queryString = "";
+        String clientEncoding = request.getCharacterEncoding();
+        String encoding = (clientEncoding != null) ? clientEncoding : "UTF-8";
         String encoded = request.getParameter("encoded");
         if(encoded == null){
         	encoded = "false"; 
@@ -1555,7 +1558,7 @@ public class AuthClientUtils {
                         }
                         // This function will encode all the parameters in
                         // SunQueryParamsString 
-                        queryParams = URLencodedSunQueryParamsString(queryParams);
+                        queryParams = URLencodedSunQueryParamsString(queryParams,encoding);
                     }
                     queryString = queryString + queryParams;
                 } else {
@@ -1570,7 +1573,8 @@ public class AuthClientUtils {
                     	   }
                        } 
                        queryString = queryString + AMURLEncDec.encode(parameter)
-                       + "=" + AMURLEncDec.encode(value);
+                       + "=" + AMURLEncDec.encode(
+                       getCharDecodedField(value, encoding, utilDebug));
                     }
                 }
                 if (parameters.hasMoreElements()) {
@@ -1618,7 +1622,8 @@ public class AuthClientUtils {
      * SunQueryParamsString and URL encodes all the parameters
      * included in its value
      */
-      private static String URLencodedSunQueryParamsString(String queryParams){
+      private static String URLencodedSunQueryParamsString(String queryParams,
+              String encoding){
           StringBuffer sb = new StringBuffer(400);
           StringTokenizer st = new StringTokenizer(queryParams, "&");
           String adviceString = null;
@@ -1628,6 +1633,12 @@ public class AuthClientUtils {
                   int index = str.indexOf("=");
                   String parameter = str.substring(0,index);
                   String value = str.substring(index+1);
+                  if(parameter.equalsIgnoreCase("realm")||
+                     parameter.equalsIgnoreCase("org")||
+                     parameter.equalsIgnoreCase("module")){
+                     value = 
+                    	 getCharDecodedField(value, encoding, utilDebug);
+                  }
                   sb.append(AMURLEncDec.encode(parameter));
                   sb.append("=");
                   sb.append(AMURLEncDec.encode(value));
@@ -2911,5 +2922,26 @@ public class AuthClientUtils {
             utilDebug.message("DataFromRealmQualifiedData : " + data );
         }
         return data;
+    }
+    
+    
+    private static String getCharDecodedField(String strIn, String charset,
+            Debug debug) {
+
+        if (strIn == null) {
+            return strIn;
+        }
+        String strOut = null;        
+        try {
+            if (charset == null || charset.length() == 0) {
+                strOut = new String(strIn.getBytes(), "UTF-8");
+            } else {
+                strOut = new String(strIn.getBytes(), charset);
+            }
+        } catch (Exception ex) {
+            debug.error("AuthClientUtils.getCharDecodedField():", ex);
+            strOut = strIn;
+        }
+        return strOut;
     }    
 }
