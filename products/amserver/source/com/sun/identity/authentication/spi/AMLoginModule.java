@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.21 2009-11-04 22:58:37 manish_rustagi Exp $
+ * $Id: AMLoginModule.java,v 1.22 2009-11-21 01:11:56 222713 Exp $
  *
  */
 
@@ -61,6 +61,8 @@ import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.iplanet.dpro.session.service.InternalSession;
+import com.iplanet.dpro.session.service.SessionCount;
+import com.iplanet.dpro.session.service.SessionConstraint;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
@@ -2340,4 +2342,56 @@ public abstract class AMLoginModule implements LoginModule {
         return retval;
 
     }
+
+    public boolean isSessionQuotaReached(String userName) {
+        int sessionCount = -1;
+        int sessionQuota = -1;
+        try {
+             // Get the universal ID
+             AMIdentity amIdUser = ad.getIdentity(IdType.USER, userName,
+                     loginState.getOrgDN());
+             String univId = IdUtils.getUniversalId(amIdUser);
+             sessionQuota = getSessionQuota(amIdUser);
+
+             Map sessions  =
+                 SessionCount.getAllSessionsByUUID(univId);
+
+             if (sessions != null) {
+                sessionCount = sessions.size();
+                if (debug.messageEnabled()) {
+                        debug.message("AMLoginModule.isSessionQuotaReached :: univId= "
+                             + univId + " - Session Quota Reached =  " + (sessionCount >= sessionQuota));
+                }
+             }
+        } catch (Exception ex) {
+             if (debug.messageEnabled()) {
+                debug.message("AMLoginModule.getSessionQuotaLevel::  "
+                    + "Exception : ", ex);
+             }
+        }
+
+        return (sessionCount >= sessionQuota);
+    }
+
+    private int getSessionQuota(AMIdentity iden) {
+        int quota = SessionConstraint.getDefaultSessionQuota();
+        try {
+             Map serviceAttrs =
+                iden.getServiceAttributesAscending("iPlanetAMSessionService");
+
+             Set s = (Set)serviceAttrs.get("iplanet-am-session-quota-limit");
+             Iterator attrs = s.iterator();
+             if (attrs.hasNext()) {
+                String attr = (String) attrs.next();
+                quota = (Integer.valueOf(attr)).intValue();
+             }
+        } catch (Exception e) {
+            if (debug.messageEnabled()) {
+                debug.message("Failed to get the session quota via the "+
+                            "IDRepo interfaces, => Use the default " +
+                            "value from the dynamic schema instead.", e);
+            }
+        }
+        return quota;
+   }
 }

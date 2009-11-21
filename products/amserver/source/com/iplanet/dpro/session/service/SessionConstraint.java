@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionConstraint.java,v 1.5 2008-07-11 22:34:15 manish_rustagi Exp $
+ * $Id: SessionConstraint.java,v 1.6 2009-11-21 01:13:24 222713 Exp $
  *
  */
 
@@ -281,7 +281,7 @@ public class SessionConstraint {
     /*
      * Gets the default allowed sessions quota
      */
-    private static int getDefaultSessionQuota() {
+    public static int getDefaultSessionQuota() {
 
         int quota = DEFAULT_QUOTA;
         try {
