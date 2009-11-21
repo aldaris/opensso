@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.29 2009-11-20 04:41:56 222713 Exp $
+ * $Id: AuthUtils.java,v 1.30 2009-11-21 02:09:40 222713 Exp $
  *
  */
 
@@ -206,6 +206,10 @@ public class AuthUtils extends AuthClientUtils {
                                   + sid);
                 utilDebug.message("AuthUtil:getAuthContext:authContext is..: "
                 + authContext);
+            }
+            if(!sid.isNull() && authContext == null) {
+                utilDebug.error("Invalid Session Timed out");
+                throw new AuthException(AMAuthErrorCode.AUTH_TIMEOUT, null);
             }
             
             if (utilDebug.messageEnabled()) {
