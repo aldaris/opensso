@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.19 2009-10-14 19:21:32 hengming Exp $
+ * $Id: ISAuthConstants.java,v 1.20 2009-11-21 02:13:05 manish_rustagi Exp $
  *
  */
 
@@ -678,4 +678,7 @@ public interface ISAuthConstants {
     // Property name for Login Context in Session
     public static final String LOGIN_CONTEXT = 
         "sunAMAuthLoginContext";
+    
+    // Property name for user password attribute
+    public static final String ATTR_USER_PASSWORD = "userpassword";    
 }

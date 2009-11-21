@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.54 2009-11-18 20:51:24 qcheng Exp $
+ * $Id: LoginState.java,v 1.55 2009-11-21 02:16:06 manish_rustagi Exp $
  *
  */
 
@@ -78,7 +78,9 @@ import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceManager;
 import java.net.InetAddress;
 import java.security.AccessController;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -364,6 +366,8 @@ public class LoginState {
     boolean modulesInSession = false;
     
     public static Set internalUsers = new HashSet();
+    
+    private static SecureRandom secureRandom = null;    
 
     static {
         
@@ -420,6 +424,13 @@ public class LoginState {
         internalUsers.add("urlaccessagent");
         internalUsers.add("amldapuser");
         
+        // Obtain the secureRandom instance
+        try {
+            secureRandom = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException ex) {
+            debug.error("LoginState.static() : " + "LoginState : "
+            + "SecureRandom.getInstance() Failed", ex);
+        }
     }
     
     
@@ -2033,6 +2044,20 @@ public class LoginState {
     }
     
     /**
+     * Converts a byte array to a hex string.
+     */
+    private static String byteArrayToHexString(byte[] byteArray) {
+        int readBytes = byteArray.length;
+        StringBuffer hexData = new StringBuffer();
+        int onebyte;
+        for (int i=0; i < readBytes; i++) {
+          onebyte = ((0x000000ff & byteArray[i]) | 0xffffff00);
+          hexData.append(Integer.toHexString(onebyte).substring(6));
+        }
+        return hexData.toString();
+    }    
+    
+    /**
      * Create user profile.
      *
      * @param token
@@ -2077,6 +2102,14 @@ public class LoginState {
                 debug.message("userCreationAttributes is : "
                 + userCreationAttributes);
             }
+            
+            Set userPasswordSet = new HashSet(1);
+            byte bytes[] = new byte[20];
+            secureRandom.nextBytes(bytes);
+            userPasswordSet.add(byteArrayToHexString(bytes));
+            userCreationAttributes.put(
+                ISAuthConstants.ATTR_USER_PASSWORD, userPasswordSet);
+            
             amIdentityUser =
             createUserIdentity(token,userCreationAttributes,defaultRoles);
             
@@ -3600,7 +3633,7 @@ public class LoginState {
             fqdnURL = ad.processURL(currentGoto, servletRequest);
         } else if ((fqdnURL == null) || (fqdnURL.length() == 0))  {
             fqdnURL = ad.processURL(successLoginURL, servletRequest);
-        }
+        }        
         
         String encodedSuccessURL = encodeURL(fqdnURL,servletResponse,true);
         if (messageEnabled) {
