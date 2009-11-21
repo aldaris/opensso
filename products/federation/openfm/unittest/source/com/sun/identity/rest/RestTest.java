@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestTest.java,v 1.1 2009-11-12 18:37:36 veiming Exp $
+ * $Id: RestTest.java,v 1.2 2009-11-21 02:00:36 qcheng Exp $
  */
 
 package com.sun.identity.rest;
@@ -410,32 +410,6 @@ public class RestTest {
             if (jo.optJSONObject("body") != null) {
                 throw new Exception(
                     "RESTTest.missingResourcesTest() failed, body not empty");
-            }
-        }
-    }
-
-    @Test
-    public void missingSubjectTest() throws Exception {
-        Form params = new Form();
-        params.add("resource", RESOURCE_NAME + "/index.html");
-        params.add("action", "GET");
-        params.add("env", ATTR_NAME + "=" + ATTR_VAL);
-        params.add("realm", REALM);
-
-        try {
-            entitlementClient
-                .queryParams(params)
-                .cookie(cookie)
-                .accept("application/json")
-                .get(String.class);
-            throw new Exception(
-                "RESTTest.missingSubjectTest: no exception thrown.");
-        } catch (UniformInterfaceException e) {
-            int errorCode = e.getResponse().getStatus();
-            //TOFIX: cannot get the correct http status from jersey client.
-            if (errorCode != HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
-                throw new Exception(
-                    "RESTTest.missingSubjectTest: incorrect error code");
             }
         }
     }

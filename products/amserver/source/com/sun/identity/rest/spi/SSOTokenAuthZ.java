@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenAuthZ.java,v 1.2 2009-11-19 19:29:09 veiming Exp $
+ * $Id: SSOTokenAuthZ.java,v 1.3 2009-11-21 02:00:35 qcheng Exp $
  */
 
 package com.sun.identity.rest.spi;
@@ -137,6 +137,14 @@ public class SSOTokenAuthZ implements IAuthorization {
     ) throws ServletException, IOException {
         String tokenId = request.getHeader(
             RestServiceManager.SUBJECT_HEADER_NAME);
+        String hashed = request.getParameter(
+            RestServiceManager.HASHED_SUBJECT_QUERY);
+
+        if (((tokenId == null) || (tokenId.trim().length() == 0)) &&
+            ((hashed == null) || (hashed.trim().length() == 0))) {
+            // by pass the check
+            return;
+        }
 
         if ((tokenId == null) || (tokenId.trim().length() == 0)) {
             try {
@@ -152,9 +160,6 @@ public class SSOTokenAuthZ implements IAuthorization {
 
         if (!Boolean.parseBoolean(SystemProperties.get(
             RestServiceManager.DISABLE_HASHED_SUBJECT_CHECK, "false"))) {
-            String hashed = request.getParameter(
-                RestServiceManager.HASHED_SUBJECT_QUERY);
-
             if ((hashed == null) || (hashed.trim().length() == 0)) {
                 throw new WebApplicationException(
                     HttpServletResponse.SC_BAD_REQUEST);

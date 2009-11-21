@@ -32,7 +32,7 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>AuthZFilter</filter-name>
-        <url-pattern>/ws/1/entitlement/*</url-pattern>
+        <url-pattern>/ws/*</url-pattern>
     </filter-mapping>
     
     <!-- filter mapping -->
