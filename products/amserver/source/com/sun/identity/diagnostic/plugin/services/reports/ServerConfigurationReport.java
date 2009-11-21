@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigurationReport.java,v 1.1 2008-11-22 02:41:20 ak138937 Exp $
+ * $Id: ServerConfigurationReport.java,v 1.2 2009-11-21 02:27:22 ak138937 Exp $
  *
  */
 
@@ -133,6 +133,10 @@ public class ServerConfigurationReport extends ServiceBase implements
         for (Enumeration e=prop.propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
             String val = (String) prop.getProperty(key);
+            if (key.equals(ENC_PWD_PROPERTY) ||
+                key.equals(AM_SERVICES_SECRET)) {
+                val= "xxxxxxxxxxxxxxxx";
+            }
             String[] params = {key, val};
             toolOutWriter.printMessage("rpt-svr-print-prop", params);
         }

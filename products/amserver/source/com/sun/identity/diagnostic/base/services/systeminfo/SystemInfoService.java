@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemInfoService.java,v 1.1 2008-11-22 02:24:32 ak138937 Exp $
+ * $Id: SystemInfoService.java,v 1.2 2009-11-21 02:26:32 ak138937 Exp $
  *
  */
 
@@ -33,9 +33,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.ResourceBundle;
 
 import com.sun.identity.diagnostic.base.core.ToolContext;
+import com.sun.identity.diagnostic.base.core.ToolLogWriter;
 import com.sun.identity.diagnostic.base.core.log.IToolOutput;
 import com.sun.identity.diagnostic.base.core.service.ServiceRequest;
 import com.sun.identity.diagnostic.base.core.service.ServiceResponse;
@@ -81,6 +83,8 @@ public class SystemInfoService implements SystemInfoConstants, ToolService {
         throws Exception 
     {
         toolOutWriter.init(sRes, rb);
+        toolOutWriter.printlnResult("service-start-msg");
+        ToolLogWriter.log(rb,Level.INFO,"service-start-msg", null);
         HashMap systemInfoHM = null;
         HashSet commandSet = (HashSet)sReq.getCommandSet();
         for (Iterator j = commandSet.iterator(); j.hasNext();) {
@@ -91,6 +95,8 @@ public class SystemInfoService implements SystemInfoConstants, ToolService {
                 sysInfoData.toString(toolOutWriter);
             } 
 	}
+        toolOutWriter.printResult(sRes.getStatus());
+        toolOutWriter.printResult("service-done-msg");
     }
     
     public SystemInfoData setToDB(HashMap systemInfoHM) {
