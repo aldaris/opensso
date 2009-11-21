@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.55 2009-11-20 20:11:26 huacui Exp $
+   $Id: build.xml,v 1.56 2009-11-21 00:36:40 huacui Exp $
 
 -->
 
@@ -109,12 +109,15 @@
             target="sample-war" />
         <ant antfile="${fedlibrary.base.dir}/build.xml" inheritRefs="true"
             target="build" />
+        <ant antfile="${oauth.base.dir}/build.xml" inheritRefs="true"
+            target="all" />
         <copy todir="${fm.base.dir}/extlib">
             <fileset file="${amserver.dist.dir}/console.jar" />
             <fileset file="${amserver.dist.dir}/amserver.jar" />
             <fileset file="${amserver.dist.dir}/opensso-register.jar" />
             <fileset file="${amserver.dist.dir}/opensso_server_samples.war" />
             <fileset file="${sharedlib.dist.dir}/opensso-sharedlib.jar" />
+            <fileset file="${oauth.dist.dir}/oauthservice.jar" />
         </copy>
 
         <!-- fake a copy to pass check-openfm-jars.xml -->
