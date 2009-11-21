@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.6 2008-08-19 19:08:28 veiming Exp $
+# $Id: README.txt,v 1.7 2009-11-21 00:02:28 weisun2 Exp $
 #
 ssoSessionTools.zip 
 ======================================================
@@ -78,13 +78,15 @@ Step 3: After step 2 is performed, the CLI's can be run under the following
 |
 |----ext
 |      |
-|      |----mq4_1-binary-Linux_X86-20070816.jar (jmq binaries for x86 linux)
+|      |----mq4_4-v2-Linux_X86.zip (jmq binaries for x86 linux)
 |      |
-|      |----mq4_1-binary-SunOS_X86-20070816.jar (jmq binaries for x86 Solaris)
+|      |----mq4_4-v2-SunOS_X86.zip (jmq binaries for x86 Solaris)
 |      |
-|      |----mq4_1-binary-SunOS-20070816.jar (jmq binaries for sparc Solaris)
+|      |----mq4_4-v2-SunOS.zip (jmq binaries for sparc Solaris)
 |      |
-|      |----mq4_1-binary-WINNT-20070816.jar (jmq binaries for Windows)
+|      |----mq4_4-v2-WINNT.zip (jmq binaries for Windows)
+|      |
+|      |----mq4_4-v2-AIX.zip (jmq binaries for AIX)
 |      |
 |      |----je.jar (bdb binaries in java)
 |
