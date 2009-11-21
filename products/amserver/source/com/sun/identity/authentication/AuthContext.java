@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.24 2009-11-02 07:19:10 222713 Exp $
+ * $Id: AuthContext.java,v 1.25 2009-11-21 01:12:59 qcheng Exp $
  *
  */
 
@@ -1564,6 +1564,8 @@ public class AuthContext extends Object implements java.io.Serializable {
     /**
      * Sets the client's hostname or IP address.This could be used
      * by the policy component to restrict access to resources.
+     * This method is ineffective if the "Remote Auth Security" option under 
+     * the global configuration of Core Authentication Service is not enabled.
      * This method must be called before calling <code>login</code> method.
      * If it is called after calling <code>login</code> then 
      * it is ineffective.
