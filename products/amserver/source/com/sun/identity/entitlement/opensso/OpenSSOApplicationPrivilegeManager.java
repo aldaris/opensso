@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.6 2009-11-19 01:02:03 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.7 2009-11-21 01:54:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -77,7 +77,8 @@ public class OpenSSOApplicationPrivilegeManager extends
         "/sunEntitlementService/1.0/application/default/application";
     private static final String APPL_NAME = 
         DelegationManager.DELEGATION_SERVICE;
-
+    private static final String SUN_AM_REALM_RESOURCE =
+        "sms://" + SMSEntry.getRootSuffix() + "/sunAMRealmService/*";
     private static final String HIDDEN_REALM_DN =
         "o=sunamhiddenrealmdelegationservicepermissions,ou=services,";
 
@@ -179,6 +180,7 @@ public class OpenSSOApplicationPrivilegeManager extends
             p.setName(appPrivilege.getName());
             p.setDescription(appPrivilege.getDescription());
             Set<String> res = createDelegationResources(appPrivilege);
+            res.add(SUN_AM_REALM_RESOURCE);
             Entitlement entitlement = new Entitlement(APPL_NAME, res,
                 getActionValues(appPrivilege.getActionValues()));
             p.setEntitlement(entitlement);
@@ -259,6 +261,7 @@ public class OpenSSOApplicationPrivilegeManager extends
         ap.setLastModifiedDate(p.getLastModifiedDate());
         Entitlement ent = p.getEntitlement();
         Set<String> resourceNames = ent.getResourceNames();
+        resourceNames.remove(SUN_AM_REALM_RESOURCE);
         Map<String, Set<String>> mapAppToRes =
             getApplicationPrivilegeResourceNames(resourceNames);
         ap.setApplicationResources(mapAppToRes);
@@ -446,10 +449,10 @@ public class OpenSSOApplicationPrivilegeManager extends
         throws EntitlementException {
         Set<String> hostIndex = new HashSet<String>();
         hostIndex.add("://" + DNMapper.orgNameToDN(realm));
-        Set<String> pathIndex = new HashSet<String>();
-        pathIndex.add(RESOURCE_PREFIX + "/*");
+        Set<String> pathParentIndex = new HashSet<String>();
+        pathParentIndex.add(RESOURCE_PREFIX);
         ResourceSearchIndexes rIndex = new ResourceSearchIndexes(
-            hostIndex, pathIndex, null);
+            hostIndex, null, pathParentIndex);
         SubjectAttributesManager sam = SubjectAttributesManager.getInstance(
             dsameUserSubject);
 
@@ -458,7 +461,7 @@ public class OpenSSOApplicationPrivilegeManager extends
         OpenSSOIndexStore db = new OpenSSOIndexStore(dsameUserSubject,
             getHiddenRealmDN());
         Iterator<IPrivilege> results = db.search("/", rIndex, subjectIndex,
-            false, false);
+            true, false);
 
         Set<String> actions = new HashSet<String>();
         actions.add(ACTION_READ);
@@ -506,10 +509,12 @@ public class OpenSSOApplicationPrivilegeManager extends
         getApplicationPrivilegeResourceNames(Set<String> resources) {
         Map<String, Set<String>> results = new HashMap<String, Set<String>>();
         for (String r : resources) {
-            Map<String, Set<String>> map =
-                getApplicationPrivilegeResourceNames(r);
-            if ((map != null) && !map.isEmpty()) {
-                results.putAll(map);
+            if (!r.equals(SUN_AM_REALM_RESOURCE)) {
+                Map<String, Set<String>> map =
+                    getApplicationPrivilegeResourceNames(r);
+                if ((map != null) && !map.isEmpty()) {
+                    results.putAll(map);
+                }
             }
         }
         return results;
@@ -787,8 +792,10 @@ public class OpenSSOApplicationPrivilegeManager extends
             Entitlement ent = p.getEntitlement();
 
             for (String res : ent.getResourceNames()) {
-                if (!res.startsWith(resourcePrefix)) {
-                    return Collections.EMPTY_MAP;
+                if (!res.equals(SUN_AM_REALM_RESOURCE)) {
+                    if (!res.startsWith(resourcePrefix)) {
+                        return Collections.EMPTY_MAP;
+                    }
                 }
             }
 

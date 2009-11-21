@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessLevel.java,v 1.2 2009-11-18 21:11:04 farble1670 Exp $
+ * $Id: AccessLevel.java,v 1.3 2009-11-21 01:54:26 veiming Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -50,7 +50,7 @@ public enum AccessLevel {
         Set<String> als = new HashSet<String>();
 
         for (AccessLevel ac: accessLevels) {
-            als.add(ac.toString());
+            als.add(ac.getValue());
         }
 
         return als;

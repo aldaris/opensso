@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPolicyImpl.java,v 1.10 2009-01-28 05:34:58 ww203982 Exp $
+ * $Id: DelegationPolicyImpl.java,v 1.11 2009-11-21 01:54:26 veiming Exp $
  *
  */
 package com.sun.identity.delegation.plugins;
@@ -324,9 +324,19 @@ public class DelegationPolicyImpl implements DelegationInterface,
                 if (p != null) {
                     Set existingPolicies = pm.getPolicyNames();
                     if (existingPolicies.contains(p.getName())) {
-                        pm.replacePolicy(p);
+                        Set<String> subjectNames = p.getSubjectNames();
+
+                        if ((subjectNames == null) || subjectNames.isEmpty()) {
+                            pm.removePolicy(p.getName());
+                        } else {
+                            pm.replacePolicy(p);
+                        }
                     } else {
-                        pm.addPolicy(p);
+                        Set<String> subjectNames = p.getSubjectNames();
+
+                        if ((subjectNames != null) && !subjectNames.isEmpty()){
+                            pm.addPolicy(p);
+                        }
                     }
                 } else {
                     throw new DelegationException(ResBundleUtils.rbName,
@@ -973,17 +983,17 @@ public class DelegationPolicyImpl implements DelegationInterface,
         sb.append(DELIMITER);
         if (serviceName != null) {
             sb.append(serviceName);
-            sb.append(DELIMITER);
         }
         if (version != null) {
-            sb.append(version);
             sb.append(DELIMITER);
+            sb.append(version);
         }
         if (configType != null) { 
-            sb.append(configType);
             sb.append(DELIMITER);
+            sb.append(configType);
         }
         if (subConfigName != null) {
+            sb.append(DELIMITER);
             sb.append(subConfigName);
         }
         return sb.toString();
