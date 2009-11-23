@@ -24,7 +24,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WspCreateWizardStep1Validator.java,v 1.1 2009-10-19 22:51:22 ggennaro Exp $
+ * $Id: WspCreateWizardStep1Validator.java,v 1.2 2009-11-23 19:54:06 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -66,7 +66,7 @@ public class WspCreateWizardStep1Validator
     private boolean validProfileName() {
         WspCreateWizardBean wb = getWspCreateWizardBean();
         String profileName = wb.getWspProfileBean().getProfileName();
-        String pattern = "[\\w ]{1,255}?";
+        String pattern = "[\\w \\-\\?\\$\\@\\:\\&\\.\\/]{0,255}?";
         
         if( profileName != null && profileName.matches(pattern) ) {
             return true;

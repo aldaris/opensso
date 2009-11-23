@@ -24,10 +24,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: WspCreateProfileNameSummary.java,v 1.2 2009-10-19 22:51:25 ggennaro Exp $
+ * $Id: WspCreateProfileNameSummary.java,v 1.3 2009-11-23 19:54:06 ggennaro Exp $
  */
 
 package com.sun.identity.admin.model;
+
+import java.util.regex.Matcher;
 
 import com.sun.identity.admin.Resources;
 
@@ -51,8 +53,10 @@ public class WspCreateProfileNameSummary extends WspCreateWizardSummary {
         Resources r = new Resources();
         String value = r.getString(this, "valueFormat");
 
-        value = value.replaceAll("\\{0\\}", profileBean.getProfileName());
-        value = value.replaceAll("\\{1\\}", profileBean.getEndPoint());
+        value = value.replaceAll("\\{0\\}", 
+                    Matcher.quoteReplacement(profileBean.getProfileName()));
+        value = value.replaceAll("\\{1\\}", 
+                    Matcher.quoteReplacement(profileBean.getEndPoint()));
 
         return value;
     }

@@ -241,11 +241,11 @@ public class WscCreateWizardHandler
         WscCreateWizardBean wizardBean = (WscCreateWizardBean) getWizardBean();
         WscProfileBean wscProfileBean = wizardBean.getWscProfileBean();
         StsClientProfileBean stsClientProfileBean = wizardBean.getStsClientProfileBean();
+        AgentProvider wsc = null;
+        STSAgent stsClient = null;
 
-        // create the sts client profile
+        // initialize the sts client profile
         if( wizardBean.isUsingSts() ) {
-            STSAgent stsClient = null;
-            
             String profileName = "STS Client - " + wscProfileBean.getProfileName();
             stsClientProfileBean.setProfileName(profileName);
             
@@ -256,9 +256,7 @@ public class WscCreateWizardHandler
             }
             
             try {
-                
                 stsClient = WssProfileDao.getStsAgent(stsClientProfileBean);
-
             } catch (ProviderException e) {
                 // problem with initialization
                 showErrorMessage("saveErrorSummary", "saveErrorDetailInit");
@@ -266,23 +264,10 @@ public class WscCreateWizardHandler
                 Logger.getLogger(WscCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
                 return false;
             }
-                        
-            try {
-                stsClient.store();
-            } catch (ProviderException e) {
-                // problem with persistence
-                showErrorMessage("saveErrorSummary", "saveErrorDetailStore");
-                getWizardBean().gotoStep(WscCreateWizardStep.SUMMARY.toInt());
-                Logger.getLogger(WscCreateWizardHandler.class.getName()).log(Level.SEVERE, null, e);
-                return false;
-            }
         }
         
-        // create the wsc profile
-        AgentProvider wsc = null;
-        
+        // initialize the wsc profile
         try {
-            
             if( wizardBean.isUsingSts() ) {
                 wscProfileBean.setStsClientProfileName(stsClientProfileBean.getProfileName());
                 wscProfileBean.setSecurityMechanism(SecurityMechanism.STS_SECURITY.toString());
@@ -303,8 +288,12 @@ public class WscCreateWizardHandler
             return false;
         }
 
-        
+        // Store if no issues in initializing above...
         try {
+            if( wizardBean.isUsingSts() ) {
+                stsClient.store();
+            }
+            
             wsc.store();
         } catch (ProviderException e) {
             // problem with persistence
@@ -316,6 +305,5 @@ public class WscCreateWizardHandler
 
         return true;
     }
-
 
 }
