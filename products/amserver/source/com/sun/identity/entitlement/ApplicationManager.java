@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.5 2009-11-19 01:02:02 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.6 2009-11-23 21:04:52 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.regex.Pattern;
 import javax.security.auth.Subject;
 
 /**
@@ -78,8 +79,126 @@ public final class ApplicationManager {
         ApplicationPrivilegeManager apm =
             ApplicationPrivilegeManager.getInstance(realm,
             adminSubject);
-        return apm.getApplications(ApplicationPrivilege.Action.READ);
+        Set<String> applNames = apm.getApplications(
+            ApplicationPrivilege.Action.READ);
+        return filterApplicationNames(realm, applNames, filters);
     }
+
+    private static Set<String> filterApplicationNames(
+        String realm,
+        Set<String> applNames,
+        Set<SearchFilter> filters
+    ) {
+        Set<String> results = new HashSet<String>();
+
+        if ((filters != null) && !filters.isEmpty()) {
+            for (String name : applNames) {
+                try {
+                    Application app = ApplicationManager.getApplication(
+                        PrivilegeManager.superAdminSubject, realm, name);
+                    if (app != null) {
+                        if (match(filters, app)) {
+                            results.add(name);
+                        }
+                    }
+                } catch (EntitlementException ex) {
+                    PrivilegeManager.debug.error(
+                        "ApplicationManager.fitlerApplicationNames", ex);
+                }
+            }
+        } else {
+            results.addAll(applNames);
+        }
+
+        return results;
+    }
+
+    private static boolean match(Set<SearchFilter> filters, Application app) {
+        for (SearchFilter f : filters) {
+            String filterName = f.getName();
+            if (filterName.equals(Application.NAME_ATTRIBUTE))  {
+                if (!match(app.getName(), f.getValue())) {
+                    return false;
+                }
+            } else if (filterName.equals(Application.DESCRIPTION_ATTRIBUTE)) {
+                if (!match(app.getDescription(), f.getValue())) {
+                    return false;
+                }
+            } else if (filterName.equals(Application.CREATED_BY_ATTRIBUTE)) {
+                if (!match(app.getCreatedBy(), f.getValue())) {
+                    return false;
+                }
+            } else if (filterName.equals(
+                Application.LAST_MODIFIED_BY_ATTRIBUTE)) {
+                if (!match(app.getLastModifiedBy(), f.getValue())) {
+                    return false;
+                }
+            } else if (filterName.equals(Application.CREATION_DATE_ATTRIBUTE)){
+                if (!match(app.getCreationDate(), f.getNumericValue(),
+                    f.getOperator())
+                ) {
+                    return false;
+                }
+            } else if (filterName.equals(
+                Application.LAST_MODIFIED_DATE_ATTRIBUTE)
+            ){
+                if (!match(app.getLastModifiedDate(), f.getNumericValue(),
+                    f.getOperator())
+                ) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean match(
+        long value,
+        long pattern,
+        SearchFilter.Operator op
+    ) {
+        if (op.equals(SearchFilter.Operator.EQUAL_OPERATOR)) {
+            return (value == pattern);
+        }
+        if (op.equals(SearchFilter.Operator.GREATER_THAN_OPERATOR)) {
+            return (value > pattern);
+        }
+        if (op.equals(SearchFilter.Operator.LESSER_THAN_OPERATOR)) {
+            return (value < pattern);
+        }
+
+        return false;
+    }
+
+
+    private static boolean match(String value, String strPattern) {
+        if ((strPattern != null) && (strPattern.length() > 0)) {
+            value = value.toLowerCase();
+            strPattern = strPattern.toLowerCase();
+            StringBuilder buff = new StringBuilder();
+            
+            for (int i = 0; i < strPattern.length() - 1; i++) {
+                char c = strPattern.charAt(i);
+                if (c == '*') {
+                    buff.append(".*?");
+                } else {
+                    buff.append(c);
+                }
+            }
+
+            char lastChar = strPattern.charAt(strPattern.length()-1);
+            if (lastChar == '*') {
+                buff.append(".*");
+            } else {
+                buff.append(lastChar);
+            }
+            return Pattern.matches(buff.toString(), value);
+        }
+
+        return true;
+    }
+
+
 
     /**
      * Returns the application names in a realm.
