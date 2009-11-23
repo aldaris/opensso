@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.30 2009-11-20 19:53:49 huacui Exp $
+$Id: README,v 1.31 2009-11-23 21:37:02 huacui Exp $
 
 ------------------------------------------------------------------------------
 
@@ -48,12 +48,10 @@ $Id: README,v 1.30 2009-11-20 19:53:49 huacui Exp $
                backport-util-concurrent-2.2.jar, commons-beanutils-1.6.jar,
                icefaces.jar, icefaces-comps.jar, commons-logging-1.1.1.jar,
                commons-digester-1.8.jar, icefaces-facelets.jar,
-               jersey-core-1.1.1-ea.jar, jersey-server-1.1.1-ea.jar,
                el-api-1.0.jar, jersey-bundle-1.1.1-ea-SNAPSHOT.jar,
-               jersey-client-1.1.1-ea-SNAPSHOT.jar, 
                oauth-signature-1.1.5-ea-SNAPSHOT.jar,
-               oauth-server-1.1.1-ea-SNAPSHOT.jar,
-               oauth-client-1.1.1-ea-SNAPSHOT.jar
+               oauth-server-1.1.5-ea-SNAPSHOT.jar,
+               oauth-client-1.1.5-ea-SNAPSHOT.jar
         %% 2.3 Obtaining db.jar
         %% 2.4 Obtaining testng-5.9-jdk15.jar
         %% 2.5 Obtaining fmsae.dll, fmsae64.dll and agent-csdk
