@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceBase.java,v 1.2 2009-11-19 00:10:38 qcheng Exp $
+ * $Id: ResourceBase.java,v 1.3 2009-11-23 21:25:14 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -30,6 +30,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.util.AuthSPrincipal;
 import java.security.Principal;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +48,6 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 public abstract class ResourceBase {
-
     public static final String STATUS_CODE = "statusCode";
     public static final String STATUS_MESSAGE = "statusMessage";
     public static final String BODY = "body";
@@ -119,89 +119,111 @@ public abstract class ResourceBase {
             toSubject(new AuthSPrincipal(subject));
     }
 
-     protected WebApplicationException getWebApplicationException(
-            HttpHeaders headers,
-            RestException e,
-            MimeType mimeType
-     ) {
+    protected WebApplicationException getWebApplicationException(
+        HttpHeaders headers,
+        RestException e,
+        MimeType mimeType
+    ) {
         if (MimeType.JSON == mimeType) {
-            int statusCode = e.getErrorCode();
-            String statusMessage =  e.getLocalizedMessage(
-                getUserLocale(headers));
-            String responseJsonString = createResponseJSONString(
-                statusCode, statusMessage, null);
-            ResponseBuilder responseBuilder =  Response.status(statusCode);
-            responseBuilder.status(statusCode);
-            responseBuilder.entity(responseJsonString);
-            responseBuilder.type("applicaton/json; charset=UTF-8");
-            throw new WebApplicationException(responseBuilder.build());
+            return getWebApplicationException(400, e.getErrorCode(),
+                e.getLocalizedMessage(getUserLocale(headers)));
         } else {
-            throw new WebApplicationException(
-                  Response.status(e.getErrorCode())
-                  .entity(e.getLocalizedMessage(getUserLocale(headers)))
-                  .type("text/plain; charset=UTF-8").build());
+            return new WebApplicationException(
+                Response.status(400)
+                .entity(getLocalizedMessage(headers, 400))
+                .type("text/plain; charset=UTF-8").build());
         }
     }
 
     protected WebApplicationException getWebApplicationException(
-            HttpHeaders headers,
-            EntitlementException e, MimeType mimeType) {
+        HttpHeaders headers,
+        EntitlementException e,
+        MimeType mimeType
+    ) {
         if (MimeType.JSON == mimeType) {
-            int statusCode = e.getErrorCode();
-            String statusMessage =  e.getLocalizedMessage(
-                getUserLocale(headers));
-            String responseJsonString = createResponseJSONString(
-                statusCode, statusMessage,  null);
-            ResponseBuilder responseBuilder =  Response.status(statusCode);
-            responseBuilder.status(statusCode);
-            responseBuilder.entity(responseJsonString);
-            responseBuilder.type("applicaton/json; charset=UTF-8");
-            throw new WebApplicationException(responseBuilder.build());
+            return getWebApplicationException(400, e.getErrorCode(),
+                e.getLocalizedMessage(getUserLocale(headers)));
         } else {
-            throw new WebApplicationException(
-                  Response.status(e.getErrorCode())
-                  .entity(e.getLocalizedMessage(getUserLocale(headers)))
-                  .type("text/plain; charset=UTF-8").build());
+            return new WebApplicationException(
+                Response.status(400)
+                .entity(getLocalizedMessage(headers, 400))
+                .type("text/plain; charset=UTF-8").build());
         }
     }
 
     protected WebApplicationException getWebApplicationException(
-        HttpHeaders headers, CoreTokenException e) {
-        throw new WebApplicationException (
+        HttpHeaders headers,
+        CoreTokenException e
+    ) {
+        return new WebApplicationException (
               Response.status(e.getHttpStatusCode())
               .entity(e.getLocalizedMessage(getUserLocale(headers)))
               .type("text/plain; charset=UTF-8").build());
     }
 
     protected WebApplicationException getWebApplicationException(
-            JSONException e, MimeType mimeType) {
-        return getWebApplicationException(425, e, mimeType);
+        JSONException e, 
+        MimeType mimeType
+    ) {
+        return getWebApplicationException(400, e, mimeType);
     }
 
     protected WebApplicationException getWebApplicationException(
-            int statusCode,
-            Exception e, MimeType mimeType) {
-        if (MimeType.JSON == mimeType) {
-            String statusMessage =  e.getLocalizedMessage();
-            String responseJsonString = createResponseJSONString(
-                statusCode, statusMessage, null);
-            ResponseBuilder responseBuilder =  Response.status(statusCode);
-            responseBuilder.status(statusCode);
-            responseBuilder.entity(responseJsonString);
-            responseBuilder.type("applicaton/json; charset=UTF-8");
-            throw new WebApplicationException(responseBuilder.build());
-        } else {
-            throw new WebApplicationException(
-                  Response.status(statusCode)
-                  .entity(e.getLocalizedMessage())
-                  .type("text/plain; charset=UTF-8").build());
+        HttpHeaders headers,
+        int statusCode,
+        int errorCode,
+        Object[] param
+    ) {
+        String localizedMsg = getLocalizedMessage(headers, errorCode);
+        if (param != null) {
+            localizedMsg = MessageFormat.format(localizedMsg, param);
         }
+        return getWebApplicationException(statusCode, errorCode, localizedMsg);
+    }
+
+    protected WebApplicationException getWebApplicationException(
+        int statusCode,
+        Exception e,
+        MimeType mimeType
+    ) {
+        if (MimeType.JSON == mimeType) {
+            String statusMessage = e.getLocalizedMessage();
+            return getWebApplicationException(statusCode, statusCode,
+                statusMessage);
+        } else {
+            return new WebApplicationException(
+                Response.status(statusCode).entity(e.getLocalizedMessage()).
+                type("text/plain; charset=UTF-8").build());
+        }
+    }
+
+    private WebApplicationException getWebApplicationException(
+        int statusCode,
+        int errorCode,
+        String message
+    ) {
+        String responseJsonString = createResponseJSONString(
+            errorCode, message, null);
+        ResponseBuilder responseBuilder = Response.status(statusCode);
+        responseBuilder.status(statusCode);
+        responseBuilder.entity(responseJsonString);
+        responseBuilder.type("applicaton/json; charset=UTF-8");
+        return new WebApplicationException(responseBuilder.build());
     }
     
     protected Locale getUserLocale(HttpHeaders headers) {
         List<Locale> locales = headers.getAcceptableLanguages();
         return ((locales == null) || locales.isEmpty()) ? Locale.getDefault() :
             locales.get(0);
+    }
+
+    protected String createResponseJSONString(
+        int statusCode,
+        HttpHeaders headers,
+        JSONObject body
+    ) {
+        return createResponseJSONString(statusCode,
+            getLocalizedMessage(headers, statusCode), body);
     }
 
     protected String createResponseJSONString(
@@ -227,19 +249,25 @@ public abstract class ResourceBase {
         return (jo != null) ? jo.toString(): "{}";
     }
 
-     /**
+    private String getLocalizedMessage(
+        HttpHeaders headers,
+        int errorCode
+    ) {
+        Locale locale = getUserLocale(headers);
+        return getLocalizedMessage(locale, errorCode);
+    }
+
+    /**
      * Returns localized exception message.
      *
      * @param locale Locale of the message.
      * @param statusCode statusCode of the message
      * @return localized exception message.
      */
-    protected String getLocalizedMessage(Locale locale, int statusCode) {
+    protected String getLocalizedMessage(Locale locale, int errorCode) {
         ResourceBundle rb = ResourceBundle.getBundle(RES_BUNDLE_NAME, locale);
-        String msg = rb.getString(Integer.toString(statusCode));
-        return msg;
+        return rb.getString(Integer.toString(errorCode));
     }
-
 }
 
 

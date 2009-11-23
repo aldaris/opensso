@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.1 2009-11-12 18:37:35 veiming Exp $
+ * $Id: DecisionResource.java,v 1.2 2009-11-23 21:25:14 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -172,9 +172,7 @@ public class DecisionResource extends ResourceBase {
 
             JSONObject jo = new JSONObject();
             jo.put(JSON_DECISION_ARRAY_KEY, results);
-            return createResponseJSONString(200, 
-                    getLocalizedMessage(getUserLocale(headers), 200), 
-                    jo); 
+            return createResponseJSONString(200, headers, jo);
         } catch (JSONException e) {
             PrivilegeManager.debug.warning("DecisionResource.decisions", e);
             throw getWebApplicationException(e, MimeType.JSON);
@@ -227,9 +225,7 @@ public class DecisionResource extends ResourceBase {
             Entitlement e = entitlements.get(0);
             JSONEntitlement jsonE = new JSONEntitlement(e.getResourceName(),
                 e.getActionValues(), e.getAdvices(), e.getAttributes());
-            return createResponseJSONString(200, 
-                    getLocalizedMessage(getUserLocale(headers), 200), 
-                    jsonE.toJSONObject()); 
+            return createResponseJSONString(200, headers, jsonE.toJSONObject());
         } catch (JSONException e) {
              PrivilegeManager.debug.warning("DecisionResource.evaluate", e);
              throw getWebApplicationException(e, MimeType.JSON);
@@ -287,9 +283,7 @@ public class DecisionResource extends ResourceBase {
 
             JSONObject jo = new JSONObject();
             jo.put(JSON_DECISION_ARRAY_KEY, result);
-            return createResponseJSONString(200, 
-                    getLocalizedMessage(getUserLocale(headers), 200), 
-                    jo); 
+            return createResponseJSONString(200, headers, jo);
         } catch (JSONException e) {
             PrivilegeManager.debug.warning("DecisionResource.evaluate", e);
             throw getWebApplicationException(e, MimeType.JSON);

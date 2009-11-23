@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeResource.java,v 1.1 2009-11-12 18:37:35 veiming Exp $
+ * $Id: PrivilegeResource.java,v 1.2 2009-11-23 21:25:14 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -75,9 +75,7 @@ public class PrivilegeResource extends ResourceBase {
                 getFilters(filters));
             JSONObject jo = new JSONObject();
             jo.put(RESULT, privilegeNames);
-            return createResponseJSONString(200,
-                getLocalizedMessage(getUserLocale(headers), 200),
-                jo);
+            return createResponseJSONString(200, headers, jo);
         } catch (JSONException e) {
             PrivilegeManager.debug.error("PrivilegeResource.privileges", e);
             throw getWebApplicationException(e, MimeType.JSON);
@@ -108,9 +106,7 @@ public class PrivilegeResource extends ResourceBase {
             pm.addPrivilege(privilege);
             JSONObject jo = new JSONObject();
             jo.put(RESULT, "OK");
-            return createResponseJSONString(200,
-                getLocalizedMessage(getUserLocale(headers), 200),
-                jo);
+            return createResponseJSONString(200, headers, jo);
         } catch (JSONException e) {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.createPrivilege", e);
@@ -144,9 +140,7 @@ public class PrivilegeResource extends ResourceBase {
             pm.modifyPrivilege(privilege);
             JSONObject jo = new JSONObject();
             jo.put(RESULT, "OK");
-            return createResponseJSONString(200,
-                getLocalizedMessage(getUserLocale(headers), 200),
-                jo);
+            return createResponseJSONString(200, headers, jo);
         } catch (JSONException e) {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.modifyPrivilege", e);
@@ -177,9 +171,7 @@ public class PrivilegeResource extends ResourceBase {
             Privilege privilege = pm.getPrivilege(name);
             JSONObject jo = new JSONObject();
             jo.put(RESULT, privilege.toMinimalJSONObject().toString());
-            return createResponseJSONString(200,
-                getLocalizedMessage(getUserLocale(headers), 200),
-                jo);
+            return createResponseJSONString(200, headers, jo);
         } catch (JSONException e) {
             PrivilegeManager.debug.error("PrivilegeResource.privilege", e);
             throw getWebApplicationException(e, MimeType.JSON);
@@ -207,9 +199,7 @@ public class PrivilegeResource extends ResourceBase {
             pm.removePrivilege(name);
             JSONObject jo = new JSONObject();
             jo.put(RESULT, "OK");
-            return createResponseJSONString(200,
-                getLocalizedMessage(getUserLocale(headers), 200),
-                jo);
+            return createResponseJSONString(200, headers, jo);
         } catch (JSONException e) {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.deletePrivilege", e);
