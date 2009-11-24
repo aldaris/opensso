@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.9 2008-09-04 00:22:10 inthanga Exp $
+   $Id: Configurator.jsp,v 1.10 2009-11-24 06:17:51 222713 Exp $
 
 --%>
 
@@ -44,7 +44,11 @@ java.util.Properties"
 %>
 
 <%
-    String configFile = System.getProperty("user.home") +
+    String configDir = System.getProperty("openssoclient.config.folder");
+    if (configDir == null || configDir.length() == 0) {
+        configDir = System.getProperty("user.home");
+    }
+    String configFile = configDir +
         File.separator + SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
         File.separator + 
         SetupClientWARSamples.getNormalizedRealPath(getServletConfig().getServletContext()) +
