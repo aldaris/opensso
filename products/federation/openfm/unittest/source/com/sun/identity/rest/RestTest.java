@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestTest.java,v 1.2 2009-11-21 02:00:36 qcheng Exp $
+ * $Id: RestTest.java,v 1.3 2009-11-24 23:08:35 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -361,7 +361,7 @@ public class RestTest {
                 "RESTTest.missingResourceTest: no exception thrown.");
         } catch (UniformInterfaceException e) {
             int errorCode = e.getResponse().getStatus();
-            if (errorCode != 420) {
+            if (errorCode != 400) {
                 throw new Exception(
                     "RESTTest.missingResourceTest: incorrect error code");
             }
@@ -397,7 +397,7 @@ public class RestTest {
                 "RESTTest.missingResourceTest: no exception thrown.");
         } catch (UniformInterfaceException e) {
             int errorCode = e.getResponse().getStatus();
-            if (errorCode != 424) { 
+            if (errorCode != 400) {
                 throw new Exception(
                     "RESTTest.missingResourceTest: incorrect error code");
             }
@@ -433,7 +433,7 @@ public class RestTest {
                 "RESTTest.missingActionTest: no exception thrown.");
         } catch (UniformInterfaceException e) {
             int errorCode = e.getResponse().getStatus();
-            if (errorCode != 422) {
+            if (errorCode != 400) {
                 throw new Exception(
                     "RESTTest.missingActionTest: incorrect error code");
             }
