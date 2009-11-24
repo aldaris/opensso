@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.15 2009-11-24 21:55:48 madan_ranganath Exp $
+   $Id: spAssertionConsumer.jsp,v 1.16 2009-11-24 22:05:43 madan_ranganath Exp $
 
 --%>
 
@@ -46,7 +46,7 @@ com.sun.identity.saml2.profile.IDPProxyUtil,
 com.sun.identity.saml2.protocol.Response,
 com.sun.identity.plugin.session.SessionManager,
 com.sun.identity.plugin.session.SessionProvider,
-com.sun.identity.plugin.session.SessionException,
+com.sun.identity.plugin.session.SessionException
 "
 %>
 
