@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PasswordDecoder.java,v 1.2 2008-06-25 05:47:39 qcheng Exp $
+ * $Id: PasswordDecoder.java,v 1.3 2009-11-24 22:45:28 exu Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.saml.xmlsig;
 /**
  * The class <code>PasswordDecoder</code> is an interface
  * that is implemented to decode password.
+ * @supported.all.api
  */
 
 public interface PasswordDecoder {
