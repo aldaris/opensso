@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.51 2009-11-18 03:38:14 sean_brydon Exp $
+ * $Id: SAML2Utils.java,v 1.52 2009-11-24 21:53:02 madan_ranganath Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.sun.identity.plugin.datastore.DataStoreProviderManager;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.saml.common.SAMLConstants;
+import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml.common.SAMLUtilsCommon;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.AssertionFactory;
@@ -100,6 +101,7 @@ import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.whitelist.URLPatternMatcher;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaException;
@@ -112,6 +114,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -4297,5 +4300,97 @@ public class SAML2Utils extends SAML2SDKUtils {
             debug.error("SAML2Utils.isIDPProfileBindingSupported:", me);
         }        
         return false;
+    }
+
+    /**
+     * Returns a list of valid Relay State URLs for the hosted entity.
+     * @param realm Realm the IDP/SP is in.
+     * @param entityID IDP/SP entity ID.
+     * @param role IDP/SP Role.
+     * @return <code>List</code> Valid Relay State URLs.
+     */
+    public static List getRelayStateUrlList(String realm,
+        String entityID, String role) throws SAML2Exception {
+
+        try {
+            IDPSSOConfigElement idpConfig = null;
+            SPSSOConfigElement spConfig = null;
+            Map attrs = null;
+
+            if (role.equalsIgnoreCase(SAML2Constants.SP_ROLE)) {
+                spConfig =
+                    saml2MetaManager.getSPSSOConfig(realm, entityID);
+                if (spConfig == null) {
+                    debug.message(
+                        "SAML2Utils.getRelayStateUrlList: spconfig is null");
+                    return null;
+                }
+                attrs = SAML2MetaUtils.getAttributes(spConfig);
+            } else {
+                idpConfig =
+                    saml2MetaManager.getIDPSSOConfig(realm, entityID);
+                if (idpConfig == null) {
+                    debug.message(
+                        "SAML2Utils.getRelayStateUrlList: idpconfig is null");
+                    return null;
+                }
+                attrs = SAML2MetaUtils.getAttributes(idpConfig);
+            }
+
+            if (attrs == null) {
+                debug.message(
+                   "SAML2Utils.getRelayStateUrlList: no extended attrs");
+                return null;
+            }
+
+            List values = (List) attrs.get(SAML2Constants.RELAY_STATE_URL_LIST);
+            if (values != null && values.size() != 0) {
+                return values;
+	    }
+        } catch (SAML2MetaException e) {
+            debug.message("get SSOConfig failed:", e);
+        }
+        return null;
+    }
+
+    /**
+     *  Validates the Relay State URL against a list of valid Relay State  
+     *  URLs created on the hosted service provider.
+     *
+     * @param orgName realm or organization name the provider resides in.
+     * @param hostEntityId Entity ID of the hosted provider.
+     * @param relayState Relay State URL.
+     * @param role IDP/SP Role.
+     * @throws SAML2Exception if the processing failed. 
+     */
+    public static void validateRelayStateURL(
+        String orgName,
+        String hostEntityId,
+        String relayState,
+        String role) throws SAML2Exception {
+
+        // Check for the validity of the RelayState URL.
+        if (relayState != null) {
+            URLPatternMatcher patternMatch = new URLPatternMatcher();
+            if (patternMatch != null) {
+                List patternsList = getRelayStateUrlList(orgName,
+                                                         hostEntityId,
+                                                         role);
+                if (patternsList != null) {
+                    try {
+                        if (!patternMatch.match(relayState, patternsList,
+                                 true)) {
+                            throw new SAML2Exception(
+                                     SAML2Utils.bundle.getString(
+                                                      "invalidRelayStateUrl"));
+                         }
+                     } catch (MalformedURLException me) {
+                             throw new SAML2Exception(
+                                 SAML2Utils.bundle.getString(
+                                                      "malformedURLSpecified"));
+                     }
+                }
+            }
+        }
     }
 }

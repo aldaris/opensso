@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.14 2009-10-15 00:00:41 exu Exp $
+   $Id: spAssertionConsumer.jsp,v 1.15 2009-11-24 21:55:48 madan_ranganath Exp $
 
 --%>
 
@@ -46,7 +46,7 @@ com.sun.identity.saml2.profile.IDPProxyUtil,
 com.sun.identity.saml2.protocol.Response,
 com.sun.identity.plugin.session.SessionManager,
 com.sun.identity.plugin.session.SessionProvider,
-com.sun.identity.plugin.session.SessionException
+com.sun.identity.plugin.session.SessionException,
 "
 %>
 
@@ -140,6 +140,7 @@ com.sun.identity.plugin.session.SessionException
         orgName = "/";
     }
     String relayState = request.getParameter(SAML2Constants.RELAY_STATE);
+
     // federate flag
     String federate = request.getParameter(SAML2Constants.FEDERATE);
     SessionProvider sessionProvider = null;
@@ -244,6 +245,7 @@ com.sun.identity.plugin.session.SessionException
     // redirect to relay state
     String finalUrl = SPACSUtils.getRelayState(
         relayState, orgName, hostEntityId, metaManager);
+
     String realFinalUrl = finalUrl;
     if (finalUrl != null && finalUrl.length() != 0) {
         try {
@@ -290,6 +292,18 @@ com.sun.identity.plugin.session.SessionException
         }  
     } else {
         // log it
+	try {
+	    SAML2Utils.validateRelayStateURL(orgName, hostEntityId, 
+                                             realRedirectUrl,
+                                             SAML2Constants.SP_ROLE);
+					     
+        } catch (SAML2Exception se) {
+	    SAMLUtils.sendError(request, response, 
+                response.SC_BAD_REQUEST, "requestProcessingError",
+	        SAML2Utils.bundle.getString("requestProcessingError") + " " +
+                se.getMessage());
+            return;
+        }
         response.sendRedirect(realRedirectUrl);
     }
 %>

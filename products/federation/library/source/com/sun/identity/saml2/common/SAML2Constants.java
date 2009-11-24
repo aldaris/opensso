@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.43 2009-10-14 23:58:37 exu Exp $
+ * $Id: SAML2Constants.java,v 1.44 2009-11-24 21:53:02 madan_ranganath Exp $
  *
  */
 
@@ -1266,6 +1266,11 @@ public interface SAML2Constants {
      * List of SAE appliation name to encrypted secret mapping.
      */
     public String SAE_APP_SECRET_LIST = "saeAppSecretList";
+
+    /**
+     * List of valid Relay State Urls
+     */
+    public String RELAY_STATE_URL_LIST = "relayStateUrlList";
 
     /**
      * IDP SAE endpoint url.

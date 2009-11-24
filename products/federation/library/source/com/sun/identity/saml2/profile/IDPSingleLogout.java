@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.26 2009-11-20 21:41:16 exu Exp $
+ * $Id: IDPSingleLogout.java,v 1.27 2009-11-24 21:53:28 madan_ranganath Exp $
  *
  */
 
@@ -48,6 +48,7 @@ import com.sun.identity.plugin.monitoring.MonitorManager;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
+import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.common.SAML2Constants;
@@ -247,6 +248,13 @@ public class IDPSingleLogout {
 
             String relayState = 
                 (String)paramsMap.get(SAML2Constants.RELAY_STATE);
+
+            // Validate the RelayState URL.
+            SAML2Utils.validateRelayStateURL(realm,
+                                             idpEntityID,
+                                             relayState,
+                                             SAML2Constants.IDP_ROLE);
+
             int soapFailCount = 0;
             for (int i = 0; i < n; i++) {
                 NameIDandSPpair pair = null;
@@ -478,6 +486,12 @@ public class IDPSingleLogout {
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("unsupportedBinding"));
         }
+
+        // Validate the RelayState URL.
+        SAML2Utils.validateRelayStateURL(realm,
+                                         idpEntityID,
+                                         relayState,
+                                         SAML2Constants.IDP_ROLE);
 
         LogoutRequest logoutReq = null;
         if (rmethod.equals("POST")) {

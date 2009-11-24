@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.33 2009-05-22 06:16:14 asyhuang Exp $
+ * $Id: SAMLv2Model.java,v 1.34 2009-11-24 21:48:40 madan_ranganath Exp $
  *
  */
 
@@ -251,6 +251,12 @@ public interface SAMLv2Model
     public static final String ATTR_SAE_SP_APP_SECRET_LIST = "saeAppSecretList";
     public static final String ATTR_SAE_SP_URL =  "saeSPUrl";
     public static final String ATTR_SAE_LOGOUT_URL = "saeSPLogoutUrl";
+
+    // Relay State URL List IDP
+    public static final String ATTR_RELAY_STATE_IDP_URL_LIST = "relayStateUrlList";
+    
+    // Relay State URL List SP
+    public static final String ATTR_RELAY_STATE_SP_URL_LIST = "relayStateUrlList";
     
     // SAMLv2 Service Provider Adapter feature
      public static final String ATTR_SP_ADAPTER = "spAdapter";

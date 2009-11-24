@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.25 2009-11-20 21:41:16 exu Exp $
+ * $Id: DoManageNameID.java,v 1.26 2009-11-24 21:53:27 madan_ranganath Exp $
  *
  */
 
@@ -268,6 +268,13 @@ public class DoManageNameID {
                     realm, hostEntityID, hostEntityRole,
                     SAML2Constants.DEFAULT_RELAY_STATE);
             }      
+
+            // Validate the RelayState URL.
+            SAML2Utils.validateRelayStateURL(realm,
+                                             hostEntityID,
+                                             relayState,
+                                             hostEntityRole);
+
             mniRequest.setDestination(XMLUtils.escapeSpecialCharacters(mniURL));
             saveMNIRequestInfo(request, response, paramsMap, mniRequest,
                 relayState, hostEntityRole, session);
@@ -945,6 +952,12 @@ public class DoManageNameID {
             debug.message(method + "Relay state is : " + relayState);
             debug.message(method + "MNI Response : " + mniResStr);
         }
+
+        // Validate the RelayState URL.
+        SAML2Utils.validateRelayStateURL(realm,
+                                         hostEntityID,
+                                         relayState,
+                                         hostRole);
                     
         ManageNameIDResponse mniResponse = null;
         try {
@@ -2435,7 +2448,13 @@ public class DoManageNameID {
             debug.message("DoManageNameID.processMNIResponsePOST: " +
                 "MNI Response : " + mniResStr);
         }
-                    
+
+        // Validate the RelayState URL.
+        SAML2Utils.validateRelayStateURL(realm,
+                                         hostEntityID,
+                                         relayState,
+                                         hostRole);
+
         ManageNameIDResponse mniResponse = null;
         try {
             mniResponse = pf.createManageNameIDResponse(mniResStr);

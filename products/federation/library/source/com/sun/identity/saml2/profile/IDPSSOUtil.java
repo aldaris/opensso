@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.55 2009-11-20 21:41:16 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.56 2009-11-24 21:53:28 madan_ranganath Exp $
  *
  */
 
@@ -279,6 +279,12 @@ public class IDPSSOUtil {
                     SAML2Utils.bundle.getString("invalidReceiver"));
             }
         }    
+
+       // Validate the RelayState URL.
+       SAML2Utils.validateRelayStateURL(realm,
+                                        idpEntityID,
+                                        relayState,
+                                        SAML2Constants.IDP_ROLE);
 
         if ((authnReq == null) && (session == null)) {
             // idp initiated and not logged in yet, need to authenticate

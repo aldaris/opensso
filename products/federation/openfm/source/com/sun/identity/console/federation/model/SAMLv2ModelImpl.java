@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.44 2009-11-10 01:19:49 exu Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.45 2009-11-24 21:48:40 madan_ranganath Exp $
  *
  */
 
@@ -147,6 +147,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ATTR_SAE_IDP_URL,
                 Collections.EMPTY_SET);
+
+        //RelayState URL List
+        extendedMetaIdpMap.put(ATTR_RELAY_STATE_IDP_URL_LIST,
+                Collections.EMPTY_SET);
     }
     
     //extended metadata attributes for sp only
@@ -214,6 +218,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         //spAdapter
         extendedMetaSpMap.put(ATTR_SP_ADAPTER, Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_SP_ADAPTER_ENV, Collections.EMPTY_SET);
+
+        //RelayState URL List
+        extendedMetaSpMap.put(ATTR_RELAY_STATE_SP_URL_LIST,
+                Collections.EMPTY_SET);
     }
     
     //extended Assertion Content metadata attributes for idp only    
@@ -267,6 +275,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedAdMetaIdpMap.put(ATTR_SAE_IDP_URL,
                 Collections.EMPTY_SET);
         extendedAdMetaIdpMap.put(IDP_SESSION_SYNC_ENABLED, Collections.EMPTY_SET);
+        extendedAdMetaIdpMap.put(ATTR_RELAY_STATE_IDP_URL_LIST,
+                Collections.EMPTY_SET);
     }
     
     //extended Assertion Content metadata attributes for sp only    
@@ -343,6 +353,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedAdMetaSpMap.put(ATTR_SAE_LOGOUT_URL, Collections.EMPTY_SET);
 
         extendedAdMetaSpMap.put(SP_SESSION_SYNC_ENABLED, Collections.EMPTY_SET);
+
+        //Relay State URL List
+        extendedAdMetaSpMap.put(ATTR_RELAY_STATE_SP_URL_LIST,
+                Collections.EMPTY_SET);
 
     }
     

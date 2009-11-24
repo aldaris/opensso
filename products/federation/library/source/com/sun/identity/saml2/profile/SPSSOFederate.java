@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.28 2009-11-20 21:41:16 exu Exp $
+ * $Id: SPSSOFederate.java,v 1.29 2009-11-24 21:53:28 madan_ranganath Exp $
  *
  */
 
@@ -288,6 +288,12 @@ public class SPSSOFederate {
             // TODO get Default URL from metadata 
             String relayState = getParameter(paramsMap,
                 SAML2Constants.RELAY_STATE);
+
+            // Validate the RelayState URL.
+            SAML2Utils.validateRelayStateURL(realm,
+                                             spEntityID,
+                                             relayState,
+                                             SAML2Constants.SP_ROLE);
 
             // check if relayState is present and get the unique
             // id which will be appended to the SSO URL before
