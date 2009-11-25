@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.4 2009-11-19 01:02:02 veiming Exp $
+ * $Id: Application.java,v 1.5 2009-11-25 18:09:50 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -66,7 +66,7 @@ public class Application implements Cloneable {
     /**
      * Name search attribute name,
      */
-    public static final String NAME_ATTRIBUTE = "ou";
+    public static final String NAME_ATTRIBUTE = "name";
 
     /**
      * Description search attribute name,

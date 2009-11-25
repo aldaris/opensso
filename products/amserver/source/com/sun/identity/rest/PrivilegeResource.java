@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeResource.java,v 1.2 2009-11-23 21:25:14 veiming Exp $
+ * $Id: PrivilegeResource.java,v 1.3 2009-11-25 18:09:51 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -57,11 +57,11 @@ import org.json.JSONObject;
  */
 @Path("/1/entitlement/privilege")
 public class PrivilegeResource extends ResourceBase {
-    public static final String RESULT = "result";
+    public static final String RESULT = "results";
 
     @GET
     @Produces("application/json")
-    @Path("/privileges")
+    @Path("/")
     public String privileges(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,

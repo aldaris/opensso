@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerRestTest.java,v 1.1 2009-11-12 18:37:36 veiming Exp $
+ * $Id: ListenerRestTest.java,v 1.2 2009-11-25 18:09:51 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -149,7 +149,8 @@ public class ListenerRestTest {
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .post(String.class, form);
-        if (!result.equals("OK")) {
+        JSONObject jo = new JSONObject(result);
+        if (!jo.getString("statusCode").equals("200")) {
             throw new Exception("ListenerRESTTest.test failed to add");
         }
 
@@ -193,7 +194,8 @@ public class ListenerRestTest {
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .post(String.class, form);
-        if (!result.equals("OK")) {
+        JSONObject jo = new JSONObject(result);
+        if (!jo.getString("statusCode").equals("200")) {
             throw new Exception(
                 "ListenerRESTTest.testAddMoreResources failed to add");
         }
@@ -241,7 +243,8 @@ public class ListenerRestTest {
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .post(String.class, form);
-        if (!result.equals("OK")) {
+        JSONObject jo = new JSONObject(result);
+        if (!jo.getString("statusCode").equals("200")) {
             throw new Exception(
                 "ListenerRESTTest.testAddDifferentApp failed to add");
         }
@@ -320,7 +323,8 @@ public class ListenerRestTest {
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .delete(String.class);
-        if (!result.equals("OK")) {
+        JSONObject jo = new JSONObject(result);
+        if (!jo.getString("statusCode").equals("200")) {
             throw new Exception(
                 "ListenerRESTTest.testRemove failed to remove");
         }

@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceBase.java,v 1.3 2009-11-23 21:25:14 veiming Exp $
+ * $Id: ResourceBase.java,v 1.4 2009-11-25 18:09:51 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -228,25 +228,61 @@ public abstract class ResourceBase {
 
     protected String createResponseJSONString(
         int statusCode,
+        HttpHeaders headers,
+        String strBody
+    ) throws JSONException {
+        return createStringResponseJSONString(statusCode,
+            getLocalizedMessage(headers, statusCode), strBody);
+    }
+
+    private JSONObject createResponseJSON(
+        int statusCode,
+        String statusMessage
+    ) throws JSONException {
+        JSONObject jo = new JSONObject();
+        jo.put(STATUS_CODE, statusCode);
+        if (statusMessage != null) {
+            jo.put(STATUS_MESSAGE, statusMessage);
+        }
+        return jo;
+    }
+
+    protected String createStringResponseJSONString(
+        int statusCode,
         String statusMessage,
-        JSONObject body
+        String strBody
     ) {
-        JSONObject jo = null;
         try {
-            jo = new JSONObject();
-            jo.put(STATUS_CODE, statusCode);
-            if (statusMessage != null) {
-                jo.put(STATUS_MESSAGE, statusMessage);
+            JSONObject jo = createResponseJSON(statusCode, statusMessage);
+            if (strBody != null) {
+                jo.put(BODY, strBody);
             }
-            if (body != null) {
-                jo.put(BODY, body);
-            }
+            return jo.toString();
         } catch (JSONException je) {
             PrivilegeManager.debug.error(
                 "ResourceBase.createeResponseJSONString(): hit JSONException",
                 je);
         }
-        return (jo != null) ? jo.toString(): "{}";
+        return "{}";
+    }
+
+    protected String createResponseJSONString(
+        int statusCode,
+        String statusMessage,
+        JSONObject body
+    ) {
+        try {
+            JSONObject jo = createResponseJSON(statusCode, statusMessage);
+            if (body != null) {
+                jo.put(BODY, body);
+            }
+            return jo.toString();
+        } catch (JSONException je) {
+            PrivilegeManager.debug.error(
+                "ResourceBase.createeResponseJSONString(): hit JSONException",
+                je);
+        }
+        return "{}";
     }
 
     private String getLocalizedMessage(

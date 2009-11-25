@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerResource.java,v 1.2 2009-11-23 21:25:14 veiming Exp $
+ * $Id: ListenerResource.java,v 1.3 2009-11-25 18:09:51 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -43,15 +43,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Exposes the entitlement listener REST resource.
  */
 @Path("/1/entitlement/listener")
 public class ListenerResource extends ResourceBase {
-    public static final String RESULT = "result";
-
     @POST
     @Path("/{url}")
     public String addListener(
@@ -68,9 +65,7 @@ public class ListenerResource extends ResourceBase {
             EntitlementListener l = new EntitlementListener(urlObj,
                 application, resources);
             ListenerManager.getInstance().addListener(caller, l);
-            JSONObject jo = new JSONObject();
-            jo.put(RESULT, "OK");
-            return createResponseJSONString(200, headers, jo);
+            return createResponseJSONString(200, headers, "OK");
         } catch (RestException e) {
             throw getWebApplicationException(headers, e, MimeType.JSON);
         } catch (JSONException e) {
@@ -94,9 +89,7 @@ public class ListenerResource extends ResourceBase {
             Subject caller = getCaller(request);
             URL urlObj = new URL(url);
             ListenerManager.getInstance().removeListener(caller, urlObj);
-            JSONObject jo = new JSONObject();
-            jo.put(RESULT, "OK");
-            return createResponseJSONString(200, headers, jo);
+            return createResponseJSONString(200, headers, "OK");
         } catch (RestException e) {
             throw getWebApplicationException(headers, e, MimeType.JSON);
         } catch (JSONException e) {

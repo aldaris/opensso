@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestNoSubjectHeaderTest.java,v 1.1 2009-11-12 18:37:36 veiming Exp $
+ * $Id: RestNoSubjectHeaderTest.java,v 1.2 2009-11-25 18:09:51 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -71,7 +71,7 @@ public class RestNoSubjectHeaderTest {
     @Test
     public void search() throws Exception {
         String result = webClient
-            .path("privileges")
+            .path("/")
             .queryParam("subject", hashedTokenId)
             .cookie(cookie)
             .get(String.class);

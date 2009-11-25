@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeRestTest.java,v 1.2 2009-11-19 00:08:53 veiming Exp $
+ * $Id: PrivilegeRestTest.java,v 1.3 2009-11-25 18:09:51 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -114,7 +114,7 @@ public class PrivilegeRestTest {
     @Test
     public void search() throws Exception {
         String result = webClient
-            .path("privileges")
+            .path("/")
             .queryParam("filter",
                 Privilege.NAME_ATTRIBUTE + "=" + PRIVILEGE_NAME)
             .queryParam("subject", hashedTokenId)
