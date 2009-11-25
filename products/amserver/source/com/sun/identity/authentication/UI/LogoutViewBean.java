@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.14 2009-01-17 00:44:51 higapa Exp $
+ * $Id: LogoutViewBean.java,v 1.15 2009-11-25 11:59:42 manish_rustagi Exp $
  *
  */
 
@@ -121,6 +121,7 @@ public class LogoutViewBean extends AuthViewBeanBase {
             intSess = AuthD.getSession(sessionID);
             if (intSess != null) {
                 populateL10NFileAttrs(intSess);
+                gotoUrl = AuthUtils.getValidGotoURL(request, orgDN);
                 String localeStr =  intSess.getProperty(ISAuthConstants.LOCALE);
                 // I18N get resource bundle
                 locale = com.iplanet.am.util.Locale.getLocale(localeStr);

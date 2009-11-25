@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.22 2009-11-20 23:52:53 ww203982 Exp $
+ * $Id: AuthD.java,v 1.23 2009-11-25 12:02:02 manish_rustagi Exp $
  *
  */
 
@@ -60,6 +60,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.whitelist.URLPatternMatcher;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceManager;
@@ -67,6 +68,7 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceConfig;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -155,6 +157,7 @@ public class AuthD  {
     public static int revisionNumber;
     private static HashMap idRepoMap = new HashMap();
     private static HashMap orgMap   = new HashMap();
+    private static HashMap orgValidDomains = new HashMap(); 
 
     /**
      * Configured bundle name for auth service
@@ -1520,4 +1523,76 @@ public class AuthD  {
         }
         return orgAuthConfig;
     }
+    
+    /**	 
+     * Returns a list of domains defined by iplanet-am-auth-valid-goto-domains	 
+     * in iPlanetAMAuthService plus organization aliases 
+     *	 
+     * @param orgDN organization DN.	 
+     * @return a Set object containing a list of valid domains, null if	 
+     * iplanet-am-auth-valid-goto-domains is empty.	 
+     */	 
+    private Set getValidGotoUrlDomains(String orgDN) {	 
+        Set validGotoUrlDomains = null;	 
+        try {	 
+            OrganizationConfigManager orgConfigMgr =	 
+                    getOrgConfigManager(orgDN);	 
+            ServiceConfig svcConfig = orgConfigMgr.getServiceConfig(	 
+                    ISAuthConstants.AUTH_SERVICE_NAME);	 
+            Map attrs = svcConfig.getAttributes();	 
+            validGotoUrlDomains = (Set)attrs.get(	 
+                    ISAuthConstants.AUTH_GOTO_DOMAINS);	 
+            if (validGotoUrlDomains != null && !validGotoUrlDomains.isEmpty()) {	 
+                attrs = orgConfigMgr.getAttributes(	 
+                        ISAuthConstants.IDREPO_SVC_NAME);	 
+                validGotoUrlDomains.addAll(	 
+                        (Set)attrs.get("sunOrganizationAliases")); 
+	        }       	 
+            if (debug.messageEnabled()) {	 
+                debug.message("AuthD.getValidGotoUrlDomains(): " +	 
+                        validGotoUrlDomains);	 
+            }	             
+        } catch(Exception e) {	 
+            debug.error("AuthD.getValidGotoUrlDomains():" + 
+                "Error in getValidGotoUrlDomains : ", e);	 
+        }	 
+        return validGotoUrlDomains;	 
+    }
+    
+    /**	 
+     * Checks whether an input URL is valid in an organization	 
+     *	 
+     * @param url a String representing a URL to be validated	 
+     * @param orgDN organization DN.	 
+     * @return true if input URL is valid, else false.	 
+     */	 
+    public boolean isGotoUrlValid(String url, String orgDN) {
+    	
+    	Set validGotoUrlDomains = null;
+        if ((!orgValidDomains.isEmpty()) && 
+                (orgValidDomains.containsKey(orgDN))) {
+        	validGotoUrlDomains = (Set)orgValidDomains.get(orgDN);
+        } else {
+        	validGotoUrlDomains = getValidGotoUrlDomains(orgDN);
+            synchronized (orgValidDomains) {
+                if (!orgValidDomains.containsKey(orgDN)) {
+                	orgValidDomains.put(orgDN,validGotoUrlDomains);
+                }
+            }           
+        }
+        if (validGotoUrlDomains == null || validGotoUrlDomains.isEmpty()) {	 
+            return true;	 
+        }
+        
+        URLPatternMatcher patternMatcher = new URLPatternMatcher();
+        try{
+            return patternMatcher.match(
+                url, new ArrayList(validGotoUrlDomains), true);
+        }catch (MalformedURLException me) {
+            debug.error("AuthD.isGotoUrlValid():" + 
+                    "Error in validating GotoUrl: " + url, me);	 
+            return false;
+        }
+    }
+    
 }

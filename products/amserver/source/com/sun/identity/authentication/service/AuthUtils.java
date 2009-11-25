@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.31 2009-11-25 10:52:00 222713 Exp $
+ * $Id: AuthUtils.java,v 1.32 2009-11-25 12:03:19 manish_rustagi Exp $
  *
  */
 
@@ -1567,10 +1567,8 @@ public class AuthUtils extends AuthClientUtils {
     public static String getSuccessURL(
         HttpServletRequest request,
         AuthContextLocal authContext) {
-        String successURL = null;
-        if (request != null) {
-            successURL = request.getParameter("goto");
-        }
+        String orgDN = authContext.getOrgDN();
+        String successURL = getValidGotoURL(request, orgDN);
         if ((successURL == null) || (successURL.length() == 0) ||
         (successURL.equalsIgnoreCase("null")) ) {
             LoginState loginState = getLoginState(authContext);
@@ -1579,11 +1577,6 @@ public class AuthUtils extends AuthClientUtils {
             } else {
                 successURL =
                 getLoginState(authContext).getConfiguredSuccessLoginURL();
-            }
-        } else {
-            String encoded = request.getParameter("encoded");
-            if (encoded != null && encoded.equals("true")) {
-                successURL = getBase64DecodedValue(successURL);
             }
         }
         if (utilDebug.messageEnabled()) {
@@ -1990,5 +1983,54 @@ public class AuthUtils extends AuthClientUtils {
                AMPostAuthProcessInterface.POST_PROCESS_LOGOUT_URL);
         }
     }
+    
+    /**
+     * Returns valid goto parameter for this request.	 
+     * Validate goto parameter set in the current request, then returns it	 
+     * if valid	 
+     * @param request, the HttpServletRequest	 
+     * @param authContext authentication context for this request.	 
+     * @return successURL, a String	 
+     */	 
+    public static String getValidGotoURL(HttpServletRequest request,	 
+            AuthContextLocal authContext) {	 
+        String orgDN = authContext.getOrgDN();	 
+        return getValidGotoURL(request, orgDN);	 
+    }	 
+	 
+    /**	 
+     * Returns valid goto parameter for this request.	 
+     * Validate goto parameter set in the current request, then returns it	 
+     * if valid	 
+     * @param request, the HttpServletRequest	 
+     * @param orgDN, organization DN	 
+     * @return successURL, a String	 
+     */	 
+    public static String getValidGotoURL(HttpServletRequest request,	 
+            String orgDN) {	 
+        String gotoUrl = null;	 
+        if (request != null) {	 
+            gotoUrl = request.getParameter("goto");	 
+        }	 
+	 
+        if ((gotoUrl != null) && (gotoUrl.length() != 0) &&	 
+                (!gotoUrl.equalsIgnoreCase("null")) ) {	 
+            String encoded = request.getParameter("encoded");	 
+            if (encoded != null && encoded.equals("true")) {	 
+                gotoUrl = getBase64DecodedValue(gotoUrl);	 
+            }	 
+	 
+            AuthD authD = AuthD.getAuth();	 
+            if (!authD.isGotoUrlValid(gotoUrl, orgDN)) {
+                if (utilDebug.messageEnabled()) {
+                    utilDebug.message("AuthUtils.getValidGotoURL():" +
+                        "Original goto URL is " + gotoUrl + " which is " +
+                        "invalid");                   	
+                }            	
+                return null;                
+            }	 
+        }	 
+        return gotoUrl;	 
+    }    
 
 }

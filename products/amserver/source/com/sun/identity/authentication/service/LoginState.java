@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.55 2009-11-21 02:16:06 manish_rustagi Exp $
+ * $Id: LoginState.java,v 1.56 2009-11-25 12:04:19 manish_rustagi Exp $
  *
  */
 
@@ -3630,6 +3630,18 @@ public class LoginState {
             if (encoded != null && encoded.equals("true")) {
                 currentGoto = AuthUtils.getBase64DecodedValue(currentGoto);
             }
+            if (!ad.isGotoUrlValid(currentGoto, getOrgDN())) {
+                if (messageEnabled) {
+                    ad.debug.message("LoginState.getSuccessLoginURL():" +
+                    "Original goto URL is " + currentGoto + " which is " +
+                    "invalid");
+                }
+	            currentGoto = null;                
+            }
+        }
+
+        if ((currentGoto != null) && (currentGoto.length() != 0) &&
+                 (!currentGoto.equalsIgnoreCase("null"))) {            
             fqdnURL = ad.processURL(currentGoto, servletRequest);
         } else if ((fqdnURL == null) || (fqdnURL.length() == 0))  {
             fqdnURL = ad.processURL(successLoginURL, servletRequest);

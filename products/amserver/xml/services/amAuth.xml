@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth.xml,v 1.15 2009-03-24 23:52:13 pluo Exp $
+    $Id: amAuth.xml,v 1.16 2009-11-25 12:06:32 manish_rustagi Exp $
 
 -->
 
@@ -380,6 +380,11 @@
                     type="list"
                     syntax="string"
                     i18nKey="a147">
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-auth-valid-goto-domains"
+                    type="list"
+                    syntax="string"
+                    i18nKey="a150">
                 </AttributeSchema>
             </Organization>
         </Schema>

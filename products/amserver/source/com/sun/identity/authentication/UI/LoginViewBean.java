@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.27 2009-10-02 23:45:42 qcheng Exp $
+ * $Id: LoginViewBean.java,v 1.28 2009-11-25 11:58:53 manish_rustagi Exp $
  *
  */
 
@@ -340,6 +340,8 @@ public class LoginViewBean extends AuthViewBeanBase {
                 }
             }
             
+            ac = AuthUtils.getAuthContext(
+                    request, response, sessionID, sessionUpgrade, isBackPost);            
             if ((ssoToken != null) && (!sessionUpgrade)) {
                 try {
                     loginDebug.message("Session is Valid / already "
@@ -350,7 +352,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                      * redirect URL.
                      */
                     if (request != null) {
-	                redirect_url = request.getParameter("goto");
+	                redirect_url = AuthUtils.getValidGotoURL(request, ac);
 	                if ((redirect_url == null) || (redirect_url.length() 
                             == 0)){
                             redirect_url = ssoToken.getProperty(
@@ -439,8 +441,6 @@ public class LoginViewBean extends AuthViewBeanBase {
 		        AMAuthErrorCode.AUTH_TIMEOUT,AuthUtils.ERROR_MESSAGE);
                 }
             }
-            ac = AuthUtils.getAuthContext(
-                request, response, sessionID, sessionUpgrade, isBackPost);
             java.util.Locale locale =
                 com.sun.identity.shared.locale.Locale.getLocale(
                     AuthUtils.getLocale(ac));
