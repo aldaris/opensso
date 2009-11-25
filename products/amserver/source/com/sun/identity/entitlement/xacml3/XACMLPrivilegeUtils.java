@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLPrivilegeUtils.java,v 1.2 2009-11-18 23:54:25 dillidorai Exp $
+ * $Id: XACMLPrivilegeUtils.java,v 1.3 2009-11-25 18:54:09 dillidorai Exp $
  */
 package com.sun.identity.entitlement.xacml3;
 
@@ -56,6 +56,7 @@ import com.sun.identity.entitlement.xacml3.core.Version;
 
 
 import com.sun.identity.sm.ServiceManager;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,13 +70,14 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
 /**
  * Class with utility methods to map from
  * <code>com.sun.identity.entity.Privilege</code>
  * to
- * </code>com.sun.identity.xacml3.core.Policy</code>
+ * </code>com.sun.identity.entitlement.xacml3.core.Policy</code>
  */
 public class XACMLPrivilegeUtils {
     /**
@@ -761,10 +763,24 @@ public class XACMLPrivilegeUtils {
         return XACMLConstants.XACML_RULE_DENY_OVERRIDES;
     }
 
-    static public Privilege policyToPrivilege(Policy policy)
+    public static Set<Privilege> policySetToPrivileges(PolicySet policySet) 
             throws EntitlementException {
+        if (policySet == null) {
+            return null;
+        }
+        Set<Privilege> privileges = new HashSet<Privilege>();
+        Set<Policy> policies = getPoliciesFromPolicySet(policySet);
+        if (policies != null) {
+            for (Policy policy : policies) {
+                Privilege p = policyToPrivilege(policy);
+                privileges.add(p);
+            }
+        }
+        return privileges;
+    }
 
-        // FIXME: make more changes and test
+    public static Privilege policyToPrivilege(Policy policy)
+            throws EntitlementException {
 
         String policyId = policy.getPolicyId();
         String privilegeName = policyIdToPrivilegeName(policyId);
@@ -793,8 +809,8 @@ public class XACMLPrivilegeUtils {
         Set<String> excludedResourceNames = getExcludedResourceNamesFromMatches(policyMatches);
         Map<String, Boolean> actionValues = getActionValuesFromPolicy(policy);
 
-        EntitlementSubject entitlementSubject = getEntitlementSubjectFromPolicy(policy);
-        EntitlementCondition entitlementCondition = getEntitlementConditionFromPolicy(policy);
+        EntitlementSubject es = getEntitlementSubjectFromPolicy(policy);
+        EntitlementCondition ec = getEntitlementConditionFromPolicy(policy);
 
         /*
          * Constuct entitlement from Rule target
@@ -802,19 +818,11 @@ public class XACMLPrivilegeUtils {
          * One Match for Action
          * One Rule per value
          */
-        Entitlement entitlement = null;
-
-        // Get EntitlementSubject from Rule Condiiton
-        //TODO: fix properly
-        String user1 = "id=user11,ou=user," + ServiceManager.getBaseDN();
-        EntitlementSubject es = new OpenSSOUserSubject();
-        ((OpenSSOUserSubject)es).setID(user1);
-
-        // Get EntitlementCondition from Rule Condiiton
-        EntitlementCondition ec = null;
-
-        // get Entitlement from Policy target, Subject from Policy target
-        // compare against those gotten from Rule
+        Entitlement entitlement = new Entitlement(applicationName, resourceNames, actionValues);
+        entitlement.setExcludedResourceNames(excludedResourceNames);
+        if (entitlementName != null) {
+            entitlement.setName(entitlementName);
+        }
 
         // FIXME: add support ResourceAttributes
         Set<ResourceAttribute> ras = null;
@@ -844,7 +852,6 @@ public class XACMLPrivilegeUtils {
                 if (vd.getVariableId().equals(id)) {
                     JAXBElement<AttributeValue> jav
                             = (JAXBElement<AttributeValue>)vd.getExpression();
-                    // TODO: initialize correctly
                     AttributeValue cbav = (AttributeValue)jav.getValue();
                     val = cbav.getContent().get(0).toString();
 
@@ -1049,7 +1056,6 @@ public class XACMLPrivilegeUtils {
         return actionValues;
     }
 
-    // FIXME: fill in implementation
     static EntitlementSubject getEntitlementSubjectFromPolicy(Policy policy) {
         if (policy == null) {
             return null;
@@ -1058,33 +1064,208 @@ public class XACMLPrivilegeUtils {
         if (rules == null) {
             return null;
         }
+        EntitlementSubject es = null;
         for (Rule rule : rules) {
             Condition condition = rule.getCondition();
             JAXBElement jaxbElement = condition.getExpression();
             if (jaxbElement.getDeclaredType().equals(Apply.class)) {
                 Apply apply = (Apply)jaxbElement.getValue();
-                String funtionId = apply.getFunctionId();
-                List<JAXBElement<?>> expressionList = apply.getExpression();
-                for (JAXBElement jaxe : expressionList) {
-                    if (jaxe.getDeclaredType().equals(AttributeValue.class)) {
-                        Object av = jaxe.getValue();
-                        //String dataType = av.getDataType();
-                        String value = null;
+                String functionId = apply.getFunctionId();
+                if (XACMLConstants.JSON_SUBJECT_AND_CONDITION_SATISFIED.equals(
+                        functionId)) {
+                    List<JAXBElement<?>> expressionList = apply.getExpression();
+                    for (JAXBElement jaxe : expressionList) {
+                        if (jaxe.getDeclaredType().equals(AttributeValue.class)) {
+                            AttributeValue av = (AttributeValue)jaxe.getValue();
+                            String dataType = av.getDataType();
+                            if (dataType.startsWith(
+                                    XACMLConstants.JSON_SUBJECT_DATATYPE)) {
+                                List<Object> valueList = av.getContent();
+                                String value = null;
+                                if (valueList != null) {
+                                    for (Object ob : valueList) {
+                                        if (ob instanceof String) {
+                                            value = (String)ob;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (value != null) {
+                                    es = createEntitlementSubject(dataType, value);
+                                }
+                            }
+                        }
                     }
+                }
+            }
+            if (es != null) {
+                break;
+            }
+
+        }
+        return es;
+    }
+
+    static EntitlementCondition getEntitlementConditionFromPolicy(Policy policy) {
+        if (policy == null) {
+            return null;
+        }
+        List<Rule> rules = getRules(policy);
+        if (rules == null) {
+            return null;
+        }
+        EntitlementCondition ec = null;
+        for (Rule rule : rules) {
+            Condition condition = rule.getCondition();
+            JAXBElement jaxbElement = condition.getExpression();
+            if (jaxbElement.getDeclaredType().equals(Apply.class)) {
+                Apply apply = (Apply)jaxbElement.getValue();
+                String functionId = apply.getFunctionId();
+                if (XACMLConstants.JSON_SUBJECT_AND_CONDITION_SATISFIED.equals(
+                        functionId)) {
+                    List<JAXBElement<?>> expressionList = apply.getExpression();
+                    for (JAXBElement jaxe : expressionList) {
+                        if (jaxe.getDeclaredType().equals(AttributeValue.class)) {
+                            AttributeValue av = (AttributeValue)jaxe.getValue();
+                            String dataType = av.getDataType();
+                            if (dataType.startsWith(
+                                    XACMLConstants.JSON_CONDITION_DATATYPE)) {
+                                List<Object> valueList = av.getContent();
+                                String value = null;
+                                if (valueList != null) {
+                                    for (Object ob : valueList) {
+                                        if (ob instanceof String) {
+                                            value = (String)ob;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (value != null) {
+                                    ec = createEntitlementCondition(dataType, value);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (ec != null) {
+                    break;
                 }
             }
 
         }
-        return null;
+        return ec;
     }
 
-    // FIXME: fill in implementation
-    static EntitlementCondition getEntitlementConditionFromPolicy(Policy policy) {
-        return null;
+    public static PolicySet streamToPolicySet(InputStream stream) throws JAXBException {
+        //FIXME: remove
+        PrivilegeManager.debug.error(
+            "XACMLProvilegeUtils.streamToPolicySet(), core_pkg:"
+                    + XACMLConstants.XACML3_CORE_PKG, null);
+        if (stream == null) {
+            return null;
+        }
+        JAXBContext jc = JAXBContext.newInstance(
+                    XACMLConstants.XACML3_CORE_PKG);
+                
+        Unmarshaller um = jc.createUnmarshaller();
+        JAXBElement je = (JAXBElement)um.unmarshal(stream);
+        PolicySet ps = (PolicySet)je.getValue();
+        return ps;
+    }
+
+    public static Set<Policy> getPoliciesFromPolicySet(PolicySet policySet) {
+        if (policySet == null) {
+            return null;
+        }
+        Set<Policy> policies = new HashSet<Policy>();
+        List<JAXBElement<?>> choiceList = policySet.getPolicySetOrPolicyOrPolicySetIdReference();
+        for (JAXBElement jaxe : choiceList) {
+            if (jaxe.getDeclaredType().equals(Policy.class)) {
+                Policy p = (Policy)jaxe.getValue();
+                policies.add(p);
+            }
+        }
+        return policies;
+    }
+
+    static EntitlementSubject createEntitlementSubject(String dataType, String value) {
+        if (dataType == null || value == null) {
+            return null;
+        }
+        EntitlementSubject es = null;
+        int i = dataType.indexOf(XACMLConstants.JSON_SUBJECT_DATATYPE);
+        if (i != 0) {
+            return null;
+        }
+        String className =  null;
+        if (dataType.length() 
+                > XACMLConstants.JSON_SUBJECT_DATATYPE.length()) {
+            className = dataType.substring(
+                    XACMLConstants.JSON_SUBJECT_DATATYPE.length() + 1);
+            Object ob = createDefaultObject(className);
+            if (ob != null && ob instanceof EntitlementSubject) {
+                es = (EntitlementSubject)ob;
+            } else {
+                PrivilegeManager.debug.error("XACMLPrivilegeUtils."
+                        + "createEntitlementSubject()"
+                        + "not an EntitlementSubject", null);
+            }
+        }
+        if (es != null) {
+            es.setState(value);
+        }
+        return es;
+    }
+
+    static EntitlementCondition createEntitlementCondition(String dataType, String value) {
+        if (dataType == null || value == null) {
+            return null;
+        }
+        EntitlementCondition ec = null;
+        int i = dataType.indexOf(XACMLConstants.JSON_CONDITION_DATATYPE);
+        if (i != 0) {
+            return null;
+        }
+        String className =  null;
+        if (dataType.length() 
+                > XACMLConstants.JSON_CONDITION_DATATYPE.length()) {
+            className = dataType.substring(
+                    XACMLConstants.JSON_CONDITION_DATATYPE.length() + 1);
+            Object ob = createDefaultObject(className);
+            if (ob != null && ob instanceof EntitlementCondition) {
+                ec = (EntitlementCondition)ob;
+            } else {
+                PrivilegeManager.debug.error("XACMLPrivilegeUtils."
+                        + "createEntitlementCondition()"
+                        + "not an EntitlementCondition", null);
+            }
+        }
+        if (ec != null) {
+            ec.setState(value);
+        }
+        return ec;
+    }
+
+    static Object createDefaultObject(String className) {
+        if (className == null) {
+            return null;
+        }
+        Object ob = null;
+        try {
+            Class cla = Class.forName(className.trim());
+            ob =  cla.newInstance();
+        } catch (ClassNotFoundException e) {
+            PrivilegeManager.debug.error("XACMLPrivilegeUtils.createDefaultObject(),"
+                    + "hit exception", e);
+        } catch (IllegalAccessException e) {
+            PrivilegeManager.debug.error("XACMLPrivilegeUtils.createDefaultObject(),"
+                    + "hit exception", e);
+        } catch (InstantiationException e) {
+            PrivilegeManager.debug.error("XACMLPrivilegeUtils.createDefaultObject(),"
+                    + "hit exception", e);
+        }
+        return ob;
     }
 
 }
 
-/*
-applicationName and entitlementName could go as varaibale definition at Policy level
-*/

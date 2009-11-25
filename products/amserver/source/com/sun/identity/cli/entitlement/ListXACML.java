@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListXACML.java,v 1.1 2009-11-18 23:54:24 dillidorai Exp $
+ * $Id: ListXACML.java,v 1.2 2009-11-25 18:54:08 dillidorai Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.cli.entitlement;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CommandManager;
@@ -39,13 +40,16 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
+
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
+import com.sun.identity.entitlement.xacml3.core.PolicySet;
 import com.sun.identity.entitlement.xacml3.XACMLPrivilegeUtils;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -58,6 +62,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
+import javax.security.auth.Subject;
+
 /**
  * Gets policies in a realm.
  * @author dillidorai
@@ -66,9 +72,6 @@ public class ListXACML extends AuthenticatedCommand {
 
     private static final String ARGUMENT_POLICY_NAMES = "policynames";
 
-    private SSOToken adminSSOToken;
-    private javax.security.auth.Subject adminSubject;
-
     /**
      * Services a Commandline Request.
      *
@@ -76,23 +79,18 @@ public class ListXACML extends AuthenticatedCommand {
      * @throw CLIException if the request cannot serviced.
      */
     public void handleRequest(RequestContext rc) 
-        throws CLIException {
+            throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        adminSSOToken = getAdminSSOToken();
-        adminSubject = SubjectUtils.createSubject(adminSSOToken);
-        String realm = getStringOptionValue(IArgument.REALM_NAME);
-        List filters = (List)rc.getOption(ARGUMENT_POLICY_NAMES);
-        String outfile = getStringOptionValue(IArgument.OUTPUT_FILE);
-        IOutput outputWriter = getOutputWriter();
 
+        SSOToken adminSSOToken = getAdminSSOToken();
+        Subject adminSubject = SubjectUtils.createSubject(adminSSOToken);
+        String realm = getStringOptionValue(IArgument.REALM_NAME);
+
+        // FIXME: change to use entitlementService.xacmlPrivilegEnabled()
         EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
             adminSubject, "/");
-
-        if(ec.migratedToEntitlementService()) {
-            handleXACMLPolicyRequest(realm, filters, outfile, 
-                    outputWriter);
-        } else {
+        if(!ec.migratedToEntitlementService()) {
             String[] args = {realm, "ANY", 
                     "list-xacml not supported in  legacy policy mode"};
             debugError("ListXACML.handleRequest(): "
@@ -106,13 +104,10 @@ public class ListXACML extends AuthenticatedCommand {
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED,
                 "list-xacml");
         }
-    }
 
-    private void handleXACMLPolicyRequest(
-            String realm,
-            List filters,
-            String outfile,
-            IOutput outputWriter) throws CLIException {
+        List filters = (List)rc.getOption(ARGUMENT_POLICY_NAMES);
+        String outfile = getStringOptionValue(IArgument.OUTPUT_FILE);
+        IOutput outputWriter = getOutputWriter();
 
         String currentPrivilegeName = null;
         try {
@@ -163,7 +158,7 @@ public class ListXACML extends AuthenticatedCommand {
                     Privilege privilege = pm.getPrivilege(currentPrivilegeName, adminSubject);
                     privileges.add(privilege);
                 }
-                com.sun.identity.entitlement.xacml3.core.PolicySet policySet 
+                PolicySet policySet 
                         = XACMLPrivilegeUtils.privilegesToPolicySet(realm, privileges);
                 if (pwout != null) {
                     pwout.write(XACMLPrivilegeUtils.toXML(policySet));

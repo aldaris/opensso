@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.111 2009-11-18 23:54:25 dillidorai Exp $
+ * $Id: AccessManager.java,v 1.112 2009-11-25 18:54:09 dillidorai Exp $
  *
  */
 
@@ -2781,7 +2781,7 @@ public class AccessManager {
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.entitlement.ListXACML",
-        description="List entitlement policy definitions in a realm.",
+        description="export policies in realm as XACML.",
         webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm."},
@@ -2796,5 +2796,37 @@ public class AccessManager {
             "get-policy-in-realm-no-policies=There were not matching policies under realm, {0}."})
     private String list_xacml;
     
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.CreateXACML",
+        description="Create policies in a realm with XACML input.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "xmlfile|X|s|Name of file that contains policy XACML definition."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "create-xacml-not-supported-in-legacy-policy-mode=add-xacml not supported in legacy policy mode",
+            "subcmd-create-policies-__web__-xmlfile=Policy XML",
+            "create-policy-in-realm-succeed=Policies were created under realm, {0}."})
+    private String create_xacml;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.entitlement.DeleteXACML",
+        description="Delete XACML policies from a realm.",
+        webSupport="true",
+        mandatoryOptions={"realm|e|s|Name of realm."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "policynames|p|m|Names of policy to be deleted.",
+            "file|D|s|Name of file that contains the policy names to be deleted."},
+        resourceStrings={
+            "delete-xacml-not-supported-in-legacy-policy-mode=delete-xacml not supported in legacy policy mode",
+            "missing-policy-names=Policy names need to be provided either with --policynames or --file option",
+            "delete-policy-in-realm-succeed=Policies were deleted under realm, {0}."})
+    private String delete_xacml;
+
 }
 
