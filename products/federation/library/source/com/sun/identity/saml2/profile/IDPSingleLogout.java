@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.27 2009-11-24 21:53:28 madan_ranganath Exp $
+ * $Id: IDPSingleLogout.java,v 1.28 2009-11-25 01:20:47 madan_ranganath Exp $
  *
  */
 
@@ -486,12 +486,6 @@ public class IDPSingleLogout {
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("unsupportedBinding"));
         }
-
-        // Validate the RelayState URL.
-        SAML2Utils.validateRelayStateURL(realm,
-                                         idpEntityID,
-                                         relayState,
-                                         SAML2Constants.IDP_ROLE);
 
         LogoutRequest logoutReq = null;
         if (rmethod.equals("POST")) {
