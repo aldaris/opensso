@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeRestTest.java,v 1.3 2009-11-25 18:09:51 veiming Exp $
+ * $Id: PrivilegeRestTest.java,v 1.4 2009-11-26 17:06:07 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -147,7 +147,7 @@ public class PrivilegeRestTest {
         JSONObject jbody = parseResult(result);
         String jsonStr = jbody.getString(PrivilegeResource.RESULT);
 
-        Privilege privilege = Privilege.getNewInstance(PRIVILEGE_NAME,
+        Privilege privilege = Privilege.getNewInstance(
             new JSONObject(jsonStr));
         privilege.setDescription("desciption1");
 
@@ -159,7 +159,7 @@ public class PrivilegeRestTest {
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .put(String.class, form);
-        parseResult(result); //OK
+        validateResult(result, 200, "OK"); //OK
     }
 
     @Test (dependsOnMethods="getAndPut")
@@ -179,18 +179,31 @@ public class PrivilegeRestTest {
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .delete(String.class);
-        jbody = parseResult(result); //OK
+        validateResult(result, 200, "OK"); //OK
 
         Form form = new Form();
         form.add("privilege.json", jsonStr);
         form.add("subject", hashedTokenId);
-        result = webClient.path(PRIVILEGE_NAME)
+        result = webClient
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .post(String.class, form);
-        parseResult(result); //OK
+        validateResult(result, 201, "Created");
     }
-    
+
+    private void validateResult(String result, int code, String msg)
+        throws Exception {
+        JSONObject jo = new JSONObject(result);
+        if (jo.optInt("statusCode") != code) {
+            throw new Exception("PrivilegeRestTest.validateResult failed.");
+        }
+        String message = jo.optString("body");
+        if ((message == null) || !message.equals(msg)) {
+            throw new Exception(
+                "PrivilegeRestTest.validateResult: body element is null");
+        }
+    }
+
     private JSONObject parseResult(String result) throws Exception {
         JSONObject jo = new JSONObject(result);
         if (jo.optInt("statusCode") != 200) {

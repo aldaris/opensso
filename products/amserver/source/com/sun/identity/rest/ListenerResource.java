@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerResource.java,v 1.3 2009-11-25 18:09:51 veiming Exp $
+ * $Id: ListenerResource.java,v 1.4 2009-11-26 17:06:06 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -50,11 +50,11 @@ import org.json.JSONException;
 @Path("/1/entitlement/listener")
 public class ListenerResource extends ResourceBase {
     @POST
-    @Path("/{url}")
+    @Produces("application/json")
     public String addListener(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
-        @PathParam("url") String url,
+        @FormParam("url") String url,
         @FormParam("resources") List<String> resources,
         @FormParam("application") @DefaultValue("iPlanetAMWebAgentService")
             String application
@@ -65,7 +65,7 @@ public class ListenerResource extends ResourceBase {
             EntitlementListener l = new EntitlementListener(urlObj,
                 application, resources);
             ListenerManager.getInstance().addListener(caller, l);
-            return createResponseJSONString(200, headers, "OK");
+            return createResponseJSONString(201, headers, "Created");
         } catch (RestException e) {
             throw getWebApplicationException(headers, e, MimeType.JSON);
         } catch (JSONException e) {
@@ -79,6 +79,7 @@ public class ListenerResource extends ResourceBase {
     }
 
     @DELETE
+    @Produces("application/json")
     @Path("/{url}")
     public String deleteListener(
         @Context HttpHeaders headers,

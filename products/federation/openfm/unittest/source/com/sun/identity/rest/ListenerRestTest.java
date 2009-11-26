@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerRestTest.java,v 1.2 2009-11-25 18:09:51 veiming Exp $
+ * $Id: ListenerRestTest.java,v 1.3 2009-11-26 17:06:07 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -144,13 +144,13 @@ public class ListenerRestTest {
         Form form = new Form();
         form.add("resources", RESOURCE_NAME + "/*");
         form.add("subject", hashedTokenId);
+        form.add("url", NOTIFICATION_URL);
         String result = listenerClient
-            .path(ENC_NOTIFICATION_URL)
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .post(String.class, form);
         JSONObject jo = new JSONObject(result);
-        if (!jo.getString("statusCode").equals("200")) {
+        if (!jo.getString("statusCode").equals("201")) {
             throw new Exception("ListenerRESTTest.test failed to add");
         }
 
@@ -189,13 +189,13 @@ public class ListenerRestTest {
         Form form = new Form();
         form.add("resources", RESOURCE_NAME + "/a/*");
         form.add("subject", hashedTokenId);
+        form.add("url", NOTIFICATION_URL);
         String result = listenerClient
-            .path(ENC_NOTIFICATION_URL)
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .post(String.class, form);
         JSONObject jo = new JSONObject(result);
-        if (!jo.getString("statusCode").equals("200")) {
+        if (!jo.getString("statusCode").equals("201")) {
             throw new Exception(
                 "ListenerRESTTest.testAddMoreResources failed to add");
         }
@@ -238,13 +238,13 @@ public class ListenerRestTest {
         Form form = new Form();
         form.add("application", "sunBank");
         form.add("subject", hashedTokenId);
+        form.add("url", NOTIFICATION_URL);
         String result = listenerClient
-            .path(ENC_NOTIFICATION_URL)
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .post(String.class, form);
         JSONObject jo = new JSONObject(result);
-        if (!jo.getString("statusCode").equals("200")) {
+        if (!jo.getString("statusCode").equals("201")) {
             throw new Exception(
                 "ListenerRESTTest.testAddDifferentApp failed to add");
         }

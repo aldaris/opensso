@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.19 2009-11-12 18:37:38 veiming Exp $
+ * $Id: ResourceResultCache.java,v 1.20 2009-11-26 17:06:06 veiming Exp $
  *
  */
 
@@ -1900,16 +1900,14 @@ class ResourceResultCache implements SSOTokenListener {
                             + ":policyServiceListenerURL=" + policyServiceListenerURL
                             );
                 } 
-                StringBuilder sb = new StringBuilder();
-                sb.append(policyServiceListenerURL).append("/");
-                sb.append(URLEncoder.encode(notificationURL, "UTF-8"));
-                String restUrl = sb.toString();
                 Set<String> resourceNames = new HashSet<String>();
                 resourceNames.add(rootURL);
                 String queryString = buildRegisterListenerQueryString(
                     appToken, serviceName, resourceNames);
-                String resourceContent = postForm(appToken, restUrl,
-                    queryString);
+                queryString += "&url=" +
+                    URLEncoder.encode(notificationURL, "UTF-8");
+                String resourceContent = postForm(appToken,
+                    policyServiceListenerURL, queryString);
                 // FIXME: what do we check in the content?
                 // FIXME: check the response, detect error conditions?
                 if (debug.messageEnabled()) {

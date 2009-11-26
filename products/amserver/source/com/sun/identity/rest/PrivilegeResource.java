@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeResource.java,v 1.3 2009-11-25 18:09:51 veiming Exp $
+ * $Id: PrivilegeResource.java,v 1.4 2009-11-26 17:06:06 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -61,7 +61,6 @@ public class PrivilegeResource extends ResourceBase {
 
     @GET
     @Produces("application/json")
-    @Path("/")
     public String privileges(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -90,23 +89,19 @@ public class PrivilegeResource extends ResourceBase {
 
     @POST
     @Produces("application/json")
-    @Path("/{name}")
     public String createPrivilege(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
         @FormParam("realm") @DefaultValue("/") String realm,
-        @FormParam("privilege.json") String jsonString,
-        @PathParam("name") String name
+        @FormParam("privilege.json") String jsonString
     ) {
         try {
             Subject caller = getCaller(request);
             PrivilegeManager pm = PrivilegeManager.getInstance(realm, caller);
-            Privilege privilege = Privilege.getNewInstance(name,
-                new JSONObject(jsonString));
+            JSONObject jo = new JSONObject(jsonString);
+            Privilege privilege = Privilege.getNewInstance(jo);
             pm.addPrivilege(privilege);
-            JSONObject jo = new JSONObject();
-            jo.put(RESULT, "OK");
-            return createResponseJSONString(200, headers, jo);
+            return createResponseJSONString(201, headers, "Created");
         } catch (JSONException e) {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.createPrivilege", e);
@@ -135,12 +130,10 @@ public class PrivilegeResource extends ResourceBase {
         try {
             Subject caller = getCaller(request);
             PrivilegeManager pm = PrivilegeManager.getInstance(realm, caller);
-            Privilege privilege = Privilege.getNewInstance(name,
+            Privilege privilege = Privilege.getNewInstance(
                 new JSONObject(jsonString));
             pm.modifyPrivilege(privilege);
-            JSONObject jo = new JSONObject();
-            jo.put(RESULT, "OK");
-            return createResponseJSONString(200, headers, jo);
+            return createResponseJSONString(200, headers, "OK");
         } catch (JSONException e) {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.modifyPrivilege", e);
@@ -197,9 +190,7 @@ public class PrivilegeResource extends ResourceBase {
             Subject caller = getCaller(request);
             PrivilegeManager pm = PrivilegeManager.getInstance(realm, caller);
             pm.removePrivilege(name);
-            JSONObject jo = new JSONObject();
-            jo.put(RESULT, "OK");
-            return createResponseJSONString(200, headers, jo);
+            return createResponseJSONString(200, headers, "OK");
         } catch (JSONException e) {
             PrivilegeManager.debug.error(
                 "PrivilegeResource.deletePrivilege", e);

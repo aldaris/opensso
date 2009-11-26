@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestPermissionTest.java,v 1.2 2009-11-19 01:02:04 veiming Exp $
+ * $Id: RestPermissionTest.java,v 1.3 2009-11-26 17:06:07 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -188,7 +188,7 @@ public class RestPermissionTest {
         JSONObject jbody = parseResult(result);
         String jsonStr = jbody.getString(PrivilegeResource.RESULT);
 
-        Privilege privilege = Privilege.getNewInstance(PRIVILEGE_NAME,
+        Privilege privilege = Privilege.getNewInstance(
             new JSONObject(jsonStr));
         privilege.setDescription("desciption1");
 
@@ -200,7 +200,10 @@ public class RestPermissionTest {
             .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
             .cookie(cookie)
             .put(String.class, form);
-        parseResult(result); //OK
+        JSONObject jo = new JSONObject(result);
+        if (jo.optInt("statusCode") != 200) {
+            throw new Exception("PrivilegeRestTest.getAndPutRestCall failed.");
+        }
     }
 
     private JSONObject parseResult(String result) throws Exception {

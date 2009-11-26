@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amDelegation.xml,v 1.13 2009-11-19 19:29:11 veiming Exp $
+   $Id: amDelegation.xml,v 1.14 2009-11-26 17:06:07 veiming Exp $
   
 -->
 
@@ -306,7 +306,7 @@
                     <SubConfiguration name="EntitlementRESTPrivilegeWrite" id="Permission">
                         <AttributeValuePair>
                             <Attribute name="resource" />
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/privilege/*</Value>
+                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/privilege*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="actions" />
@@ -317,7 +317,7 @@
                     <SubConfiguration name="EntitlementRESTPrivilegeRead" id="Permission">
                         <AttributeValuePair>
                             <Attribute name="resource" />
-                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/privilege/*</Value>
+                            <Value>@SM_CONFIG_ROOT_SUFFIX@/sunEntitlementService/1.0/application/ws/1/entitlement/privilege*</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="actions" />
