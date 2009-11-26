@@ -77,7 +77,7 @@
         
         <!-- define opensso-root.dir property in this file or in private.properties
              if you build the module from Netbeans -->
-        <property name="opensso-root.dir" value="/export/home/ppetit/domains/opensso/applications/j2ee-modules/opensso" />
+        <property name="opensso-root.dir" value="" />
         <property name="opensso-lib.dir" value="${opensso-root.dir}/WEB-INF/lib" />
         <property name="opensso-config.dir" value="${opensso-root.dir}/config/auth/" />
         <property name="opensso-images.dir" value="${opensso-root.dir}/images" />
