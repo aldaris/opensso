@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAttributeMapper.java,v 1.6 2008-08-06 17:28:18 exu Exp $
+ * $Id: DefaultSPAttributeMapper.java,v 1.7 2009-11-30 21:11:08 exu Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
+import com.sun.identity.shared.xml.XMLUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -113,12 +114,24 @@ public class DefaultSPAttributeMapper extends DefaultAttributeMapper
             }
 
             Map map = new HashMap();
-
+            boolean toUnescape = needToUnescapeXMLSpecialCharacters(
+                hostEntityID, remoteEntityID, realm);
             for(Iterator iter = attributes.iterator(); iter.hasNext();) {
 
                 Attribute attribute = (Attribute)iter.next();
                 Set values = new HashSet(); 
-                values.addAll(attribute.getAttributeValueString());
+                List attrValues = attribute.getAttributeValueString();
+                if (attrValues != null) {
+                    if (toUnescape) {
+                        Iterator iter1 = attrValues.iterator();
+                        while (iter1.hasNext()) {
+                           values.add(XMLUtils.unescapeSpecialCharacters(
+                               (String)iter1.next()));
+                        }
+                    } else {
+                        values.addAll(attrValues);
+                    }
+                }
                 String attributeName = attribute.getName();
 
                 if (SAML2Constants.ATTR_WILD_CARD.equals((String)
@@ -140,6 +153,21 @@ public class DefaultSPAttributeMapper extends DefaultAttributeMapper
             throw new SAML2Exception(se.getMessage());
         }
 
+    }
+
+    /**
+     * Decides whether it needs to unescape XML special characters for attribute
+     * values or not.
+     * @param hostEntityID Entity ID for hosted provider.
+     * @param remoteEntityID Entity ID for remote provider.
+     * @param realm the providers are in.
+     * @return <code>true</code> if it should unescape special characters for
+     *   attribute values; <code>false</code> otherwise.
+     */
+    protected boolean needToUnescapeXMLSpecialCharacters(String hostEntityID,
+        String remoteEntityID, String realm)
+    {
+        return true;
     }
 
 }

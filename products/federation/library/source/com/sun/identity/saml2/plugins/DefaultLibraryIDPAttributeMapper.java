@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibraryIDPAttributeMapper.java,v 1.2 2008-08-07 20:01:44 qcheng Exp $
+ * $Id: DefaultLibraryIDPAttributeMapper.java,v 1.3 2009-11-30 21:11:08 exu Exp $
  */
 
 package com.sun.identity.saml2.plugins;
@@ -181,7 +181,7 @@ public class DefaultLibraryIDPAttributeMapper extends DefaultAttributeMapper
                 }
 
                 attributes.add(getSAMLAttribute(samlAttribute, nameFormat,
-                    localAttributeValues));
+                    localAttributeValues, hostEntityID, remoteEntityID, realm));
             }
             return attributes;      
 
@@ -193,15 +193,36 @@ public class DefaultLibraryIDPAttributeMapper extends DefaultAttributeMapper
     }
 
     /**
+     * Decides whether it needs to escape XML special characters for attribute
+     * values or not.
+     * @param hostEntityID Entity ID for hosted provider.
+     * @param remoteEntityID Entity ID for remote provider.
+     * @param realm the providers are in.
+     * @return <code>true</code> if it should escape special characters for
+     *   attribute values; <code>false</code> otherwise.
+     */
+    protected boolean needToEscapeXMLSpecialCharacters(String hostEntityID,
+        String remoteEntityID, String realm)
+    {
+        return true;
+    }
+
+    /**
      * Returns the SAML <code>Attribute</code> object.
      *
      * @param name attribute name.
      * @param nameFormat Name format of the attribute
      * @param values attribute values.
+     * @param hostEntityID Entity ID for hosted provider.
+     * @param remoteEntityID Entity ID for remote provider.
+     * @param realm the providers are in.
+     * @return SAML <code>Attribute</code> element.
      * @exception SAML2Exception if any failure.
      */
     protected Attribute getSAMLAttribute(String name, String nameFormat,
-         String[] values) throws SAML2Exception {
+         String[] values, String hostEntityID, String remoteEntityID,
+         String realm) 
+    throws SAML2Exception {
 
         if (name == null) {
             throw new SAML2Exception(bundle.getString("nullInput"));
@@ -215,9 +236,15 @@ public class DefaultLibraryIDPAttributeMapper extends DefaultAttributeMapper
             attribute.setNameFormat(nameFormat);
         }
         if (values != null) {
+            boolean toEscape = needToEscapeXMLSpecialCharacters(
+                hostEntityID, remoteEntityID, realm);
             List list = new ArrayList();
             for (int i=0; i<values.length; i++) {
-                list.add(XMLUtils.escapeSpecialCharacters(values[i]));
+                if (toEscape) {
+                    list.add(XMLUtils.escapeSpecialCharacters(values[i]));
+                } else {
+                    list.add(values[i]);
+                }
             }
             attribute.setAttributeValueString(list);
         }
