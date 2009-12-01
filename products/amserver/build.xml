@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.90 2009-11-19 00:07:39 qcheng Exp $
+   $Id: build.xml,v 1.91 2009-12-01 02:09:58 veiming Exp $
 
 -->
 
@@ -90,7 +90,7 @@
             debug="${build.debug}" debuglevel="${build.debuglevel}"
             srcdir="${amserver.src.dir}"
             includes="com/sun/identity/rest/*"
-            excludes="com/sun/identity/rest/CoreTokenResource.java">
+            excludes="com/sun/identity/rest/CoreTokenResource.java,com/sun/identity/rest/RestService.java">
             <classpath refid="build.ent.class.path"/>
         </javac>
         
