@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralEditViewBean.java,v 1.2 2008-06-25 05:43:04 qcheng Exp $
+ * $Id: ReferralEditViewBean.java,v 1.3 2009-12-01 21:23:32 veiming Exp $
  *
  */
 
@@ -82,9 +82,9 @@ public class ReferralEditViewBean
         ptModel = new CCPageTitleModel(
             getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/threeBtnsPageTitle.xml"));
-        ptModel.setValue("button1", "button.ok");
+        ptModel.setValue("button1", "button.save");
         ptModel.setValue("button2", "button.reset");
-        ptModel.setValue("button3", "button.cancel");
+        ptModel.setValue("button3", getBackButtonLabel());
     }
 
     public void beginDisplay(DisplayEvent event)
