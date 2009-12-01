@@ -26,7 +26,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.15 2009-11-04 22:11:43 leiming Exp $
+# $Id: components.mk,v 1.16 2009-12-01 21:52:55 subbae Exp $
 # 
 #
 
@@ -185,7 +185,7 @@ else
 NSS_DYNAMIC_LIBS := -lssl3 -lnss3 
 endif
 else
-NSS_DYNAMIC_LIBS := -lssl3 -lnss3 
+NSS_DYNAMIC_LIBS := -lssl3 -lnss3 -lnssutil3
 endif
 NSS_LIBS := $(NSS_DYNAMIC_LIBS)
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.55 2009-11-04 22:11:56 leiming Exp $
+ * $Id: am_web.cpp,v 1.56 2009-12-01 21:52:54 subbae Exp $
  *
  */
 
@@ -1598,34 +1598,30 @@ get_normalized_url(const char *url_str,
     
     if (status == AM_SUCCESS) {
         // Parse & canonicalize URL
-        try {
-            if(path_info != NULL && strlen(path_info) > 0 &&
-                    strcasecmp(path_info, "/") != 0) {
-                Log::log(boot_info.log_module, Log::LOG_DEBUG,
-                    "%s: url '%s' path_info '%s'.",
-                    thisfunc, url_str, path_info);
+        am_web_log_max_debug("%s: Original url: %s", thisfunc, url_str);
 
-                if (AM_TRUE == (*agentConfigPtr)->ignore_path_info) {
-                    Log::log(boot_info.log_module, Log::LOG_DEBUG,
-                               "%s:: Ignoring path info %s.", thisfunc, path_info);
-                    string tmp_url_str(url_str);
-                    string tmp_path_info(path_info);
-                    string::size_type loc = tmp_url_str.find(tmp_path_info,0);
-                    if (loc != string::npos) {
-                        new_url_str = tmp_url_str.substr(0,loc);
-                        URL urlObject(new_url_str.c_str(), pInfo);
-                        (void)overrideProtoHostPort(urlObject, agent_config);
-                        urlObject.getURLString(normalizedURL);
-                    }
-                } else {
-                    pInfo=path_info;
-                }
-            }
-            if (normalizedURL.length() == 0) {
+        try {
+            if(path_info != NULL && strlen(path_info) > 0) {
+                pInfo=path_info;
                 URL urlObject(url_str, pInfo);
+                (void)overrideProtoHostPort(urlObject, agent_config);
+                am_web_log_max_debug("%s: Path info: %s", thisfunc, path_info);
+                if (AM_TRUE == (*agentConfigPtr)->ignore_path_info) {
+                    am_web_log_max_debug("%s: Ignoring path info for "
+                                         "policy evaluation.", thisfunc);
+                    urlObject.getBaseURL(normalizedURL);
+                    pInfo.erase();
+                } else {
+                    urlObject.getURLString(normalizedURL);
+                }
+            } else {
+                URL urlObject(url_str);
                 (void)overrideProtoHostPort(urlObject, agent_config);
                 urlObject.getURLString(normalizedURL);
             }
+            am_web_log_max_debug("%s: Normalized url: %s",
+                                 thisfunc, normalizedURL.c_str());
+
         } catch(InternalException &iex) {
             Log::log(boot_info.log_module, Log::LOG_ERROR, iex);
             status = iex.getStatusCode();

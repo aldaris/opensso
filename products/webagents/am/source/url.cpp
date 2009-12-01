@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: url.cpp,v 1.8 2009-10-13 01:40:24 robertis Exp $
+ * $Id: url.cpp,v 1.9 2009-12-01 21:52:54 subbae Exp $
  *
  */ 
 #include <iterator>
@@ -276,14 +276,29 @@ void URL::parseURLStrNew(const std::string &urlString,
     
     if (uri_ptr != NULL) {
 	if (path_info_cstr[0] != '\0') {
-	    path_info_ptr = strstr(uri_ptr, path_info_cstr);
-	    if (path_info_ptr == NULL) {
-		throw InternalException(func, "Path Info not found in uri",
-					AM_INVALID_RESOURCE_FORMAT);
-	    }
-	    else {
-		end_uri = path_info_ptr;
-	    }
+
+            if (strcmp(path_info_cstr, "/") != 0) {
+                path_info_ptr = strstr(uri_ptr, path_info_cstr);
+            } else {
+                // As there can be several "/" in the uri, if path info
+                // equal "/" we need to point at the last one before the
+                // query.
+                for (int i=0 ; i<strlen(uri_ptr) ; i++) {
+                    if (uri_ptr[i] == '?') {
+                        break;
+                    }
+                    if (uri_ptr[i] == '/') {
+                        path_info_ptr = uri_ptr + i;
+                    }
+                }
+            }
+            if (path_info_ptr == NULL) {
+                throw InternalException(func, "Path Info not found in uri",
+                      AM_INVALID_RESOURCE_FORMAT);
+            } else {
+                end_uri = path_info_ptr;
+            }
+
 	}
 	else if (query_ptr != NULL) {
 	    end_uri = query_ptr;
