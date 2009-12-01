@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionOpViewBeanBase.java,v 1.4 2009-05-05 18:43:41 mrudul_uchil Exp $
+ * $Id: ConditionOpViewBeanBase.java,v 1.5 2009-12-01 20:41:43 veiming Exp $
  *
  */
 
@@ -191,7 +191,9 @@ public abstract class ConditionOpViewBeanBase
 
             String conditionName = (String)getPageSessionAttribute(
                 PG_SESSION_CONDITION_NAME);
-            propertySheetModel.setValue(CONDITION_NAME, conditionName);
+            if ((conditionName != null) && (conditionName.length() > 0)) {
+                propertySheetModel.setValue(CONDITION_NAME, conditionName);
+            }
             Map map = model.getActiveConditionTypes(realmName);
             String condType = (String)getPageSessionAttribute(
                 PG_SESSION_CONDITION_TYPE);
