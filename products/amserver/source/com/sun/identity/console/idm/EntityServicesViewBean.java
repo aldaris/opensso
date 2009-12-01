@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityServicesViewBean.java,v 1.6 2008-11-17 21:18:07 veiming Exp $
+ * $Id: EntityServicesViewBean.java,v 1.7 2009-12-01 20:42:42 veiming Exp $
  *
  */
 
@@ -145,21 +145,22 @@ public class EntityServicesViewBean
 
     private void getServiceNames() {
         EntitiesModel model = (EntitiesModel)getModel();
+        boolean hasServicesToAssign = false;
 
         try {
             String universalId = (String)getPageSessionAttribute(
                 EntityEditViewBean.UNIVERSAL_ID);
             populateTableModel(model.getAssignedServiceNames(universalId));
 
-            if (model.getAssignableServiceNames(universalId).isEmpty()) {
-                disableButton(TBL_BUTTON_ADD, true);
-            }
+            hasServicesToAssign = 
+                !model.getAssignableServiceNames(universalId).isEmpty();
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());
         }
         
-        disableButton(TBL_BUTTON_ADD, !model.isServicesSupported());
+        disableButton(TBL_BUTTON_ADD, !hasServicesToAssign ||
+            !model.isServicesSupported());
     }
 
     private void populateTableModelEx(List serviceNames) {
