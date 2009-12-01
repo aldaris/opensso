@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.xml,v 1.1 2009-11-04 22:09:38 leiming Exp $
+   $Id: configure.xml,v 1.2 2009-12-01 22:06:18 leiming Exp $
 
 -->
 
@@ -331,10 +331,10 @@
             <task name="DELETE_LAYOUT">
                 <class name="DeleteLayoutTask" type="system"/>
             </task>
+            <task name="REMOVE_DSAME_CONF_FILE">
+                <class name="RemoveDsameFileTask" type="custom"/>
+            </task>
         </instance-tasks>
-        <task name="REMOVE_DSAME_CONF_FILE">
-            <class name="RemoveDsameFileTask" type="custom"/>
-        </task>
     </uninstall>
     <migrate>
         <common-interactions/>

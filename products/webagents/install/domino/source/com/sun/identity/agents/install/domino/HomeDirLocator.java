@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HomeDirLocator.java,v 1.1 2009-11-04 22:09:38 leiming Exp $
+ * $Id: HomeDirLocator.java,v 1.2 2009-12-01 22:06:46 leiming Exp $
  *
  */
 package com.sun.identity.agents.install.domino;
+
+import java.io.File;
 
 import com.sun.identity.install.tools.configurator.InstallConstants;
 import com.sun.identity.install.tools.configurator.IStateAccess;
@@ -34,6 +36,7 @@ import com.sun.identity.install.tools.configurator.IServerHomeDirLocator;
 import com.sun.identity.install.tools.util.FileUtils;
 import com.sun.identity.install.tools.util.LocalizedMessage;
 import com.sun.identity.install.tools.util.Debug;
+
 
 /**
  * Determines IBM Lotus Domino server home directory based on user's specified
@@ -47,8 +50,8 @@ public class HomeDirLocator implements IServerHomeDirLocator,
 
     public String getServerDirectory(IStateAccess state)
             throws InstallException {
+
         String dominoHomeDir = null;
-        String serverHomeDir = null;
         // Home dir
         String dominoConfigDir = (String) state.get(
                 STR_KEY_DOMINO_INST_CONF_DIR);
@@ -57,23 +60,22 @@ public class HomeDirLocator implements IServerHomeDirLocator,
                     STR_DOMINO_NOTES_INI_FILE;
 
             if (FileUtils.isFileValid(dominoNotesFile)) {
-                dominoHomeDir = dominoConfigDir;
+                File configDirFile = new File(dominoConfigDir);
+                dominoHomeDir = configDirFile.getParent();
             }
         }
-        if ((dominoHomeDir != null) && (dominoHomeDir.length() > 0)) {
-            serverHomeDir = dominoHomeDir;
-        }
 
-        if (!FileUtils.isDirValid(serverHomeDir)) {
+        if (!FileUtils.isDirValid(dominoHomeDir)) {
             Debug.log("HomeDirLocator: The Domino Home " +
-                    serverHomeDir + ", directory is invalid:");
+                    dominoHomeDir + ", directory is invalid:");
             throw new InstallException(
                     LocalizedMessage.get(LOC_DOMINO_ERR_IN_VALID_HOME_DIR,
                     STR_DOMINO_GROUP));
         }
 
         Debug.log("HomeDirLocator : Domino Home " +
-                "directory = " + serverHomeDir);
-        return serverHomeDir;
+                "directory = " + dominoHomeDir);
+        return dominoHomeDir;
     }
 }
+

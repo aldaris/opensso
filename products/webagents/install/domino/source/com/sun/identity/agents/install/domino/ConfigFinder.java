@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigFinder.java,v 1.1 2009-11-04 22:09:38 leiming Exp $
+ * $Id: ConfigFinder.java,v 1.2 2009-12-01 22:06:46 leiming Exp $
  *
  */
 package com.sun.identity.agents.install.domino;
@@ -64,7 +64,7 @@ public class ConfigFinder implements IDefaultValueFinder,
     private String getDefaultConfigDirectoryPath() {
         String result = null;
         if (OSChecker.isWindows()) {
-            result = "c:\\ibm\\notesdata";
+            result = "C:\\IBM\\Lotus\\Domino";
         } else {
             result = "/opt/ibm/notesdata";
         }
