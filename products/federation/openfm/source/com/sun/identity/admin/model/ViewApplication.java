@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.5 2009-11-11 19:01:36 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.6 2009-12-02 23:02:01 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -55,6 +55,14 @@ public class ViewApplication implements Serializable {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public boolean isWritable() {
+        return writable;
+    }
+
+    public void setWritable(boolean writable) {
+        this.writable = writable;
     }
 
     public static class NameComparator extends TableColumnComparator {
@@ -137,6 +145,7 @@ public class ViewApplication implements Serializable {
     private List<SubjectType> subjectTypes = new ArrayList<SubjectType>();
     private OverrideRule overrideRule = OverrideRule.DENY_OVERRIDE;
     private boolean selected;
+    private boolean writable = true;
 
     public ViewApplication() {
         booleanActionsHandler.setBooleanActionsBean(booleanActionsBean);

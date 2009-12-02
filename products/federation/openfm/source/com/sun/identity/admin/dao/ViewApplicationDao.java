@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationDao.java,v 1.6 2009-11-19 01:02:04 veiming Exp $
+ * $Id: ViewApplicationDao.java,v 1.7 2009-12-02 23:02:01 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.admin.ManagedBeanResolver;
 import com.sun.identity.admin.Token;
 import com.sun.identity.admin.model.FilterHolder;
@@ -35,6 +36,8 @@ import com.sun.identity.admin.model.ViewApplication;
 import com.sun.identity.admin.model.ViewApplicationType;
 import com.sun.identity.entitlement.Application;
 import com.sun.identity.entitlement.ApplicationManager;
+import com.sun.identity.entitlement.ApplicationPrivilege.Action;
+import com.sun.identity.entitlement.ApplicationPrivilegeManager;
 import com.sun.identity.entitlement.ApplicationType;
 import com.sun.identity.entitlement.ApplicationTypeManager;
 import java.io.Serializable;
@@ -45,6 +48,7 @@ import java.util.Set;
 import java.util.HashSet;
 import com.sun.identity.entitlement.util.SearchFilter;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.opensso.SubjectUtils;
 import java.util.Collections;
 import java.util.List;
 
@@ -81,7 +85,6 @@ public class ViewApplicationDao implements Serializable {
         return sfs;
     }
 
-
     public Map<String, ViewApplication> getViewApplications() {
         return getViewApplications(null, Collections.EMPTY_LIST);
     }
@@ -95,11 +98,10 @@ public class ViewApplicationDao implements Serializable {
 
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         Map<String, ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String, ViewApplicationType>) mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
-
         Token token = new Token();
         Subject adminSubject = token.getAdminSubject();
-
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
 
         Set<String> names;
         try {
@@ -119,6 +121,8 @@ public class ViewApplicationDao implements Serializable {
                 }
 
                 ViewApplication va = new ViewApplication(a);
+                va.setWritable(apm.hasPrivilege(a, Action.MODIFY));
+
                 viewApplications.put(va.getName(), va);
             }
 
@@ -126,6 +130,15 @@ public class ViewApplicationDao implements Serializable {
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }
+    }
+
+    private ApplicationPrivilegeManager getApplicationPrivilegeManager() {
+        SSOToken t = new Token().getSSOToken();
+        Subject s = SubjectUtils.createSubject(t);
+        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
+        ApplicationPrivilegeManager apm = ApplicationPrivilegeManager.getInstance(realmBean.getName(), s);
+
+        return apm;
     }
 
     public ViewApplication getViewApplication(String name) {
@@ -148,7 +161,7 @@ public class ViewApplicationDao implements Serializable {
             if (vat == null) {
                 return null;
             }
-    
+
             ViewApplication va = new ViewApplication(a);
             return va;
         } catch (EntitlementException e) {

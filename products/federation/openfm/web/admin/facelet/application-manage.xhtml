@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-manage.xhtml,v 1.10 2009-10-12 21:47:01 farble1670 Exp $
+   $Id: application-manage.xhtml,v 1.11 2009-12-02 23:02:04 farble1670 Exp $
 -->
 
 <ui:composition
@@ -150,15 +150,19 @@
                                 styleClass="application-manage-cell"
                                 visible="#{true}">
                                 <ice:outputLink
-                                    rendered="#{permissionsBean.applicationEditAllowed}"
+                                    rendered="#{viewApplication.writable}"
                                     styleClass="command-link"
                                     value="application-edit.xhtml?viewApplicationName=#{viewApplication.name}">
                                     <ice:outputText
                                         value="#{viewApplication.title}"/>
                                 </ice:outputLink>
-                                <ice:outputLabel
-                                    rendered="#{!permissionsBean.applicationEditAllowed}"
-                                    value="#{viewApplication.title}"/>
+                                <ice:outputLink
+                                    rendered="#{!viewApplication.writable}"
+                                    styleClass="command-link"
+                                    value="application-view.xhtml?viewApplicationName=#{viewApplication.name}">
+                                    <ice:outputText
+                                        value="#{viewApplication.title}"/>
+                                </ice:outputLink>
                             </ice:panelGroup>
                         </ice:column>
                         <ice:column

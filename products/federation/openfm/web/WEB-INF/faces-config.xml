@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.37 2009-11-21 01:54:27 veiming Exp $
+  $Id: faces-config.xml,v 1.38 2009-12-02 23:02:03 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -235,7 +235,8 @@
 
             <value>APPLICATION=sunEntitlementService::1.0::application::default/application::READ</value>
             <value>APPLICATION_MANAGE=sunEntitlementService::1.0::application::default/application::READ</value>
-            <value>APPLICATION_CREATE=sunEntitlementService::1.0::application::default/application::WRITE</value>
+            <value>APPLICATION_VIEW=sunEntitlementService::1.0::application::default/application::READ</value>
+            <value>APPLICATION_CREATE=iPlanetAMPolicyService::1.0::OrganizationConfig::default::WRITE</value>
             <value>APPLICATION_EDIT=iPlanetAMPolicyService::1.0::OrganizationConfig::default::WRITE</value>
 
             <value>DELEGATION=sunEntitlementService::1.0::application::default/application::READ,DELEGATE</value>
@@ -3043,6 +3044,11 @@
         <navigation-case>
             <from-outcome>application-edit</from-outcome>
             <to-view-id>/admin/facelet/application-edit.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>application-view</from-outcome>
+            <to-view-id>/admin/facelet/application-view.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>
