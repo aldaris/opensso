@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: infocard.jsp,v 1.4 2009-10-28 08:35:26 ppetitsm Exp $
+   $Id: infocard.jsp,v 1.5 2009-12-03 16:13:05 ppetitsm Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
    Portions Copyrighted 2008 Patrick Petit Consulting
@@ -69,7 +69,7 @@ private static final String[] iCClaims = {"issuer", "issuerPolicy",
          }
             %>
             <link rel="stylesheet" href="<%= ServiceURI %>/css/styles.css" type="text/css">
-            <link rel="stylesheet" href="<%= ServiceURI %>/css/Infocard.css" type="text/css">
+            <link rel="stylesheet" href="<%= ServiceURI %>/css/infocard.css" type="text/css">
             <script type="text/javascript" src="<%= ServiceURI %>/js/browserVersion.js"></script>
             <script type="text/javascript" src="<%= ServiceURI %>/js/auth.js"></script>
             <script type="text/javascript" src="<%= ServiceURI %>/js/infocard.js"></script>

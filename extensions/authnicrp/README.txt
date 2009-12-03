@@ -22,7 +22,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.txt,v 1.16 2009-10-28 08:35:27 ppetitsm Exp $
+$Id: README.txt,v 1.17 2009-12-03 16:13:05 ppetitsm Exp $
 
 Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 Portions Copyrighted 2008 Patrick Petit Consulting
@@ -142,7 +142,7 @@ below:
 
     If you want to build Authnicrp for a different release than OpenSSO Express 8,
     you will need to replace the amserver.jar file and opensso-sharedlib.jar file
-    under extlib/OpenSSO by the librairies of your actual OpenSSO instance.
+    under extlib/OpenSSO by the librairies of your actual OpenSSO version.
 
 3-  Install the authentication module in the OpenSSO instance.
     Invoke the following commands in sequence:
