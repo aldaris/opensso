@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: README,v 1.13 2009-11-20 18:00:12 mrudul_uchil Exp $
+ * $Id: README,v 1.14 2009-12-03 18:57:52 mrudul_uchil Exp $
  */
 
  %% Contents:
@@ -202,16 +202,15 @@ Assumption :
         [input] Enter OpenSSO Server URL :
         <server_protocol>://<server_host.server_domain>:<server_port>/<server_deploy_uri>
 
-        [input] Have you configured your application with @HandlerChain annotation (y/n)? (y, n)
-        y
-
         [input] Enter type of application (WSC/ WSP) : (WSC, WSP)
         WSP
 
-        [input] Enter location of un-secured WAR file ending with name of the WAR file OR
-                Enter the location of un-secured application's staging area ending with
-                the application name (delimited by '|') :
-        <wssagents_unzip_location>/wssagent/samples/StockService/web|StockService
+        [input] Enter location of un-secured WAR file OR
+                location of un-secured application's staging area :
+        <wssagents_unzip_location>/wssagent/samples/StockService/web
+
+        [input] Enter the name of secured war file to be generated (e.g. mySecuredApp.war) :
+        StockService.war
 
         [input] Enter the package structure of application class file (e.g. com/sun/stockquote) :
         com/sun/stockquote
@@ -241,16 +240,15 @@ Assumption :
         [input] Enter OpenSSO Server URL :
         <server_protocol>://<server_host.server_domain>:<server_port>/<server_deploy_uri>
 
-        [input] Have you configured your application with @HandlerChain annotation (y/n)? (y, n)
-        y
-
         [input] Enter type of application (WSC/ WSP) : (WSC, WSP)
         WSC
 
-        [input] Enter location of un-secured WAR file ending with name of the WAR file OR
-                Enter the location of un-secured application's staging area ending with
-                the application name (delimited by '|') :
-        <wssagents_unzip_location>/wssagent/samples/StockClient/web|StockClient
+        [input] Enter location of un-secured WAR file OR
+                location of un-secured application's staging area :
+        <wssagents_unzip_location>/wssagent/samples/StockClient/web
+
+        [input] Enter the name of secured war file to be generated (e.g. mySecuredApp.war) :
+        StockClient.war
 
         [input] Enter the package structure of application class file (e.g. com/sun/stockquote) :
         com/sun/stockquote
@@ -357,16 +355,16 @@ Assumption :
           user authentication redirection to be done based on WSC's profile /
           configuration by reading "User Authentication Required" flag setting, 
           then the property "com.sun.identity.wss.wsc.providername" needs to be
-          added in the StockClient side AMConfig.properties file and its value
+          set in the StockClient side AMConfig.properties file and its value
           should be the WSC provider name. Also If you have multiple WSC talking
           to same service (WSP), then you can identify each WSC's profile
           uniquely by specifying this com.sun.identity.wss.wsc.providername
-          property in the WSC side AMConfig.properties file.
+          property value in the WSC side AMConfig.properties file.
           For WSC profile name, com.sun.identity.wss.wsc.providername property
           takes precedence over the WSDL service name. If both are absent, then
           default name as "wsc" (this is created out of box) is used.
 
-          For this sample, you can use and add this property as shown below :
+          For this sample, you can use and set this property as shown below :
           com.sun.identity.wss.wsc.providername=wsc
 
           Make sure to re-war the StockClient web application (war file) and

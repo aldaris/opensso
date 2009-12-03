@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.32 2009-11-20 18:00:11 mrudul_uchil Exp $
+   $Id: build.xml,v 1.33 2009-12-03 18:57:50 mrudul_uchil Exp $
 
 -->
 
@@ -249,15 +249,7 @@
             replace=""/>
         <replaceregexp byline="true"
             file="${zip.temp.dir}/config/AMConfig.properties.template"
-            match="@APPLICATION_USER@"
-            replace="agentAuth"/>
-        <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties.template"
             match="@APPLICATION_PASSWD@"
-            replace="changeit"/>
-        <replaceregexp byline="true"
-            file="${zip.temp.dir}/config/AMConfig.properties.template"
-            match="@ENCODED_APPLICATION_PASSWORD@"
             replace=""/>
         <replaceregexp byline="true"
             file="${zip.temp.dir}/config/AMConfig.properties.template"

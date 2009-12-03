@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ParseInputData.java,v 1.1 2009-11-10 08:37:28 mrudul_uchil Exp $
+ * $Id: ParseInputData.java,v 1.2 2009-12-03 18:57:50 mrudul_uchil Exp $
  *
  */
 
@@ -44,22 +44,19 @@ public class ParseInputData {
         PrintWriter out = new PrintWriter(os);
         String warFileLocation = args[0];
         String newWarFileLocation = warFileLocation.trim().replace("\\", "/");
-        String warFileName = null;
+
         int index = newWarFileLocation.lastIndexOf("/");
         if (index != -1) {
             int indexWar = newWarFileLocation.indexOf(".war");
             if (indexWar != -1) {
-                warFileName = newWarFileLocation.substring(index+1,indexWar);
                 out.write("war.exist=yes" + "\n");
+            } else {
+                out.write("wss.war.packages.dir=" + newWarFileLocation + "\n");
             }
+        } else {
+            System.out.println("Error : Incorrect Directory/File location Syntax");
         }
-        int indexPipe = newWarFileLocation.indexOf("|");
-        if (indexPipe != -1) {
-            String stagingLocation = newWarFileLocation.substring(0,indexPipe);
-            warFileName = newWarFileLocation.substring(indexPipe+1);
-            out.write("wss.war.packages.dir=" + stagingLocation + "\n");
-        }
-        out.write("unsecure.appname=" + warFileName + "\n");
+        
         out.close();
         os.close();
     }

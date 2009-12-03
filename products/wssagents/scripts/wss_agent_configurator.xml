@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: wss_agent_configurator.xml,v 1.2 2009-11-20 18:00:13 mrudul_uchil Exp $
+   $Id: wss_agent_configurator.xml,v 1.3 2009-12-03 18:57:52 mrudul_uchil Exp $
 
 -->
 
@@ -43,6 +43,7 @@
     <target name="config">
         <echo message="Welcome to OpenSSO WSS Agent Configurator..."/>
         <echo message="This will secure your non-secured web aplication (either non-secured WAR file or non-secured staging area)."/>
+        <echo message="Please make sure that you have enabled JAX-WS handlers configuration from your WSC / WSP application code."/>
 
         <tstamp>
             <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
@@ -58,16 +59,6 @@
         />
         
         <input
-            message="Have you configured your application with @HandlerChain annotation (y/n)?"
-            validargs="y,n"
-            addproperty="do.config"
-        />
-        <condition property="do.abort">
-            <equals arg1="n" arg2="${do.config}"/>
-        </condition>
-        <fail if="do.abort">Please configure your application with @HandlerChain annotation first.</fail>
-
-        <input
             message="Enter type of application (WSC/ WSP) :"
             validargs="WSC,WSP"
             addproperty="app.type"
@@ -76,8 +67,13 @@
         <echo message="Now securing ${app.type} Application using OpenSSO WSS Agents..."/>
 
         <input
-            message="Enter location of un-secured WAR file ending with name of the WAR file OR Enter the location of un-secured application's staging area ending with the application name (delimited by '|') :"
+            message="Enter location of un-secured WAR file OR location of un-secured application's staging area :"
             addproperty="unsecure.location"
+        />
+
+        <input
+            message="Enter the name of secured war file to be generated (e.g. mySecuredApp.war) :"
+            addproperty="secureapp.war"
         />
 
         <input
@@ -95,6 +91,9 @@
                 <classpath refid="build.class.path"/>
                 <arg value="${server.url}" />
                 <arg value="${wss.basedir}" />
+                <arg value="${app.user.name}" />
+                <arg value="${app.user.password}" />
+                <arg value="${wsc.providername}" />
                 <arg value="${wss.basedir}/config/AMConfig.properties.template"/>
                 <arg value="${wss.basedir}/config/AMConfig.properties"/>
         </java>
@@ -138,7 +137,7 @@
         <antcall target="merge-webxml" />
 
         <mkdir dir="${wss.basedir}/secured_war" />
-        <war destfile="${wss.basedir}/secured_war/${unsecure.appname}.war" >
+        <war destfile="${wss.basedir}/secured_war/${secureapp.war}" >
             <manifest>
                 <attribute name="Create-On" value="${touch.time}"/>
             </manifest>
@@ -146,7 +145,7 @@
         </war>
 
         <echo message="Completed OpenSSO WSS Agent Configurator with debug directory created at ${wss.debugdir}"/>
-        <echo message="Completed Securing ${unsecure.appname} application of type ${app.type} using OpenSSO WSS Agents with secured war file ${wss.basedir}/secured_war/${unsecure.appname}.war" />
+        <echo message="Completed Securing your application of type ${app.type} using OpenSSO WSS Agents with secured war file ${wss.basedir}/secured_war/${secureapp.war}" />
         
     </target>
 

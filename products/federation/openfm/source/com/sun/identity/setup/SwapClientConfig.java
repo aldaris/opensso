@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SwapClientConfig.java,v 1.1 2009-11-10 08:37:28 mrudul_uchil Exp $
+ * $Id: SwapClientConfig.java,v 1.2 2009-12-03 18:57:50 mrudul_uchil Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import com.iplanet.services.util.Crypt;
 
 /**
  * Tag swap client properties for server protocol, host, port and deploy uri.
@@ -47,8 +48,12 @@ public class SwapClientConfig {
         try {
             String serverURL = args[0];
             String baseDir = args[1];
-            StringBuffer templateFile = getInputStringBuffer(args[2], false);
-            createAMConfigProperties(args[3],templateFile,serverURL,baseDir);
+            String appUser = args[2];
+            String appPassword = args[3];
+            String wscProviderName = args[4];
+            StringBuffer templateFile = getInputStringBuffer(args[5], false);
+            createAMConfigProperties(args[6],templateFile,serverURL,baseDir,
+                appUser,appPassword,wscProviderName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -59,9 +64,14 @@ public class SwapClientConfig {
      * @param configFile Absolute path to the AMConfig.properties to be created.
      * @param templateFile Template file for AMConfig.properties
      * @param serverURL OpenSSO server URL to be swapped in the template file
+     * @param baseDir Base directory for Debug and Keystore files, to be swapped in the template file
+     * @param appUser Application user name to be swapped in the template file
+     * @param appPassword Application user password to be swapped in the template file
+     * @param wscProviderName Unique agent profile name to be used for WSC
      */
     private static void createAMConfigProperties(String configFile,
-        StringBuffer templateFile, String serverURL, String baseDir)
+        StringBuffer templateFile, String serverURL, String baseDir,
+        String appUser, String appPassword, String wscProviderName)
         throws IOException {
         String content = templateFile.toString();
 
@@ -109,6 +119,16 @@ public class SwapClientConfig {
         String newBaseDir = baseDir.trim().replace("\\", "/");
         content = content.replaceAll("@DEBUG_DIR@", newBaseDir + "/debug");
         content = content.replaceAll("@KEYSTORE_LOCATION@", newBaseDir + "/resources");
+
+        content = content.replaceAll("@APPLICATION_USER@", appUser);
+        content = content.replaceAll("@ENCODED_APPLICATION_PASSWORD@",
+            Crypt.encrypt(appPassword));
+
+        if((wscProviderName != null) && (wscProviderName.trim().length() != 0)
+                && (!wscProviderName.equals("<@wsc.providername@>"))) {
+            content = content.replaceAll("com.sun.identity.wss.wsc.providername=",
+                "com.sun.identity.wss.wsc.providername=" + wscProviderName);
+        }
 
         writeToFile(content, configFile);
     }

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagents-jax-ws-zip,v 1.10 2009-11-10 08:37:29 mrudul_uchil Exp $
+   $Id: README.wssagents-jax-ws-zip,v 1.11 2009-12-03 18:57:51 mrudul_uchil Exp $
 
 -->
 
@@ -51,14 +51,20 @@ type of JAX-WS handlers that intercept inbound and outbound Web Service
 requests/responses (SOAP messages) in order to secure them.
 You can easily plug these handlers into the JAX-WS 2.1 runtime environment.
 
-To secure your web service application (WSC / WSP) unsecured war file with
-OpenSSO WSS Agents, using installer/configurator utility, run
+To secure your web service application (WSC / WSP), either unsecured war file OR
+unsecured staging area, with OpenSSO WSS Agents,
+using installer/configurator utility, run
 
 wssagent/ant config
 
-for WSC and WSP applications each (separately). You can also specify the
-input data in wssagent/config/WSSAgentInputData.properties file so that
-this installer/configurator utility can run silently, without prompting for
+for WSC and WSP applications each (separately).
+You can customize "security credentails to authenticate to OpenSSO server and
+read the configuration data" and "Unique agent profile name to be used for WSC"
+in wssagent/config/WSSAgentInputData.properties file, if you do not want to use
+default values set.
+You can also specify the other input data in
+wssagent/config/WSSAgentInputData.properties file so that this
+installer/configurator utility can run silently, without prompting for
 user input.
 Note : Make sure you have Ant (version "1.7" or higher) in CLASS PATH
 
