@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceClientEdit.jsp,v 1.9 2008-12-10 18:25:15 farble1670 Exp $
+   $Id: WebServiceClientEdit.jsp,v 1.10 2009-12-03 23:38:29 asyhuang Exp $
 
 --%>
 
@@ -92,6 +92,59 @@
         frm.elements['WebServiceClientEdit.kerberosdomainserver'].disabled = disableKerberos;
         frm.elements['WebServiceClientEdit.ispassthroughsecuritytoken'].disabled = disablePassThru;
     }
+
+    function enableSigningElements()
+    {
+        var frm = document.forms['WebServiceClientEdit'];
+        if(frm.elements['WebServiceClientEdit.isrequestsigned'].checked == true){
+            frm.elements['WebServiceClientEdit.Body'].disabled = false;
+            frm.elements['WebServiceClientEdit.SecurityToken'].disabled = false;
+            frm.elements['WebServiceClientEdit.Timestamp'].disabled = false;
+            frm.elements['WebServiceClientEdit.To'].disabled = false;
+            frm.elements['WebServiceClientEdit.From'].disabled = false;
+            frm.elements['WebServiceClientEdit.ReplyTo'].disabled = false;
+            frm.elements['WebServiceClientEdit.Action'].disabled = false;
+            frm.elements['WebServiceClientEdit.MessageID'].disabled = false;
+
+            if((frm.elements['WebServiceClientEdit.Body'].checked == false)
+                && (frm.elements['WebServiceClientEdit.SecurityToken'].checked == false)
+                && (frm.elements['WebServiceClientEdit.Timestamp'].checked == false)
+                && (frm.elements['WebServiceClientEdit.To'].checked == false)
+                && (frm.elements['WebServiceClientEdit.From'].checked == false)
+                && (frm.elements['WebServiceClientEdit.ReplyTo'].checked == false)
+                && (frm.elements['WebServiceClientEdit.Action'].checked == false)
+                && (frm.elements['WebServiceClientEdit.MessageID'].checked == false))
+            {
+                frm.elements['WebServiceClientEdit.Body'].checked = true;
+            }
+        } else {
+            frm.elements['WebServiceClientEdit.Body'].disabled = true;
+            frm.elements['WebServiceClientEdit.SecurityToken'].disabled = true;
+            frm.elements['WebServiceClientEdit.Timestamp'].disabled = true;
+            frm.elements['WebServiceClientEdit.To'].disabled = true;
+            frm.elements['WebServiceClientEdit.From'].disabled = true;
+            frm.elements['WebServiceClientEdit.ReplyTo'].disabled = true;
+            frm.elements['WebServiceClientEdit.Action'].disabled = true;
+            frm.elements['WebServiceClientEdit.MessageID'].disabled = true;
+        }
+    }
+    
+    function enableRequestEncryptionOptions()
+    {
+        var frm = document.forms['WebServiceClientEdit'];
+        if(frm.elements['WebServiceClientEdit.isRequestEncryptedEnabled'].checked == true){
+            frm.elements['WebServiceClientEdit.isrequestencrypted'].disabled = false;
+            frm.elements['WebServiceClientEdit.isRequestHeaderEncrypt'].disabled = false;
+            if((frm.elements['WebServiceClientEdit.isrequestencrypted'].checked==false)
+                && (frm.elements['WebServiceClientEdit.isRequestHeaderEncrypt'].checked==false))
+            {
+               frm.elements['WebServiceClientEdit.isrequestencrypted'].checked=true;
+            }
+        } else {
+            frm.elements['WebServiceClientEdit.isrequestencrypted'].disabled = true;
+            frm.elements['WebServiceClientEdit.isRequestHeaderEncrypt'].disabled = true;
+        }
+    }
 </script>
 
 <cc:form name="WebServiceClientEdit" method="post">
@@ -145,6 +198,8 @@
     }
     disableCustomKeyStoreFields(frm, disabled);
     disableSTSFields();
+    enableSigningElements();
+    enableRequestEncryptionOptions();
 </script>
 </cc:header>
 </jato:useViewBean>
