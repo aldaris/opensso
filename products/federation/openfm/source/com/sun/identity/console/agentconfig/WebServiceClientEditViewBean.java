@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceClientEditViewBean.java,v 1.3 2009-10-05 23:04:45 babysunil Exp $
+ * $Id: WebServiceClientEditViewBean.java,v 1.4 2009-12-03 23:55:33 asyhuang Exp $
  *
  */
 
@@ -81,6 +81,7 @@ public class WebServiceClientEditViewBean
         attrToChildNames.put("isRequestSign", "isrequestsigned");
         attrToChildNames.put("useDefaultStore", "keystoreusage");
         attrToChildNames.put("serviceType", "libertyservicetype");
+        attrToChildNames.put("DnsClaim", "DnsClaim");
         attrToChildNames.put("isResponseEncrypt", "isrequestencrypted");
         attrToChildNames.put("SAMLAttributeMapping", "SAMLAttributeMapping");
         attrToChildNames.put("NameIDMapper", "NameIDMapper");

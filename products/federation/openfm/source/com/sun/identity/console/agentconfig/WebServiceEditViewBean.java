@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceEditViewBean.java,v 1.5 2008-06-25 05:49:32 qcheng Exp $
+ * $Id: WebServiceEditViewBean.java,v 1.6 2009-12-03 23:55:33 asyhuang Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.agentconfig.model.AgentsModel;
 import com.sun.identity.console.agentconfig.model.WSSAttributeNames;
 import com.sun.identity.console.base.AMViewBeanBase;
+import com.sun.identity.wss.security.ConfiguredSignedElements;
 import com.sun.web.ui.model.CCNavNode;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.text.MessageFormat;
@@ -269,6 +270,8 @@ public abstract class WebServiceEditViewBean
                     setSecurityMech(securityMechs);
                     setExternalizeUIValues(externalizeUIProperties, attrValues);
                     setKeyStoreInfo(attrValues);
+                    setSignedElements(attrValues);
+                    setEncryptionFlag(attrValues);
                 } else if ((inheritedValues != null) && 
                     !inheritedValues.isEmpty()
                 ){
@@ -293,7 +296,68 @@ public abstract class WebServiceEditViewBean
             propertySheetModel.setValues(PROPERTY_UUID, uuid, model);
         }
     }
+
+    void setEncryptionFlag(Map values) {         
+         Set set = (Set)values.get("isRequestEncrypt");
+         String isrequestencrypted = ((set != null) && !set.isEmpty()) ?
+             (String)set.iterator().next() : "";
+        
+         set = (Set)values.get("isRequestHeaderEncrypt");
+         String isRequestHeaderEncrypt = ((set != null) && !set.isEmpty()) ?
+             (String)set.iterator().next() : "";
+
+         if(((isrequestencrypted != null) && (isrequestencrypted.equals("true")))
+             || ((isRequestHeaderEncrypt != null) && (isRequestHeaderEncrypt.equals("true"))))
+         {
+             propertySheetModel.setValue("isRequestEncryptedEnabled", "true");
+         }
+    }
     
+    void setSignedElements(Map values) {       
+        Set set = (Set)values.get("isrequestsigned");
+        String isresponsesigned = ((set != null) && !set.isEmpty()) ?
+             (String)set.iterator().next() : "";
+
+        set = (Set) values.get("SignedElements");
+        
+        ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
+        Map map = configuredSignedElements.getChoiceValues();
+        if((set.isEmpty() || set.size()==0 ) 
+            && (isresponsesigned != null) && (isresponsesigned.equals("true"))){
+            propertySheetModel.setValue("Body", "true");
+        } else {
+            Iterator it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pairs = (Map.Entry)it.next();                
+                if (set.contains(pairs.getKey())) {
+                    propertySheetModel.setValue(pairs.getKey().toString(), "true");
+                }
+            }
+        }
+    }
+
+    private void getSignedElements(Map values){
+        String val=null;
+        Set set = new HashSet();
+        ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
+        Map map = configuredSignedElements.getChoiceValues();
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pairs = (Map.Entry)it.next();           
+            val = (String)propertySheetModel.getValue(pairs.getKey().toString());
+            if(val.equals("true")){
+                set.add(pairs.getValue());
+            }
+        }  
+
+        val = (String)propertySheetModel.getValue("isrequestsigned");
+        if(val.equals("true") && set.isEmpty()) {
+             set.add("Body");
+        }
+        values.put("SignedElements", set);
+
+    }
+
     void setExternalizeUIValues(Set extUIs, Map values) {
         for (Iterator i = extUIs.iterator(); i.hasNext(); ) {
             WebServiceUIElement elm = (WebServiceUIElement)i.next();
@@ -377,7 +441,7 @@ public abstract class WebServiceEditViewBean
             }
         }
     }
-    
+
     protected Map getFormValues()
         throws AMConsoleException, ModelControlException {
         AgentsModel model = (AgentsModel)getModel();
@@ -402,6 +466,7 @@ public abstract class WebServiceEditViewBean
         }
         
         getExternalizeUIValues(externalizeUIProperties, values);
+        getSignedElements(values);
         
         String useDefaultKeyStore = (String)propertySheetModel.getValue(
             CHILD_NAME_KEYSTORE_USAGE);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceSTSEditViewBean.java,v 1.4 2009-10-20 18:49:48 babysunil Exp $
+ * $Id: WebServiceSTSEditViewBean.java,v 1.5 2009-12-03 23:55:33 asyhuang Exp $
  *
  */
 
@@ -72,6 +72,7 @@ public class WebServiceSTSEditViewBean
         attrToChildNames.put("STS", "sts");
         attrToChildNames.put("STSEndpoint", "securitytokenendpoint");
         attrToChildNames.put("STSMexEndpoint", "securitytokenmetadataendpoint");
+        attrToChildNames.put("DnsClaim", "DnsClaim");
         attrToChildNames.put("isRequestSign", "isrequestsigned");
         attrToChildNames.put("isRequestHeaderEncrypt",
             "isRequestHeaderEncrypt");

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenServiceViewBean.java,v 1.2 2008-08-15 23:10:52 asyhuang Exp $
+ * $Id: SecurityTokenServiceViewBean.java,v 1.3 2009-12-03 23:56:08 asyhuang Exp $
  *
  */
 package com.sun.identity.console.service;
@@ -33,17 +33,19 @@ import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.jato.view.html.OptionList;
-import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.AMServiceProfileViewBeanBase;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
+import com.sun.identity.console.base.model.AMServiceProfileModel;
 import com.sun.identity.console.service.model.SecurityTokenServiceModel;
 import com.sun.identity.console.service.model.SecurityTokenServiceModelImpl;
+import com.sun.identity.wss.security.ConfiguredSignedElements;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.html.CCSelectableList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -96,13 +98,10 @@ public class SecurityTokenServiceViewBean
             CCSelectableList cb = (CCSelectableList) getChild(
                     AUTHENTICATION_CHAIN);
             cb.setOptions(getAuthChainOptionList());
-
-
             propertySheetModel.setValue(AUTHENTICATION_CHAIN, authChains);
-            //AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTIES);
-            //ps.init();
-            
-
+          
+            setSignedElements(values);
+            setEncryptionFlag(values);
             if (!isInlineAlertMessageSet()) {
                 String flag = (String) getPageSessionAttribute(PAGE_MODIFIED);
                 if ((flag != null) && flag.equals("1")) {
@@ -110,13 +109,69 @@ public class SecurityTokenServiceViewBean
                             "message.profile.modified");
                 }
             }
-        } catch (AMConsoleException ex) {
-           // Logger.getLogger(SecurityTokenServiceViewBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (AMConsoleException ex) {          
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     ex.getMessage());
         }
     }
 
+    void setEncryptionFlag(Map values) {
+         Set set = (Set)values.get("isRequestEncrypt");
+         String isrequestencrypted = ((set != null) && !set.isEmpty()) ?
+             (String)set.iterator().next() : "";
+
+         set = (Set)values.get("isRequestHeaderEncrypt");
+         String isRequestHeaderEncrypt = ((set != null) && !set.isEmpty()) ?
+             (String)set.iterator().next() : "";
+
+         if(((isrequestencrypted != null) && (isrequestencrypted.equals("true")))
+             || ((isRequestHeaderEncrypt != null) && (isRequestHeaderEncrypt.equals("true"))))
+         {
+             propertySheetModel.setValue("isRequestEncryptedEnabled", "true");
+         }
+    }
+    void setSignedElements(Map values) {
+        Set set = (Set) values.get("SignedElements");
+        String isresponsesigned = (String) values.get("isrequestsigned");
+        ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
+        Map map = configuredSignedElements.getChoiceValues();
+        if((set.isEmpty() || set.size()==0 )
+            && (isresponsesigned != null) && (isresponsesigned.equals("true"))){
+            propertySheetModel.setValue("Body", "true");
+        } else {
+            Iterator it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pairs = (Map.Entry)it.next();               
+                if (set.contains(pairs.getKey())) {
+                    propertySheetModel.setValue(pairs.getKey().toString(), "true");
+                }
+            }            
+        }
+    }
+
+
+    private void getSignedElements(Map values){
+        String val=null;
+        Set set = new HashSet();
+        ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
+        Map map = configuredSignedElements.getChoiceValues();
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pairs = (Map.Entry)it.next();            
+            val = (String)propertySheetModel.getValue(pairs.getKey().toString());
+            if(val.equals("true")){
+                set.add(pairs.getValue());
+            }
+        }    
+
+        val = (String)propertySheetModel.getValue("isResponseSign");
+        if(val.equals("true") && set.isEmpty()) {
+             set.add("Body");
+        }
+        values.put("SignedElements", set);
+
+    }
+    
     private OptionList getAuthChainOptionList()
             throws AMConsoleException {
         Set config = ((SecurityTokenServiceModel) getModel()).getAuthenticationChains();
@@ -169,7 +224,25 @@ public class SecurityTokenServiceViewBean
     public void handleButton1Request(RequestInvocationEvent event)
             throws ModelControlException {
         removePageSessionAttribute(PAGE_MODIFIED);
-        super.handleButton1Request(event);
+        /*super.handleButton1Request(event);*/
+
+        submitCycle = true;
+        AMServiceProfileModel model = (AMServiceProfileModel)getModel();
+
+        if (model != null) {
+            try {
+                Map values = getValues();
+                onBeforeSaveProfile(values);
+                getSignedElements(values);
+                model.setAttributeValues(values);
+                setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                    "message.updated");
+            } catch (AMConsoleException e) {
+                setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    e.getMessage());
+            }
+        }
+        forwardTo();
     }
 
     /**

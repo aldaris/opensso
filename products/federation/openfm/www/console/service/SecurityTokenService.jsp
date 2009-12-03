@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SecurityTokenService.jsp,v 1.1 2008-08-13 22:37:11 asyhuang Exp $
+   $Id: SecurityTokenService.jsp,v 1.2 2009-12-03 23:56:38 asyhuang Exp $
 
 --%>
 
@@ -40,6 +40,61 @@
 
 <script language="javascript" src="../console/js/am.js"></script>
 
+<script language="javascript">
+    function enableSigningElements()
+    {
+        var frm = document.forms['SecurityTokenService'];
+        if(frm.elements['SecurityTokenService.isresponsesigned'].checked == true){
+            frm.elements['SecurityTokenService.Body'].disabled = false;
+            frm.elements['SecurityTokenService.SecurityToken'].disabled = false;
+            frm.elements['SecurityTokenService.Timestamp'].disabled = false;
+            frm.elements['SecurityTokenService.To'].disabled = false;
+            frm.elements['SecurityTokenService.From'].disabled = false;
+            frm.elements['SecurityTokenService.ReplyTo'].disabled = false;
+            frm.elements['SecurityTokenService.Action'].disabled = false;
+            frm.elements['SecurityTokenService.MessageID'].disabled = false;
+
+            if((frm.elements['SecurityTokenService.Body'].checked == false)
+                && (frm.elements['SecurityTokenService.SecurityToken'].checked == false)
+                && (frm.elements['SecurityTokenService.Timestamp'].checked == false)
+                && (frm.elements['SecurityTokenService.To'].checked == false)
+                && (frm.elements['SecurityTokenService.From'].checked == false)
+                && (frm.elements['SecurityTokenService.ReplyTo'].checked == false)
+                && (frm.elements['SecurityTokenService.Action'].checked == false)
+                && (frm.elements['SecurityTokenService.MessageID'].checked == false))
+            {
+                frm.elements['SecurityTokenService.Body'].checked = true;
+            }
+            
+        } else {
+            frm.elements['SecurityTokenService.Body'].disabled = true;
+            frm.elements['SecurityTokenService.SecurityToken'].disabled = true;
+            frm.elements['SecurityTokenService.Timestamp'].disabled = true;
+            frm.elements['SecurityTokenService.To'].disabled = true;
+            frm.elements['SecurityTokenService.From'].disabled = true;
+            frm.elements['SecurityTokenService.ReplyTo'].disabled = true;
+            frm.elements['SecurityTokenService.Action'].disabled = true;
+            frm.elements['SecurityTokenService.MessageID'].disabled = true;
+        }
+    }
+
+    function enableRequestEncryptionOptions()
+    {
+        var frm = document.forms['SecurityTokenService'];
+        if(frm.elements['SecurityTokenService.isRequestEncryptedEnabled'].checked == true){
+            frm.elements['SecurityTokenService.isRequestEncrypt'].disabled = false;
+            frm.elements['SecurityTokenService.isRequestHeaderEncrypt'].disabled = false;
+            if((frm.elements['SecurityTokenService.isRequestEncrypt'].checked==false)
+                && (frm.elements['SecurityTokenService.isRequestHeaderEncrypt'].checked==false))
+            {
+               frm.elements['SecurityTokenService.isRequestEncrypt'].checked=true;
+            }
+        } else {
+            frm.elements['SecurityTokenService.isRequestEncrypt'].disabled = true;
+            frm.elements['SecurityTokenService.isRequestHeaderEncrypt'].disabled = true;
+        }
+    }
+</script>
 <cc:form name="SecurityTokenService" method="post" defaultCommandChild="/button1" >
 <cc:hidden name="tfPageModified" />
 
@@ -65,6 +120,11 @@
 <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="true" />
 
 </cc:form>
+
+<script language="javascript">
+    enableSigningElements();
+    enableRequestEncryptionOptions();
+</script>
 
 </cc:header>
 </jato:useViewBean>
