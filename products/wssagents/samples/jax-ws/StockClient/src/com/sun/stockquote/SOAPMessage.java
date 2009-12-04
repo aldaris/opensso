@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPMessage.java,v 1.2 2009-07-27 21:43:53 mrudul_uchil Exp $
+ * $Id: SOAPMessage.java,v 1.3 2009-12-04 00:53:12 kamna Exp $
  *
  */
 package com.sun.stockquote;
@@ -66,9 +66,12 @@ public class SOAPMessage extends HttpServlet {
 		String fileName = System.getProperty("user.home") + "/opensso/" + file;
 		BufferedReader br = new BufferedReader(new InputStreamReader(
 				new FileInputStream(fileName)));
-		out.println("<?xml version='1.0' encoding=\"ISO-8859-1\"?>\n\n");
-		String line;
-		while ((line = br.readLine()) != null) {
+        String line;
+        if(!((line = br.readLine()).startsWith("<?xml"))){
+            out.println("<?xml version='1.0' encoding=\"ISO-8859-1\"?>");
+        }
+        out.println(line);
+        while ((line = br.readLine()) != null) {
 			out.println(line);
 		}
 		br.close();
