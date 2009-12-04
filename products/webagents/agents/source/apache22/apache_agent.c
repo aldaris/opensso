@@ -229,10 +229,8 @@ render_result(void **args, am_web_result_t http_result, char *data) {
     int *apache_ret = NULL;
     am_status_t sts = AM_SUCCESS;
     core_dir_config *conf;
-    //char buf[50];
     int len = 0;
 
-    //char *am_rev_number = am_web_get_am_revision_number();
     if (args == NULL || (r = (request_rec *) args[0]) == NULL,
             (apache_ret = (int *) args[1]) == NULL ||
             ((http_result == AM_WEB_RESULT_OK_DONE ||
@@ -248,13 +246,12 @@ render_result(void **args, am_web_result_t http_result, char *data) {
                 *apache_ret = OK;
                 break;
             case AM_WEB_RESULT_OK_DONE:
-                //if ((am_rev_number != NULL) && (!strcmp(am_rev_number, "7.0")) && data && ((len = strlen(data)) > 0))
                 if (data && ((len = strlen(data)) > 0)) {
                     ap_set_content_type(r, "text/html");
                     ap_set_content_length(r, len);
                     ap_rwrite(data, len, r);
                     ap_rflush(r);
-                    *apache_ret = HTTP_FORBIDDEN;
+                    *apache_ret = DONE;
                 } else {
                     *apache_ret = OK;
                 }

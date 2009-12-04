@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: log.cpp,v 1.7 2008-09-13 01:11:53 robertis Exp $
+ * $Id: log.cpp,v 1.8 2009-12-04 19:30:21 subbae Exp $
  *
  */ 
 #if (defined(WINNT) || defined(_AMD64_))
@@ -847,6 +847,13 @@ Log::rlog(ModuleId module, int remote_log_level,
 	logMsg = PR_vsmprintf(format, args);
 	logMessage = logMsg;
 	if (logMsg != NULL) {
+
+            if (logMsg[0] == '\0') {
+                Log::log(Log::ALL_MODULES, Log::LOG_WARNING,
+                    "Log Record Message is empty");
+                return status;
+            }
+
 	    try {
 		LogRecord logRecord(
 			    static_cast<LogRecord::Level>(remote_log_level), 
