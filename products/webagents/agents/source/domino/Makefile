@@ -107,15 +107,20 @@ ifeq ($(OS_ARCH), AIX)
 ifeq ($(BUILD_DEBUG), full)
 LINKDEBUG := -bnoquiet
 endif
-CFLAGS +=  $(PIC_FLAG) -I/usr/include -I$(DOMINO_DIR)/include $(INCLUDE_FLAGS) -DUNIX -DAIX -D_REENTRANT -DUSE_THREADSAFE_INTERFACES 
+EXPORTED_LIBS := $(LIB_NAME).a
+CFLAGS +=  $(PIC_FLAG) -I/usr/include -I$(DOMINO_INC_DIR) -I$(DEST_INC_DIR) -DUNIX -DAIX -D_REENTRANT -DUSE_THREADSAFE_INTERFACES 
 SYSTEM_LIBS := -lpthread -ldl -lc -lm -liconv
 LDFLAGS += -brtl -blibpath:/usr/lib:/lib:/usr/lib/mps -L$(NSS_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR) -L${DOMINO_LIB_DIR}
 LDLIBS +=  -L${DEST_LIB_DIR} -lamsdk
 LDLIBS += $(NSS_LIBS) $(NSPR_LIBS)
 LDLIBS += $(LIBXML_LIBS) -lnotes_r
 LINKOPTS := -bE:libamdomino.exp -bnoentry -bquiet
-MAKE_SHARED_LIB := $(CC) -o libamdomino.a libamdomino.o $(LINKOPTS) ${LDFLAGS} \
-     $(LDLIBS) ${SYSTEM_LIBS}
+
+MAKE_SHARED_LIB := $(CC) -o libamdomino.a domino_agent.o $(LINKOPTS) ${LDFLAGS} $(LDLIBS) ${SYSTEM_LIBS}
+
+all: export_libs
+$(EXPORTED_LIBS): $(OBJS) $(LIB_MAPFILE)
+	$(MAKE_SHARED_LIB)
 
 endif
 ###

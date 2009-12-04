@@ -23,7 +23,7 @@
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
 #
-# $Id: Makefile,v 1.15 2009-08-27 21:41:28 subbae Exp $
+# $Id: Makefile,v 1.16 2009-12-04 23:01:37 leiming Exp $
 #
 # Makefile file for building the Agents tree.
 #
@@ -81,7 +81,7 @@ SUBDIRS += apache
 endif 
 
 ifeq ($(OS_ARCH), AIX)
-SUBDIRS += apache apache22
+SUBDIRS += apache apache22 domino
 endif 
 
 all: all_subdirs

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2009-11-04 22:09:38 leiming Exp $
+   $Id: build.xml,v 1.2 2009-12-04 23:02:03 leiming Exp $
 
 -->
 
@@ -148,7 +148,18 @@
                     <include name="amdomino.pdb"/>
             </fileset>
         </copy>
+    </target>
 
+    <target name="copy-AIX-library">
+        <copy todir="${container.web_agent.lib.dir}">
+            <fileset dir="${webagents.domino.src.dir}">
+                    <include name="libamdomino.a"/>
+            </fileset>
+        </copy>
+        <copy file="${webagents.am.src.dir}/libamsdk.so.3"
+            tofile="${container.web_agent.lib.dir}/libamsdk.so"/>
+        <move file="${container.web_agent.lib.dir}/libxml2.so.2"
+              tofile="${container.web_agent.lib.dir}/libxml2.so"/>
     </target>
 
 </project>
