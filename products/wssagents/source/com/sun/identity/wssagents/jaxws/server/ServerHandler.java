@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerHandler.java,v 1.3 2009-11-04 04:55:43 kamna Exp $
+ * $Id: ServerHandler.java,v 1.4 2009-12-04 20:53:53 mrudul_uchil Exp $
  *
  */
 
@@ -71,7 +71,13 @@ public class ServerHandler implements SOAPHandler<SOAPMessageContext>{
 	public boolean handleMessage(SOAPMessageContext context) {
 	    Boolean outboundMsg =
             (Boolean)context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
-		
+
+		Map sharedMap = (Map) context.get("WSS_SHARED_MAP");
+        if ((sharedMap == null) || (sharedMap.isEmpty())) {
+            sharedMap = new HashMap();
+            context.put("WSS_SHARED_MAP", sharedMap);
+        }
+
         SOAPRequestHandler handler = null;
         try {
 		    handler = new SOAPRequestHandler();
@@ -105,9 +111,9 @@ public class ServerHandler implements SOAPHandler<SOAPMessageContext>{
 
 		    try {
 		        handler.validateRequest(context.getMessage(), subject,
-		            new HashMap(), null, null);
+		            sharedMap, null, null);
                 synchronized(this){
-                cred.set(subject);
+                    cred.set(subject);
                 }
                 return true;
 		    } catch (Exception ex) {
@@ -126,7 +132,7 @@ public class ServerHandler implements SOAPHandler<SOAPMessageContext>{
             }
 
             try {
-		        handler.secureResponse(context.getMessage(), new HashMap());
+		        handler.secureResponse(context.getMessage(), sharedMap);
                 return true;
 		    } catch (Exception ex) {
 		        if(logger != null && logger.isLoggable(Level.SEVERE)) {

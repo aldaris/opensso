@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogServerHandler.java,v 1.1 2009-07-25 01:11:02 Kamna Exp $
+ * $Id: LogServerHandler.java,v 1.2 2009-12-04 20:53:52 mrudul_uchil Exp $
  *
  */
 package com.sun.stockquote;
@@ -64,7 +64,6 @@ public class LogServerHandler implements SOAPHandler<SOAPMessageContext> {
     }
     
     public Set<QName> getHeaders() {
-        System.out.println("LogServerHandler: getHeaders..");
         Set<QName> qnames = new HashSet();
         qnames.add(new QName(
             "http://docs.oasis-open.org/wss/2004/01/" +
