@@ -19,6 +19,17 @@ BASE_PRODUCT_NAME OpenSSO C Development Kit
 /opt/agents/lib/libplds4.so
 /opt/agents/lib/libnss3.so
 /opt/agents/lib/libssl3.so
+/opt/agents/lib/libfreebl3.chk
+/opt/agents/lib/libfreebl3.so
+/opt/agents/lib/libjss4.so
+/opt/agents/lib/libnssckbi.so
+/opt/agents/lib/libnssdbm3.chk
+/opt/agents/lib/libnssdbm3.so
+/opt/agents/lib/libnssutil3.so
+/opt/agents/lib/libsmime3.so
+/opt/agents/lib/libsoftokn3.chk
+/opt/agents/lib/libsoftokn3.so
+/opt/agents/lib/libsqlite3.so
 /opt/agents/bin/crypt_util
 /opt/agents/lib/comlib_linux
 /opt/agents/config/OpenSSOAgentBootstrap.template.orig

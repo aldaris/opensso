@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2009-08-27 21:41:31 subbae Exp $
+   $Id: build.xml,v 1.17 2009-12-04 00:47:57 robertis Exp $
 
 -->
 
@@ -206,6 +206,13 @@
                     <include name="freebl3.dll"/>
                     <include name="freebl3.chk"/>
                     <include name="smime3.dll"/>
+                    <include name="jss4.dll"/>
+                    <include name="nssckbi.dll"/>
+                    <include name="nssdbm3.dll"/>
+                    <include name="nssdbm3.chk"/>
+                    <include name="nssutil3.dll"/>
+                    <include name="sqlite3.dll"/>
+
             </fileset>
         </copy>
         <copy todir="${container.web_agent.lib.dir}">

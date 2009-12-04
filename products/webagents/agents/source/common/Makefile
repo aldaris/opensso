@@ -118,11 +118,7 @@ $(DEST_PACKAGE_SCRATCH_DIR)/$(ZIP_DIR): $(DEST_PACKAGE_SCRATCH_DIR) $(EXPORTED_H
 	$(MKDIR) $(patsubst %, $(ZIP_DIR)/%, $(ZIP_SUB_DIRS))
 	$(CP) $(filter %$(SO_EXT).$(AGENT_MAJOR_VER), $^) $(ZIP_DIR)/lib
 	$(CP) $(LIBXML_LIB_DIR)/libxml2.so.2 $(ZIP_DIR)/lib
-	$(CP) $(NSPR_LIB_DIR)/libnspr4.so $(ZIP_DIR)/lib
-	$(CP) $(NSPR_LIB_DIR)/libplc4.so $(ZIP_DIR)/lib
-	$(CP) $(NSPR_LIB_DIR)/libplds4.so $(ZIP_DIR)/lib
-	$(CP) $(NSS_LIB_DIR)/libnss3.so $(ZIP_DIR)/lib
-	$(CP) $(NSS_LIB_DIR)/libssl3.so $(ZIP_DIR)/lib
+	$(CP) -r $(NSPR_LIB_DIR)/* $(ZIP_DIR)/lib
 	$(CP) $(USERX_ROOT)/conf/OpenSSOAgentBootstrap.template $(ZIP_DIR)/config/OpenSSOAgentBootstrap.template.orig
 	$(CP) $(USERX_ROOT)/conf/OpenSSOAgentConfiguration.template $(ZIP_DIR)/config/OpenSSOAgentConfiguration.template.orig
 	$(CP) $(USERX_ROOT)/am/source/crypt_util $(ZIP_DIR)/bin
@@ -140,13 +136,18 @@ EXTRA_PACKAGE_FILES += $(DEST_LIB_DIR)/amsdk.dll $(DEST_LIB_DIR)/amsdk.lib \
 	$(LIBXML_LIB_DIR)/libxml2.dll $(LIBXML_LIB_DIR)/libxml2.lib \
 	$(NSS_BIN_DIR)/certutil.exe $(NSS_LIB_DIR)/softokn3.dll \
 	$(NSS_LIB_DIR)/softokn3.chk $(NSS_LIB_DIR)/freebl3.chk \
-	$(NSS_LIB_DIR)/freebl3.dll
+	$(NSS_LIB_DIR)/freebl3.dll $(NSS_LIB_DIR)/jss4.dll \
+	$(NSS_LIB_DIR)/nssckbi.dll $(NSS_LIB_DIR)/nssdbm3.dll \
+	$(NSS_LIB_DIR)/nssdbm3.chk $(NSS_LIB_DIR)/nssutil3.dll \
+	$(NSS_LIB_DIR)/smime3.dll $(NSS_LIB_DIR)/sqlite3.dll \
+	$(NSS_LIB_DIR)/nssutil3.lib $(NSS_LIB_DIR)/smime3.lib 
 
 $(ZIP_FILE): $(DEST_PACKAGE_SCRATCH_DIR) $(EXPORTED_HEADERS) $(EXPORTED_LIBS) $(EXTRA_PACKAGE_FILES)
 	$(RM) -r $(PKG_DIR)
 	$(MKDIR) $(patsubst %, $(PKG_DIR)/%, $(ZIP_DIRS))
 	$(CP) $(filter %.exe, $^) $(PKG_DIR)/bin
 	$(CP) $(filter %$(SO_EXT), $^) $(PKG_DIR)/bin
+	$(CP) $(filter %.chk, $^) $(PKG_DIR)/bin
 	$(CP) $(USERX_ROOT)/conf/OpenSSOAgentBootstrap.template $(PKG_DIR)/config/OpenSSOAgentBootstrap.template.orig
 	$(CP) $(USERX_ROOT)/conf/OpenSSOAgentConfiguration.template $(PKG_DIR)/config/OpenSSOAgentConfiguration.template.orig
 	$(CP) $(filter %.h, $^) $(PKG_DIR)/include
@@ -226,11 +227,7 @@ $(RPM):
 	$(MKDIR) $(BUILDROOT_SAMPLES_DIR)
 	$(MKDIR) $(BUILDROOT_RPM_DIR)
 	$(CP) $(DEST_LIB_DIR)/libamsdk.so.$(AGENT_MAJOR_VER) $(BUILDROOT_LIB_DIR)
-	$(CP) $(NSPR_LIB_DIR)/libnspr4.so $(BUILDROOT_LIB_DIR)
-	$(CP) $(NSPR_LIB_DIR)/libplc4.so $(BUILDROOT_LIB_DIR)
-	$(CP) $(NSPR_LIB_DIR)/libplds4.so $(BUILDROOT_LIB_DIR)
-	$(CP) $(NSS_LIB_DIR)/libnss3.so $(BUILDROOT_LIB_DIR)
-	$(CP) $(NSS_LIB_DIR)/libssl3.so $(BUILDROOT_LIB_DIR)
+	$(CP)  $(NSPR_LIB_DIR)/* $(BUILDROOT_LIB_DIR)
 	$(CP) THIRD_PARTY_LICENSE.TXT $(BUILDROOT_LIB_DIR)/..
 	$(CP) $(LIBXML_LIB_DIR)/libxml2.so.2 $(BUILDROOT_LIB_DIR)
 	$(CP) $(USERX_ROOT)/conf/OpenSSOAgentBootstrap.template $(BUILDROOT_CONF_DIR)/OpenSSOAgentBootstrap.template.orig
