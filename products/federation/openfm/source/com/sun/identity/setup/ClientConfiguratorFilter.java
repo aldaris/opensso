@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfiguratorFilter.java,v 1.6 2009-11-24 06:16:37 222713 Exp $
+ * $Id: ClientConfiguratorFilter.java,v 1.7 2009-12-05 02:33:36 222713 Exp $
  *
  */
 package com.sun.identity.setup;
@@ -112,14 +112,13 @@ public final class ClientConfiguratorFilter implements Filter {
         setFilterConfig(filterConfig);
         servletCtx = filterConfig.getServletContext();
         configFile = System.getProperty("openssoclient.config.folder");
-        if (configFile == null) {
-            configFile = System.getProperty("user.home") + File.separator + 
-                SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR + File.separator + 
-                SetupClientWARSamples.getNormalizedRealPath(servletCtx) +
-                "AMConfig.properties";
-        } else {
-            configFile = configFile + File.separator + "AMConfig.properties";
+        if (configFile == null || configFile.length() == 0) {
+            configFile = System.getProperty("user.home"); 
         }
+        configFile = configFile + File.separator +
+            SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR + File.separator +
+            SetupClientWARSamples.getNormalizedRealPath(servletCtx) +
+            "AMConfig.properties";
 
         File file = new File(configFile);
         if (file.exists()) {
