@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralPrivilege.java,v 1.5 2009-11-19 01:02:03 veiming Exp $
+ * $Id: ReferralPrivilege.java,v 1.6 2009-12-05 01:24:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -420,6 +420,14 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
             return Collections.EMPTY_LIST;
         }
 
+        Application application =
+            ApplicationManager.getApplication(
+            PrivilegeManager.superAdminSubject, realm, applicationName);
+        EntitlementCombiner entitlementCombiner =
+            application.getEntitlementCombiner();
+        entitlementCombiner.init(adminSubject, "/",
+            applicationName, resourceName, actionNames, recursive);
+
         for (String rlm : realms) {
             for (String app : mapApplNameToResources.keySet()) {
                 if (app.equals(applicationName)) {
@@ -436,9 +444,9 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
                         ResourceMatch match = comp.compare(resName,
                             comp.canonicalize(r), true);
                         if (!recursive) {
-                        applicable = match.equals(ResourceMatch.EXACT_MATCH) ||
-                            match.equals(ResourceMatch.WILDCARD_MATCH) ||
-                            match.equals(ResourceMatch.SUB_RESOURCE_MATCH);
+                            applicable = match.equals(ResourceMatch.EXACT_MATCH) ||
+                                match.equals(ResourceMatch.WILDCARD_MATCH) ||
+                                match.equals(ResourceMatch.SUB_RESOURCE_MATCH);
                         } else {
                             applicable = !match.equals(ResourceMatch.NO_MATCH);
                         }
@@ -448,14 +456,6 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
                     }
 
                     if (applicable) {
-                        Application application = 
-                            ApplicationManager.getApplication(
-                                PrivilegeManager.superAdminSubject, realm, app);
-                        EntitlementCombiner entitlementCombiner = 
-                            application.getEntitlementCombiner();
-                        entitlementCombiner.init(adminSubject, rlm, 
-                            applicationName, resName, actionNames, recursive);
-                        
                         PrivilegeEvaluator evaluator = new PrivilegeEvaluator();
 
                         // create subject for sub realm by copying subject for
@@ -469,9 +469,7 @@ public final class ReferralPrivilege implements IPrivilege, Cloneable {
                         List<Entitlement> entitlements = evaluator.evaluate(rlm,
                             adminSubject, subjectSubRealm, applicationName,
                             resName, environment, recursive);
-                        if (results == null) {
-                            results = entitlements;
-                        } else if (entitlements != null) {
+                        if (entitlements != null) {
                             entitlementCombiner.add(entitlements);
                             results = entitlementCombiner.getResults();
                         }
