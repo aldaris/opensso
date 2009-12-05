@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-hosted-idp-create.xhtml,v 1.1 2009-08-19 05:41:08 veiming Exp $
+   $Id: samlv2-hosted-idp-create.xhtml,v 1.2 2009-12-05 04:35:41 babysunil Exp $
 -->
 
 <ui:composition
@@ -220,7 +220,7 @@
                                     summary="#{samlV2HostedIdpCreateWizardBean.cotSamlV2HostedIdpCreateSummary}"/>
                                 <o:summarypanel
                                     summary="#{samlV2HostedIdpCreateWizardBean.signingKeySamlV2HostedIdpCreateSummary}"
-                                    visible="#{o:size(samlV2HostedIdpCreateWizardBean.selectedSigningKey)>0}"/>
+                                    visible="#{samlV2HostedIdpCreateWizardBean.selectedSigningKey != null}"/>
                                 <o:summarypanel
                                     summary="#{samlV2HostedIdpCreateWizardBean.attributeMappingSamlV2HostedIdpCreateSummary}"
                                     visible="#{o:size(samlV2HostedIdpCreateWizardBean.viewAttributes)>0}"/>

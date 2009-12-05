@@ -13,16 +13,19 @@ public class MetadataSamlV2HostedSpCreateWizardStepValidator extends SamlV2Hoste
         String newEntityName = getSamlV2HostedSpCreateWizardBean().getNewEntityName();
 
         if (!usingMetaDataFile) {
-            if ((newEntityName == null) || newEntityName.length() == 0 || (!SamlV2CreateSharedDao.getInstance().valideEntityName(newEntityName))) {
-
+            if ((newEntityName == null) || (!(newEntityName.length() > 0))) {
                 popUpErrorMessage(
-                        "invalidEntityNameSummary",
-                        "invalidEntityNameDetail",
+                        "invalidNameSummary",
+                        "invalidNameDetail",
                         SamlV2HostedSpCreateWizardStep.METADATA.toInt());
-
+                return false;
+            } else if (!SamlV2CreateSharedDao.getInstance().valideEntityName(newEntityName)) {
+                popUpErrorMessage(
+                        "NameExistsSummary",
+                        "NameExistsDetail",
+                        SamlV2HostedSpCreateWizardStep.METADATA.toInt());
                 return false;
             }
-
         } else {
             String stdFilename = getSamlV2HostedSpCreateWizardBean().getStdMetaFile();
             String extFilename = getSamlV2HostedSpCreateWizardBean().getExtMetaFile();
