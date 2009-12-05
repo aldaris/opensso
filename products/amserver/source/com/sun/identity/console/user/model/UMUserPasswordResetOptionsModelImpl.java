@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMUserPasswordResetOptionsModelImpl.java,v 1.3 2008-09-22 20:17:37 veiming Exp $
+ * $Id: UMUserPasswordResetOptionsModelImpl.java,v 1.4 2009-12-05 05:07:07 bhavnab Exp $
  *
  */
 
@@ -78,6 +78,10 @@ public class UMUserPasswordResetOptionsModelImpl
         super(req, map);
     }
 
+    public UMUserPasswordResetOptionsModelImpl() {
+        // do nothing
+    }
+ 
     /**
      * Returns a map of question to its localized name.
      *

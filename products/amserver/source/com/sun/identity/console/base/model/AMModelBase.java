@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.16 2008-08-24 19:38:11 veiming Exp $
+ * $Id: AMModelBase.java,v 1.17 2009-12-05 05:07:06 bhavnab Exp $
  *
  */
 
@@ -120,6 +120,10 @@ public class AMModelBase
      */
     public AMModelBase(HttpServletRequest req) {
         initialize(req, null);
+    }
+
+    public AMModelBase() {
+        // do nothing
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PWResetQuestionTiledView.java,v 1.2 2008-06-25 05:43:42 qcheng Exp $
+ * $Id: PWResetQuestionTiledView.java,v 1.3 2009-12-05 05:07:07 bhavnab Exp $
  *
  */
 
@@ -38,10 +38,15 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.html.HiddenField;
 import com.iplanet.jato.view.html.StaticTextField;
 import com.iplanet.jato.view.html.TextField;
+import com.sun.identity.console.user.model.UMUserPasswordResetOptionsModelImpl;
+import com.sun.identity.console.user.model.UMUserPasswordResetOptionsModel; 
 import com.sun.identity.password.ui.model.PWResetQuestionModel;
+import com.sun.identity.sm.DNMapper;
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -175,7 +180,28 @@ public class PWResetQuestionTiledView extends RequestHandlingTiledViewBase
      */
     public void populateQuestionsList(String userDN, String orgDN) {
         PWResetQuestionModel model = getModel();
-        map = model.getSecretQuestions(userDN, orgDN);
+        int maxQuestions = new UMUserPasswordResetOptionsModelImpl().
+                     getMaxNumQuestions(DNMapper.orgNameToRealmName(orgDN));
+        Map secretMap = model.getSecretQuestions(userDN, orgDN);
+        if (secretMap != null & !secretMap.isEmpty()) {
+            if (maxQuestions >=0 & maxQuestions < secretMap.size())  {
+                map = new HashMap(maxQuestions);
+                Set secretSet = secretMap.keySet();
+                Iterator it = secretSet.iterator();
+                int i = 0;
+                while  (it.hasNext()) {
+                    Object obj = (Object)it.next();
+                    map.put(obj, secretMap.get(obj));
+                    i++;
+                    if  (i == maxQuestions) {
+                        break;
+                    }
+                }
+            } else {
+                map = new HashMap(secretMap.size());
+                map.putAll(secretMap);
+            }
+        } 
         if (map != null && !map.isEmpty() ) {
             Set set = map.keySet();
             list = new ArrayList(set);
