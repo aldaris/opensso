@@ -23,6 +23,9 @@
 ./WEB-INF/classes/AccessManagerCLI_zh.properties
 ./WEB-INF/classes/AccessManagerCLI_zh_TW.properties
 ./WEB-INF/classes/AgentService.xml
+./WEB-INF/classes/CoreToken.properties
+./WEB-INF/classes/CoreTokenConfig.xml
+./WEB-INF/classes/CoreTokenStore.xml
 ./WEB-INF/classes/DSConfig.properties
 ./WEB-INF/classes/DSConfig_de.properties
 ./WEB-INF/classes/DSConfig_en.properties
@@ -50,6 +53,7 @@
 ./WEB-INF/classes/LDAPAuth_ko.properties
 ./WEB-INF/classes/LDAPAuth_zh.properties
 ./WEB-INF/classes/LDAPAuth_zh_TW.properties
+./WEB-INF/classes/OAuthConfig.properties
 ./WEB-INF/classes/OpenSSOConfigurator.properties
 ./WEB-INF/classes/OpenSSOConfigurator_de.properties
 ./WEB-INF/classes/OpenSSOConfigurator_en.properties
@@ -1279,6 +1283,7 @@
 ./WEB-INF/lib/click.jar
 ./WEB-INF/lib/commons-codec-1.3.jar
 ./WEB-INF/lib/crimsondeb.jar
+./WEB-INF/lib/esapiport.jar
 ./WEB-INF/lib/iaik_jce_full.jar
 ./WEB-INF/lib/iaik_ssl.jar
 ./WEB-INF/lib/idpdiscovery.jar
@@ -1291,8 +1296,7 @@
 ./WEB-INF/lib/jdmktk.jar
 ./WEB-INF/lib/jdom.jar
 ./WEB-INF/lib/je.jar
-./WEB-INF/lib/jersey-core-1.1.0-ea.jar
-./WEB-INF/lib/jersey-server-1.1.0-ea.jar
+./WEB-INF/lib/jersey-bundle-1.1.1-ea-SNAPSHOT.jar
 ./WEB-INF/lib/jhall.jar
 ./WEB-INF/lib/jms.jar
 ./WEB-INF/lib/json.jar
@@ -1303,6 +1307,10 @@
 ./WEB-INF/lib/log4j-1.2.8.jar
 ./WEB-INF/lib/mail.jar
 ./WEB-INF/lib/mfwk_instrum_tk-2.0.jar
+./WEB-INF/lib/oauth-client-1.1.5-ea-SNAPSHOT.jar
+./WEB-INF/lib/oauth-server-1.1.5-ea-SNAPSHOT.jar
+./WEB-INF/lib/oauth-signature-1.1.5-ea-SNAPSHOT.jar
+./WEB-INF/lib/oauthservice.jar
 ./WEB-INF/lib/openfedlib.jar
 ./WEB-INF/lib/opensso-register.jar
 ./WEB-INF/lib/opensso-sharedlib.jar
@@ -1326,6 +1334,7 @@
 ./WEB-INF/template/keystore/keystore.jks
 ./WEB-INF/template/ldif/ad/ad_config_schema.ldif
 ./WEB-INF/template/ldif/ad/ad_user_schema.ldif
+./WEB-INF/template/ldif/adam/adam_user_schema.ldif
 ./WEB-INF/template/ldif/opends/opends_config_schema.ldif
 ./WEB-INF/template/ldif/opends/opends_embinit.ldif
 ./WEB-INF/template/ldif/opends/opends_plugin.ldif
@@ -2261,6 +2270,11 @@
 ./login_images/master-style.css
 ./login_images/spacer.gif
 ./login_images/warning_32_sunplex.gif
+./oauth/deleteconsumer.jsp
+./oauth/deletetoken.jsp
+./oauth/index.jsp
+./oauth/registerconsumer.jsp
+./oauth/userconsole.jsp
 ./password/css/adminstyle.css
 ./password/css/css_ie5win.css
 ./password/css/css_ie6up.css
