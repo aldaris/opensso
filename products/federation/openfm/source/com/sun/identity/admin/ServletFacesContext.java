@@ -1,6 +1,7 @@
 package com.sun.identity.admin;
 
 import javax.faces.FactoryFinder;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
@@ -23,12 +24,17 @@ public class ServletFacesContext {
         if (facesContext != null) {
             return facesContext;
         }
+
         FacesContextFactory contextFactory = (FacesContextFactory) FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
         LifecycleFactory lifecycleFactory = (LifecycleFactory) FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
         Lifecycle lifecycle = lifecycleFactory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
 
         facesContext = contextFactory.getFacesContext(context, request, response, lifecycle);
         AbstractInnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
+        if (null == facesContext.getViewRoot()) {
+            UIViewRoot view = facesContext.getApplication().getViewHandler().createView(facesContext, "/admin/facelet/home.xhtml");
+            facesContext.setViewRoot(new UIViewRoot());
+        }
 
         return facesContext;
     }
