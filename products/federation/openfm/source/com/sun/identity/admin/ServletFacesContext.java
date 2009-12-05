@@ -1,5 +1,6 @@
 package com.sun.identity.admin;
 
+import com.sun.identity.admin.model.ViewId;
 import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
@@ -32,8 +33,8 @@ public class ServletFacesContext {
         facesContext = contextFactory.getFacesContext(context, request, response, lifecycle);
         AbstractInnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
         if (null == facesContext.getViewRoot()) {
-            UIViewRoot view = facesContext.getApplication().getViewHandler().createView(facesContext, "/admin/facelet/home.xhtml");
-            facesContext.setViewRoot(new UIViewRoot());
+            UIViewRoot view = facesContext.getApplication().getViewHandler().createView(facesContext, ViewId.HOME.getId());
+            facesContext.setViewRoot(view);
         }
 
         return facesContext;
