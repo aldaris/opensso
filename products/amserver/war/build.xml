@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.66 2009-11-04 21:10:43 veiming Exp $
+   $Id: build.xml,v 1.67 2009-12-07 19:55:58 goodearth Exp $
 
 -->
 
@@ -44,6 +44,7 @@
     <property name="war.built.dir" location="${amserver.built.war.dir}"/>
     <property name="war.xml.dir" location="${amserver.warbase.dir}/xml"/>
     <property name="war.www.dir" location="${amserver.warbase.dir}/www"/>
+    <property name="war.config.dir" location="${amserver.warbase.dir}/config"/>
 
     <target name="all" depends="preparebuild">
         <antcall target="tools" />
@@ -127,6 +128,13 @@
             </zipfileset>
             <zipfileset dir="${amserver.www.dir}/click" prefix="click">
                  <include name="*.htm" />
+                 <include name="index.html" />
+            </zipfileset>
+            <zipfileset dir="${war.config.dir}/assets">
+                <include name="index.html" />
+            </zipfileset>
+            <zipfileset dir="${war.config.dir}/config">
+                <include name="index.html" />
             </zipfileset>
             <zipfileset dir="${amserver.authmodule.xml.dir}" prefix="config/auth/default">
                 <include name="*.xml" />
