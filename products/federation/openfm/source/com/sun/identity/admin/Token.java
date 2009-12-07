@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Token.java,v 1.1 2009-08-19 05:40:44 veiming Exp $
+ * $Id: Token.java,v 1.2 2009-12-07 19:46:49 veiming Exp $
  */
 
 package com.sun.identity.admin;
@@ -57,6 +57,10 @@ public class Token {
         } catch (SSOException ssoe) {
             throw new RuntimeException(ssoe);
         }
+    }
+
+    public Subject getSubject() {
+        return SubjectUtils.createSubject(getSSOToken());
     }
 
     public SSOToken getAdminSSOToken() {

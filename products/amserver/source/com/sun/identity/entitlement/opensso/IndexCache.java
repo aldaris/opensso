@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.1 2009-08-19 05:40:35 veiming Exp $
+ * $Id: IndexCache.java,v 1.2 2009-12-07 19:46:46 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -89,16 +89,17 @@ public class IndexCache {
 
         try {
             for (String s : indexes) {
-                Set<String> setDNs = (Set<String>)cache.get(s);
+                String lc = s.toLowerCase();
+                Set<String> setDNs = (Set<String>)cache.get(lc);
                 if (setDNs == null) {
                     setDNs = new HashSet<String>();
-                    cache.put(s, setDNs);
+                    cache.put(lc, setDNs);
                     setDNs.add(dn);
                 } else {
-                    if (!CacheTaboo.isTaboo(cacheName, s)) {
+                    if (!CacheTaboo.isTaboo(cacheName, lc)) {
                         if (setDNs.size() >= CACHE_BUCKET_LIMIT) {
-                            CacheTaboo.taboo(cacheName, s);
-                            cache.remove(s);
+                            CacheTaboo.taboo(cacheName, lc);
+                            cache.remove(lc);
                         } else {
                             setDNs.add(dn);
                         }
@@ -203,7 +204,8 @@ public class IndexCache {
         Set<String> parentPathIndexes = indexes.getParentPathIndexes();
         Set<String> results = new HashSet<String>();
         for (String i : parentPathIndexes) {
-            Set<String> r = (Set<String>) parentPathIndexCache.get(i);
+            Set<String> r = (Set<String>) parentPathIndexCache.get(
+                i.toLowerCase());
             if (r != null) {
                 results.addAll(r);
             }
@@ -215,7 +217,7 @@ public class IndexCache {
         Set<String> pathIndexes = indexes.getPathIndexes();
         Set<String> results = new HashSet<String>();
         for (String i : pathIndexes) {
-            Set<String> r = (Set<String>) pathIndexCache.get(i);
+            Set<String> r = (Set<String>) pathIndexCache.get(i.toLowerCase());
             if (r != null) {
                 results.addAll(r);
             }
@@ -226,7 +228,7 @@ public class IndexCache {
         Set<String> results = new HashSet<String>();
         Set<String> hostIndexes = indexes.getHostIndexes();
         for (String i : hostIndexes) {
-            Set<String> r = (Set<String>) hostIndexCache.get(i);
+            Set<String> r = (Set<String>) hostIndexCache.get(i.toLowerCase());
             if (r != null) {
                 results.addAll(r);
             }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.9 2009-11-25 18:09:50 veiming Exp $
+ * $Id: EntitlementService.java,v 1.10 2009-12-07 19:46:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -463,6 +463,10 @@ public class EntitlementService extends EntitlementConfiguration {
         Set<Application> results = new HashSet<Application>();
         try {
             if (token != null) {
+                if (curRealm.startsWith(SMSEntry.SUN_INTERNAL_REALM_PREFIX) ||
+                    curRealm.startsWith(SMSEntry.SUN_INTERNAL_REALM_PREFIX2)) {
+                    curRealm = "/";
+                } 
                 // TODO. Since applications for the hidden realms have to be
                 // the same as root realm mainly for delegation without any
                 // referrals, the hack is to use root realm for hidden realm.

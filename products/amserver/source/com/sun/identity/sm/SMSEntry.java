@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.52 2009-11-20 23:52:56 ww203982 Exp $
+ * $Id: SMSEntry.java,v 1.53 2009-12-07 19:46:47 veiming Exp $
  *
  */
 
@@ -1819,6 +1819,10 @@ public class SMSEntry implements Cloneable {
 
     public static final String SUN_INTERNAL_REALM_PREFIX = ORGANIZATION_RDN
             + EQUALS + SUN_INTERNAL_REALM_NAME;
+
+
+    public static final String SUN_INTERNAL_REALM_PREFIX2 = "/" +
+            SUN_INTERNAL_REALM_NAME; 
 
     // Service name for Realm management used for delegation
     public static final String REALM_SERVICE = "sunAMRealmService";

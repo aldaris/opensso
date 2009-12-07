@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationIsAllowedSubResourceTest.java,v 1.1 2009-11-19 00:08:52 veiming Exp $
+ * $Id: DelegationIsAllowedSubResourceTest.java,v 1.2 2009-12-07 19:46:50 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -165,7 +165,8 @@ public class DelegationIsAllowedSubResourceTest {
         actions.add("READ");
         SSOToken token = AuthUtils.authenticate("/", USER1, USER1);
         DelegationPermission dp = new DelegationPermission("/",
-            "sunEntitlementService", "1.0", "application", "default/application",
+            "sunEntitlementService", "1.0", "application", 
+            "default/application/*",
             actions, null);
         DelegationEvaluator de = new DelegationEvaluator();
         if (!de.isAllowed(token, dp, Collections.EMPTY_MAP, true)) {

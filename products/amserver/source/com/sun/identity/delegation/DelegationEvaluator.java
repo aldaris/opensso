@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationEvaluator.java,v 1.15 2009-11-21 01:54:25 veiming Exp $
+ * $Id: DelegationEvaluator.java,v 1.16 2009-12-07 19:46:44 veiming Exp $
  *
  */
 
@@ -46,15 +46,10 @@ import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.sm.DNMapper;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.security.auth.Subject;
 
 /**
@@ -74,10 +69,6 @@ public class DelegationEvaluator {
          "false")).booleanValue();
     static Set adminUserSet = new HashSet();
     static AMIdentity adminUserId; 
-    private static final ReadWriteLock patternCacheLock =
-        new ReentrantReadWriteLock();
-    private static Map<String, Pattern> patternCache =
-        new HashMap<String, Pattern>();
 
     static {
         try {
@@ -151,7 +142,6 @@ public class DelegationEvaluator {
         if (permission.orgName != null) {
             buff.append(permission.orgName).append("/");
         }
-        String rootResource = buff.toString();
         if (permission.getServiceName() != null) {
             buff.append(permission.getServiceName()).append("/");
         }
@@ -171,85 +161,26 @@ public class DelegationEvaluator {
                 DelegationManager.DELEGATION_SERVICE);
             List<Entitlement> results = eval.evaluate(
                 DNMapper.orgNameToDN(PolicyManager.DELEGATION_REALM),
-                userSubject, rootResource,
-                envParameters, true);
-
+                userSubject, resource, envParameters, true);
             List<String> copiedActions = new ArrayList<String>();
             copiedActions.addAll(permission.getActions());
 
             for (Entitlement e : results) {
-                if (patternMatch(e.getResourceName(), resource)) {
-                    for (int i = copiedActions.size() -1; i >= 0; --i) {
-                        String action = copiedActions.get(i);
-                        Boolean result = e.getActionValue(action);
-                        if ((result != null) && result) {
-                            copiedActions.remove(i);
-                        }
+                for (int i = copiedActions.size() - 1; i >= 0; --i) {
+                    String action = copiedActions.get(i);
+                    Boolean result = e.getActionValue(action);
+                    if ((result != null) && result) {
+                        copiedActions.remove(i);
                     }
-                    if (copiedActions.isEmpty()) {
-                       return true;
-                    }
+                }
+                if (copiedActions.isEmpty()) {
+                    return true;
                 }
             }
             return false;
         } catch (EntitlementException ex) {
             debug.error("DelegationEvaluator.isAllowed", ex);
             throw new DelegationException(ex);
-        }
-    }
-
-    private boolean patternMatch(String strPattern, String target) {
-        String lcStrPattern = strPattern.toLowerCase();
-        String lcTarget = target.toLowerCase();
-        if (lcStrPattern.startsWith(lcTarget)) {
-            return true;
-        }
-        Pattern pattern = getPatternFromCache(lcStrPattern);
-        Matcher matcher = pattern.matcher(lcTarget);
-        return matcher.matches();
-    }
-
-    private static Pattern getPatternFromCache(String strPattern) {
-        patternCacheLock.readLock().lock();
-        try {
-            Pattern pattern = patternCache.get(strPattern);
-            if (pattern != null) {
-                return pattern;
-            }
-        } finally {
-            patternCacheLock.readLock().unlock();
-        }
-
-        patternCacheLock.writeLock().lock();
-        try {
-            Pattern pattern = patternCache.get(strPattern);
-            if (pattern != null) {
-                return pattern;
-            }
-
-            StringBuilder buff = new StringBuilder();
-            for (int i = 0; i < strPattern.length()-1; i++) {
-                char c = strPattern.charAt(i);
-                if (c == '*') {
-                    buff.append(".*?");
-                } else {
-                    buff.append(c);
-                }
-            }
-
-            char lastChar = strPattern.charAt(strPattern.length()-1);
-            if (lastChar == '*') {
-                buff.append(".*");
-            } else {
-                buff.append(lastChar);
-            }
-
-            pattern = Pattern.compile(buff.toString(),
-                Pattern.CASE_INSENSITIVE);
-            patternCache.put(strPattern, pattern);
-            return pattern;
-        } finally {
-            patternCacheLock.writeLock().unlock();
         }
     }
 

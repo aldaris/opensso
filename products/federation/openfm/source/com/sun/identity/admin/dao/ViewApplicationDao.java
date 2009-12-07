@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationDao.java,v 1.7 2009-12-02 23:02:01 farble1670 Exp $
+ * $Id: ViewApplicationDao.java,v 1.8 2009-12-07 19:46:49 veiming Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -99,15 +99,15 @@ public class ViewApplicationDao implements Serializable {
         ManagedBeanResolver mbr = new ManagedBeanResolver();
         Map<String, ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String, ViewApplicationType>) mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
         Token token = new Token();
-        Subject adminSubject = token.getAdminSubject();
+        Subject userSubject = token.getSubject();
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
         ApplicationPrivilegeManager apm = getApplicationPrivilegeManager();
 
         Set<String> names;
         try {
-            names = ApplicationManager.search(adminSubject, realmBean.getName(), sfs);
+            names = ApplicationManager.search(userSubject, realmBean.getName(), sfs);
             for (String name : names) {
-                Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), name);
+                Application a = ApplicationManager.getApplication(userSubject, realmBean.getName(), name);
                 if (a.getResources() == null || a.getResources().size() == 0) {
                     // TODO: log
                     continue;
@@ -146,7 +146,7 @@ public class ViewApplicationDao implements Serializable {
         Map<String, ViewApplicationType> entitlementApplicationTypeToViewApplicationTypeMap = (Map<String, ViewApplicationType>) mbr.resolve("entitlementApplicationTypeToViewApplicationTypeMap");
 
         Token token = new Token();
-        Subject adminSubject = token.getAdminSubject();
+        Subject adminSubject = token.getSubject();
 
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
 
@@ -172,7 +172,7 @@ public class ViewApplicationDao implements Serializable {
     public Application newApplication(String name, ViewApplicationType vat) {
         String eApplicationTypeName = vat.getEntitlementApplicationType();
         Token token = new Token();
-        Subject adminSubject = token.getAdminSubject();
+        Subject adminSubject = token.getSubject();
         String realm = RealmsBean.getInstance().getRealmBean().getName();
         ApplicationType at = ApplicationTypeManager.getAppplicationType(adminSubject, eApplicationTypeName);
         Application a;
@@ -189,7 +189,7 @@ public class ViewApplicationDao implements Serializable {
 
     public void remove(ViewApplication va) {
         Token token = new Token();
-        Subject adminSubject = token.getAdminSubject();
+        Subject adminSubject = token.getSubject();
 
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
         try {
@@ -201,7 +201,7 @@ public class ViewApplicationDao implements Serializable {
 
     public boolean exists(ViewApplication va) {
         Token token = new Token();
-        Subject adminSubject = token.getAdminSubject();
+        Subject adminSubject = token.getSubject();
 
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
         try {
@@ -216,7 +216,7 @@ public class ViewApplicationDao implements Serializable {
         try {
             Application a = va.toApplication();
             RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
-            Subject adminSubject = new Token().getAdminSubject();
+            Subject adminSubject = new Token().getSubject();
             ApplicationManager.saveApplication(adminSubject, realmBean.getName(), a);
         } catch (EntitlementException ee) {
             throw new AssertionError(ee);
@@ -226,7 +226,7 @@ public class ViewApplicationDao implements Serializable {
     public Application getApplication(ViewApplication va) {
         String name = va.getName();
         Token token = new Token();
-        Subject adminSubject = token.getAdminSubject();
+        Subject adminSubject = token.getSubject();
         RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
 
         try {

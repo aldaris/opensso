@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.4 2009-11-19 01:02:03 veiming Exp $
+ * $Id: Entitlement.java,v 1.5 2009-12-07 19:46:45 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -439,27 +439,47 @@ public class Entitlement {
         
         for (String r : resources) {
             if (!recursive) {
-                ResourceMatch match = resComparator.compare(
-                    r, resourceName, false);
-                if (match.equals(ResourceMatch.EXACT_MATCH)) {
-                    matched.add(r);
-                } else {
-                    match = resComparator.compare(resourceName, r, true);
-                    if (match.equals(ResourceMatch.WILDCARD_MATCH)) {
+                if (resComparator instanceof RegExResourceName) {
+                    ResourceMatch match = resComparator.compare(
+                        resourceName, r, true);
+                    if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                        match.equals(ResourceMatch.SUPER_RESOURCE_MATCH) ||
+                        match.equals(ResourceMatch.WILDCARD_MATCH)) {
                         matched.add(r);
+                    }
+                } else {
+                    ResourceMatch match = resComparator.compare(
+                        r, resourceName, false);
+                    if (match.equals(ResourceMatch.EXACT_MATCH)) {
+                        matched.add(r);
+                    } else {
+                        match = resComparator.compare(resourceName, r, true);
+                        if (match.equals(ResourceMatch.WILDCARD_MATCH)) {
+                            matched.add(r);
+                        }
                     }
                 }
             } else {
-                ResourceMatch match = resComparator.compare(
-                    resourceName, r, true);
-                if (match.equals(ResourceMatch.WILDCARD_MATCH) ||
-                    match.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
-                    matched.add(r);
-                } else {
-                    match = resComparator.compare(r, resourceName, false);
+                if (resComparator instanceof RegExResourceName) {
+                    ResourceMatch match = resComparator.compare(
+                        r, resourceName, true);
                     if (match.equals(ResourceMatch.EXACT_MATCH) ||
-                        match.equals(ResourceMatch.SUPER_RESOURCE_MATCH)) {
+                        match.equals(ResourceMatch.SUPER_RESOURCE_MATCH) ||
+                        match.equals(ResourceMatch.WILDCARD_MATCH)) {
                         matched.add(r);
+                    }
+                } else {
+                    ResourceMatch match = resComparator.compare(
+                        resourceName, r, true);
+                    if (match.equals(ResourceMatch.WILDCARD_MATCH) ||
+                        match.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
+                        matched.add(r);
+                    } else {
+                        match = resComparator.compare(r, resourceName, false);
+                        if (match.equals(ResourceMatch.EXACT_MATCH) ||
+                            match.equals(ResourceMatch.SUPER_RESOURCE_MATCH)) {
+                            matched.add(r);
+                        }
                     }
                 }
             }

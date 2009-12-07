@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationFilterTest.java,v 1.1 2009-11-23 21:04:51 veiming Exp $
+ * $Id: ApplicationFilterTest.java,v 1.2 2009-12-07 19:46:50 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -57,7 +57,6 @@ public class ApplicationFilterTest {
     private static final String USER1 = "ApplicationFilterTestUser1";
     private static final String PRIVILEGE_NAME =
         "ApplicationFilterTestPrivilege";
-    private static final String PRIVILEGE_NAME1 = PRIVILEGE_NAME + "1";
 
     private static final String DELEGATE_PRIVILEGE_NAME =
         "ApplicationFilterTestDelegationPrivilege";
@@ -97,9 +96,6 @@ public class ApplicationFilterTest {
         if (!migrated) {
             return;
         }
-
-        PrivilegeManager pm = PrivilegeManager.getInstance("/", adminSubject);
-        pm.removePrivilege(PRIVILEGE_NAME1);
 
         ApplicationPrivilegeManager apm =
             ApplicationPrivilegeManager.getInstance("/", adminSubject);

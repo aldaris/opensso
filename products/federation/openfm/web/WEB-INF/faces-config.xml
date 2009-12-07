@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.38 2009-12-02 23:02:03 farble1670 Exp $
+  $Id: faces-config.xml,v 1.39 2009-12-07 19:46:51 veiming Exp $
 -->
 
 <faces-config version="1.2" 
@@ -212,7 +212,7 @@
             <value>WSC_MANAGE=sunIdentityRepositoryService::1.0::application::agent::WRITE</value>
             <value>STS_MANAGE=sunIdentityRepositoryService::1.0::application::agent::WRITE</value>
 
-            <value>WEB_SERVICE_SECURITY=sunIdentityRepositoryService::1.0::application::agent::READ</value>
+            <value>WEB_SERVICE_SECURITY=sunIdentityRepositoryService::1.0::application::agent::WRITE</value>
 
             <value>SAMLV2_HOSTED_IDP_CREATE=sunFMSAML2MetadataService::1.0::OrganizationConfig::default::WRITE</value>
             <value>SAMLV2_HOSTED_SP_CREATE=sunFMSAML2MetadataService::1.0::OrganizationConfig::default::WRITE</value>
@@ -240,9 +240,9 @@
             <value>APPLICATION_EDIT=iPlanetAMPolicyService::1.0::OrganizationConfig::default::WRITE</value>
 
             <value>DELEGATION=sunEntitlementService::1.0::application::default/application::READ,DELEGATE</value>
-            <value>DELEGATION_CREATE=sunEntitlementService::1.0::application::default/application::WRITE,DELEGATE</value>
+            <value>DELEGATION_CREATE=sunEntitlementService::1.0::application::default/application::DELEGATE</value>
             <value>DELEGATION_VIEW=sunEntitlementService::1.0::application::default/application::READ,DELEGATE</value>
-            <value>DELEGATION_EDIT=sunEntitlementService::1.0::application::default/application::WRITE,DELEGATE</value>
+            <value>DELEGATION_EDIT=sunEntitlementService::1.0::application::default/application::DELEGATE</value>
             <value>DELEGATION_MANAGE=sunEntitlementService::1.0::application::default/application::READ,DELEGATE</value>
         </list-entries>
     </managed-bean>

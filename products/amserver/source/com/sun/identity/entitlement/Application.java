@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.5 2009-11-25 18:09:50 veiming Exp $
+ * $Id: Application.java,v 1.6 2009-12-07 19:46:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -533,24 +533,37 @@ public class Application implements Cloneable {
     public ValidateResourceResult validateResourceName(String resource) {
         ResourceName resComp = getResourceComparator();
         boolean match = false;
-        String res = null;
+
         try {
-            res = resComp.canonicalize(resource);
+            String res = resComp.canonicalize(resource);
 
             if ((resources != null) && !resources.isEmpty()) {
-                for (String r : resources) {
-                    ResourceMatch rm = resComp.compare(resComp.canonicalize(r),
-                        res, false);
-                    if (rm.equals(ResourceMatch.EXACT_MATCH) ||
-                        rm.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
-                        match = true;
-                        break;
-                    } else {
-                        rm = resComp.compare(res, resComp.canonicalize(r),
-                            true);
-                        if (rm.equals(ResourceMatch.WILDCARD_MATCH)) {
+                if (resComp instanceof RegExResourceName) {
+                    for (String r : resources) {
+                        ResourceMatch rm = resComp.compare(r, res, true);
+                        if (rm.equals(ResourceMatch.EXACT_MATCH) ||
+                            rm.equals(ResourceMatch.WILDCARD_MATCH) ||
+                            rm.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
                             match = true;
                             break;
+                        }
+                    }
+                } else {
+                    for (String r : resources) {
+                        ResourceMatch rm = resComp.compare(resComp.canonicalize(
+                            r),
+                            res, false);
+                        if (rm.equals(ResourceMatch.EXACT_MATCH) ||
+                            rm.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
+                            match = true;
+                            break;
+                        } else {
+                            rm = resComp.compare(res, resComp.canonicalize(r),
+                                true);
+                            if (rm.equals(ResourceMatch.WILDCARD_MATCH)) {
+                                match = true;
+                                break;
+                            }
                         }
                     }
                 }
