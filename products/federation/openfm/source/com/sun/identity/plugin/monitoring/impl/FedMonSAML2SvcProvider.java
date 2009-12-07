@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedMonSAML2SvcProvider.java,v 1.2 2009-09-23 22:25:07 bigfatrat Exp $
+ * $Id: FedMonSAML2SvcProvider.java,v 1.3 2009-12-07 19:11:32 bigfatrat Exp $
  *
  */
 
@@ -64,8 +64,6 @@ public class FedMonSAML2SvcProvider implements FedMonSAML2Svc {
     }
 
     public void setFedSessionCount(long count) {
-	debug.error("FedMonSAML2SvcProvider:setFedSessionCount: count = " +
-	    count);
         if (sSAML2Svc != null) {
             sSAML2Svc.setFedSessionCount(count);
 	} else {
@@ -87,8 +85,6 @@ public class FedMonSAML2SvcProvider implements FedMonSAML2Svc {
     }
 
     public void setIdpSessionCount(long count) {
-	debug.error("FedMonSAML2SvcProvider:setIdpSessionCount: count = " +
-	    count);
         if (sSAML2Svc != null) {
             sSAML2Svc.setIdpSessionCount(count);
         } else {
