@@ -355,7 +355,6 @@
         <servlet-name>uploadServlet</servlet-name>
         <url-pattern>/uploadHtml</url-pattern>
     </servlet-mapping>
-</web-app>
 
     <!-- servlet mapping -->
 
