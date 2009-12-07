@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.21 2009-12-03 18:07:47 leiming Exp $
+   $Id: build.xml,v 1.22 2009-12-07 20:45:32 leiming Exp $
 
 -->
 
@@ -123,7 +123,7 @@
         <antcall target="apache" />
         <antcall target="proxy40" />
         <antcall target="iis6" />
-        <!--antcall target="domino" /-->
+        <antcall target="domino" />
     </target>
 
     <target name="apache" depends="preparebuild">
@@ -150,12 +150,27 @@
             target="all" inheritRefs="true"/>
     </target>
 
-    <target name="domino" depends="preparebuild">
+    <target name="domino" depends="preparebuild,check.build.domino" 
+            if="build.domino">
         <echo message="Dispatch to domino"/>
         <property name="containername" value="domino"/>
         <antcall target="gmake" inheritRefs="true"/>
         <ant antfile="${webagents.basedir}/build_agent.xml"
             target="all" inheritRefs="true"/>
+    </target>
+
+    <target name="check.build.domino">
+        <condition property="build.domino">
+            <and>
+                <not><equals arg1="${build.type}" arg2="64"/></not>
+                <or>
+                    <os name="linux" />
+                    <os name="sunos" arch="sparc" />
+                    <os name="aix"/>
+                    <os family="windows"/>
+                </or>
+            </and>
+        </condition>
     </target>
 
     <target name="apache22" depends="preparebuild">
