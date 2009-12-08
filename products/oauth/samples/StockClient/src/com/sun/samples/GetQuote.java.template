@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetQuote.java.template,v 1.1 2009-11-20 19:36:03 huacui Exp $
+ * $Id: GetQuote.java.template,v 1.2 2009-12-08 18:51:02 huacui Exp $
  *
  */
 
@@ -190,8 +190,10 @@ public class GetQuote extends HttpServlet {
         String url = "<PROTOCOL>://<HOST>:<PORT>/<DEPLOYURI>/oauth/userconsole.jsp?" +
               "oauth_token=" + oauthtoken + "&" +
               "oauth_callback=" + 
-              java.net.URLEncoder.encode("<PROTOCOL-STOCKCLIENT>://<HOST-STOCKCLIENT>:<PORT-STOCKCLIENT>/StockClient/GetQuote?callback=true&symbol=" + symbol);
-          response.sendRedirect(url);
+              java.net.URLEncoder.encode(request.getScheme() + "://" +
+              request.getServerName() + ":" + request.getServerPort() + 
+              "/StockClient/GetQuote?callback=true&symbol=" + symbol);
+         response.sendRedirect(url);
 
     }
 
