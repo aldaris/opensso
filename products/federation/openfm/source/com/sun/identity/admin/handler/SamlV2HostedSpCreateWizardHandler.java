@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.1 2009-08-19 05:40:47 veiming Exp $
+ * $Id: SamlV2HostedSpCreateWizardHandler.java,v 1.2 2009-12-08 00:02:09 babysunil Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -37,13 +37,17 @@ import com.sun.identity.admin.model.MessageBean;
 import com.sun.identity.admin.model.MetadataSamlV2HostedSpCreateWizardStepValidator;
 import com.sun.identity.admin.model.SamlV2HostedSpCreateWizardBean;
 import com.sun.identity.admin.model.SamlV2HostedSpCreateWizardStep;
+import com.sun.identity.admin.model.SamlV2ViewAttribute;
+import com.sun.identity.admin.model.ViewAttribute;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 
@@ -55,8 +59,10 @@ public class SamlV2HostedSpCreateWizardHandler
 
     @Override
     public void initWizardStepValidators() {
-        getWizardStepValidators()[SamlV2HostedSpCreateWizardStep.COT.toInt()] = new CotSamlV2HostedSpCreateWizardStepValidator(getWizardBean());
-        getWizardStepValidators()[SamlV2HostedSpCreateWizardStep.METADATA.toInt()] = new MetadataSamlV2HostedSpCreateWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[SamlV2HostedSpCreateWizardStep.COT.toInt()] = 
+                new CotSamlV2HostedSpCreateWizardStepValidator(getWizardBean());
+        getWizardStepValidators()[SamlV2HostedSpCreateWizardStep.METADATA.toInt()] = 
+                new MetadataSamlV2HostedSpCreateWizardStepValidator(getWizardBean());
     }
 
     public void setSamlV2HostedSpCreateDao(SamlV2HostedSpCreateDao samlV2HostedSpCreateDao) {
@@ -97,24 +103,40 @@ public class SamlV2HostedSpCreateWizardHandler
 
         boolean isMeta = getSamlV2HostedSpCreateWizardBean().isMeta();
 
-        String selectedRealmValue = getSamlV2HostedSpCreateWizardBean().getSelectedRealm();
+        String selectedRealmValue =
+            getSamlV2HostedSpCreateWizardBean().getSelectedRealm();
         int idx = selectedRealmValue.indexOf("(");
         int end = selectedRealmValue.indexOf(")");
         String realm = selectedRealmValue.substring(idx + 1, end).trim();
         String name = getSamlV2HostedSpCreateWizardBean().getNewEntityName();
-        boolean defAttrMappings = getSamlV2HostedSpCreateWizardBean().getDefAttrMappings();
+        boolean defAttrMappings =
+            getSamlV2HostedSpCreateWizardBean().getDefAttrMappings();
         boolean result = false;
+        List attrMapping = new ArrayList();
+        if (!defAttrMappings) {
+            attrMapping = new ArrayList(1);
+            attrMapping.add("*=*");
+        } else {
+                List viewAttributes =
+                    getSamlV2HostedSpCreateWizardBean().getViewAttributes();
+                attrMapping =
+                    getSamlV2HostedSpCreateWizardBean().getToListOfStrings(
+                    viewAttributes);
+        }
+
         if (!isMeta) {
-            result = samlV2HostedSpCreateDao.createSamlv2HostedSp(realm, name, cot, defAttrMappings);
+            result = samlV2HostedSpCreateDao.createSamlv2HostedSp(
+                realm, name, cot, attrMapping);
         } else {
             String stdMeta = getSamlV2HostedSpCreateWizardBean().getStdMetaFile();
             String extMeta = getSamlV2HostedSpCreateWizardBean().getExtMetaFile();
-            result = samlV2HostedSpCreateDao.importSamlv2HostedSp(cot, stdMeta, extMeta, defAttrMappings);
+            result = samlV2HostedSpCreateDao.importSamlv2HostedSp(
+                cot, stdMeta, extMeta, attrMapping);
         }
 
         if (!result) {
             getSamlV2HostedSpCreateWizardBean().setStdMetaFileProgress(0);
-           
+
             popUpErrorMessage(
                     "creationFailedSummary",
                     "creationFailedDetail",
@@ -124,6 +146,7 @@ public class SamlV2HostedSpCreateWizardHandler
             doFinishNext();
         }
     }
+
 
     private SamlV2HostedSpCreateWizardBean getSamlV2HostedSpCreateWizardBean() {
         return (SamlV2HostedSpCreateWizardBean) getWizardBean();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.1 2009-08-19 05:40:47 veiming Exp $
+ * $Id: SamlV2HostedIdpCreateWizardHandler.java,v 1.2 2009-12-08 00:02:09 babysunil Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -34,8 +34,6 @@ import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.dao.SamlV2HostedIdpCreateDao;
 import com.sun.identity.admin.effect.InputFieldErrorEffect;
 import com.sun.identity.admin.model.MessageBean;
-import com.sun.identity.admin.model.SamlV2ViewAttribute;
-import com.sun.identity.admin.model.ViewAttribute;
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.CotSamlV2HostedIdpCreateWizardStepValidator;
 import com.sun.identity.admin.model.MetadataSamlV2HostedIdpCreateWizardStepValidator;
@@ -51,8 +49,6 @@ import java.util.EventObject;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.FacesEvent;
-import javax.faces.event.ValueChangeEvent;
 
 public class SamlV2HostedIdpCreateWizardHandler
         extends SamlV2HostedCreateWizardHandler {
@@ -236,63 +232,5 @@ public class SamlV2HostedIdpCreateWizardHandler
         getSamlV2HostedIdpCreateWizardBean().setExtMetaFileProgress(
                 ifile.getFileInfo().getPercent());
     }
-
-    // for attrmapping
-    public void dropListener(DropEvent dropEvent) {
-        int type = dropEvent.getEventType();
-        if (type == DndEvent.DROPPED) {
-            Object dragValue = dropEvent.getTargetDragValue();
-            assert (dragValue != null);
-            ViewAttribute va = (ViewAttribute) dragValue;
-
-            getSamlV2HostedIdpCreateWizardBean().getViewAttributes().add(va);
-        }
-    }
-
-    protected ViewAttribute getViewAttribute(FacesEvent event) {
-        ViewAttribute va = (ViewAttribute) event.getComponent().
-                getAttributes().get("viewAttribute");
-        assert (va != null);
-
-        return va;
-    }
-
-    public void removeListener(ActionEvent event) {
-        ViewAttribute va = getViewAttribute(event);
-        getSamlV2HostedIdpCreateWizardBean().getViewAttributes().remove(va);
-    }
-
-    public void addListener(ActionEvent event) {
-        ViewAttribute va = newViewAttribute();
-        va.setEditable(true);
-        SamlV2ViewAttribute sva = (SamlV2ViewAttribute) va;
-        sva.setValueEditable(true);
-        sva.setAdded(true);
-
-        getSamlV2HostedIdpCreateWizardBean().getViewAttributes().add(va);
-    }
-
-    public void editNameListener(ActionEvent event) {
-        ViewAttribute va = (ViewAttribute) getViewAttribute(event);
-        va.setNameEditable(true);
-    }
-
-    public void nameEditedListener(ValueChangeEvent event) {
-        ViewAttribute va = (ViewAttribute) getViewAttribute(event);
-        va.setNameEditable(false);
-    }
-
-    public void editValueListener(ActionEvent event) {
-        SamlV2ViewAttribute sva = (SamlV2ViewAttribute) getViewAttribute(event);
-        sva.setValueEditable(true);
-    }
-
-    public void valueEditedListener(ValueChangeEvent event) {
-        SamlV2ViewAttribute sva = (SamlV2ViewAttribute) getViewAttribute(event);
-        sva.setValueEditable(false);
-    }
-
-    public ViewAttribute newViewAttribute() {
-        return new SamlV2ViewAttribute();
-    }
+   
 }

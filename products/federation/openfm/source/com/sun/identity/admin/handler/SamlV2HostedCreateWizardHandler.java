@@ -22,17 +22,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedCreateWizardHandler.java,v 1.1 2009-08-19 05:40:47 veiming Exp $
+ * $Id: SamlV2HostedCreateWizardHandler.java,v 1.2 2009-12-08 00:02:09 babysunil Exp $
  */
 package com.sun.identity.admin.handler;
+
+import com.icesoft.faces.component.dragdrop.DndEvent;
+import com.icesoft.faces.component.dragdrop.DropEvent;
 
 import com.sun.identity.admin.Resources;
 import com.sun.identity.admin.model.LinkBean;
 import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.NextPopupBean;
+import com.sun.identity.admin.model.SamlV2ViewAttribute;
+import com.sun.identity.admin.model.SamlV2HostedCreateWizardBean;
+import com.sun.identity.admin.model.ViewAttribute;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.FacesEvent;
+import javax.faces.event.ValueChangeEvent;
+
 
 public class SamlV2HostedCreateWizardHandler
         extends WizardHandler
@@ -86,5 +96,66 @@ public class SamlV2HostedCreateWizardHandler
 
     public MessagesBean getMessagesBean() {
         return messagesBean;
+    }
+
+     // for attrmapping
+
+    public void dropListener(DropEvent dropEvent) {
+        int type = dropEvent.getEventType();
+        if (type == DndEvent.DROPPED) {
+            Object dragValue = dropEvent.getTargetDragValue();
+            assert (dragValue != null);
+            ViewAttribute va = (ViewAttribute) dragValue;
+            getSamlV2HostedCreateWizardBean().getViewAttributes().add(va);
+        }
+    }
+
+    protected ViewAttribute getViewAttribute(FacesEvent event) {
+        ViewAttribute va = (ViewAttribute) event.getComponent().
+                getAttributes().get("viewAttribute");
+        assert (va != null);
+        return va;
+    }
+
+    public void removeListener(ActionEvent event) {
+        ViewAttribute va = getViewAttribute(event);
+        getSamlV2HostedCreateWizardBean().getViewAttributes().remove(va);
+    }
+
+    public void addListener(ActionEvent event) {
+        ViewAttribute va = newViewAttribute();
+        va.setEditable(true);
+        SamlV2ViewAttribute sva = (SamlV2ViewAttribute) va;
+        sva.setValueEditable(true);
+        sva.setAdded(true);
+        getSamlV2HostedCreateWizardBean().getViewAttributes().add(va);
+    }
+
+    public void editNameListener(ActionEvent event) {
+        ViewAttribute va = (ViewAttribute) getViewAttribute(event);
+        va.setNameEditable(true);
+    }
+
+    public void nameEditedListener(ValueChangeEvent event) {
+        ViewAttribute va = (ViewAttribute) getViewAttribute(event);
+        va.setNameEditable(false);
+    }
+
+    public void editValueListener(ActionEvent event) {
+        SamlV2ViewAttribute sva = (SamlV2ViewAttribute) getViewAttribute(event);
+        sva.setValueEditable(true);
+    }
+
+    public void valueEditedListener(ValueChangeEvent event) {
+        SamlV2ViewAttribute sva = (SamlV2ViewAttribute) getViewAttribute(event);
+        sva.setValueEditable(false);
+    }
+
+    public ViewAttribute newViewAttribute() {
+        return new SamlV2ViewAttribute();
+    }
+
+    private SamlV2HostedCreateWizardBean getSamlV2HostedCreateWizardBean() {
+        return (SamlV2HostedCreateWizardBean) getWizardBean();
     }
 }

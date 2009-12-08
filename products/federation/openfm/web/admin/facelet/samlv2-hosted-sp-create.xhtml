@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-hosted-sp-create.xhtml,v 1.1 2009-08-19 05:41:08 veiming Exp $
+   $Id: samlv2-hosted-sp-create.xhtml,v 1.2 2009-12-07 23:59:36 babysunil Exp $
 -->
 
 <ui:composition
@@ -154,6 +154,30 @@
                                 </ice:panelGroup>
                             </ui:define>
                         </o:section>
+                        <o:section visible="#{samlV2HostedSpCreateWizardBean.defAttrMappings}">
+                                <ui:define name="section-title">
+                                        <ice:outputLabel
+                                                value="#{resources['samlv2-hosted-sp-create.attributeMappingPanelLabel.section-title']}"/>
+                                </ui:define>
+                                <ui:define name="section-details">
+                                        <ice:outputLabel
+                                                value="#{resources['samlv2-hosted-sp-create.attributeMappingPanelLabel.section-details']}"/>
+                                </ui:define>
+                                <ui:define name="section-body">
+                                        <ice:panelGroup>
+                                                <ui:include src="template/samlv2-attribute-mapping.xhtml">
+                                                        <ui:param
+                                                name="wizardBean"
+                                                value="#{samlV2HostedSpCreateWizardBean}"/>
+                                        <ui:param
+                                                name="wizardHandler"
+                                                value="#{samlV2HostedSpCreateWizardHandler}"/>
+                                                </ui:include>
+                                        </ice:panelGroup>
+                                </ui:define>
+                        </o:section>
+
+                         
 
                     </ui:define>
                 </o:wstep>

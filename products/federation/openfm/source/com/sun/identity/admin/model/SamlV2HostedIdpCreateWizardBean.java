@@ -22,14 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.1 2009-08-19 05:40:54 veiming Exp $
+ * $Id: SamlV2HostedIdpCreateWizardBean.java,v 1.2 2009-12-08 00:01:09 babysunil Exp $
  */
 package com.sun.identity.admin.model;
 
-import com.sun.identity.admin.dao.AttributeMappingsDao;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.faces.model.SelectItem;
 
@@ -95,69 +93,6 @@ public class SamlV2HostedIdpCreateWizardBean
         return availableSigningKeyList;
     }
 
-    //for attr mapping
-    public List<ViewAttribute> getAvailableViewAttributes() {
-        loadAvailableViewAttributes();
-        return availableViewAttributes;
-    }
-
-    public void loadAvailableViewAttributes() {
-        AttributeMappingsDao amdao = new AttributeMappingsDao();
-        availableViewAttributes.clear();
-        for (SamlV2ViewAttribute va : amdao.getViewAttributes()) {
-            availableViewAttributes.add(va);
-        }
-    }
-
-    public List<ViewAttribute> getViewAttributes() {
-        return viewAttributes;
-    }
-
-    public String getToString() {
-        return getListToString(viewAttributes);
-    }
-
-    public String getToFormattedString() {
-        return getListToFormattedString(viewAttributes);
-    }
-
-    public static String getToFormattedString(List<ViewAttribute> vas) {
-        return getListToFormattedString(vas);
-    }
-
-    private static String getListToString(List list) {
-        StringBuffer b = new StringBuffer();
-
-        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
-            b.append(i.next());
-            if (i.hasNext()) {
-                b.append(",");
-            }
-
-        }
-        return b.toString();
-    }
-
-    public List getToListOfStrings(List list) {
-        List newList = new ArrayList();
-        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
-            newList.add(String.valueOf(i.next()));
-        }
-        return newList;
-    }
-
-    private static String getListToFormattedString(List list) {
-        StringBuffer b = new StringBuffer();
-
-        for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
-            b.append(i.next());
-            if (i.hasNext()) {
-                b.append("\n");
-            }
-        }
-        return b.toString();
-    }
-
     public RealmSamlV2HostedIdpCreateSummary getRealmSamlV2HostedIdpCreateSummary() {
         return realmSamlV2HostedIdpCreateSummary;
     }
@@ -187,3 +122,4 @@ public class SamlV2HostedIdpCreateWizardBean
     }
 
 }
+
