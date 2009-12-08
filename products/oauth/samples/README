@@ -22,7 +22,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2009-11-20 19:33:24 huacui Exp $
+$Id: README,v 1.2 2009-12-08 18:49:51 huacui Exp $
 
 ------------------------------------------------------------------------
 
@@ -71,16 +71,16 @@ Deploy and configure opensso.war using the Glassfish admin console.
    change the tags <PROTOCOL-STOCKSERVICE>, <HOST-STOCKSERVICE>, and 
    <PORT-STOCKSERVICE> to the protocol, host(FQDN), and port of the 
    glassfish server on which the sample stock service is hosted.
-   change the tags <PROTOCOL-STOCKCLIENT>, <HOST-STOCKCLIENT>, and 
-   <PORT-STOCKCLIENT> to the protocol, host(FQDN), and port of the 
-   glassfish server on which this sample stock client will be hosted.
    Save the change.
 3. run "ant"
    This command creates a StockClient.war under dist directory
 4. Deploy StockClient.war using Glassfish administration console.
 5. Access the URL 
    <PROTOCOL-STOCKCLIENT>://<HOST-STOCKCLIENT>:<PORT-STOCKCLIENT>/StockClient
-   using a browser (replace the tags with the real values)
+   using a browser (replace the tags <PROTOCOL-STOCKCLIENT>, 
+   <HOST-STOCKCLIENT>, and <PORT-STOCKCLIENT> with the protocol, 
+   host(FQDN), and port of the glassfish server on which this sample 
+   stock client is hosted.)
    A page diplayed with a text field lablled "Stock Symbol" and a button
    "GetQuote". Enter a valid stock symbol such as JAVA in the text field
    and click on the GetQuote button.
