@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PWResetQuestionTiledView.java,v 1.3 2009-12-05 05:07:07 bhavnab Exp $
+ * $Id: PWResetQuestionTiledView.java,v 1.4 2009-12-08 10:32:23 bhavnab Exp $
  *
  */
 
@@ -183,8 +183,8 @@ public class PWResetQuestionTiledView extends RequestHandlingTiledViewBase
         int maxQuestions = new UMUserPasswordResetOptionsModelImpl().
                      getMaxNumQuestions(DNMapper.orgNameToRealmName(orgDN));
         Map secretMap = model.getSecretQuestions(userDN, orgDN);
-        if (secretMap != null & !secretMap.isEmpty()) {
-            if (maxQuestions >=0 & maxQuestions < secretMap.size())  {
+        if (secretMap != null && !secretMap.isEmpty()) {
+            if (maxQuestions >=0 && maxQuestions < secretMap.size())  {
                 map = new HashMap(maxQuestions);
                 Set secretSet = secretMap.keySet();
                 Iterator it = secretSet.iterator();
