@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.10 2009-11-18 00:53:48 farble1670 Exp $
+   $Id: menu.xhtml,v 1.11 2009-12-08 01:48:27 babysunil Exp $
 
 -->
 
@@ -113,6 +113,10 @@
                 rendered="#{permissionsBean.samlV2RemoteSpCreateAllowed}"
                 value="#{resources['menu.federationSamlV2RemoteSpCreateItemValue']}"
                 action="samlv2-remote-sp-create"/>
+             <ice:menuItem
+                 rendered="#{permissionsBean.webexCreateAllowed}"
+                 value="#{resources['menu.webexCreateItemValue']}"
+                 action="webex-create"/>
         </ice:menuItem>
         <ice:menuItem
             rendered="#{permissionsBean.webServiceSecurityAllowed}"

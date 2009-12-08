@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.39 2009-12-07 19:46:51 veiming Exp $
+  $Id: faces-config.xml,v 1.40 2009-12-08 01:43:42 babysunil Exp $
 -->
 
 <faces-config version="1.2" 
@@ -218,6 +218,8 @@
             <value>SAMLV2_HOSTED_SP_CREATE=sunFMSAML2MetadataService::1.0::OrganizationConfig::default::WRITE</value>
             <value>SAMLV2_REMOTE_IDP_CREATE=sunFMSAML2MetadataService::1.0::OrganizationConfig::default::WRITE</value>
             <value>SAMLV2_REMOTE_SP_CREATE=sunFMSAML2MetadataService::1.0::OrganizationConfig::default::WRITE</value>
+            
+            <value>WEBEX_CONFIG=sunFMSAML2MetadataService::1.0::OrganizationConfig::default::WRITE</value> 
 
             <value>ENTITLEMENTS=sunEntitlementService::1.0::application::default::READ</value>
 
@@ -2868,6 +2870,33 @@
     <!--remote -->
 
     <!--idp end -->
+    
+    
+    <!-- webEx create - Start -->
+        <managed-bean>
+            <managed-bean-name>webExConfigWizardHandler</managed-bean-name>
+            <managed-bean-class>com.sun.identity.admin.handler.WebExConfigWizardHandler</managed-bean-class>
+            <managed-bean-scope>request</managed-bean-scope>
+            <managed-property>
+                <property-name>wizardBean</property-name>
+                <value>#{webExConfigWizardBean}</value>
+            </managed-property>
+            <managed-property>
+                <property-name>messagesBean</property-name>
+                <value>#{messagesBean}</value>
+            </managed-property>
+        </managed-bean>
+        <managed-bean>
+            <managed-bean-name>webExConfigWizardBean</managed-bean-name>
+            <managed-bean-class>com.sun.identity.admin.model.WebExConfigWizardBean</managed-bean-class>
+            <managed-bean-scope>request</managed-bean-scope>
+            <managed-property>
+                <property-name>steps</property-name>
+                <value>5</value>
+            </managed-property>
+        </managed-bean>
+    <!-- webEx create -  End -->
+
 
   <!--  federation manage   -->
 
@@ -2981,6 +3010,11 @@
             <to-view-id>/admin/facelet/samlv2-remote-sp-create.xhtml</to-view-id>
             <redirect />
         </navigation-case>
+        <navigation-case>
+           <from-outcome>webex-config</from-outcome>
+            <to-view-id>/admin/facelet/webex-config.xhtml</to-view-id>
+           <redirect />
+       </navigation-case> 
         <navigation-case>
             <from-outcome>policy-create</from-outcome>
             <to-view-id>/admin/facelet/policy-create.xhtml</to-view-id>

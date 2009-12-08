@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.4 2009-11-13 20:19:19 farble1670 Exp $
+* $Id: admin.css,v 1.5 2009-12-08 01:49:42 babysunil Exp $
 *
 */
 
@@ -1499,6 +1499,51 @@ span.button img.left {
     color: red;
     font-style: italic;
 }
+
+.section-body-column {
+     width: 500px;
+     height: 100px;
+     text-align: right;
+ }
+
+ .section-body-middle-column {
+     width: 500px;
+     height: 100px;
+     text-align: left;
+ }
+
+ .section-body-end-column {
+     width: 500px;
+     height: 100px;
+     text-align: right;
+ }
+
+ .link-for-html-text {
+     font-weight: bold;
+     color: #030390;
+ }
+
+ .fedattributesCol1 {
+     text-align: right;
+     padding-left: 10px;
+     padding-right: 10px;
+     min-width: 200px;
+     max-width: 300px;
+ }
+
+ .fedattributesCol2 {
+     text-align: left;
+     padding-left: 10px;
+     padding-right: 10px;
+     min-width: 200px;
+ }
+
+
+ .fedattributesCol3 {
+     text-align: center;
+     padding-left: 10px;
+     padding-right: 10px;
+ }
 
 /*
 #homeTabContent {
