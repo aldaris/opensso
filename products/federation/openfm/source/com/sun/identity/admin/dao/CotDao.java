@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CotDao.java,v 1.1 2009-08-19 05:40:45 veiming Exp $
+ * $Id: CotDao.java,v 1.2 2009-12-08 02:02:29 babysunil Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -31,8 +31,11 @@ import com.sun.identity.cot.COTException;
 import com.sun.identity.cot.CircleOfTrustManager;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+ import javax.faces.model.SelectItem;
 
 public class CotDao implements Serializable {
 
@@ -57,6 +60,27 @@ public class CotDao implements Serializable {
         
         return cotBeans;
     }
+    
+   public List<SelectItem> getCotNames(String realm) {
+       List<SelectItem> items = new ArrayList<SelectItem>();
+         if (realm == null) {
+             realm = "/";
+        }
+ 
+         try {
+             CircleOfTrustManager manager = getCircleOfTrustManager();
+             Set<String> cotSet = manager.getAllCirclesOfTrust(realm);
+             for (Iterator<String> i = cotSet.iterator(); i.hasNext();) {
+                 String cotname = i.next();
+                 items.add(new SelectItem(cotname));
+             }
+ 
+             } catch (COTException e) {
+             throw new RuntimeException(e);
+             }
+ 
+         return items;
+     }
 
     private CircleOfTrustManager getCircleOfTrustManager()
             throws COTException {
