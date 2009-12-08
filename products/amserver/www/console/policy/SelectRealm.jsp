@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SelectRealm.jsp,v 1.3 2008-06-25 05:44:44 qcheng Exp $
+   $Id: SelectRealm.jsp,v 1.4 2009-12-08 06:19:05 si224302 Exp $
 
 --%>
 
@@ -70,7 +70,8 @@
 
 	var parentFrm = opener.document.forms[0];
 	var sl = parentFrm.elements[parentFrm.name + '.AuthScheme'];
-        sl.options[sl.options.length] = new Option(label, value);
+        var newOpt = window.opener.addOption(label, value);
+        sl.options[sl.options.length] = newOpt; 
 	top.window.close();
     }
 </script>

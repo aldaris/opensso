@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: PMDefaultAuthSchemeConditionAdd.jsp,v 1.3 2008-06-25 05:44:42 qcheng Exp $
+   $Id: PMDefaultAuthSchemeConditionAdd.jsp,v 1.4 2009-12-08 06:22:31 si224302 Exp $
 
 --%>
 
@@ -74,6 +74,11 @@
 	    }
 	}
     }
+    
+     function addOption(label, value) {
+         var o = new Option(label, value);
+         return o;
+     } 
 </script>
 
 <cc:form name="PMDefaultAuthSchemeConditionAdd" method="post" defaultCommandChild="/btnFilter" onSubmit="selectAllElements(this)">
