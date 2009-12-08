@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UrlResourcesBean.java,v 1.1 2009-08-19 05:40:57 veiming Exp $
+ * $Id: UrlResourcesBean.java,v 1.2 2009-12-08 17:11:59 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -43,6 +43,7 @@ public class UrlResourcesBean implements Serializable {
     private boolean addExceptionPopupVisible;
     private UrlResource addExceptionPopupResource;
     private List<Resource> addPopupAvailableResources;
+    private ViewEntitlement viewEntitlement;
     private Effect resourcesMessageEffect;
 
     public boolean isAddPopupVisible() {
@@ -87,27 +88,17 @@ public class UrlResourcesBean implements Serializable {
 
     public List<SelectItem> getAddPopupAvailableResourceNameItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-        if (getAddPopupAvailableResources() == null) {
+        if (addPopupAvailableResources == null) {
             return items;
         }
 
-        for (Resource r : getAddPopupAvailableResources()) {
+        for (Resource r : addPopupAvailableResources) {
             UrlResource ur = (UrlResource) r;
             SelectItem i = new SelectItem(ur.getName());
             items.add(i);
         }
 
         return items;
-    }
-
-    public void setAddPopupAvailableResources(List<Resource> addPopupAvailableResources) {
-        this.addPopupAvailableResources = new ArrayList<Resource>();
-        for (Resource r : addPopupAvailableResources) {
-            UrlResource ur = (UrlResource) r;
-            if (ur.isAddable()) {
-                this.getAddPopupAvailableResources().add(ur);
-            }
-        }
     }
 
     public Effect getResourcesMessageEffect() {
@@ -153,5 +144,20 @@ public class UrlResourcesBean implements Serializable {
 
     public List<Resource> getAddPopupAvailableResources() {
         return addPopupAvailableResources;
+    }
+
+    public ViewEntitlement getViewEntitlement() {
+        return viewEntitlement;
+    }
+
+    public void setViewEntitlement(ViewEntitlement viewEntitlement) {
+        this.viewEntitlement = viewEntitlement;
+        this.addPopupAvailableResources = new ArrayList<Resource>();
+        for (Resource r : viewEntitlement.getAvailableResources()) {
+            UrlResource ur = (UrlResource) r;
+            if (ur.isAddable()) {
+                addPopupAvailableResources.add(ur);
+            }
+        }
     }
 }

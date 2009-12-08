@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UrlResourcesHandler.java,v 1.1 2009-08-19 05:40:47 veiming Exp $
+ * $Id: UrlResourcesHandler.java,v 1.2 2009-12-08 17:11:58 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -62,13 +62,6 @@ public class UrlResourcesHandler implements Serializable {
         return ve;
     }
 
-    private List<Resource> getAvailableResources(FacesEvent event) {
-        List<Resource> ar = (List<Resource>) event.getComponent().getAttributes().get("availableResources");
-        assert (ar != null);
-
-        return ar;
-    }
-
     public void selectListener(ValueChangeEvent event) {
         ViewEntitlement ve = getViewEntitlement(event);
         /*
@@ -80,8 +73,11 @@ public class UrlResourcesHandler implements Serializable {
     }
 
     public void addListener(ActionEvent event) {
-        List<Resource> ar = getAvailableResources(event);
-        urlResourcesBean.setAddPopupAvailableResources(ar);
+        ViewEntitlement ve = getViewEntitlement(event);
+        if (ve == null) {
+            throw new AssertionError("view entitlement was not passed in event");
+        }
+        urlResourcesBean.setViewEntitlement(ve);
 
         if (urlResourcesBean.getAddPopupAvailableResources().size() > 0) {
             urlResourcesBean.setAddPopupVisible(true);
@@ -106,7 +102,8 @@ public class UrlResourcesHandler implements Serializable {
     }
 
     public void addPopupOkListener(ActionEvent event) {
-        ViewEntitlement ve = getViewEntitlement(event);
+        ViewEntitlement ve = urlResourcesBean.getViewEntitlement();
+
         UrlResourceParts urps = urlResourcesBean.getAddPopupUrlResourceParts();
         if (!urps.isValid()) {
             MessageBean mb = new MessageBean();
@@ -132,7 +129,7 @@ public class UrlResourcesHandler implements Serializable {
             urlResourcesBean.setAddPopupVisible(false);            
         } else if (!ve.getResources().contains(ur)) {
             ve.getResources().add(ur);
-            List<Resource> ar = getAvailableResources(event);
+            List<Resource> ar = urlResourcesBean.getViewEntitlement().getAvailableResources();
             if (!ar.contains(ur)) {
                 ar.add(ur);
             }
