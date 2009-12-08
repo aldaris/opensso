@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewId.java,v 1.13 2009-12-02 23:02:01 farble1670 Exp $
+ * $Id: ViewId.java,v 1.14 2009-12-08 02:13:42 babysunil Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -51,6 +51,7 @@ public enum ViewId {
     SAMLV2_REMOTE_SP_CREATE("/admin/facelet/samlv2-remote-sp-create.xhtml"),
     SAMLV2_HOSTED_IDP_CREATE("/admin/facelet/samlv2-hosted-idp-create.xhtml"),
     SAMLV2_REMOTE_IDP_CREATE("/admin/facelet/samlv2-remote-idp-create.xhtml"),
+    WEBEX_CONFIG("/admin/facelet/webex-config.xhtml"),
     NEWS("/admin/facelet/news.xhtml"),
     APPLICATION("/admin/facelet/application.xhtml"),
     APPLICATION_CREATE("/admin/facelet/application-create.xhtml"),
@@ -87,6 +88,7 @@ public enum ViewId {
             put(SAMLV2_HOSTED_IDP_CREATE.getId(), SAMLV2_HOSTED_IDP_CREATE);
             put(SAMLV2_REMOTE_IDP_CREATE.getId(), SAMLV2_REMOTE_IDP_CREATE);
             put(FEDERATION.getId(), FEDERATION);
+            put(WEBEX_CONFIG.getId(), WEBEX_CONFIG);
             put(NEWS.getId(), NEWS);
             put(APPLICATION.getId(), APPLICATION);
             put(APPLICATION_CREATE.getId(), APPLICATION_CREATE);

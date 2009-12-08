@@ -24,6 +24,7 @@ public enum FromAction {
     SAMLV2_REMOTE_SP_CREATE("samlv2-remote-sp-create"),
     SAMLV2_HOSTED_IDP_CREATE("samlv2-hosted-idp-create"),
     SAMLV2_REMOTE_IDP_CREATE("samlv2-remote-idp-create"),
+    WEBEX_CONFIG("webex-config"),
     WEB_SERVICE_SECURITY("wss"),
     WSP_CREATE("wsp-create"),
     WSP_MANAGE("wsp-manage"),
@@ -57,6 +58,7 @@ public enum FromAction {
             put(SAMLV2_REMOTE_SP_CREATE.getAction(), SAMLV2_REMOTE_SP_CREATE);
             put(SAMLV2_HOSTED_IDP_CREATE.getAction(), SAMLV2_HOSTED_IDP_CREATE);
             put(SAMLV2_REMOTE_IDP_CREATE.getAction(), SAMLV2_REMOTE_IDP_CREATE);
+            put(WEBEX_CONFIG.getAction(), WEBEX_CONFIG);
             put(FEDERATION.getAction(), FEDERATION);
             put(NEWS.getAction(), NEWS);
             put(WEB_SERVICE_SECURITY.getAction(), WEB_SERVICE_SECURITY);
