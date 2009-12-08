@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardBean.java,v 1.9 2009-11-18 18:27:12 farble1670 Exp $
+ * $Id: DelegationWizardBean.java,v 1.10 2009-12-08 18:31:40 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -52,7 +52,6 @@ public abstract class DelegationWizardBean extends WizardBean {
     private Map<SubjectType, SubjectContainer> subjectTypeToSubjectContainerMap;
     private List<ViewSubject> selectedAvailableViewSubjects;
     private List<ViewSubject> selectedSelectedViewSubjects;
-
     private DelegationSummary nameSummary = new NameDelegationSummary(this);
     private DelegationSummary resourcesSummary = new ResourcesDelegationSummary(this);
     private DelegationSummary subjectsSummary = new SubjectsDelegationSummary(this);
@@ -165,8 +164,8 @@ public abstract class DelegationWizardBean extends WizardBean {
 
     public List<SelectItem> getAvailableResourceItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-        if (getAvailableResources() != null) {
-            for (Resource r : getAvailableResources()) {
+        if (availableResources != null) {
+            for (Resource r : availableResources) {
                 ApplicationResource ar = (ApplicationResource) r;
                 items.add(new SelectItem(ar, ar.getTitle()));
             }
@@ -180,8 +179,14 @@ public abstract class DelegationWizardBean extends WizardBean {
         for (ViewApplication va : viewApplicationsBean.getViewApplications().values()) {
             ApplicationResource ar = new ApplicationResource();
             ar.setName(va.getName());
-            ar.getViewEntitlement().setResources(ar.getViewEntitlement().getAvailableResources());
-
+            int i = delegationBean.getResources().indexOf(ar);
+            if (i == -1) {
+                ar.getViewEntitlement().setResources(ar.getViewEntitlement().getAvailableResources());
+            } else {
+                ApplicationResource selectedAr = (ApplicationResource) delegationBean.getResources().get(i);
+                List<Resource> resources = selectedAr.getViewEntitlement().getResources();
+                ar.getViewEntitlement().setResources(resources);
+            }
             availableResources.add(ar);
         }
     }
