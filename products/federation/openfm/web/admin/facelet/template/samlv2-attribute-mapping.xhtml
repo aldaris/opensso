@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: samlv2-attribute-mapping.xhtml,v 1.1 2009-08-19 05:41:12 veiming Exp $
+   $Id: samlv2-attribute-mapping.xhtml,v 1.2 2009-12-08 19:34:07 babysunil Exp $
 
 -->
 
@@ -102,7 +102,7 @@
                                     <ice:outputText value="#{resources['samlv2-attribute-mapping.attribute.localattrname']}"/>
                                 </f:facet>
                                 <ice:panelGroup
-                                    visible="#{attribute.isAdded and !attribute.valueEditable}">
+                                    visible="#{attribute.added and !attribute.valueEditable}">
                                     <ice:commandLink
                                         styleClass="command-link"
                                         actionListener="#{wizardHandler.editValueListener}">
@@ -115,7 +115,7 @@
                                 </ice:panelGroup>
 
                                 <ice:panelGroup
-                                    visible="#{!attribute.isAdded}">
+                                    visible="#{!attribute.added}">
                                     <ice:outputText
                                         value="#{attribute.value}"/>
                                 </ice:panelGroup>
