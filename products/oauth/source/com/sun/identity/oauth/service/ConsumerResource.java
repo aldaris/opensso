@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConsumerResource.java,v 1.1 2009-11-20 19:31:57 huacui Exp $
+ * $Id: ConsumerResource.java,v 1.2 2009-12-09 21:47:12 huacui Exp $
  *
  */
 
@@ -96,9 +96,7 @@ public class ConsumerResource implements OAuthServiceConstants {
                 if (sigmethod.equalsIgnoreCase(RSA_SHA1.NAME)) {
                     cs = URLEncoder.encode(consumer.getConsRsakey());
                 } else {
-                    if (sigmethod.equalsIgnoreCase(HMAC_SHA1.NAME)) {
-                        cs = URLEncoder.encode(consumer.getConsSecret());
-                    }
+                    cs = URLEncoder.encode(consumer.getConsSecret());
                 }
             }
             if (consumer.getConsName() != null) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConsumerRequest.java,v 1.1 2009-11-20 19:31:57 huacui Exp $
+ * $Id: ConsumerRequest.java,v 1.2 2009-12-09 21:46:40 huacui Exp $
  *
  */
 
@@ -156,13 +156,11 @@ public class ConsumerRequest implements OAuthServiceConstants {
             }
 
             if (tmpsecret != null) {
-                if (sigmeth.equalsIgnoreCase(RSA_SHA1.NAME)) {
+                if ((sigmeth != null) && sigmeth.equalsIgnoreCase(RSA_SHA1.NAME)) {
                     cons.setConsRsakey(tmpsecret);
                     cons.setConsSecret(new UniqueRandomString().getString());
                 } else {
-                    if (sigmeth.equalsIgnoreCase(HMAC_SHA1.NAME)) {
-                        cons.setConsSecret(tmpsecret);
-                    }
+                    cons.setConsSecret(tmpsecret);
                 }
             } else {
                 cons.setConsSecret(new UniqueRandomString().getString());
