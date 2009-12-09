@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoModelImpl.java,v 1.3 2009-11-19 23:46:00 asyhuang Exp $
+ * $Id: IDRepoModelImpl.java,v 1.4 2009-12-09 20:51:22 veiming Exp $
  *
  */
 
@@ -229,7 +229,10 @@ public class IDRepoModelImpl
 
             for (Iterator iter = attrs.iterator(); iter.hasNext(); ) {
                 AttributeSchema as = (AttributeSchema)iter.next();
-                values.put(as.getName(), as.getDefaultValues());
+                String i18nKey = as.getI18NKey();
+                if ((i18nKey != null) && (i18nKey.length() > 0)) {
+                    values.put(as.getName(), as.getDefaultValues());
+                }
             }
         } catch (SMSException e) {
             debug.warning("IDRepoModelImpl.getDefaultAttributeValues", e);
@@ -351,7 +354,7 @@ public class IDRepoModelImpl
             values = new HashMap(attrs.size() *2);
 
             for (Iterator iter = attrs.iterator(); iter.hasNext(); ) {
-                AttributeSchema as = (AttributeSchema)iter.next();
+                AttributeSchema as = (AttributeSchema) iter.next();
                 values.put(as.getName(), as.getDefaultValues());
             }
         } catch (SMSException e) {
