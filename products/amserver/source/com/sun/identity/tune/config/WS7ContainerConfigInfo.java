@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WS7ContainerConfigInfo.java,v 1.5 2009-03-13 22:58:22 ykwon Exp $
+ * $Id: WS7ContainerConfigInfo.java,v 1.6 2009-12-09 00:37:35 ykwon Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -522,6 +522,18 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
                 reqLine = checkJVMOpt(
                         cfgF.getLine(MARK_SWEEP_GC_FLAG.replace("-XX:+", "")));
                 cfgMap.put(MARK_SWEEP_GC_FLAG, reqLine);
+                reqLine = checkJVMOpt(
+                        cfgF.getLine(HEAPDUMP_OOM_FLAG.replace("-XX:+", "")));
+                cfgMap.put(HEAPDUMP_OOM_FLAG, reqLine);         
+                reqLine = checkJVMOpt(
+                        cfgF.getLine(PRINT_CONC_LOCKS_FLAG.replace("-XX:+", "")));
+                cfgMap.put(PRINT_CONC_LOCKS_FLAG, reqLine);
+                reqLine = checkJVMOpt(
+                        cfgF.getLine(ESCAPE_ANALYSIS_FLAG.replace("-XX:+", "")));
+                cfgMap.put(ESCAPE_ANALYSIS_FLAG, reqLine);
+                reqLine = checkJVMOpt(
+                        cfgF.getLine(COMPRESSED_OOPS_FLAG.replace("-XX:+", "")));
+                cfgMap.put(COMPRESSED_OOPS_FLAG, reqLine); 
                 if (AMTuneUtil.isNiagara()) {
                     reqLine = checkJVMOpt(cfgF.getLine(PARALLEL_GC_THREADS));
                     cfgMap.put(PARALLEL_GC_THREADS, 

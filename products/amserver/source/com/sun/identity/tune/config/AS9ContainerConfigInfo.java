@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AS9ContainerConfigInfo.java,v 1.7 2009-05-04 23:28:28 ykwon Exp $
+ * $Id: AS9ContainerConfigInfo.java,v 1.8 2009-12-09 00:36:57 ykwon Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -292,6 +292,18 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
                 cfgMap.put(MARK_SWEEP_GC_FLAG, 
                         AMTuneUtil.getASJVMOption(curJVMOptList, 
                         MARK_SWEEP_GC_FLAG.replace("-XX:+", ""), true));
+                cfgMap.put(HEAPDUMP_OOM_FLAG,
+                        AMTuneUtil.getASJVMOption(curJVMOptList,
+                        HEAPDUMP_OOM_FLAG.replace("-XX:+", ""), true));
+                cfgMap.put(PRINT_CONC_LOCKS_FLAG,
+                        AMTuneUtil.getASJVMOption(curJVMOptList,
+                        PRINT_CONC_LOCKS_FLAG.replace("-XX:+", ""), true)); 
+                cfgMap.put(ESCAPE_ANALYSIS_FLAG,
+                        AMTuneUtil.getASJVMOption(curJVMOptList,
+                        ESCAPE_ANALYSIS_FLAG.replace("-XX:+", ""), true));
+                cfgMap.put(COMPRESSED_OOPS_FLAG, 
+                        AMTuneUtil.getASJVMOption(curJVMOptList,
+                        COMPRESSED_OOPS_FLAG.replace("-XX:+", ""), true));
                 if (isTuneWebContainerJavaPolicy()) {
                     cfgMap.put(JAVA_SECURITY_POLICY, 
                             AMTuneUtil.getASJVMOption(curJVMOptList, 

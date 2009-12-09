@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneAS9Container.java,v 1.10 2009-05-04 23:35:53 ykwon Exp $
+ * $Id: TuneAS9Container.java,v 1.11 2009-12-09 00:38:36 ykwon Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -290,6 +290,40 @@ public class TuneAS9Container extends TuneAppServer implements
             mWriter.writeln(asAdminNewUseConMarkSweepGc);
             mWriter.writeln(" ");
 
+            String asAdminNewHeapDumpOOM = HEAPDUMP_OOM_FLAG;
+            mWriter.writelnLocaleMsg("pt-as-heapdumpoom-msg");
+            mWriter.writeLocaleMsg("pt-cur-val");
+            mWriter.writeln((String)curCfgMap.get(HEAPDUMP_OOM_FLAG));
+            mWriter.writeLocaleMsg("pt-rec-val");
+            mWriter.writeln(asAdminNewHeapDumpOOM);
+            mWriter.writeln(" ");
+
+            String asAdminNewPrintConcLocks = PRINT_CONC_LOCKS_FLAG;
+            mWriter.writelnLocaleMsg("pt-as-printconclocks-msg");
+            mWriter.writeLocaleMsg("pt-cur-val");
+            mWriter.writeln((String)curCfgMap.get(PRINT_CONC_LOCKS_FLAG));
+            mWriter.writeLocaleMsg("pt-rec-val");
+            mWriter.writeln(asAdminNewPrintConcLocks);
+            mWriter.writeln(" ");
+
+            String asAdminNewUseDoEscapeAnalysis = ESCAPE_ANALYSIS_FLAG;
+            mWriter.writelnLocaleMsg("pt-as-doescapeanalysis-msg");
+            mWriter.writeLocaleMsg("pt-cur-val");
+            mWriter.writeln((String)curCfgMap.get(ESCAPE_ANALYSIS_FLAG));
+            mWriter.writeLocaleMsg("pt-rec-val");
+            mWriter.writeln(asAdminNewUseDoEscapeAnalysis);
+            mWriter.writeln(" ");
+
+            String asAdminNewUseCompressedOOPS = COMPRESSED_OOPS_FLAG;
+            if (asConfigInfo.isJVM64Bit()) {
+                mWriter.writelnLocaleMsg("pt-as-compressedoops-msg");
+                mWriter.writeLocaleMsg("pt-cur-val");
+                mWriter.writeln((String)curCfgMap.get(COMPRESSED_OOPS_FLAG));
+                mWriter.writeLocaleMsg("pt-rec-val");
+                mWriter.writeln(asAdminNewUseCompressedOOPS);
+                mWriter.writeln(" ");
+            }
+
             String asAdminNewServerpolicy = "";
             if (asConfigInfo.isTuneWebContainerJavaPolicy()) {
                 asAdminNewServerpolicy =
@@ -385,6 +419,27 @@ public class TuneAS9Container extends TuneAppServer implements
                     asAdminNewUseConMarkSweepGc)) {
                 delOptList.add(curCfgMap.get(MARK_SWEEP_GC_FLAG));
                 newOptList.add(asAdminNewUseConMarkSweepGc);
+            }
+            if (!curCfgMap.get(HEAPDUMP_OOM_FLAG).toString().equals(
+                    asAdminNewHeapDumpOOM)) {
+                delOptList.add(curCfgMap.get(HEAPDUMP_OOM_FLAG));
+                newOptList.add(asAdminNewHeapDumpOOM);
+            }
+            if (!curCfgMap.get(PRINT_CONC_LOCKS_FLAG).toString().equals(
+                    asAdminNewPrintConcLocks)) {
+                delOptList.add(curCfgMap.get(PRINT_CONC_LOCKS_FLAG));
+                newOptList.add(asAdminNewPrintConcLocks);
+            }
+            if (!curCfgMap.get(ESCAPE_ANALYSIS_FLAG).toString().equals(
+                    asAdminNewUseDoEscapeAnalysis)) {
+                delOptList.add(curCfgMap.get(ESCAPE_ANALYSIS_FLAG));
+                newOptList.add(asAdminNewUseDoEscapeAnalysis);
+            }
+            if (asConfigInfo.isJVM64Bit() &&
+                  !curCfgMap.get(COMPRESSED_OOPS_FLAG).toString().equals(
+                  asAdminNewUseCompressedOOPS)) {
+                delOptList.add(curCfgMap.get(COMPRESSED_OOPS_FLAG));
+                newOptList.add(asAdminNewUseCompressedOOPS);
             }
             if (!curCfgMap.get(HISTOGRAM_FLAG).toString().equals(
                     asAdminNewPrintClassHistogram)) {
