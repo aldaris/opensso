@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMConstants.java,v 1.6 2008-08-29 10:22:48 kanduls Exp $
+ * $Id: FAMConstants.java,v 1.7 2009-12-09 00:30:48 ykwon Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -43,8 +43,14 @@ public interface FAMConstants extends AMTuneConstants {
     static String NOTIFICATION_THREADPOOL_THRESHOLD = 
             "com.iplanet.am.notification.threadpool.threshold";
     static String MAX_SESSIONS = "com.iplanet.am.session.maxSessions";
-    static String HTTP_SESSION_ENABLED = 
-            "com.iplanet.am.session.httpSession.enabled";
+
+    /**
+      * HTTP_SESSION_ENABLED parameter is not used in OpenSSO: so
+      * it is meaningless to change its value.
+      *
+      */   
+    //static String HTTP_SESSION_ENABLED = 
+    //        "com.iplanet.am.session.httpSession.enabled";
     static String SESSION_PURGE_DELAY = "com.iplanet.am.session.purgedelay";
     static String INVALID_SESSION_MAX_TIME = 
             "com.iplanet.am.session.invalidsessionmaxtime";
