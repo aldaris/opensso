@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Infocard.java,v 1.12 2009-10-28 08:35:27 ppetitsm Exp $
+ * $Id: Infocard.java,v 1.13 2009-12-09 11:23:53 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -385,6 +385,9 @@ public class Infocard extends AMLoginModule {
             while (itr.hasNext()) {
                 String roleName = itr.next();
                 setUserSessionProperty("claims.based.roles." + roleName, "Yes");
+                if (debug.messageEnabled()) {
+                        debug.message("Added claim-based role to user session '" + roleName + "' values = Yes");
+                    }
             }
         }
         return retval;

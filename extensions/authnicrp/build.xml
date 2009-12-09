@@ -77,6 +77,9 @@
         
         <!-- define opensso-root.dir property in this file or in private.properties
              if you build the module from Netbeans -->
+        <!--
+        <property name="opensso-root.dir" value="/Users/Patrick/Downloads/opensso/deployable-war/opensso" />
+        -->
         <property name="opensso-root.dir" value="/Users/Patrick/opensso" />
         <property name="opensso-lib.dir" value="${opensso-root.dir}/WEB-INF/lib" />
         <property name="opensso-config.dir" value="${opensso-root.dir}/config/auth/" />
