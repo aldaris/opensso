@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConstants.java,v 1.12 2009-08-21 01:25:18 ykwon Exp $
+ * $Id: AMTuneConstants.java,v 1.13 2009-12-09 00:29:34 ykwon Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -70,12 +70,13 @@ public interface AMTuneConstants {
     static String AMTUNE_TUNE_WEB_CONTAINER = "AMTUNE_TUNE_WEB_CONTAINER";
     static String AMTUNE_TUNE_DS = "AMTUNE_TUNE_DS";
     static String AMTUNE_TUNE_IDENTITY = "AMTUNE_TUNE_OPENSSO";
+    static String DEFAULT_SDK_CACHE_MAX_SIZE = "10000";
     
     static int AMTUNE_MIN_PERM_SIZE_WS7 = 400;
     static int AMTUNE_MIN_PERM_SIZE_WS61 = 400;
     static int AMTUNE_MIN_PERM_SIZE_AS8 = 400;
     static int AMTUNE_AVG_PER_ENTRY_CACHE_SIZE_IN_KB = 8;
-    static int AMTUNE_AVG_PER_SESSION_SIZE_IN_KB = 4;
+    static int AMTUNE_AVG_PER_SESSION_SIZE_IN_KB = 6;
     /**
      * Out the memory available for Java part of the OpenSSO
      * process memory, the following is the breakdown of memory needs
@@ -89,15 +90,21 @@ public interface AMTuneConstants {
     /**
      * Out of the memory available for OpenSSO Caches, 
      * the breakdown b/w SDK and Session Cache size is as follows:
-     * NOTE :  Its not clear how much memory Policy, Liberty, SAML Caches use. 
-     *         These fall into the OPERATIONAL memory category. 
+     * NOTE :  It's not clear how much memory policy and other caches 
+     *         use.  These fall into the OPERATIONAL memory category. 
      *         Once we have an estimate on them, will adjust these values 
      *         appropriately. 
      *         OPERATIONAL memory is large enough to handle these unknown 
      *         quantities.
+     *         The following breakdowns are not used right now because 
+     *         SDK cache size is now recommended to be set at the default
+     *         value of 10,000 entries, DEFAULT_SDK_CACHE_MAX_SIZE.  Thus, 
+     *         for calculating the recommended number of session entries,
+     *         AMTUNE_MEM_SESSION_CACHE_SIZE is equivalent to 
+     *         AMTUNE_MEM_CACHES_SIZE.
      */
-    static double AMTUNE_MEM_SDK_CACHE_SIZE = (double) 2/3;
-    static double AMTUNE_MEM_SESSION_CACHE_SIZE = (double) 1/3;
+    //static double AMTUNE_MEM_SDK_CACHE_SIZE = (double) 2/3;
+    //static double AMTUNE_MEM_SESSION_CACHE_SIZE = (double) 1/3;
     /**
      * From internal testing, best performance was found when notification 
      * queue size was 30% of the maximum number of sessions (here, numSessions).
