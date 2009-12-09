@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OSConstants.java,v 1.2 2008-08-29 10:22:48 kanduls Exp $
+ * $Id: OSConstants.java,v 1.3 2009-12-09 00:33:00 ykwon Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -40,6 +40,8 @@ public interface OSConstants {
     static String SOL_TCP_KEEPALIVE_INTERVAL = "tcp_keepalive_interval";
     static String SOL_TCP_SMALLEST_ANON_PORT = "tcp_smallest_anon_port";
     static String SOL_TCP_SLOW_START_INTITIAL = "tcp_slow_start_initial";
+    static String SOL_TCP_MAX_BUF = "tcp_max_buf";
+    static String SOL_TCP_CWND_MAX = "tcp_cwnd_max";
     static String SOL_TCP_XMIT_HIWAT = "tcp_xmit_hiwat";
     static String SOL_TCP_RECV_HIWAT = "tcp_recv_hiwat";
     static String SOL_TCP_IP_ABORT_CINTERVAL = "tcp_ip_abort_cinterval";
@@ -54,6 +56,8 @@ public interface OSConstants {
     static String KEEP_ALIVE_INTERVAL_VAL = "90000";
     static String ANON_PORT_VAL = "1024";
     static String SLOW_START_INITIAL_VAL = "2";
+    static String MAX_BUF_CWND_VAL = "2097152";
+    static String XMIT_RECV_HIWAT_VAL = "400000";
     static String ABORT_CINTERVAL_VAL = "10000";
     static String ACK_INTERVAL_VAL = "5";
     static String STRONG_ISS_VAL = "2";
