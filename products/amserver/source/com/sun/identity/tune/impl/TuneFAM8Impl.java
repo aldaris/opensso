@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM8Impl.java,v 1.10 2009-04-02 06:16:34 kanduls Exp $
+ * $Id: TuneFAM8Impl.java,v 1.11 2009-12-09 00:40:35 ykwon Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -32,6 +32,7 @@ import com.sun.identity.tune.common.FileHandler;
 import com.sun.identity.tune.common.AMTuneException;
 import com.sun.identity.tune.config.AMTuneConfigInfo;
 import com.sun.identity.tune.util.AMTuneUtil;
+import com.sun.identity.tune.constants.AMTuneConstants;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -136,15 +137,15 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
     throws AMTuneException {
         List newAttrList = new ArrayList();
         Map curCfgMap = getFAMServerConfig();
-        String ATTR1 = SDK_CACHE_MAXSIZE + "=" + configInfo.getNumSessions();
+        String ATTR1 = SDK_CACHE_MAXSIZE + "=" + DEFAULT_SDK_CACHE_MAX_SIZE;
         String ATTR2 = NOTIFICATION_THREADPOOL_SIZE + "=" +
                 configInfo.getNumNotificationThreads();
         String ATTR3 = NOTIFICATION_THREADPOOL_THRESHOLD + "=" + 
                 configInfo.getNumNotificationQueue();
         String ATTR4 = MAX_SESSIONS + "=" + configInfo.getNumSessions();
-        String ATTR5 = HTTP_SESSION_ENABLED + "=false";
-        String ATTR6 = SESSION_PURGE_DELAY + "=0";
-        String ATTR7 = INVALID_SESSION_MAX_TIME + "=3";
+        //String ATTR5 = HTTP_SESSION_ENABLED + "=false";
+        String ATTR5 = SESSION_PURGE_DELAY + "=0";
+        String ATTR6 = INVALID_SESSION_MAX_TIME + "=3";
         String curVal = null;
         mWriter.writelnLocaleMsg("pt-fam-rec-parm-tune-msg");
         mWriter.writeln(" ");
@@ -214,53 +215,58 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
         mWriter.writeLocaleMsg("pt-rec-val");
         mWriter.writeln(ATTR4);
         mWriter.writeln(" ");
+       
+     /**
+      * HTTP_SESSION_ENABLED parameter is not used in OpenSSO: so
+      * it is meaningless to change its value.
+      *
+      */
+        //mWriter.writeln("5.    " + HTTP_SESSION_ENABLED);
+        //mWriter.writeLocaleMsg("pt-cur-val");
+        //if (curCfgMap.get(HTTP_SESSION_ENABLED) != null) {
+        //    curVal = curCfgMap.get(HTTP_SESSION_ENABLED).toString();
+        //    if (ATTR5.indexOf(curVal) == -1) {
+        //        newAttrList.add(ATTR5);
+        //    }
+        //} else {
+        //    curVal = NO_VAL_SET;
+        //    newAttrList.add(ATTR5);
+        //}
+        //mWriter.writeln(HTTP_SESSION_ENABLED + "=" + curVal);
+        //mWriter.writeLocaleMsg("pt-rec-val");
+        //mWriter.writeln(ATTR5);
+        //mWriter.writeln(" ");
         
-        mWriter.writeln("5.    " + HTTP_SESSION_ENABLED);
+        mWriter.writeln("5.    " + SESSION_PURGE_DELAY);
         mWriter.writeLocaleMsg("pt-cur-val");
-        if (curCfgMap.get(HTTP_SESSION_ENABLED) != null) {
-            curVal = curCfgMap.get(HTTP_SESSION_ENABLED).toString();
-            if (ATTR5.indexOf(curVal) == -1) {
+        if (curCfgMap.get(SESSION_PURGE_DELAY) != null ) {
+            curVal = curCfgMap.get(SESSION_PURGE_DELAY).toString();
+            if (Integer.parseInt(curVal) != 0) {
                 newAttrList.add(ATTR5);
             }
         } else {
             curVal = NO_VAL_SET;
             newAttrList.add(ATTR5);
         }
-        mWriter.writeln(HTTP_SESSION_ENABLED + "=" + curVal);
+        mWriter.writeln(SESSION_PURGE_DELAY + "=" +curVal);
         mWriter.writeLocaleMsg("pt-rec-val");
         mWriter.writeln(ATTR5);
         mWriter.writeln(" ");
         
-        mWriter.writeln("6.    " + SESSION_PURGE_DELAY);
+        mWriter.writeln("6.    " + INVALID_SESSION_MAX_TIME);
         mWriter.writeLocaleMsg("pt-cur-val");
-        if (curCfgMap.get(SESSION_PURGE_DELAY) != null ) {
-            curVal = curCfgMap.get(SESSION_PURGE_DELAY).toString();
-            if (Integer.parseInt(curVal) != 0) {
+        if (curCfgMap.get(INVALID_SESSION_MAX_TIME) != null) {
+            curVal = curCfgMap.get(INVALID_SESSION_MAX_TIME).toString();
+            if (Integer.parseInt(curVal) != 3) {
                 newAttrList.add(ATTR6);
             }
         } else {
             curVal = NO_VAL_SET;
             newAttrList.add(ATTR6);
         }
-        mWriter.writeln(SESSION_PURGE_DELAY + "=" +curVal);
-        mWriter.writeLocaleMsg("pt-rec-val");
-        mWriter.writeln(ATTR6);
-        mWriter.writeln(" ");
-        
-        mWriter.writeln("7.    " + INVALID_SESSION_MAX_TIME);
-        mWriter.writeLocaleMsg("pt-cur-val");
-        if (curCfgMap.get(INVALID_SESSION_MAX_TIME) != null) {
-            curVal = curCfgMap.get(INVALID_SESSION_MAX_TIME).toString();
-            if (Integer.parseInt(curVal) != 3) {
-                newAttrList.add(ATTR7);
-            }
-        } else {
-            curVal = NO_VAL_SET;
-            newAttrList.add(ATTR7);
-        }
         mWriter.writeln(INVALID_SESSION_MAX_TIME + "=" + curVal);
         mWriter.writeLocaleMsg("pt-rec-val");
-        mWriter.writeln(ATTR7);
+        mWriter.writeln(ATTR6);
         mWriter.writeln(" ");
         if (configInfo.isReviewMode()) {
             return;
