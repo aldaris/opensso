@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SsoServerLoggingSvcImpl.java,v 1.2 2009-10-21 00:03:11 bigfatrat Exp $
+ * $Id: SsoServerLoggingSvcImpl.java,v 1.3 2009-12-09 00:33:03 bigfatrat Exp $
  *
  */
 
@@ -251,6 +251,15 @@ public class SsoServerLoggingSvcImpl extends SsoServerLoggingSvc {
      */
     public void setSsoServerLoggingRecsRejected(long l) {
         LoggingRecsRejected = new Long(l);
+    }
+
+    /**
+     * Incrementer for the "LoggingRecsRejected" variable.
+     */
+    public void incSsoServerLoggingRecsRejected() {
+        long li = LoggingRecsRejected.longValue();
+        li++;
+        LoggingRecsRejected = Long.valueOf(li);
     }
 
     /**
