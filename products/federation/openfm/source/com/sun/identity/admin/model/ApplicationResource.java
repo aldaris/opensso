@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationResource.java,v 1.2 2009-10-19 18:35:20 farble1670 Exp $
+ * $Id: ApplicationResource.java,v 1.3 2009-12-09 23:53:43 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -38,8 +38,8 @@ public class ApplicationResource
     extends Resource
     implements MultiPanelBean, MultiPanelHandler, PolicyResourcesBean {
 
-    private Effect panelExpandEffect;
-    private Effect panelEffect;
+    private Effect panelExpandEffect = null;
+    private Effect panelEffect = null;
     private boolean panelExpanded = false;
     private boolean panelVisible = true;
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
@@ -58,9 +58,10 @@ public class ApplicationResource
         } else {
             e = new SlideDown();
         }
+
         e.setSubmit(true);
         e.setTransitory(false);
-        setPanelExpandEffect(e);
+        panelExpandEffect = e;
     }
 
     public void panelRemoveListener(ActionEvent event) {

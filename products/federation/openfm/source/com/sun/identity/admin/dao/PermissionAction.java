@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionAction.java,v 1.5 2009-11-19 22:27:30 farble1670 Exp $
+ * $Id: PermissionAction.java,v 1.6 2009-12-09 23:53:42 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -35,8 +35,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.sun.identity.admin.model.RealmBean;
+import java.io.Serializable;
 
-public class PermissionAction {
+public class PermissionAction implements Serializable {
 
     private static final Pattern LINE_PATTERN = Pattern.compile("^(.*)=(.*)::(.*)::(.*)::(.*)::(.*)$");
     private String service;
