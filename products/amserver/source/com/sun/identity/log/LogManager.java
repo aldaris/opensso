@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.13 2009-11-04 22:33:38 bigfatrat Exp $
+ * $Id: LogManager.java,v 1.14 2009-12-09 00:34:22 bigfatrat Exp $
  *
  */
 package com.sun.identity.log;
@@ -118,7 +118,28 @@ public class LogManager extends java.util.logging.LogManager {
         }
         boolean addSuccess = super.addLogger(logger);
         if(addSuccess){
-            loggerCount++;
+            Enumeration loggerNames = getLoggerNames();
+            int lcnt = 0;
+            while (loggerNames.hasMoreElements()) {
+                String curEl = (String) loggerNames.nextElement();
+                /* avoid root logger */
+                if (curEl.length() != 0 && curEl.length() != 0 &&
+                    !curEl.equals("global"))
+                {
+                    lcnt++;
+                }
+            }
+            loggerCount = lcnt;
+            if (SystemProperties.isServerMode() && Agent.isRunning()) {
+                if (logServiceImplForMonitoring == null) {
+                    logServiceImplForMonitoring =
+                        (SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
+                }
+                if (logServiceImplForMonitoring != null) {
+                    logServiceImplForMonitoring.setSsoServerLoggingLoggers(
+                        new Integer(loggerCount));
+                }
+            }
         }
         return addSuccess;
     }
@@ -639,6 +660,8 @@ public class LogManager extends java.util.logging.LogManager {
                     getProperty(LogConstants.LOG_LOCATION));
             logServiceImplForMonitoring.setSsoServerLoggingType(
                     getProperty(LogConstants.BACKEND));
+            logServiceImplForMonitoring.setSsoServerLoggingRecsRejected(
+                    (long)0);
             
             isMonitoringInit = true;
         }
@@ -647,6 +670,14 @@ public class LogManager extends java.util.logging.LogManager {
     public boolean getLoggingStatusIsActive() {
         String oStatus = getProperty(LogConstants.LOG_STATUS_ATTR);
         return (oStatus.equalsIgnoreCase("ACTIVE"));
+    }
+
+    protected String getBackend() {
+        return (newBackend);
+    }
+
+    protected boolean isDBLogging() {
+        return (newBackend.equals("DB"));
     }
 
     public boolean getDidFirstReadConfig() {

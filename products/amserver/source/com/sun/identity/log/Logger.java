@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.14 2009-06-19 02:32:51 bigfatrat Exp $
+ * $Id: Logger.java,v 1.15 2009-12-09 00:34:21 bigfatrat Exp $
  *
  */
 
@@ -48,6 +48,9 @@ import com.sun.identity.log.messageid.LogMessageProviderBase;
 import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.log.spi.Authorizer;
 import com.sun.identity.log.spi.Debug;
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerLoggingSvcImpl;
+import com.sun.identity.monitoring.SsoServerLoggingHdlrEntryImpl;
 import com.sun.identity.shared.Constants;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -278,6 +281,7 @@ public class Logger extends java.util.logging.Logger {
         } else {
             /* Authorizer need not be called in the case of remote. */
             if (!Authorizer.isAuthorized(logName, "MODIFY", cred)) {
+                incMonReject(); // increment log svc and handler stats
                 Debug.error("Logger.validateLogBy:" + logName +
                     ": authorization failed; Will not log");
                 throw new AMLogException(logName + ":" +
@@ -662,5 +666,44 @@ public class Logger extends java.util.logging.Logger {
         }
         rec.addLogInfo(LogConstants.HOST_NAME, hostName);
         rec.addLogInfo(LogConstants.IP_ADDR, ipAddress);
+    }
+
+    /*
+     *  increment the logging service LoggingRecsRejected attribute and
+     *  the logging handler's (File, DB, and Secure only) LoggingHdlrFailureCt.      *  this is for the count of rejections due to unauthorized userid trying
+     *  to write to the log.
+     */
+    private void incMonReject() {
+        if (LogManager.isLocal && Agent.isRunning()) {
+            // logging service stat
+            SsoServerLoggingSvcImpl logSvcMon =
+                (SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
+            if (logSvcMon != null) {
+                 logSvcMon.incSsoServerLoggingRecsRejected();
+            }
+
+            // handler's stat
+            // if DB then database, else if secure then secure file, else file
+            SsoServerLoggingHdlrEntryImpl logH = null;
+            if (lm.isDBLogging()) {
+                logH = logSvcMon.getHandler(
+                        SsoServerLoggingSvcImpl.DB_HANDLER_NAME);
+            } else if (lm.isSecure()) {
+                logH = logSvcMon.getHandler(
+                        SsoServerLoggingSvcImpl.SECURE_FILE_HANDLER_NAME);
+            } else {
+                logH = logSvcMon.getHandler(
+                        SsoServerLoggingSvcImpl.FILE_HANDLER_NAME);
+            } 
+            if (logH != null) {
+                logH.incHandlerFailureCount(1);
+                /*
+                 *  also increment handler's request count.  if it gets
+                 *  through the authorization check, it gets incremented
+                 *  in the handler itself.
+                 */
+                logH.incHandlerRequestCount(1);
+            }
+        }
     }
 }
