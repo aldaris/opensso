@@ -23,7 +23,7 @@
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
 #
-# $Id: Makefile,v 1.16 2009-12-04 23:01:37 leiming Exp $
+# $Id: Makefile,v 1.17 2009-12-09 23:00:59 krishna_indigo Exp $
 #
 # Makefile file for building the Agents tree.
 #
@@ -43,7 +43,7 @@ SUBDIRS := common
 
 ifeq ($(BUILD_AGENT),)
 ifeq ($(OS_ARCH), HP-UX)
-SUBDIRS += apache
+SUBDIRS += apache apache22
 else 
 ifeq ($(OS_ARCH), AIX)
 SUBDIRS += apache apache22
@@ -77,7 +77,7 @@ endif
 endif
 
 ifeq ($(OS_ARCH), HP-UX)
-SUBDIRS += apache
+SUBDIRS += apache apache22
 endif 
 
 ifeq ($(OS_ARCH), AIX)

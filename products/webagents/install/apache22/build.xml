@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2009-08-27 21:41:32 subbae Exp $
+   $Id: build.xml,v 1.10 2009-12-09 23:01:00 krishna_indigo Exp $
 
 -->
 
@@ -138,6 +138,14 @@
                     <include name="libamapc22.so"/>
             </fileset>
         </copy>
+    </target>
+
+    <target name="copy-HP-UX-library">
+	<copy todir="${container.web_agent.lib.dir}">
+	   <fileset dir="${webagents.apache22.src.dir}">
+		<include name="libamapc22.sl"/>
+	   </fileset>
+	</copy>
     </target>
 
     <target name="copy-WINNT-library">
