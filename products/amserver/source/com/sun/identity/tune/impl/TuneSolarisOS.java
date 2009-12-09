@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneSolarisOS.java,v 1.5 2008-09-18 17:05:52 kanduls Exp $
+ * $Id: TuneSolarisOS.java,v 1.6 2009-12-09 00:41:04 ykwon Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -281,7 +281,7 @@ public class TuneSolarisOS extends TuneOS {
             mWriter.writeln(" " + tcpCurCFGMap.get(SOL_TCP_XMIT_HIWAT));
             mWriter.writeLocaleMsg("pt-rec-val");
             mWriter.write(TCP_DIV + SOL_TCP_XMIT_HIWAT);
-            mWriter.writeln(" " + AMTUNE_NUM_FILE_DESCRIPTORS);
+            mWriter.writeln(" " + XMIT_RECV_HIWAT_VAL);
             mWriter.writeln(" ");
             
             mWriter.writelnLocaleMsg("pt-tcp-recv-hiwat");
@@ -290,7 +290,7 @@ public class TuneSolarisOS extends TuneOS {
             mWriter.writeln(" " + tcpCurCFGMap.get(SOL_TCP_RECV_HIWAT));
             mWriter.writeLocaleMsg("pt-rec-val");
             mWriter.write(TCP_DIV + SOL_TCP_RECV_HIWAT);
-            mWriter.writeln(" " + AMTUNE_NUM_FILE_DESCRIPTORS);
+            mWriter.writeln(" " + XMIT_RECV_HIWAT_VAL);
             mWriter.writeln(" ");
             
             mWriter.writelnLocaleMsg("pt-tcp-ip-abort-cinterval");
@@ -320,6 +320,25 @@ public class TuneSolarisOS extends TuneOS {
             mWriter.write(TCP_DIV + SOL_TCP_STRONG_ISS);
             mWriter.writeln(" " + STRONG_ISS_VAL);
             mWriter.writeln(" ");
+
+            mWriter.writelnLocaleMsg("pt-tcp-max-buf");
+            mWriter.writeLocaleMsg("pt-cur-val");
+            mWriter.write(TCP_DIV + SOL_TCP_MAX_BUF);
+            mWriter.writeln(" " + tcpCurCFGMap.get(SOL_TCP_MAX_BUF));
+            mWriter.writeLocaleMsg("pt-rec-val");
+            mWriter.write(TCP_DIV + SOL_TCP_MAX_BUF);
+            mWriter.writeln(" " + MAX_BUF_CWND_VAL);
+            mWriter.writeln(" ");
+
+            mWriter.writelnLocaleMsg("pt-tcp-cwnd-max");
+            mWriter.writeLocaleMsg("pt-cur-val");
+            mWriter.write(TCP_DIV + SOL_TCP_CWND_MAX);
+            mWriter.writeln(" " + tcpCurCFGMap.get(SOL_TCP_CWND_MAX));
+            mWriter.writeLocaleMsg("pt-rec-val");
+            mWriter.write(TCP_DIV + SOL_TCP_CWND_MAX);
+            mWriter.writeln(" " + MAX_BUF_CWND_VAL);
+            mWriter.writeln(" ");
+
             if (confInfo.isReviewMode()) {
                 return;
             }
@@ -343,6 +362,8 @@ public class TuneSolarisOS extends TuneOS {
                     SOL_TCP_IP_ABORT_CINTERVAL,
                     SOL_TCP_DEFERRED_ACK_INTERVAL,
                     SOL_TCP_STRONG_ISS,
+                    SOL_TCP_MAX_BUF,
+                    SOL_TCP_CWND_MAX,
                     "#" + END_FAM_MSG
                 };
                 solConfFile.removeMatchingLines(delStrs);
@@ -367,14 +388,16 @@ public class TuneSolarisOS extends TuneOS {
             fh.appendLine(setCmd + SOL_TCP_SLOW_START_INTITIAL + " " +
                     SLOW_START_INITIAL_VAL);
             fh.appendLine(setCmd + SOL_TCP_XMIT_HIWAT + " " +
-                    AMTUNE_NUM_FILE_DESCRIPTORS);
+                    XMIT_RECV_HIWAT_VAL);
             fh.appendLine(setCmd + SOL_TCP_RECV_HIWAT + " " +
-                    AMTUNE_NUM_FILE_DESCRIPTORS);
+                    XMIT_RECV_HIWAT_VAL);
             fh.appendLine(setCmd + SOL_TCP_IP_ABORT_CINTERVAL + " " +
                     ABORT_CINTERVAL_VAL);
             fh.appendLine(setCmd + SOL_TCP_DEFERRED_ACK_INTERVAL + " " +
                     ACK_INTERVAL_VAL);
             fh.appendLine(setCmd + SOL_TCP_STRONG_ISS + " " + STRONG_ISS_VAL);
+            fh.appendLine(setCmd + SOL_TCP_MAX_BUF + " " + MAX_BUF_CWND_VAL);
+            fh.appendLine(setCmd + SOL_TCP_CWND_MAX + " " + MAX_BUF_CWND_VAL);
             fh.appendLine("#" + END_FAM_MSG);
             fh.close();
             //source the tcp tune file so that the settings are visible 
@@ -425,7 +448,9 @@ public class TuneSolarisOS extends TuneOS {
                 SOL_TCP_RECV_HIWAT,
                 SOL_TCP_IP_ABORT_CINTERVAL,
                 SOL_TCP_DEFERRED_ACK_INTERVAL,
-                SOL_TCP_STRONG_ISS
+                SOL_TCP_STRONG_ISS,
+                SOL_TCP_MAX_BUF,
+                SOL_TCP_CWND_MAX
             };
             StringBuffer rBuf = new StringBuffer();
             for (int i = 0; i < reqParams.length; i++) {
