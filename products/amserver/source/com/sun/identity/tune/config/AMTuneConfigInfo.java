@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.11 2009-03-03 02:33:03 ykwon Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.12 2009-12-09 00:35:59 ykwon Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -809,19 +809,23 @@ FAMConstants, WebContainerConstants {
                 mWriter.writeln(maxPermSize + " ");
             }
             cacheSize = (int) ((double) maxHeapSize * AMTUNE_MEM_CACHES_SIZE);
-            mWriter.writeLocaleMsg("pt-cache-size-msg"); 
-            mWriter.writeln(cacheSize + " ");
-
-            sdkCacheSize =
-                    (int) ((double) cacheSize * AMTUNE_MEM_SDK_CACHE_SIZE);
-            mWriter.writeLocaleMsg("pt-sdk-cache-size-msg");
-            mWriter.writeln(sdkCacheSize + " ");
-            numSDKCacheEntries = (int) ((double) sdkCacheSize * 1024.0 /
-                    AMTUNE_AVG_PER_ENTRY_CACHE_SIZE_IN_KB);
-            mWriter.writeLocaleMsg("pt-no-sdk-cache-ent-msg");
-            mWriter.writeln(numSDKCacheEntries + " ");
-            sessionCacheSize =
-                    (int) ((double) cacheSize * AMTUNE_MEM_SESSION_CACHE_SIZE);
+            //mWriter.writeLocaleMsg("pt-cache-size-msg"); 
+            //mWriter.writeln(cacheSize + " ");
+     /**
+      * sdkCacheSize is not used because it is recommended to be set at 
+      * its default value of 10,000, DEFAULT_SDK_CACHE_MAX_SIZE.
+      */ 
+            //sdkCacheSize =
+            //        (int) ((double) cacheSize * AMTUNE_MEM_SDK_CACHE_SIZE);
+            //mWriter.writeLocaleMsg("pt-sdk-cache-size-msg");
+            //mWriter.writeln(sdkCacheSize + " ");
+            //numSDKCacheEntries = (int) ((double) sdkCacheSize * 1024.0 /
+            //        AMTUNE_AVG_PER_ENTRY_CACHE_SIZE_IN_KB);
+            //mWriter.writeLocaleMsg("pt-no-sdk-cache-ent-msg");
+            //mWriter.writeln(numSDKCacheEntries + " ");
+            // sessionCacheSize =
+            //        (int) ((double) cacheSize * AMTUNE_MEM_SESSION_CACHE_SIZE);
+            sessionCacheSize = cacheSize;
             mWriter.writeLocaleMsg("pt-session-cache-size-msg");
             mWriter.writeln(sessionCacheSize + " ");
             numSessions = (int) ((double) sessionCacheSize * 1024.0 /
@@ -872,6 +876,10 @@ FAMConstants, WebContainerConstants {
                     (int) (AMTUNE_NOTIFICATION_QUEUE_CALC_FACTOR *
                     (double) numSessions);
             numNotificationQueue = (numNotificationQueue / (10 ^ 1)) * (10 ^ 1);
+            
+            if (numNotificationQueue >= 30000) {
+                numNotificationQueue = 30000;}
+
             mWriter.writeLocaleMsg("pt-notification-queue-size-msg");
             mWriter.writeln(numNotificationQueue + " ");
             mWriter.writeln(PARA_SEP);
