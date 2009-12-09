@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebContainerConstants.java,v 1.6 2009-05-04 23:27:06 ykwon Exp $
+ * $Id: WebContainerConstants.java,v 1.7 2009-12-09 00:34:15 ykwon Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -68,6 +68,10 @@ public interface WebContainerConstants extends AMTuneConstants {
     static String HISTOGRAM_FLAG = "-XX:+PrintClassHistogram";
     static String GC_TIME_STAMP_FLAG = "-XX:+PrintGCTimeStamps";
     static String MARK_SWEEP_GC_FLAG = "-XX:+UseConcMarkSweepGC";
+    static String HEAPDUMP_OOM_FLAG = "-XX:+HeapDumpOnOutOfMemoryError";
+    static String PRINT_CONC_LOCKS_FLAG = "-XX:+PrintConcurrentLocks";
+    static String ESCAPE_ANALYSIS_FLAG = "-XX:+DoEscapeAnalysis";
+    static String COMPRESSED_OOPS_FLAG = "-XX:+UseCompressedOops";
     static String PARALLEL_GC_THREADS = "-XX:ParallelGCThreads";
     static String WADM_RESTART_SUB_CMD = "restart-instance";
     static String WADM_SET_STATS_SUB_CMD = "set-stats-prop";
