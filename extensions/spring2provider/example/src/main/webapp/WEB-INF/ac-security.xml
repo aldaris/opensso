@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-   $Id: ac-security.xml,v 1.5 2009-08-12 18:18:18 wstrange Exp $
+   $Id: ac-security.xml,v 1.6 2009-12-09 17:36:20 wstrange Exp $
 
 -->
 
@@ -92,6 +92,7 @@
                     <list>
                         <value>/faces/logout*</value>
                         <value>/faces/denied*</value>
+                        <value>/index.html</value>
                     </list>
                 </property>
             </bean>
@@ -115,7 +116,7 @@
         <property name="filterProcessesUrl" value="/j_spring_security_check"/>
     </bean>
     
-    <bean id="authenticationEntryPoint" class="com.sun.identity.provider.springsecurity.OpenSsoProcessingFilterEntryPoint">
+    <bean id="authenticationEntryPoint" class="com.sun.identity.provider.springsecurity.OpenSSOProcessingFilterEntryPoint">
         <property name="loginUrl" value="${com.sun.identity.loginurl}"/>
         <property name="filterProcessesUrl" value="/j_spring_security_check"/>
     </bean>
