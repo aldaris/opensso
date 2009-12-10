@@ -78,6 +78,7 @@
             allValid();
         } else {
             eval(field + "Valid = false;" );
+            $('nextTabButton').disabled = true;
             $(field + 'Status').innerHTML = errorImage +
                 '<small>' + response.responseText + '</small>';
         }                
