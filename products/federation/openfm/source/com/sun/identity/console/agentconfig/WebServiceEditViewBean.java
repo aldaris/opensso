@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceEditViewBean.java,v 1.6 2009-12-03 23:55:33 asyhuang Exp $
+ * $Id: WebServiceEditViewBean.java,v 1.7 2009-12-10 17:14:02 ggennaro Exp $
  *
  */
 
@@ -320,19 +320,22 @@ public abstract class WebServiceEditViewBean
 
         set = (Set) values.get("SignedElements");
         
-        ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
-        Map map = configuredSignedElements.getChoiceValues();
-        if((set.isEmpty() || set.size()==0 ) 
-            && (isresponsesigned != null) && (isresponsesigned.equals("true"))){
-            propertySheetModel.setValue("Body", "true");
-        } else {
-            Iterator it = map.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry)it.next();                
-                if (set.contains(pairs.getKey())) {
-                    propertySheetModel.setValue(pairs.getKey().toString(), "true");
+        if( set != null ) { 
+            ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
+            Map map = configuredSignedElements.getChoiceValues();
+
+            if(( set.isEmpty() || set.size()==0 ) 
+                    && (isresponsesigned != null) && (isresponsesigned.equals("true"))){
+                    propertySheetModel.setValue("Body", "true");
+                } else {
+                    Iterator it = map.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry pairs = (Map.Entry)it.next();                
+                        if (set.contains(pairs.getKey())) {
+                            propertySheetModel.setValue(pairs.getKey().toString(), "true");
+                        }
+                    }
                 }
-            }
         }
     }
 
