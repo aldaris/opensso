@@ -144,6 +144,7 @@ SUNW_1.0 {
 		am_auth_get_sso_token_id;
 		am_auth_get_callback;
 		am_auth_submit_requirements;
+		am_auth_submit_requirements_and_update_authctx;
 		am_auth_get_status;
 		am_auth_get_module_instance_names;
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_auth.h,v 1.3 2008-06-25 08:14:26 qcheng Exp $
+ * $Id: am_auth.h,v 1.4 2009-12-09 23:58:58 robertis Exp $
  *
  */ 
 #ifndef __AM_AUTH_H__
@@ -384,6 +384,31 @@ am_auth_get_callback(am_auth_context_t auth_ctx, size_t index);
  */
 AM_EXPORT am_status_t
 am_auth_submit_requirements(am_auth_context_t auth_ctx);
+
+/*
+ * Submits the responses populated in the callbacks to the server
+ * and updates the auth context object with the new authIdentifier
+ * which is generated after successful authentication and which is 
+ * different from the initial auth identifier generated at the auth
+ * context creation.
+ *
+ * Parameters:
+ *   p_auth_ctx	Pointer to the handle of the auth context.
+ *
+ * Returns:
+ *   AM_SUCCESS
+ *		If the submitted requirements were processed
+ *		successfully.
+ *
+ *   AM_AUTH_FAILURE
+ *		If the authentication process failed.
+ *
+ *   AM_INVALID_ARGUMENT
+ *		If the auth_ctx parameter is NULL.
+ *
+ */
+AM_EXPORT am_status_t
+am_auth_submit_requirements_and_update_authctx(am_auth_context_t *p_auth_ctx); 
 
 /*
  * 

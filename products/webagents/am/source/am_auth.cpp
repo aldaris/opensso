@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_auth.cpp,v 1.4 2008-06-25 08:14:26 qcheng Exp $
+ * $Id: am_auth.cpp,v 1.5 2009-12-09 23:58:50 robertis Exp $
  *
  */
 
@@ -483,6 +483,40 @@ am_auth_submit_requirements(am_auth_context_t auth_ctx) {
         } catch(...) {
             Log::log(amAuthLogID, Log::LOG_ERROR,
                      "am_auth_submit_requirements(): "
+                     "Unknown exception thrown.");
+            retVal = AM_FAILURE;
+        }
+    } else {
+        retVal = (authSvc == NULL)?AM_AUTH_CTX_INIT_FAILURE:AM_INVALID_ARGUMENT;
+    }
+    return retVal;
+}
+
+extern "C" am_status_t
+am_auth_submit_requirements_and_update_authctx(am_auth_context_t *p_auth_ctx) {
+    am_status_t retVal = AM_FAILURE;
+
+    Log::ModuleId amAuthLogID = Log::addModule(AM_AUTH_MODULE);
+    if(*p_auth_ctx != NULL && authSvc != NULL) {
+        try {
+            AuthContext &authContext =
+                reinterpret_cast<AuthContext &>(**p_auth_ctx);
+            if(authContext.getStatus() == AM_AUTH_STATUS_IN_PROGRESS) {
+                authSvc->submitRequirements(authContext);
+                retVal = AM_SUCCESS;
+                *p_auth_ctx = reinterpret_cast<am_auth_context_t>(&authContext);
+            } else {
+                retVal = AM_AUTH_FAILURE;
+            }
+        } catch(InternalException &iex) {
+            Log::log(amAuthLogID, Log::LOG_ERROR, iex);
+            retVal = AM_AUTH_FAILURE;
+        } catch(std::invalid_argument &aex) {
+            Log::log(amAuthLogID, Log::LOG_ERROR, aex);
+            retVal = AM_INVALID_ARGUMENT;
+        } catch(...) {
+            Log::log(amAuthLogID, Log::LOG_ERROR,
+                     "am_auth_submit_requirements_and_update_authctx(): "
                      "Unknown exception thrown.");
             retVal = AM_FAILURE;
         }

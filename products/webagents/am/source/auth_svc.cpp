@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: auth_svc.cpp,v 1.6 2008-09-13 01:11:53 robertis Exp $
+ * $Id: auth_svc.cpp,v 1.7 2009-12-10 00:01:43 robertis Exp $
  *
  */ 
 #include <iostream>
@@ -1803,92 +1803,108 @@ AuthService::processLoginStatus(AuthContext &auth_ctx,
 	if(loginStatusNode.getAttributeValue(STATUS, status)) {
 	    const char *statusStr = status.c_str();
 	    if(strcmp(statusStr, FAILED) == 0) {
-		// process AUTH_STATUS_FAILED
-		XMLElement exceptionNode;
-		auth_ctx.authStatus = AM_AUTH_STATUS_FAILED;
-		if(responseNode.getSubElement(EXCEPTION, exceptionNode)) {
-		    logAndThrowException("AuthService::processLoginStatus()",
-                                         exceptionNode);
-		} else {
-		    throw InternalException("AuthService::processLoginStatus()",
-					    "Login failed.",
-					    AM_AUTH_FAILURE);
-		}
+            // process AUTH_STATUS_FAILED
+            XMLElement exceptionNode;
+            auth_ctx.authStatus = AM_AUTH_STATUS_FAILED;
+            if(responseNode.getSubElement(EXCEPTION, exceptionNode)) {
+                logAndThrowException("AuthService::processLoginStatus()",
+                                             exceptionNode);
+            } else {
+                throw InternalException("AuthService::processLoginStatus()",
+                            "Login failed.",
+                            AM_AUTH_FAILURE);
+            }
 	    } else if(strcmp(statusStr, COMPLETED) == 0) {
-		// process AUTH_STATUS_COMPLETED
-		auth_ctx.authStatus = AM_AUTH_STATUS_COMPLETED;
-		Log::log(logID, Log::LOG_INFO,
-			 "AuthService::procesLoginStatus() "
-			 "Login completed.");
+            // process AUTH_STATUS_COMPLETED
+            auth_ctx.authStatus = AM_AUTH_STATUS_COMPLETED;
+            Log::log(logID, Log::LOG_INFO,
+                 "AuthService::procesLoginStatus() "
+                 "Login completed.");
 	    } else if(strcmp(statusStr, SUCCESS) == 0) {
-		// process AUTH_STATUS_SUCCESS
-		auth_ctx.authStatus = AM_AUTH_STATUS_SUCCESS;
-		XMLElement subjectNode;
-		if(loginStatusNode.getSubElement(SUBJECT, subjectNode)) {
-		    if(subjectNode.getValue(auth_ctx.subject)) {
-			Log::log(logID, Log::LOG_INFO,
-				 "AuthService::processLoginStatus(): "
-				 "Successful login of subject %s",
-				 auth_ctx.subject.c_str());
-		    }
-		}
-		if(loginStatusNode.getAttributeValue(SSO_TOKEN,
-						     auth_ctx.ssoToken)) {
-			Log::log(logID, Log::LOG_INFO,
-				 "AuthService::processLoginStatus() "
-				 "Successful login of ssoToken %s",
-				 auth_ctx.ssoToken.c_str());
-		}
-	    } else if(strcmp(statusStr, IN_PROGRESS) == 0) {
-		// process AUTH_STATUS_IN_PROGRESS
-		auth_ctx.authStatus = AM_AUTH_STATUS_IN_PROGRESS;
-		Log::log(logID, Log::LOG_DEBUG,
-			 "AuthService::processLoginStatus() "
-			 "Login is in progress.");
-                // there could be an exception after status
-                // throw an error if so.
-                XMLElement excNode;
-                if (responseNode.getSubElement(EXCEPTION, excNode)) {
-                    std::string errorCode;
-                    if (excNode.getAttributeValue(ERROR_CODE, errorCode)) {
-			Log::log(logID, Log::LOG_ERROR,
-			    "AuthService::processLoginStatus() "
-			    "Exception fround in server response: "
-                            "error code '%s'.", 
-                            errorCode.c_str());
-			throw InternalException(
-			    "AuthService::processLoginStatus()",
-			    "Exception found in server response.",
-			    AM_AUTH_FAILURE);
-                    }
-                    else {
-			Log::log(logID, Log::LOG_ERROR,
-			    "AuthService::processLoginStatus() "
-			    "Exception (with no error code) fround in "
-			    "server response.");
-			throw InternalException(
-			    "AuthService::processLoginStatus()",
-			    "Exception (with no error code) found in "
-			    "server response.",
-			    AM_AUTH_FAILURE);
-                    }
+            // process AUTH_STATUS_SUCCESS
+            auth_ctx.authStatus = AM_AUTH_STATUS_SUCCESS;
+            XMLElement subjectNode;
+            if(loginStatusNode.getSubElement(SUBJECT, subjectNode)) {
+                if(subjectNode.getValue(auth_ctx.subject)) {
+                    Log::log(logID, Log::LOG_INFO,
+                     "AuthService::processLoginStatus(): "
+                     "Successful login of subject %s",
+                     auth_ctx.subject.c_str());
                 }
-                // check for auth identifier.
- 		if(responseNode.getAttributeValue(AUTH_IDENTIFIER,
+            }
+            if(loginStatusNode.getAttributeValue(SSO_TOKEN,
+						     auth_ctx.ssoToken)) {
+                Log::log(logID, Log::LOG_INFO,
+                     "AuthService::processLoginStatus() "
+                     "Successful login of ssoToken %s",
+                     auth_ctx.ssoToken.c_str());
+            }
+
+            // the auth identifier is checked again because a new one
+            // is generated after the successful authentication.
+            if(responseNode.getAttributeValue(AUTH_IDENTIFIER,
 						  auth_ctx.authIdentifier)) {
-		    Log::log(logID, Log::LOG_INFO,
+                Log::log(logID, Log::LOG_INFO,
 			     "AuthService::processLoginStatus() "
 			     "Auth Identifier =%s",
 			     auth_ctx.authIdentifier.c_str());
-		} else {
-		    //exception
-		    Log::log(logID, Log::LOG_ERROR,
-			"AuthService::processLoginStatus() "
-			"Auth Identifier not found in server response.");
-		    throw InternalException("AuthService::processLoginStatus()",
-			"No Auth Identifier found in server response.",
-			AM_AUTH_FAILURE);
-		}
+            } else {
+                Log::log(logID, Log::LOG_ERROR,
+                    "AuthService::processLoginStatus() "
+                    "Auth Identifier not found in server response.");
+                throw InternalException("AuthService::processLoginStatus()",
+                "No Auth Identifier found in server response.",
+                AM_AUTH_FAILURE);
+            }
+
+	    } else if(strcmp(statusStr, IN_PROGRESS) == 0) {
+            // process AUTH_STATUS_IN_PROGRESS
+            auth_ctx.authStatus = AM_AUTH_STATUS_IN_PROGRESS;
+            Log::log(logID, Log::LOG_DEBUG,
+                 "AuthService::processLoginStatus() "
+                 "Login is in progress.");
+            // there could be an exception after status
+            // throw an error if so.
+            XMLElement excNode;
+            if (responseNode.getSubElement(EXCEPTION, excNode)) {
+                std::string errorCode;
+                if (excNode.getAttributeValue(ERROR_CODE, errorCode)) {
+                    Log::log(logID, Log::LOG_ERROR,
+                        "AuthService::processLoginStatus() "
+                        "Exception fround in server response: "
+                        "error code '%s'.", errorCode.c_str());
+                        throw InternalException(
+                            "AuthService::processLoginStatus()",
+                            "Exception found in server response.",
+                            AM_AUTH_FAILURE);
+                }
+                else {
+                    Log::log(logID, Log::LOG_ERROR,
+                        "AuthService::processLoginStatus() "
+                        "Exception (with no error code) fround in "
+                        "server response.");
+                    throw InternalException(
+                        "AuthService::processLoginStatus()",
+                        "Exception (with no error code) found in "
+                        "server response.", AM_AUTH_FAILURE);
+                }
+            }
+            // check for auth identifier.
+            if(responseNode.getAttributeValue(AUTH_IDENTIFIER,
+						  auth_ctx.authIdentifier)) {
+                Log::log(logID, Log::LOG_INFO,
+			     "AuthService::processLoginStatus() "
+			     "Auth Identifier =%s",
+			     auth_ctx.authIdentifier.c_str());
+            } else {
+                //exception
+                Log::log(logID, Log::LOG_ERROR,
+                    "AuthService::processLoginStatus() "
+                    "Auth Identifier not found in server response.");
+                throw InternalException("AuthService::processLoginStatus()",
+                "No Auth Identifier found in server response.",
+                AM_AUTH_FAILURE);
+            }
 	    }
 	}
     } else {
