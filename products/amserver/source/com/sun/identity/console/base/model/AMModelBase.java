@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.17 2009-12-05 05:07:06 bhavnab Exp $
+ * $Id: AMModelBase.java,v 1.18 2009-12-11 23:25:19 veiming Exp $
  *
  */
 
@@ -42,6 +42,7 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.idm.common.IdRepoUtils;
 import com.sun.identity.log.messageid.LogMessageProvider;
 import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.log.LogRecord;
@@ -50,11 +51,13 @@ import com.sun.identity.security.EncryptAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.shared.locale.L10NMessage;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -1156,5 +1159,17 @@ public class AMModelBase
         String[] array = new String[1];
         array[0] = SystemProperties.getServerInstanceName();
         return array;
+    }
+
+    public boolean isAmadminUser(AMIdentity amid) {
+        if (amid.getType().equals(IdType.USER)) {
+            String amadminUUID = "id=amadmin,ou=user," +
+                SMSEntry.getRootSuffix();
+            DN dn = new DN(amadminUUID);
+            DN amidDN = new DN(amid.getUniversalId());
+            return dn.equals(amidDN);
+        }
+
+        return false;
     }
 }

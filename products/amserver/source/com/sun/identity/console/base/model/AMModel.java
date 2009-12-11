@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModel.java,v 1.8 2008-08-19 19:09:05 veiming Exp $
+ * $Id: AMModel.java,v 1.9 2009-12-11 23:25:19 veiming Exp $
  *
  */
 
@@ -265,4 +265,12 @@ public interface AMModel
      * repo enabled.
      */
     boolean isAMSDKEnabled();
+
+    /**
+     * Returns <code>true</code> if identity is amadmin user.
+     *
+     * @param amid user object.
+     * @return <code>true</code> if identity is amadmin user.
+     */
+    boolean isAmadminUser(AMIdentity amid);
 }

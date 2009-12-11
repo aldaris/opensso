@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesViewBean.java,v 1.13 2009-01-28 05:34:57 ww203982 Exp $
+ * $Id: EntitiesViewBean.java,v 1.14 2009-12-11 23:25:19 veiming Exp $
  *
  */
 
@@ -343,10 +343,11 @@ public class EntitiesViewBean
                 String name = AMFormatUtils.getIdentityDisplayName(
                     model, entity);
                 
-                // hide the checkbox if this is the current user 
-                boolean hide = 
-                    ((curUser != null) && (!curUser.equals(entity)));
-                tblModel.setSelectionVisible(counter++, hide);
+                // hide the checkbox if this is the current user or amadmin
+                boolean showCheckbox =
+                    ((curUser != null) && (!curUser.equals(entity))) &&
+                    !model.isAmadminUser(entity);
+                tblModel.setSelectionVisible(counter++, showCheckbox);
 
                 String universalId = IdUtils.getUniversalId(entity);
                 tblModel.setValue(TBL_DATA_NAME, name);
