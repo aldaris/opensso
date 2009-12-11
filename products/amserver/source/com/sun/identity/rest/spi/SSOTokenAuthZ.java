@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenAuthZ.java,v 1.3 2009-11-21 02:00:35 qcheng Exp $
+ * $Id: SSOTokenAuthZ.java,v 1.4 2009-12-11 09:24:42 veiming Exp $
  */
 
 package com.sun.identity.rest.spi;
@@ -53,7 +53,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.WebApplicationException;
 
 /**
  *
@@ -80,6 +79,9 @@ public class SSOTokenAuthZ implements IAuthorization {
         ServletResponse response,
         FilterChain chain
     ) throws IOException, ServletException {
+        int statusCode = HttpServletResponse.SC_OK;
+        String statusMessage = null;
+
         Principal clientPrincipal = ((HttpServletRequest)request).
             getUserPrincipal();
         if (clientPrincipal instanceof ISubjectable) {
@@ -89,27 +91,46 @@ public class SSOTokenAuthZ implements IAuthorization {
                 DelegationEvaluator eval = new DelegationEvaluator();
                 SSOToken token = SubjectUtils.getSSOToken(clientSubject);
 
-                DelegationPermission permission = new DelegationPermission(
-                    "/", "sunEntitlementService", "1.0", "application",
-                    getURI(request), getAction(request), null);
-                if (!eval.isAllowed(token, permission,
-                    Collections.EMPTY_MAP)) {
-                    throw new WebApplicationException(
-                        HttpServletResponse.SC_UNAUTHORIZED);
+                String action = mapMethodToAction.get((
+                    (HttpServletRequest) request).getMethod());
+                if (action == null) {
+                    statusCode = HttpServletResponse.SC_UNAUTHORIZED;
+                    statusMessage = "Unable to get HTTP method for request.";
+                } else {
+                    Set<String> setAction = new HashSet<String>();
+                    setAction.add(action);
+                    DelegationPermission permission = new DelegationPermission(
+                        "/", "sunEntitlementService", "1.0", "application",
+                        getURI(request), setAction, null);
+                    if (!eval.isAllowed(token, permission,
+                        Collections.EMPTY_MAP)) {
+                        statusCode = HttpServletResponse.SC_UNAUTHORIZED;
+                        statusMessage = "Unauthorized.";
+                    }
                 }
             } catch (Exception e) {
-                throw new WebApplicationException(
-                    HttpServletResponse.SC_BAD_REQUEST);
+                statusCode = HttpServletResponse.SC_UNAUTHORIZED;
+                statusMessage = e.getMessage();
             }
         } else {
-            throw new WebApplicationException(
-                HttpServletResponse.SC_BAD_REQUEST);
+            statusCode = HttpServletResponse.SC_UNAUTHORIZED;
+            statusMessage = "Unable to obtain subject.";
         }
-       
 
-        validateTokenId((HttpServletRequest)request,
-            (HttpServletResponse)response);
-        chain.doFilter(request, response);
+        if (statusCode == HttpServletResponse.SC_OK) {
+            statusCode = validateTokenId((HttpServletRequest) request);
+
+            if (statusCode == HttpServletResponse.SC_OK) {
+                chain.doFilter(request, response);
+            } else {
+                statusMessage = "SSO token is invalid or has expired.";
+            }
+        }
+        
+        if (statusCode != HttpServletResponse.SC_OK) {
+            ((HttpServletResponse)response).sendError(statusCode, 
+                statusMessage);
+        }
     }
 
     private String getURI(ServletRequest req) {
@@ -118,23 +139,8 @@ public class SSOTokenAuthZ implements IAuthorization {
         return (idx != -1) ? uri.substring(idx+1) : uri;
     }
 
-    private Set<String> getAction(ServletRequest req)
-        throws WebApplicationException {
-        String action = mapMethodToAction.get((
-            (HttpServletRequest)req).getMethod());
-        Set<String> set = new HashSet<String>();
-        if (action == null) {
-            throw new WebApplicationException(
-                HttpServletResponse.SC_UNAUTHORIZED);
-        }
-        set.add(action);
-        return set;
-    }
-
-    private void validateTokenId(
-        HttpServletRequest request,
-        HttpServletResponse response
-    ) throws ServletException, IOException {
+    private int validateTokenId(HttpServletRequest request)
+        throws ServletException, IOException {
         String tokenId = request.getHeader(
             RestServiceManager.SUBJECT_HEADER_NAME);
         String hashed = request.getParameter(
@@ -143,7 +149,7 @@ public class SSOTokenAuthZ implements IAuthorization {
         if (((tokenId == null) || (tokenId.trim().length() == 0)) &&
             ((hashed == null) || (hashed.trim().length() == 0))) {
             // by pass the check
-            return;
+            return HttpServletResponse.SC_OK;
         }
 
         if ((tokenId == null) || (tokenId.trim().length() == 0)) {
@@ -152,28 +158,26 @@ public class SSOTokenAuthZ implements IAuthorization {
                 SSOToken token = mgr.createSSOToken(request);
                 tokenId = token.getTokenID().toString();
             } catch (SSOException e) {
-                throw new WebApplicationException(
-                    HttpServletResponse.SC_BAD_REQUEST);
+                return HttpServletResponse.SC_UNAUTHORIZED;
             }
         }
-
 
         if (!Boolean.parseBoolean(SystemProperties.get(
             RestServiceManager.DISABLE_HASHED_SUBJECT_CHECK, "false"))) {
             if ((hashed == null) || (hashed.trim().length() == 0)) {
-                throw new WebApplicationException(
-                    HttpServletResponse.SC_BAD_REQUEST);
+                return HttpServletResponse.SC_UNAUTHORIZED;
             } else {
                 int idx = tokenId.indexOf(':');
                 if (idx != -1) {
                     tokenId = tokenId.substring(idx + 1);
                 }
                 if (!Hash.hash(tokenId).equals(hashed)) {
-                    throw new WebApplicationException(
-                        HttpServletResponse.SC_BAD_REQUEST);
+                    return HttpServletResponse.SC_UNAUTHORIZED;
                 }
             }
         }
+
+        return HttpServletResponse.SC_OK;
     }
 
     public void init(FilterConfig arg0) throws ServletException {

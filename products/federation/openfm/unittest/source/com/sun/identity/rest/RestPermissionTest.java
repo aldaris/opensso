@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RestPermissionTest.java,v 1.3 2009-11-26 17:06:07 veiming Exp $
+ * $Id: RestPermissionTest.java,v 1.4 2009-12-11 09:24:43 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -147,7 +147,7 @@ public class RestPermissionTest {
         try {
             decisionRestCall();
         } catch (UniformInterfaceException ex) {
-            if (ex.getResponse().getStatus() != 500) {
+            if (ex.getResponse().getStatus() != 401) {
                 throw ex;
             }
         }
@@ -165,7 +165,7 @@ public class RestPermissionTest {
         try {
             getAndPutRestCall();
         } catch (UniformInterfaceException ex) {
-            if (ex.getResponse().getStatus() != 500) {
+            if (ex.getResponse().getStatus() != 401) {
                 throw ex;
             }
         }
