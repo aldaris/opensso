@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAMSDKIdRepoPlugin.java,v 1.8 2009-07-01 01:02:16 hengming Exp $
+ * $Id: AddAMSDKIdRepoPlugin.java,v 1.9 2009-12-11 06:50:36 hengming Exp $
  *
  */
 
@@ -47,10 +47,13 @@ import com.sun.identity.common.configuration.ServerConfigXML;
 import com.sun.identity.common.configuration.ServerConfigXML.DirUserObject;
 import com.sun.identity.common.configuration.ServerConfigXML.ServerGroup;
 import com.sun.identity.common.configuration.ServerConfiguration;
+import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdConstants;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.PolicyUtils;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSSchema;
 import com.sun.identity.sm.ServiceManager;
@@ -62,6 +65,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +135,7 @@ public class AddAMSDKIdRepoPlugin extends AuthenticatedCommand {
             addAMSDKSubSchema(xmlData);
             loadDelegrationPolicies(xmlData);
             updateServerConfigXML();
+            updateDSAMEUserPassword();
 
             outputWriter.printlnMessage(params[0] + ": " +
                 getResourceString(
@@ -270,7 +275,20 @@ public class AddAMSDKIdRepoPlugin extends AuthenticatedCommand {
                 instance, newValues);
         }
     }
-    
+
+    private void updateDSAMEUserPassword() throws Exception {
+        String dsameuserDN = "cn=dsameuser,ou=DSAME Users," +
+            SMSEntry.getRootSuffix();
+        AMIdentity dsameuser = IdUtils.getIdentity(ssoToken, dsameuserDN);
+            
+        Set setNewPwd = new HashSet(2);
+        setNewPwd.add(dUserPwd);
+        Map mapPassword = new HashMap(2);
+        mapPassword.put("userpassword", setNewPwd);
+        dsameuser.setAttributes(mapPassword);
+        dsameuser.store();
+    }
+
     private String getResourceContent(String resName)
         throws CLIException {
         String configDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
