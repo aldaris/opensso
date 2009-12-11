@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManageHandler.java,v 1.5 2009-10-12 21:47:00 farble1670 Exp $
+ * $Id: ApplicationManageHandler.java,v 1.6 2009-12-11 23:59:33 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -145,12 +145,30 @@ public class ApplicationManageHandler implements Serializable {
                 mb.setDetail(r.getString(this, "removeNoneSelectedDetail"));
                 mb.setSeverity(FacesMessage.SEVERITY_ERROR);
                 messagesBean.addMessageBean(mb);
+            } else if (isNonWritableSelected()) {
+                MessageBean mb = new MessageBean();
+                Resources r = new Resources();
+                mb.setSummary(r.getString(this, "nonWritableSelectedSummary"));
+                mb.setDetail(r.getString(this, "nonWritableSelectedDetail"));
+                mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+                messagesBean.addMessageBean(mb);
             } else {
                 applicationManageBean.setRemovePopupVisible(true);
             }
         } else {
             applicationManageBean.setRemovePopupVisible(false);
         }
+    }
+
+    private boolean isNonWritableSelected() {
+        for (ViewApplication va : applicationManageBean.getViewApplications()) {
+            if (va.isSelected()) {
+                if (!va.isWritable()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void removePopupOkListener(ActionEvent event) {
