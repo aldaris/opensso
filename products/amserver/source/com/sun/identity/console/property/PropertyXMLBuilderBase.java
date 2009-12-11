@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.19 2009-01-08 06:21:21 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.20 2009-12-11 23:23:55 veiming Exp $
  *
  */
 
@@ -36,9 +36,6 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -876,10 +873,11 @@ public abstract class PropertyXMLBuilderBase
         for (Iterator iter = sorted.iterator(); iter.hasNext(); ) {
             String localizedName = (String)iter.next();
             String value = (String)map.get(localizedName);
-            Object[] params = {localizedName, value};
+            Object[] params = {escapeSpecialChars(localizedName),
+                escapeSpecialChars(value)};
             if (!defaultValue) {
                 xml.append("<attribute name=\"defaultValue\" value=\"")
-                    .append(value)
+                    .append(escapeSpecialChars(value))
                     .append("\" />");
                 defaultValue = true;
             }
