@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSAuthModule.java,v 1.8 2009-11-20 23:52:52 ww203982 Exp $
+ * $Id: SMSAuthModule.java,v 1.9 2009-12-11 06:51:37 hengming Exp $
  *
  */
 
@@ -242,7 +242,7 @@ public class SMSAuthModule implements LoginModule {
                         debug.message("SMSAuthModule::login() Success AuthN");
                     }
                     authenticated = true;
-                } else if (!loadedInternalUsers && hash == null) {
+                } else if (!loadedInternalUsers) {
                     // Load the internal users and compare hashed passwords
                     if (debug.messageEnabled()) {
                         debug.message("SMSAuthModule::login() "
