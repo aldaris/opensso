@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PermissionDao.java,v 1.13 2009-11-19 22:27:31 farble1670 Exp $
+ * $Id: PermissionDao.java,v 1.14 2009-12-11 18:06:36 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -41,10 +41,10 @@ import java.util.List;
 
 public class PermissionDao implements Serializable {
 
-    private transient DelegationEvaluator delegationEvaluator;
     private List<PermissionAction> permissionActions = new ArrayList<PermissionAction>();
+    private static DelegationEvaluator delegationEvaluator;
 
-    public PermissionDao() {
+    static {
         try {
             delegationEvaluator = new DelegationEvaluator();
         } catch (DelegationException de) {
@@ -53,7 +53,7 @@ public class PermissionDao implements Serializable {
     }
 
     public void setPermissionActions(List<String> pas) {
-        for (String line: pas) {
+        for (String line : pas) {
             PermissionAction pa = new PermissionAction(line);
             permissionActions.add(pa);
         }

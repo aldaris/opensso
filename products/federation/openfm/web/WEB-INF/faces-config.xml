@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.40 2009-12-08 01:43:42 babysunil Exp $
+  $Id: faces-config.xml,v 1.41 2009-12-11 18:06:37 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -198,7 +198,7 @@
     <managed-bean>
         <managed-bean-name>permissionActions</managed-bean-name>
         <managed-bean-class>java.util.ArrayList</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
+        <managed-bean-scope>application</managed-bean-scope>
         <list-entries>
             <value-class>java.lang.String</value-class>
             <value>HOME=sunAMRealmService::1.0::OrganizationConfig::default::READ</value>

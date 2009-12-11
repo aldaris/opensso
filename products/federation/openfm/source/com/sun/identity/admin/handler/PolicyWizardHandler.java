@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardHandler.java,v 1.1 2009-08-19 05:40:46 veiming Exp $
+ * $Id: PolicyWizardHandler.java,v 1.2 2009-12-11 18:06:37 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -352,17 +352,6 @@ public abstract class PolicyWizardHandler
         } else {
             throw new AssertionError("unhandled multi-panel bean: " + mpb);
         }
-        /*
-        MultiPanelBean mpb = (MultiPanelBean) event.getComponent().getAttributes().get("bean");
-        assert (mpb != null);
-
-        Effect e = new Fade();
-        e.setSubmit(true);
-        e.setTransitory(false);
-        mpb.setPanelEffect(e);
-
-        addPanelRemoveAction(mpb);
-         */
     }
 
     /*
