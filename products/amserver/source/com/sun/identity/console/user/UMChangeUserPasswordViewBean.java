@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMChangeUserPasswordViewBean.java,v 1.5 2009-09-28 21:20:46 babysunil Exp $
+ * $Id: UMChangeUserPasswordViewBean.java,v 1.6 2009-12-12 01:34:11 babysunil Exp $
  *
  */
 
@@ -170,17 +170,6 @@ public class UMChangeUserPasswordViewBean
         ptModel.setPageTitleText(MessageFormat.format(
             model.getLocalizedString("page.title.user.change.password"),
             (Object[]) arg));
-
-        if (!submitCycle) {
-            try {
-                String pwd = model.getPassword(userId);
-                propertySheetModel.setValue(ATTR_PASSWORD, pwd);
-                propertySheetModel.setValue(REENTER_PASSWORD, pwd);
-            } catch (AMConsoleException e) {
-                setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                    e.getMessage());
-            }
-        }
     }
 
     protected AMModel getModelInternal() {
