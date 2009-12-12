@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.17 2009-08-12 23:21:50 weisun2 Exp $
+ * $Id: IdentityServicesImpl.java,v 1.18 2009-12-12 00:01:26 veiming Exp $
  *
  */
 
@@ -33,7 +33,6 @@ import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.idsvcs.InvalidToken;
 import com.sun.identity.policy.PolicyException;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,6 +97,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import com.sun.identity.shared.ldap.util.DN;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Web Service to provide security based on authentication and authorization
@@ -108,6 +109,10 @@ public class IdentityServicesImpl
 {
     // Debug
     private static Debug debug = Debug.getInstance("amIdentityServices");
+
+    private static Pattern RESOURCE_PATTERN =
+        Pattern.compile("service://(.+?)/\\?(resource=)?(.+)",
+        Pattern.CASE_INSENSITIVE);
     
     /**
      * Attempt to authenticate using simple user/password credentials.
@@ -282,15 +287,12 @@ public class IdentityServicesImpl
             // Check if service name is encoded in uri
             // Format of uri with service name:
             //   service://<sevicename>/?resource=<resourcename>
-            if (uri.toLowerCase().startsWith("service://")) {
-                URI iuri = new URI(uri);
-                serviceName = iuri.getHost();
-                resource = iuri.getQuery();
-                int index = resource.indexOf('=');
-                if (index > 0) {
-                    resource = resource.substring(index);
-                }
+            Matcher matcher = RESOURCE_PATTERN.matcher(uri);
+            if (matcher.matches()) {
+                serviceName = matcher.group(1);
+                resource = matcher.group(matcher.groupCount());
             }
+
             PolicyEvaluator pe = new PolicyEvaluator(serviceName);
             if ((action == null) || (action.length() == 0)) {
                 action = "GET";
@@ -303,9 +305,6 @@ public class IdentityServicesImpl
             debug.error("IdentityServicesImpl:authorize", e);
             throw new TokenExpired(e.getMessage());
         } catch (PolicyException ex) {
-            debug.error("IdentityServicesImpl:authorize", ex);
-            throw new GeneralFailure(ex.getMessage());
-        } catch (URISyntaxException ex) {
             debug.error("IdentityServicesImpl:authorize", ex);
             throw new GeneralFailure(ex.getMessage());
         }
