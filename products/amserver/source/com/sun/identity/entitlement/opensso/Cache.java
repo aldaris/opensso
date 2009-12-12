@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cache.java,v 1.3 2009-09-28 17:09:36 veiming Exp $
+ * $Id: Cache.java,v 1.4 2009-12-12 00:03:13 veiming Exp $
  *
  */
 
@@ -179,10 +179,13 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
 
     private transient ReadWriteLock rwlock = new ReentrantReadWriteLock();
 
+    private String name;
+
     /**
      * Constructs a new, empty Cache with the specified capacity and the
      * specified load factor.
-     * 
+     *
+     * @param name Name of cache.
      * @param capacity
      *            the capacity of the Cache.
      * @param loadFactor
@@ -191,7 +194,7 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
      *                if the capacity is less than zero, or if the load factor
      *                is nonpositive.
      */
-    public Cache(int capacity, float loadFactor) {
+    public Cache(String name, int capacity, float loadFactor) {
         if (capacity < 0) {
             throw new IllegalArgumentException("Illegal Capacity: " + capacity);
         }
@@ -202,6 +205,8 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
         if (capacity == 0) {
             capacity = 1;
         }
+
+        this.name = name;
         this.loadFactor = loadFactor;
         table = new Entry[capacity];
         threshold = (int) (capacity * loadFactor);
@@ -213,14 +218,15 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
     /**
      * Constructs a new, empty Cache with the specified capacity and default
      * load factor, which is <tt>0.75</tt>.
-     * 
+     *
+     * @param name Name of cache.
      * @param capacity
      *            the capacity of the Cache.
      * @exception IllegalArgumentException
      *                if the capacity is less than zero.
      */
-    public Cache(int capacity) {
-        this(capacity, 0.75f);
+    public Cache(String name, int capacity) {
+        this(name, capacity, 0.75f);
         maxSize = capacity;
         lruTracker = new LRUList();
     }
@@ -229,11 +235,24 @@ public class Cache extends Dictionary implements Map, java.io.Serializable {
      * Constructs a new, empty Cache with a default capacity and load factor,
      * which is <tt>0.75</tt>.
      */
-    public Cache() {
+    public Cache(String name) {
         // Obtain the cache size
-        this(DEFAULT_CACHE_SIZE, 0.75f);
+        this(name, DEFAULT_CACHE_SIZE, 0.75f);
         maxSize = DEFAULT_CACHE_SIZE;
         lruTracker = new LRUList();
+    }
+
+    // required for serializable
+    public Cache() {
+    }
+
+    /**
+     * Returns name.
+     *
+     * @return name.
+     */
+    public String getName() {
+        return name;
     }
 
     /**

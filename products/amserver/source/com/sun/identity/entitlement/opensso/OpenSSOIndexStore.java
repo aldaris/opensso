@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.8 2009-11-19 01:02:03 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.9 2009-12-12 00:03:13 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -96,8 +96,9 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         policyCacheSize = getInteger(ec,
             EntitlementConfiguration.POLICY_CACHE_SIZE, DEFAULT_CACHE_SIZE);
         if (policyCacheSize > 0) {
-            policyCache = new PolicyCache(policyCacheSize);
-            referralCache = new PolicyCache(policyCacheSize);
+            policyCache = new PolicyCache("PolicyCache", policyCacheSize);
+            referralCache = new PolicyCache("ReferralPolicyCache",
+                policyCacheSize);
         } else {
             policyCache = null;
             referralCache = null;
@@ -494,6 +495,9 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
     }
 
     private boolean doDSSearch() {
+        if (!CacheTaboo.isEmpty()) {
+            return true;
+        }
         String realm = getRealm();
 
         // check if PolicyCache has all the entries for the realm

@@ -22,15 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.2 2009-12-07 19:46:46 veiming Exp $
+ * $Id: IndexCache.java,v 1.3 2009-12-12 00:03:13 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -51,7 +49,6 @@ public class IndexCache {
     private Cache hostIndexCache;
     private Cache pathIndexCache;
     private Cache parentPathIndexCache;
-    private Map<Cache, String> cacheToName = new HashMap<Cache, String>();
     private ReadWriteLock rwlock = new ReentrantReadWriteLock();
 
     /**
@@ -85,7 +82,6 @@ public class IndexCache {
 
     private void cache(String dn, Set<String> indexes, Cache cache) {
         rwlock.writeLock().lock();
-        String cacheName = cacheToName.get(cache);
 
         try {
             for (String s : indexes) {
@@ -96,6 +92,7 @@ public class IndexCache {
                     cache.put(lc, setDNs);
                     setDNs.add(dn);
                 } else {
+                    String cacheName = cache.getName();
                     if (!CacheTaboo.isTaboo(cacheName, lc)) {
                         if (setDNs.size() >= CACHE_BUCKET_LIMIT) {
                             CacheTaboo.taboo(cacheName, lc);
@@ -142,15 +139,10 @@ public class IndexCache {
     private synchronized void clearCaches() {
         rwlock.writeLock().lock();
         try {
-            subjectIndexCache = new Cache(size);
-            hostIndexCache = new Cache(size);
-            pathIndexCache = new Cache(size);
-            parentPathIndexCache = new Cache(size);
-            cacheToName.clear();
-            cacheToName.put(subjectIndexCache, SUBJECT_ID);
-            cacheToName.put(hostIndexCache, HOST_ID);
-            cacheToName.put(pathIndexCache, PATH_ID);
-            cacheToName.put(parentPathIndexCache, PARENTPATH_ID);
+            subjectIndexCache = new Cache(SUBJECT_ID, size);
+            hostIndexCache = new Cache(HOST_ID, size);
+            pathIndexCache = new Cache(PATH_ID, size);
+            parentPathIndexCache = new Cache(PARENTPATH_ID, size);
         } finally {
             rwlock.writeLock().unlock();
         }

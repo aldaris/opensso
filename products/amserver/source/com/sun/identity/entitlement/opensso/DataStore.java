@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.7 2009-11-05 21:13:47 veiming Exp $
+ * $Id: DataStore.java,v 1.8 2009-12-12 00:03:13 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -929,11 +929,9 @@ public class DataStore {
         StringBuilder subjectBuffer = new StringBuilder();
         if ((subjectIndexes != null) && !subjectIndexes.isEmpty()) {
             for (String i : subjectIndexes) {
-                if (!CacheTaboo.isTaboo(IndexCache.SUBJECT_ID, i)) {
-                    Object[] o = {i};
-                    subjectBuffer.append(
-                        MessageFormat.format(SUBJECT_FILTER_TEMPLATE, o));
-                }
+                Object[] o = {i};
+                subjectBuffer.append(
+                    MessageFormat.format(SUBJECT_FILTER_TEMPLATE, o));
             }
         }
         if (subjectBuffer.length() > 0) {
@@ -944,11 +942,9 @@ public class DataStore {
         StringBuilder hostBuffer = new StringBuilder();
         if ((hostIndexes != null) && !hostIndexes.isEmpty()) {
             for (String h : indexes.getHostIndexes()) {
-                if (!CacheTaboo.isTaboo(IndexCache.HOST_ID, h)) {
-                    Object[] o = {h};
-                    hostBuffer.append(MessageFormat.format(
-                        HOST_FILTER_TEMPLATE, o));
-                }
+                Object[] o = {h};
+                hostBuffer.append(MessageFormat.format(
+                    HOST_FILTER_TEMPLATE, o));
             }
         }
         if (hostBuffer.length() > 0) {
@@ -960,11 +956,9 @@ public class DataStore {
             Set<String> parentPathIndexes = indexes.getParentPathIndexes();
             if ((parentPathIndexes != null) && !parentPathIndexes.isEmpty()) {
                 for (String p : parentPathIndexes) {
-                    if (!CacheTaboo.isTaboo(IndexCache.PARENTPATH_ID, p)) {
-                        Object[] o = {p};
-                        parentPathBuffer.append(MessageFormat.format(
-                            PATH_PARENT_FILTER_TEMPLATE, o));
-                    }
+                    Object[] o = {p};
+                    parentPathBuffer.append(MessageFormat.format(
+                        PATH_PARENT_FILTER_TEMPLATE, o));
                 }
             }
             if (parentPathBuffer.length() > 0) {
@@ -976,11 +970,9 @@ public class DataStore {
             StringBuilder pathBuffer = new StringBuilder();
             if ((pathIndexes != null) && !pathIndexes.isEmpty()) {
                 for (String p : pathIndexes) {
-                    if (!CacheTaboo.isTaboo(IndexCache.PATH_ID, p)) {
-                        Object[] o = {p};
-                        pathBuffer.append(MessageFormat.format(
-                            PATH_FILTER_TEMPLATE, o));
-                    }
+                    Object[] o = {p};
+                    pathBuffer.append(MessageFormat.format(
+                        PATH_FILTER_TEMPLATE, o));
                 }
             }
             if (pathBuffer.length() > 0) {

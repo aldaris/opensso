@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheTaboo.java,v 1.1 2009-08-19 05:40:35 veiming Exp $
+ * $Id: CacheTaboo.java,v 1.2 2009-12-12 00:03:13 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -45,6 +45,16 @@ public final class CacheTaboo {
     private static final ReadWriteLock rwlock = new ReentrantReadWriteLock();
 
     private CacheTaboo() {
+    }
+
+    public static boolean isEmpty() {
+        Lock lock = rwlock.readLock();
+        try {
+            lock.lock();
+            return tabooed.isEmpty();
+        } finally {
+            lock.unlock();
+        }
     }
 
     public static boolean isTaboo(String cache, String key) {

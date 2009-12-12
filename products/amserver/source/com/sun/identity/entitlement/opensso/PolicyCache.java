@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.2 2009-10-13 22:36:30 veiming Exp $
+ * $Id: PolicyCache.java,v 1.3 2009-12-12 00:03:13 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -42,8 +42,8 @@ class PolicyCache {
     private HashMap<String, Integer> countByRealm;
     private ReadWriteLock rwlock = new ReentrantReadWriteLock();
 
-    PolicyCache(int size) {
-        cache = new Cache(size);
+    PolicyCache(String name, int size) {
+        cache = new Cache(name, size);
         countByRealm = new HashMap<String, Integer>();
     }
 
