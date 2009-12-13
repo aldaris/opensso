@@ -153,6 +153,7 @@ com/sun/identity/log/spi/IDebug.class
 com/sun/identity/log/spi/ISDebug.class
 com/sun/identity/log/handlers/RemoteHandler*.class
 com/sun/identity/log/handlers/RemoteFormatter.class
+com/sun/identity/log/handlers/LoggingThread*.class
 com/sun/identity/security/DecodeAction.class
 com/sun/identity/security/ISSecurityPermission.class
 com/iplanet/services/util/ParseOutput.class
