@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.17 2009-03-05 22:55:40 veiming Exp $
+ * $Id: RemoteHandler.java,v 1.18 2009-12-13 22:58:06 hvijay Exp $
  *
  */
 
 
 package com.sun.identity.log.handlers;
 
+import com.iplanet.am.util.ThreadPoolException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -57,6 +58,8 @@ import com.sun.identity.log.LogManager;
 import com.sun.identity.log.LogManagerUtil;
 import com.sun.identity.log.ILogRecord;
 import com.sun.identity.log.spi.Debug;
+import com.sun.identity.log.handlers.LoggingThread;
+import com.sun.identity.log.Logger;
 
 /**
  * The class which publishes the log message to a remote log service. Also
@@ -82,6 +85,7 @@ public class RemoteHandler extends Handler {
     private boolean timeBufferingEnabled = false;
     private String logName;
     private URL logServURL;
+    private LoggingThread thread = LoggingThread.getInstance();
     
     private void configure() {
         
@@ -129,6 +133,9 @@ public class RemoteHandler extends Handler {
         if (timeBufferingEnabled) {
             startTimeBufferingThread();
         }
+        //Redundant instantiation of FlushTask for early class loading
+        //and hence performance improvement.
+        new FlushTask(reqSetMap);
     }
     
     /**
@@ -168,7 +175,7 @@ public class RemoteHandler extends Handler {
                 Debug.message(logName + ":RemoteHandler.publish(): got " 
                     + recCount + " records, flushing all");
             }
-            flush();
+            nonBlockingFlush();
         }
     }
     
@@ -235,7 +242,38 @@ public class RemoteHandler extends Handler {
             throw new AMLogException(thisAMException);
         }
     }
-    
+   
+    /**
+     * Copy the existing request set map and pass it on to ThreadPool as part
+     * of a FlushTask. Initiatize a new map as the new request set map for
+     * future remote logging calls.
+     */
+    public synchronized void nonBlockingFlush() {
+        if (recCount <= 0) {
+            if (Debug.messageEnabled()) {
+                Debug.message("RemoteHandler.nonBlockingFlush(): no records " +
+                        "in buffer to send");
+            }
+            return;
+        }
+
+        FlushTask task = new FlushTask(reqSetMap);
+        try {
+            thread.run(task);
+        } catch (ThreadPoolException ex) {
+            //Use current thread to complete the task if ThreadPool can not
+            //execute it.
+            if (Debug.messageEnabled()) {
+                Debug.message("RemoteHandler.nonBlockingFlush(): ThreadPoolException" +
+                        ". Performing blocking flush.");
+            }
+            task.run();
+        }
+        this.recCount = 0;
+        reqSetMap = new HashMap();
+    }
+
+ 
     private URL getLogHostURL(String loggedBySID) {
         SessionID sid = new SessionID(loggedBySID);
         
@@ -286,6 +324,64 @@ public class RemoteHandler extends Handler {
         return loggingURL;
     }
     
+    /**
+     * This inner class is instantiated by the nonBlockingFlush() method to
+     * create task for flushing out (asynchronously) the current buffer of
+     * log record requests.
+     */
+    private class FlushTask implements Runnable {
+
+        private Map<String, RequestSet> logReqsMap = null;
+
+        FlushTask(Map<String, RequestSet> reqSetMap) {
+            this.logReqsMap = reqSetMap;
+        }
+        
+        public void run() {
+            Vector responses = new Vector();
+            if (Debug.messageEnabled()) {
+                Debug.message("RemoteHandler.FlushTask.run(): " +
+                        "sending buffered records");
+            }
+
+            String thisAMException = null;
+            try {
+                for(String currentLoggedBySID : logReqsMap.keySet()){
+                    URL logHostURL = getLogHostURL(currentLoggedBySID);
+                    if (logHostURL == null) {
+                        Debug.error("RemoteHandler.FlushTask.run(): " +
+                                "logHostURL is null");
+                        return;
+                    }
+                    RequestSet reqSet =
+                            (RequestSet) logReqsMap.get(currentLoggedBySID);
+                    responses = PLLClient.send(logHostURL, reqSet);
+                    Iterator respIter = responses.iterator();
+                    while (respIter.hasNext()) {
+                        Response resp = (Response) respIter.next();
+                        String respContent = resp.getContent();
+                        if (!respContent.equals("OK")) {
+                            Debug.error("RemoteHandler.FlushTask.run(): " + 
+                                    respContent + " on remote machine");
+                            if (thisAMException == null) {
+                                thisAMException =
+                                        "RemoteHandler.FlushTask.run(): " +
+                                        respContent + " on remote machine";
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Debug.error("RemoteHandler.FlushTask.run(): ", e);
+            }
+
+            if(thisAMException != null){
+                throw new AMLogException(thisAMException);
+            }
+        }    
+    }
+
+
     private class TimeBufferingTask extends GeneralTaskRunnable {
         
         private long runPeriod;
