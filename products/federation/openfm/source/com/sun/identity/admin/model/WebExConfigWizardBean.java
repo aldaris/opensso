@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebExConfigWizardBean.java,v 1.1 2009-12-08 02:13:40 babysunil Exp $
+ * $Id: WebExConfigWizardBean.java,v 1.2 2009-12-14 23:42:15 babysunil Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -66,6 +66,7 @@ public class WebExConfigWizardBean
     private String singleLogoutUrl;
     private String singleSignOnUrl;
     private String authnContext;
+    private String idpInitTestUrl;
     private Resource fileResource = new StringResource("text");
     private Effect webexSiteUrlNameInputEffect;
     private Effect webexSiteUrlMessageEffect;
@@ -90,6 +91,7 @@ public class WebExConfigWizardBean
         idpInit = null;
         newIdpName = null;
         newCotName = null;
+        idpInitTestUrl = null;
     }
 
     public boolean getAuthnReq() {
@@ -335,6 +337,18 @@ public class WebExConfigWizardBean
         return authnContext;
     }
 
+    public String getIdpInitTestUrl() {
+        WebExUrlsDao webExUrlsDao = new WebExUrlsDao();
+        String idpName = selectedIdp;
+        if (getChooseExistng()) {
+            idpName = getNewIdpName();
+            setSelectedIdp(idpName);
+        }
+        idpInitTestUrl = webExUrlsDao.getIdpinitTestUrl(
+                getRealmName(), idpName, webexSiteUrl);
+        return idpInitTestUrl;
+    }
+
     public Effect getWebexSiteUrlNameInputEffect() {
         return webexSiteUrlNameInputEffect;
     }
@@ -365,3 +379,4 @@ public class WebExConfigWizardBean
         this.webExCreateEntityInputEffect = webExCreateEntityInputEffect;
     }
 }
+

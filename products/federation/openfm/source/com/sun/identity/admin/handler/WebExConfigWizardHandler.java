@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebExConfigWizardHandler.java,v 1.1 2009-12-08 02:20:10 babysunil Exp $
+ * $Id: WebExConfigWizardHandler.java,v 1.2 2009-12-14 23:43:34 babysunil Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -80,7 +80,7 @@ public class WebExConfigWizardHandler
     @Override
     public void cancelListener(ActionEvent event) {
         WebExConfigWizardBean wizardBean = (WebExConfigWizardBean) getWizardBean();
-        if (4 == getStep(event)) {
+        if (2 < getStep(event)) {
             deleteConfiguration(event);
         }
         wizardBean.reset();
@@ -102,19 +102,8 @@ public class WebExConfigWizardHandler
         WebExDeleteConfigDao webExDeleteConfigDao = new WebExDeleteConfigDao();
         String realmName = wizardBean.getRealmName();
         String spName = wizardBean.getWebexSiteUrl();
-        String cotName = null;
-        String idpName = null;
 
-        boolean chooseFromExisintgCot = wizardBean.getChooseCot();
-        if (chooseFromExisintgCot) {
-            cotName = wizardBean.getNewCotName();
-        }
-        boolean chooseFromExisintgIdp = wizardBean.getChooseExistng();
-        if (chooseFromExisintgIdp) {
-            idpName = wizardBean.getNewIdpName();
-        }
-
-        //delete idp and sp
+        //delete sp
         if (spName != null && spName.length() > 0) {
             result = webExDeleteConfigDao.deleteEntity(realmName, spName);
             if (!result) {
@@ -122,21 +111,6 @@ public class WebExConfigWizardHandler
                         "deletionSpFailedDetail");
             }
         }
-
-        if (idpName != null && idpName.length() > 0) {
-            result = webExDeleteConfigDao.deleteEntity(realmName, idpName);
-            if (!result) {
-                showErrorMessage("deletionIdpFailedSummary",
-                        "deletionIdpFailedDetail");
-            } else if (cotName != null && cotName.length() > 0) {
-            result = webExDeleteConfigDao.deleteCOT(realmName, cotName);
-            if (!result) {
-                showErrorMessage("deletionCotFailedSummary",
-                        "deletionCotFailedDetail");
-            }
-
-        }
-    }
     }
 
     @Override

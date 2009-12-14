@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebExRemoteSpCreateDao.java,v 1.1 2009-12-08 02:02:29 babysunil Exp $
+ * $Id: WebExRemoteSpCreateDao.java,v 1.2 2009-12-14 23:44:31 babysunil Exp $
  */
 
 package com.sun.identity.admin.dao;
@@ -108,7 +108,12 @@ public class WebExRemoteSpCreateDao
                 "protocolSupportEnumeration=\"urn:oasis:names:tc:SA" +
                 "ML:2.0:protocol\">" + certtoAdd + respLoation + " <NameIDForm" +
                 "at> urn:oasis:names:tc:SAM" +
-                "L:1.1:nameid-format:unspecified </NameIDFormat> <AssertionCons" +
+                "L:1.1:nameid-format:unspecified </NameIDFormat> <NameID" +
+                "Format>urn:oasis:names:tc:SAML:1.1:name" +
+                "id-format:emailAddress</NameIDFormat> <NameIDFormat>urn:oas" +
+                "is:names:tc:SAML:2.0:nameid-format:persistent</NameIDFor" +
+                "mat> <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-for" +
+                "mat:X509SubjectName</NameIDFormat> <AssertionCons" +
                 "umerService index=\"0\" Binding=\"urn:oasis:name" +
                 "s:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"" + entityId + "/dispatche" +
                 "r/SAML2AuthService.do?site" +
@@ -188,4 +193,3 @@ public class WebExRemoteSpCreateDao
         return buff.toString();
     }
 }
-

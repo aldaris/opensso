@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: webex-config-validate.xhtml,v 1.1 2009-12-08 01:47:14 babysunil Exp $
+   $Id: webex-config-validate.xhtml,v 1.2 2009-12-14 23:41:10 babysunil Exp $
 
 -->
 
@@ -49,11 +49,21 @@
         <ice:panelGrid visible="#{!webExConfigWizardBean.spInit}">
             <ice:outputText
                 value="#{resources['webex-configuration.validate.step5.three.Details']}"/>
+        <ice:outputLink value="#{webExConfigWizardBean.idpInitTestUrl}" target="_blank">
+            <ice:outputText
+                styleClass="link-for-html-text"
+                value="#{resources['webex-validate.idpInitSsoTestlink']}"/>
+        </ice:outputLink>
         </ice:panelGrid>
 
         <ice:panelGrid visible="#{webExConfigWizardBean.spInit}">
             <ice:outputText
                 value="#{resources['webex-configuration.validate.step5.four.Details']}"/>
+            <ice:outputLink value="#{webExConfigWizardBean.webexSiteUrl}" target="_blank">
+            <ice:outputText
+                styleClass="link-for-html-text"
+                value="#{resources['webex-validate.spInitSsoTestlink']}"/>
+        </ice:outputLink>
         </ice:panelGrid>
 
     </ui:define>

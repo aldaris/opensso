@@ -22,11 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebExUrlsDao.java,v 1.1 2009-12-08 02:02:30 babysunil Exp $
+ * $Id: WebExUrlsDao.java,v 1.2 2009-12-14 23:44:31 babysunil Exp $
  */
 
 package com.sun.identity.admin.dao;
-
 
 import com.sun.identity.console.federation.SAMLv2AuthContexts;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
@@ -142,5 +141,33 @@ public class WebExUrlsDao implements Serializable {
         } catch (SAML2MetaException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String getIdpinitTestUrl(
+            String realm,
+            String entityId,
+            String spName) {
+        StringBuilder testUrl = new StringBuilder();
+        String metaAlias = null;
+         try {
+            SAML2MetaManager saml2MetaManager = new SAML2MetaManager();
+
+            BaseConfigType idpssoConfig =
+                    saml2MetaManager.getIDPSSOConfig(realm, entityId);
+           if (idpssoConfig != null) {
+                    BaseConfigType baseConfig = (BaseConfigType)idpssoConfig;
+                    metaAlias = baseConfig.getMetaAlias();
+                }
+            if (null != metaAlias && metaAlias.length() > 0) {
+              testUrl.append(entityId).append("/idpssoinit?metaAlias=").
+                  append(metaAlias).append("&spEntityID=").append(spName).
+                  append("&RelayState=").append(spName);
+            }
+
+            return testUrl.toString();
+        } catch (SAML2MetaException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

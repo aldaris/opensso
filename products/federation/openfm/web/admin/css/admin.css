@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.5 2009-12-08 01:49:42 babysunil Exp $
+* $Id: admin.css,v 1.6 2009-12-14 23:40:29 babysunil Exp $
 *
 */
 
@@ -1520,7 +1520,7 @@ span.button img.left {
 
  .link-for-html-text {
      font-weight: bold;
-     color: #030390;
+     color: #2B60DE;
  }
 
  .fedattributesCol1 {
