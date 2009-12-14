@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SAML11RequestedSecurityToken.java,v 1.6 2009-10-28 23:58:59 exu Exp $
+ * $Id: SAML11RequestedSecurityToken.java,v 1.7 2009-12-14 23:42:48 mallas Exp $
  * 
  */
 
@@ -39,6 +39,7 @@ import com.sun.identity.saml.assertion.Subject;
 import com.sun.identity.saml.assertion.SubjectStatement;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLException;
+import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -74,6 +75,7 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
     protected Assertion assertion = null;
     protected String xmlString = null;
     protected boolean signed = false;
+    protected Element assertionE = null;
 
     /**
      * Creates a SAML11RequestedSecurityToken given a DOM Node
@@ -106,7 +108,7 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
             throw new WSFederationException(
                 WSFederationUtils.bundle.getString("invalidToken"));
         }
-        
+        this.assertionE = ae;
         try {
             assertion = new Assertion(ae);
         }
@@ -286,6 +288,11 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
      */
     public String toString()
     {
+        if(assertionE != null) {
+           return XMLUtils.print(SAMLUtils.getCanonicalElement(
+                  assertionE));
+        }
+
         StringBuffer buffer = new StringBuffer();
 
         // Pass (true,true) to assertion.toString so we get namespace

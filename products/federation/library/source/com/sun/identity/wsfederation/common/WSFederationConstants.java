@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationConstants.java,v 1.12 2008-08-29 02:29:17 superpat7 Exp $
+ * $Id: WSFederationConstants.java,v 1.13 2009-12-14 23:42:48 mallas Exp $
  *
  */
 
@@ -325,4 +325,10 @@ public final class WSFederationConstants {
      * The URL suffix for WS-Fed metadata requests
      */
     public static final String METADATA_URL_SUFFIX = "/FederationMetadata.xml";
+
+     /**
+     * WS-Policy URI.
+     */
+    public static final String WS_POLICY_URI =
+                     "http://schemas.xmlsoap.org/ws/2004/09/policy";
 }

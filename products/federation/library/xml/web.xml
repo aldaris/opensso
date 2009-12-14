@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.20 2009-06-19 02:44:57 bigfatrat Exp $
+   $Id: web.xml,v 1.21 2009-12-14 23:42:49 mallas Exp $
                                                                                 
 -->
 
@@ -321,6 +321,15 @@
             <servlet-name>LoggedOut</servlet-name>
             <jsp-file>/wsfederation/jsp/loggedOut.jsp</jsp-file>
         </servlet>
+        <servlet>
+        <servlet-name>federationrest</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>com.sun.identity.rest.FederationRestService</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
 	<listener>
 		<listener-class>com.sun.identity.common.ShutdownServletContextListener</listener-class>
@@ -606,5 +615,9 @@
             <servlet-name>saml2query</servlet-name>
             <url-pattern>/saml2query/*</url-pattern>
         </servlet-mapping>
+        <servlet-mapping>
+        <servlet-name>federationrest</servlet-name>
+        <url-pattern>/federationws/*</url-pattern>
+    </servlet-mapping>
 </web-app>
 

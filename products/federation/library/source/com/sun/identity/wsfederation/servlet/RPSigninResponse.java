@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninResponse.java,v 1.7 2009-10-28 23:59:00 exu Exp $
+ * $Id: RPSigninResponse.java,v 1.8 2009-12-14 23:42:48 mallas Exp $
  *
  */
 
@@ -44,6 +44,8 @@ import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import com.sun.identity.wsfederation.plugins.SPAccountMapper;
 import com.sun.identity.wsfederation.plugins.SPAttributeMapper;
 import com.sun.identity.wsfederation.profile.RequestSecurityTokenResponse;
+import com.sun.identity.wsfederation.profile.RequestedSecurityToken;
+import com.sun.identity.wsfederation.profile.SPCache;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -212,6 +214,13 @@ public class RPSigninResponse extends WSFederationAction {
             String[] idpArray = {idpEntityId};
             sessionProvider.setProperty(session, 
                 WSFederationConstants.SESSION_IDP, idpArray);
+            RequestedSecurityToken rst = rstr.getRequestedSecurityToken();
+            if(isAssertionCacheEnabled(spssoconfig)) {
+               String tokenID = rst.getTokenId();
+               String[] assertionID = {tokenID};
+               sessionProvider.setProperty(session, "AssertionID", assertionID);
+               SPCache.assertionByIDCache.put(tokenID, rst.toString());
+            }
         } catch (SessionException se) {
             String[] data = {se.getLocalizedMessage(),realm, userName, 
                 authLevel};
@@ -336,5 +345,16 @@ public class RPSigninResponse extends WSFederationAction {
                 }
             }
         }
+    }
+
+    private boolean isAssertionCacheEnabled(SPSSOConfigElement spssoconfig) {          
+         String enabled = WSFederationMetaUtils.getAttribute(spssoconfig,
+               SAML2Constants.ASSERTION_CACHE_ENABLED);
+         if(enabled == null) {
+            //TODO: until the console/cli is fixed for this attribute,
+            // return true.
+            return true;
+         }
+         return "true".equalsIgnoreCase(enabled) ? true : false;
     }
 }

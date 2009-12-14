@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.4 2009-01-28 05:35:07 ww203982 Exp $
+ * $Id: SPCache.java,v 1.5 2009-12-14 23:42:48 mallas Exp $
  *
  */
 
@@ -35,7 +35,13 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Date;
 import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
+import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.wsfederation.common.WSFederationUtils;
+import com.sun.identity.common.PeriodicCleanUpMap;
+import com.sun.identity.common.SystemTimerPool;
 
 
 /**
@@ -45,6 +51,32 @@ import com.sun.identity.shared.ldap.util.DN;
  */
 
 public class SPCache {
+
+    public static int interval = SAML2Constants.CACHE_CLEANUP_INTERVAL_DEFAULT;
+    public static PeriodicCleanUpMap assertionByIDCache = null;
+   
+    static {
+        String intervalStr = SystemPropertiesManager.get(
+            SAML2Constants.CACHE_CLEANUP_INTERVAL);
+        try {
+            if (intervalStr != null && intervalStr.length() != 0) {
+                interval = Integer.parseInt(intervalStr);
+                if (interval < 0) {
+                    interval =
+                        SAML2Constants.CACHE_CLEANUP_INTERVAL_DEFAULT;
+                }
+            }
+        } catch (NumberFormatException e) {
+            if (WSFederationUtils.debug.messageEnabled()) {
+                WSFederationUtils.debug.message("SPCache.constructor: "
+                    + "invalid cleanup interval. Using default.");
+            }
+        }
+        assertionByIDCache = new PeriodicCleanUpMap(interval * 1000,
+                                 interval * 1000);
+        SystemTimerPool.getTimerPool().schedule(assertionByIDCache,
+                new Date(System.currentTimeMillis() + interval * 1000));
+    }
 
     private SPCache() {
     }

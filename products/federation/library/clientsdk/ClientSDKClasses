@@ -541,6 +541,7 @@ com/sun/identity/saml2/xmlsig/SigProvider.class
 com/sun/identity/saml2/soapbinding/QueryClient.class
 com/sun/identity/wsfederation/common/WSFederationException.class
 com/sun/identity/wsfederation/meta/WSFederationMetaException.class
+com/sun/identity/wsfederation/client/WSFederationClient.class
 com/sun/liberty/INameIdentifier.class
 com/sun/liberty/jaxrpc/LibertyClientSSOTokenListener.class
 com/sun/liberty/jaxrpc/LibertyManagerClient.class

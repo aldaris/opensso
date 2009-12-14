@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestSecurityTokenResponse.java,v 1.3 2008-06-25 05:48:08 qcheng Exp $
+ * $Id: RequestSecurityTokenResponse.java,v 1.4 2009-12-14 23:42:48 mallas Exp $
  *
  */
 
@@ -122,7 +122,11 @@ public class RequestSecurityTokenResponse {
                     ((Element)child).getElementsByTagNameNS(
                     WSFederationConstants.WS_ADDRESSING_URI, 
                     WSFederationConstants.ADDRESS_TAG_NAME);
-                // ASSUME exactly one address 
+                // ASSUME exactly one address
+                if(nodes == null || nodes.getLength() == 0) {
+                   continue;
+                }
+
                 String appliesTo = nodes.item(0).getTextContent();
                 
                 if ( debug.messageEnabled() ) {

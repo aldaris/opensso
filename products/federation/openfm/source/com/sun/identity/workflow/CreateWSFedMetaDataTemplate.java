@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateWSFedMetaDataTemplate.java,v 1.8 2009-05-04 18:22:15 exu Exp $
+ * $Id: CreateWSFedMetaDataTemplate.java,v 1.9 2009-12-14 23:42:49 mallas Exp $
  *
  */
 
@@ -326,6 +326,7 @@ public class CreateWSFedMetaDataTemplate {
             { SAML2Constants.AUTH_MODULE_NAME, "" },
             { SAML2Constants.DEFAULT_RELAY_STATE, "" },
             { SAML2Constants.ASSERTION_TIME_SKEW, "300" },
+            { SAML2Constants.ASSERTION_CACHE_ENABLED, "true" },
             { WSFederationConstants.WANT_ASSERTION_SIGNED, "true" },
             { COTConstants.COT_LIST, null },
         };
