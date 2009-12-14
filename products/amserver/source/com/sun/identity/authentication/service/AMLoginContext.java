@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.22 2009-06-19 02:28:00 bigfatrat Exp $
+ * $Id: AMLoginContext.java,v 1.23 2009-12-14 23:40:35 mrudul_uchil Exp $
  *
  */
 
@@ -122,6 +122,7 @@ public class AMLoginContext {
     Callback[] recdCallback;
 
     private static SsoServerAuthSvcImpl authImpl;
+    static Configuration defaultConfig = null;
     
     /**
      * Bundle to be used for localized error message. users can be differnt
@@ -133,14 +134,13 @@ public class AMLoginContext {
 
     static {
         // set the auth configuration programmatically.
-        Configuration defaultConfig = null;
         // this getConfiguration() call throws null exception
         // when no default config is available, which looks like
         // a bug of JDK.
         try {
             defaultConfig = Configuration.getConfiguration();
-        } catch (Exception e) {
-            debug.message("Get Auth Config Error.");
+        } catch (java.lang.SecurityException e) {
+            debug.message("AMLoginContext:Get default JAAS Config Error.");
             if (debug.messageEnabled()) {
                 debug.message("Stack trace:", e);
             }
@@ -148,16 +148,30 @@ public class AMLoginContext {
         AMConfiguration ISConfig = new AMConfiguration(defaultConfig);
         try {
             Configuration.setConfiguration(ISConfig);
-        } catch (Exception e) {
-            debug.error("Set config error:" + e.getMessage());
+        } catch (java.lang.SecurityException e) {
+            debug.error("AMLoginContext:Set AM config error:" + e.getMessage());
             if (debug.messageEnabled()) {
-                debug.message("Stack trace:", e);
+                debug.message("AMLoginContext:Set AM config:Stack trace:", e);
             }
         }
         debug.message("Reset the auth Configuration !");
 
         if (Agent.isRunning()) {
             authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
+        }
+    }
+
+    /**
+     * Sets the JAAS configuration to the default container's configuration.
+     */
+    public static void resetJAASConfig() {
+        try {
+            Configuration.setConfiguration(defaultConfig);
+        } catch (java.lang.SecurityException e) {
+            debug.error("AMLoginContext:resetJAASConfig:" + e.getMessage());
+            if (debug.messageEnabled()) {
+                debug.message("AMLoginContext:resetJAASConfig:Stack trace:", e);
+            }
         }
     }
 

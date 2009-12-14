@@ -43,6 +43,9 @@
     <listener>
         <listener-class>com.sun.identity.monitoring.AgentShutdownServletContextListener</listener-class>
     </listener>
+    <listener>
+        <listener-class>com.sun.identity.authentication.service.AuthServletContextListener</listener-class>
+    </listener>
 
     <!-- listener declaration -->
 
