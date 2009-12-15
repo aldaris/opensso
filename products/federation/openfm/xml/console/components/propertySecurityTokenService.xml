@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySecurityTokenService.xml,v 1.4 2009-12-04 00:03:33 asyhuang Exp $
+   $Id: propertySecurityTokenService.xml,v 1.5 2009-12-15 00:19:59 babysunil Exp $
 
 -->
 
@@ -181,6 +181,24 @@
                 <attribute name="autoSubmit" value="false"/>
             </cc>
         </property>
+        <property>
+           <label name="lbldetectmessagereplay"
+            defaultValue="web.services.security.token.detect.message.replay"
+            labelFor="DetectMessageReplay" />
+           <cc name="DetectMessageReplay"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+               <attribute name="label" value="label.Yes" />
+           </cc>
+       </property>
+       <property>
+           <label name="lbldetectusertokenreplay"
+            defaultValue="web.services.security.token.detect.user.token.replay"
+            labelFor="DetectUserTokenReplay" />
+           <cc name="DetectUserTokenReplay"
+            tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
+               <attribute name="label" value="label.Yes" />
+           </cc>
+       </property> 
     </section>
     
     <section name="SingingAndEncryption" defaultValue="web.services.security.token.singing.and.encryption.section.title">
