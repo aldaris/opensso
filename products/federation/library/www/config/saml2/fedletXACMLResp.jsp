@@ -47,6 +47,7 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="org.owasp.esapi.ESAPI" %>
 
 <%
     String deployuri = request.getRequestURI();
@@ -121,6 +122,7 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
 <th>Policy Decision</th>
 </tr>
 <%
+       if(resource!=null) resource = ESAPI.encoder().encodeForHTML(resource);
        out.println("<tr>");
        out.println("<td>"); 
        out.println(resource);
