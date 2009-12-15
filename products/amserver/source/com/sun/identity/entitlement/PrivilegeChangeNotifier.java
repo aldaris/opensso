@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeChangeNotifier.java,v 1.3 2009-11-19 01:02:03 veiming Exp $
+ * $Id: PrivilegeChangeNotifier.java,v 1.4 2009-12-15 00:44:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -79,7 +79,7 @@ public class PrivilegeChangeNotifier {
 
             String json = toJSONString(realm, privilegeName, resources);
             for (URL url : urls) {
-                thrdPool.submit(new Task(adminSubject, url, json));
+                thrdPool.submit(new Task(adminSubject, url.toString(), json));
             }
         } catch (JSONException e) {
             PrivilegeManager.debug.error("PrivilegeChangeNotifier.notify", e);
@@ -148,12 +148,12 @@ public class PrivilegeChangeNotifier {
 
     public class Task implements Runnable {
         private Subject adminSubject;
-        private URL url;
+        private String url;
         private String json;
 
         Task(
             Subject adminSubject,
-            URL url,
+            String url,
             String json
         ) {
             this.adminSubject = adminSubject;
@@ -192,8 +192,9 @@ public class PrivilegeChangeNotifier {
 
             try {
                 try {
+                    URL urlObj = new URL(url);
                     HttpURLConnection conn = (HttpURLConnection)
-                        url.openConnection();
+                        urlObj.openConnection();
                     conn.setConnectTimeout(HTTP_TIMEOUT);
                     conn.setDoOutput(true);
                     wr = new OutputStreamWriter(

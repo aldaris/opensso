@@ -19,7 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerResource.java,v 1.4 2009-11-26 17:06:06 veiming Exp $
+ * $Id: ListenerResource.java,v 1.5 2009-12-15 00:44:19 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -27,8 +27,6 @@ package com.sun.identity.rest;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.EntitlementListener;
 import com.sun.identity.entitlement.ListenerManager;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
@@ -61,8 +59,7 @@ public class ListenerResource extends ResourceBase {
     ) {
         try {
             Subject caller = getCaller(request);
-            URL urlObj = new URL(url);
-            EntitlementListener l = new EntitlementListener(urlObj,
+            EntitlementListener l = new EntitlementListener(url,
                 application, resources);
             ListenerManager.getInstance().addListener(caller, l);
             return createResponseJSONString(201, headers, "Created");
@@ -72,9 +69,6 @@ public class ListenerResource extends ResourceBase {
             throw getWebApplicationException(e, MimeType.JSON);
         } catch (EntitlementException e) {
             throw getWebApplicationException(headers, e, MimeType.JSON);
-        } catch (MalformedURLException e) {
-            Object[] param = {url};
-            throw getWebApplicationException(headers, 400, 426, param);
         }
     }
 
@@ -88,8 +82,7 @@ public class ListenerResource extends ResourceBase {
     ) {
         try {
             Subject caller = getCaller(request);
-            URL urlObj = new URL(url);
-            ListenerManager.getInstance().removeListener(caller, urlObj);
+            ListenerManager.getInstance().removeListener(caller, url);
             return createResponseJSONString(200, headers, "OK");
         } catch (RestException e) {
             throw getWebApplicationException(headers, e, MimeType.JSON);
@@ -97,8 +90,6 @@ public class ListenerResource extends ResourceBase {
             throw getWebApplicationException(e, MimeType.JSON);
         } catch (EntitlementException e) {
             throw getWebApplicationException(headers, e, MimeType.JSON);
-        } catch (MalformedURLException e) {
-            throw getWebApplicationException(426, e, MimeType.JSON);
         }
     }
 
@@ -112,9 +103,8 @@ public class ListenerResource extends ResourceBase {
     ) {
         try {
             Subject caller = getCaller(request);
-            URL urlObj = new URL(url);
             EntitlementListener listener = ListenerManager.getInstance()
-                .getListener(caller, urlObj);
+                .getListener(caller, url);
             if (listener == null) {
                 String[] param = {url.toString()};
                 throw new EntitlementException(427, param);
@@ -127,8 +117,6 @@ public class ListenerResource extends ResourceBase {
             throw getWebApplicationException(headers, e, MimeType.JSON);
         } catch (EntitlementException e) {
             throw getWebApplicationException(headers, e, MimeType.JSON);
-        } catch (MalformedURLException e) {
-            throw getWebApplicationException(426, e, MimeType.JSON);
         }
     }
 }

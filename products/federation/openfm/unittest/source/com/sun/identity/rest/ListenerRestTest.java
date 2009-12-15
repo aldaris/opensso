@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerRestTest.java,v 1.3 2009-11-26 17:06:07 veiming Exp $
+ * $Id: ListenerRestTest.java,v 1.4 2009-12-15 00:44:19 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -46,8 +46,10 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.unittest.UnittestLog;
 import com.sun.identity.shared.encode.Hash;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.representation.Form;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -60,6 +62,7 @@ import javax.security.auth.Subject;
 import javax.ws.rs.core.Cookie;
 import org.json.JSONObject;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.errors.EncodingException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -139,7 +142,76 @@ public class ListenerRestTest {
         IdRepoUtils.deleteIdentity(REALM, agent);
     }
 
+
     @Test
+    public void negativeTest() throws Exception {
+        noURLInPost();
+        noURLInGet();
+        noURLInDelete();
+    }
+
+    private void noURLInPost() throws Exception {
+        Form form = new Form();
+        form.add("resources", RESOURCE_NAME + "/*");
+        form.add("subject", hashedTokenId);
+        try {
+            listenerClient
+                .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+                .cookie(cookie)
+                .post(String.class, form);
+        } catch (UniformInterfaceException e) {
+            validateUniformInterfaceException(e, 426, "noURLInPost");
+        }
+    }
+
+    private void noURLInGet() throws Exception {
+        try {
+            getListener("");
+        } catch (UniformInterfaceException e) {
+            int errorCode = e.getResponse().getStatus();
+            if (errorCode != 405) {
+                throw new Exception(
+                    "ListenerRestTest.noURLInGet: incorrect error code");
+            }
+        }
+    }
+
+    private void noURLInDelete() throws Exception {
+        try {
+           listenerClient.path("")
+               .queryParam("subject", hashedTokenId)
+               .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+               .cookie(cookie).delete(String.class);
+        } catch (UniformInterfaceException e) {
+            int errorCode = e.getResponse().getStatus();
+            if (errorCode != 405) {
+                throw new Exception(
+                    "ListenerRestTest.noURLInDelete: incorrect error code");
+            }
+        }
+    }
+
+    private void validateUniformInterfaceException(
+        UniformInterfaceException e,
+        int expectedStatusCode,
+        String methodName
+    ) throws Exception {
+        int errorCode = e.getResponse().getStatus();
+        if (errorCode != 400) {
+            throw new Exception(
+                "ListenerRestTest." + methodName + ": incorrect error code");
+        }
+        String json = e.getResponse().getEntity(String.class);
+        JSONObject jo = new JSONObject(json);
+        if (jo.optInt("statusCode") != expectedStatusCode) {
+            throw new Exception(
+                "ListenerRestTest." + methodName + ", status code not " +
+                expectedStatusCode);
+        }
+    }
+
+
+    @Test(dependsOnMethods={"negativeTest"})
     public void test() throws Exception {
         Form form = new Form();
         form.add("resources", RESOURCE_NAME + "/*");
@@ -260,29 +332,9 @@ public class ListenerRestTest {
 
     @Test(dependsOnMethods = {"testAddDifferentApp"})
     public void testGetListener() throws Exception {
-        //have to use dsame user here
-
-       String adminTokenId = adminToken.getTokenID().toString();
-       String adminHashedTokenId = Hash.hash(adminTokenId);
-       String adminTokenIdHeader = RestServiceManager.SSOTOKEN_SUBJECT_PREFIX +
-           RestServiceManager.SUBJECT_DELIMITER + adminTokenId;
-       String cookieValue = adminTokenId;
-
-        if (Boolean.parseBoolean(
-            SystemProperties.get(Constants.AM_COOKIE_ENCODE, "false"))) {
-            cookieValue = URLEncoder.encode(adminTokenId, "UTF-8");
-        }
-
-        cookie = new Cookie(SystemProperties.get(Constants.AM_COOKIE_NAME),
-            cookieValue);
-
-        String result = listenerClient.path(ENC_NOTIFICATION_URL)
-            .queryParam("subject", adminHashedTokenId)
-            .header(RestServiceManager.SUBJECT_HEADER_NAME, adminTokenIdHeader)
-            .cookie(cookie)
-            .get(String.class);
 
         try {
+            String result = getListener(NOTIFICATION_URL);
             JSONObject jo = new JSONObject(result);
             if (jo.optInt("statusCode") != 200) {
                 throw new Exception("ListenerRESTTest.postDecisionsTest() failed,"
@@ -312,6 +364,30 @@ public class ListenerRestTest {
         } catch (MalformedURLException e) {
             //ignore
         }
+    }
+
+    private String getListener(String url)
+        throws UnsupportedEncodingException, EncodingException {
+        String adminTokenId = adminToken.getTokenID().toString();
+        String adminHashedTokenId = Hash.hash(adminTokenId);
+        String adminTokenIdHeader = RestServiceManager.SSOTOKEN_SUBJECT_PREFIX +
+            RestServiceManager.SUBJECT_DELIMITER + adminTokenId;
+        String cookieValue = adminTokenId;
+
+        if (Boolean.parseBoolean(
+            SystemProperties.get(Constants.AM_COOKIE_ENCODE, "false"))) {
+            cookieValue = URLEncoder.encode(adminTokenId, "UTF-8");
+        }
+
+        cookie = new Cookie(SystemProperties.get(Constants.AM_COOKIE_NAME),
+            cookieValue);
+        String encodedURL = ESAPI.encoder().encodeForURL(url);
+        String result = listenerClient.path(encodedURL)
+            .queryParam("subject", adminHashedTokenId)
+            .header(RestServiceManager.SUBJECT_HEADER_NAME, adminTokenIdHeader)
+            .cookie(cookie)
+            .get(String.class);
+        return result;
     }
 
 

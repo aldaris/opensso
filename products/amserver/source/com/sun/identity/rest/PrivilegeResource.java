@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeResource.java,v 1.4 2009-11-26 17:06:06 veiming Exp $
+ * $Id: PrivilegeResource.java,v 1.5 2009-12-15 00:44:19 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -98,8 +98,7 @@ public class PrivilegeResource extends ResourceBase {
         try {
             Subject caller = getCaller(request);
             PrivilegeManager pm = PrivilegeManager.getInstance(realm, caller);
-            JSONObject jo = new JSONObject(jsonString);
-            Privilege privilege = Privilege.getNewInstance(jo);
+            Privilege privilege = Privilege.getNewInstance(jsonString);
             pm.addPrivilege(privilege);
             return createResponseJSONString(201, headers, "Created");
         } catch (JSONException e) {
@@ -130,8 +129,7 @@ public class PrivilegeResource extends ResourceBase {
         try {
             Subject caller = getCaller(request);
             PrivilegeManager pm = PrivilegeManager.getInstance(realm, caller);
-            Privilege privilege = Privilege.getNewInstance(
-                new JSONObject(jsonString));
+            Privilege privilege = Privilege.getNewInstance(jsonString);
             pm.modifyPrivilege(privilege);
             return createResponseJSONString(200, headers, "OK");
         } catch (JSONException e) {

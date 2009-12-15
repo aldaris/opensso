@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOEntitlementListener.java,v 1.3 2009-11-19 01:02:03 veiming Exp $
+ * $Id: OpenSSOEntitlementListener.java,v 1.4 2009-12-15 00:44:19 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -39,6 +39,7 @@ import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
 import java.util.ArrayList;
@@ -58,8 +59,6 @@ public class OpenSSOEntitlementListener
 
     public void addListener(Subject adminSubject, EntitlementListener l)
         throws EntitlementException {
-        //TOFIX: adminSubject check
-        
         for (String applName : l.getMapAppToRes().keySet()) {
             if (!doesApplicationExist(applName)) {
                 String[] params = {applName};
@@ -83,24 +82,33 @@ public class OpenSSOEntitlementListener
         storeListeners(listeners);
     }
 
-    public boolean removeListener(Subject adminSubject, URL url)
+    public boolean removeListener(Subject adminSubject, String url)
         throws EntitlementException {
-        //TOFIX: adminSubject check
 
-        boolean removed = false;
-        List<EntitlementListener> listeners = getListeners();
-
-        for (int i = listeners.size() -1; i >= 0; --i) {
-            EntitlementListener l = listeners.get(i);
-            if (l.getUrl().equals(url)) {
-                listeners.remove(l);
-                removed = true;
-                break;
-            }
+        if (url == null) {
+            throw new EntitlementException(436);
         }
 
-        storeListeners(listeners);
-        return removed;
+        try {
+            URL urlObj = new URL(url);
+
+            boolean removed = false;
+            List<EntitlementListener> listeners = getListeners();
+
+            for (int i = listeners.size() - 1; i >= 0; --i) {
+                EntitlementListener l = listeners.get(i);
+                if (l.getUrl().equals(urlObj)) {
+                    listeners.remove(l);
+                    removed = true;
+                    break;
+                }
+            }
+
+            storeListeners(listeners);
+            return removed;
+        } catch (MalformedURLException e) {
+            throw new EntitlementException(435);
+        }
     }
 
     private void storeListeners(List<EntitlementListener> listeners) 

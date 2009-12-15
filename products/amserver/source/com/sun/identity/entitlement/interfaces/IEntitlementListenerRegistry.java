@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IEntitlementListenerRegistry.java,v 1.1 2009-09-14 23:02:41 veiming Exp $
+ * $Id: IEntitlementListenerRegistry.java,v 1.2 2009-12-15 00:44:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement.interfaces;
 
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.EntitlementListener;
-import java.net.URL;
 import java.util.Set;
 import javax.security.auth.Subject;
 
@@ -66,6 +65,6 @@ public interface IEntitlementListenerRegistry {
      * @return <code>true</code> if listener(s) is/are successfully removed.
      * @throws EntitlementException if listener(s) cannot be removed.
      */
-    boolean removeListener(Subject adminSubject, URL url)
+    boolean removeListener(Subject adminSubject, String url)
         throws EntitlementException;
 }

@@ -19,11 +19,12 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DecisionResource.java,v 1.2 2009-11-23 21:25:14 veiming Exp $
+ * $Id: DecisionResource.java,v 1.3 2009-12-15 00:44:19 veiming Exp $
  */
 
 package com.sun.identity.rest;
 
+import com.sun.identity.entitlement.ApplicationTypeManager;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Evaluator;
@@ -87,12 +88,14 @@ public class DecisionResource extends ResourceBase {
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("action") String action,
         @QueryParam("resource") String resource,
-        @QueryParam("application") String application,
+        @QueryParam("application") @DefaultValue(
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME) String application ,
         @QueryParam("env") List<String> environment
     ) {
         if (!realm.startsWith("/")) {
             realm = "/" + realm;
         }
+        
         try {
             Subject caller = getCaller(request);
             Map env = getMap(environment);
@@ -121,7 +124,6 @@ public class DecisionResource extends ResourceBase {
      *
      * @param realm Realm Name.
      * @param subject Subject of interest.
-     * @param action action to be evaluated.
      * @param resource resources to be evaluated
      * @param application application name.
      * @param environment environment parameters.
@@ -135,7 +137,8 @@ public class DecisionResource extends ResourceBase {
         @Context HttpServletRequest request,
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("resources") List<String> resources,
-        @QueryParam("application") String application,
+        @QueryParam("application") @DefaultValue(
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME) String application,
         @QueryParam("env") List<String> environment
     ) {
         try {
@@ -204,7 +207,8 @@ public class DecisionResource extends ResourceBase {
         @Context HttpServletRequest request,
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("resource") String resource,
-        @QueryParam("application") String application,
+        @QueryParam("application") @DefaultValue(
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME) String application,
         @QueryParam("env") List<String> environment
     ) {
         if (!realm.startsWith("/")) {
@@ -257,7 +261,8 @@ public class DecisionResource extends ResourceBase {
         @Context HttpServletRequest request,
         @QueryParam("realm") @DefaultValue("/") String realm,
         @QueryParam("resource") String resource,
-        @QueryParam("application") String application,
+        @QueryParam("application") @DefaultValue(
+            ApplicationTypeManager.URL_APPLICATION_TYPE_NAME) String application,
         @QueryParam("env") List<String> environment
     ) {
         if (!realm.startsWith("/")) {

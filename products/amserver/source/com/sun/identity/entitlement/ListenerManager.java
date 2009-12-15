@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListenerManager.java,v 1.1 2009-09-14 23:02:40 veiming Exp $
+ * $Id: ListenerManager.java,v 1.2 2009-12-15 00:44:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.sun.identity.entitlement.interfaces.IEntitlementListenerRegistry;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
@@ -87,15 +88,25 @@ public final class ListenerManager {
      */
     public EntitlementListener getListener(
         Subject adminSubject,
-        URL url)
+        String url)
         throws EntitlementException {
-        Set<EntitlementListener> listeners = getListeners(adminSubject);
-        for (EntitlementListener l : listeners) {
-            if (l.getUrl().equals(url)) {
-                return l;
-            }
+
+        if (url == null) {
+            throw new EntitlementException(436);
         }
-        return null;
+
+        try {
+            URL urlObj = new URL(url);
+            Set<EntitlementListener> listeners = getListeners(adminSubject);
+            for (EntitlementListener l : listeners) {
+                if (l.getUrl().equals(urlObj)) {
+                    return l;
+                }
+            }
+            return null;
+        } catch (MalformedURLException e) {
+            throw new EntitlementException(435);
+        }
     }
 
     /**
@@ -119,7 +130,7 @@ public final class ListenerManager {
      * @return <code>true</code> if listener(s) is/are successfully removed.
      * @throws EntitlementException if listener(s) cannot be removed.
      */
-    public boolean removeListener(Subject adminSubject, URL url)
+    public boolean removeListener(Subject adminSubject, String url)
         throws EntitlementException {
         if (registry != null) {
             return registry.removeListener(adminSubject, url);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.7 2009-11-05 21:13:47 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.8 2009-12-15 00:44:19 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -129,6 +129,10 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
 
     public Privilege getPrivilege(String privilegeName, Subject adminSubject)
         throws EntitlementException {
+        if (privilegeName == null) {
+            throw new EntitlementException(12);
+        }
+
         Privilege privilege = null;
         try {
             Object policy = null;
@@ -211,7 +215,10 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      */
     @Override
     public void removePrivilege(String privilegeName)
-            throws EntitlementException {
+        throws EntitlementException {
+        if (privilegeName == null) {
+            throw new EntitlementException(12);
+        }
         try {
             if (!migratedToEntitlementSvc) {
                 pm.removePolicy(privilegeName);

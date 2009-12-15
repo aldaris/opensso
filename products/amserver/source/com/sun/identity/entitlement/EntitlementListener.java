@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementListener.java,v 1.2 2009-09-21 18:33:45 dillidorai Exp $
+ * $Id: EntitlementListener.java,v 1.3 2009-12-15 00:44:18 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -78,6 +78,42 @@ public final class EntitlementListener {
      *         <code>resourceNames</code> is null.
      */
     public EntitlementListener(
+        String url,
+        String application,
+        Collection<String> resourceNames
+    ) throws EntitlementException {
+        if (url == null) {
+            throw new EntitlementException(426);
+        }
+
+        try {
+            init(new URL(url), application, resourceNames);
+        } catch (MalformedURLException e) {
+            throw new EntitlementException(435);
+        }
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param url URL of which notification will be sent to.
+     * @param application Application name.
+     * @param resourceNames Notification will be send to <code>url</code>
+     *        if privilege for resources matches with the elements in
+     *        <code>resourceNames</code>. Wildcard and sub resource matching
+     *        apply too.
+     * @throws EntitlementException if <code>url</code> or
+     *         <code>resourceNames</code> is null.
+     */
+    public EntitlementListener(
+        URL url,
+        String application,
+        Collection<String> resourceNames)
+        throws EntitlementException {
+        init(url, application, resourceNames);
+    }
+
+    private void init(
         URL url,
         String application,
         Collection<String> resourceNames)

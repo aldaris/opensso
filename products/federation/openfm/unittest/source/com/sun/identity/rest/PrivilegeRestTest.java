@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeRestTest.java,v 1.4 2009-11-26 17:06:07 veiming Exp $
+ * $Id: PrivilegeRestTest.java,v 1.5 2009-12-15 00:44:20 veiming Exp $
  */
 
 package com.sun.identity.rest;
@@ -39,6 +39,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.encode.Hash;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.representation.Form;
 import java.net.URLEncoder;
@@ -112,6 +113,58 @@ public class PrivilegeRestTest {
     }
 
     @Test
+    public void negativeTest() throws Exception {
+        noJSONStringInPost();
+        noJSONStringInPut();
+    }
+
+    private void noJSONStringInPost() throws Exception {
+        Form form = new Form();
+        form.add("subject", hashedTokenId);
+        try {
+            webClient.header(
+                RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+                .cookie(cookie)
+                .post(String.class, form);
+        } catch (UniformInterfaceException e) {
+            validateUniformInterfaceException(e, 9, "noJSONStringInPost");
+        }
+    }
+    
+    private void noJSONStringInPut() throws Exception {
+        try {
+            Form form = new Form();
+            webClient
+                .path(PRIVILEGE_NAME)
+                .queryParam("subject", hashedTokenId)
+                .header(RestServiceManager.SUBJECT_HEADER_NAME, tokenIdHeader)
+                .cookie(cookie)
+                .put(String.class, form);
+        } catch (UniformInterfaceException e) {
+            validateUniformInterfaceException(e, 9, "noJSONStringInPut");
+        }
+    }
+
+    private void validateUniformInterfaceException(
+        UniformInterfaceException e,
+        int expectedStatusCode,
+        String methodName
+    ) throws Exception {
+        int errorCode = e.getResponse().getStatus();
+        if (errorCode != 400) {
+            throw new Exception(
+                "PrivilegeRestTest." + methodName + ": incorrect error code");
+        }
+        String json = e.getResponse().getEntity(String.class);
+        JSONObject jo = new JSONObject(json);
+        if (jo.optInt("statusCode") != expectedStatusCode) {
+            throw new Exception(
+                "PrivilegeRestTest." + methodName + ", status code not " +
+                expectedStatusCode);
+        }
+    }
+
+    @Test(dependsOnMethods={"negativeTest"})
     public void search() throws Exception {
         String result = webClient
             .path("/")
