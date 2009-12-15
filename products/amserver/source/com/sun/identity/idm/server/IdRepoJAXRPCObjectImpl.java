@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoJAXRPCObjectImpl.java,v 1.11 2009-08-25 06:53:14 hengming Exp $
+* $Id: IdRepoJAXRPCObjectImpl.java,v 1.12 2009-12-15 00:11:43 mrudul_uchil Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -916,7 +916,11 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
              */
             Object context = null;
             if (agentTokenStr.indexOf('.') != -1) {
-                context = InetAddress.getByName(agentTokenStr);
+                try {
+                    context = InetAddress.getByName(agentTokenStr);
+                } catch (Exception e) {
+                    context = tokenManager.createSSOToken(agentTokenStr);
+                }
             } else {
                 context = tokenManager.createSSOToken(agentTokenStr);
             } 
