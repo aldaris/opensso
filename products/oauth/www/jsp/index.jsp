@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.1 2009-11-20 19:25:15 huacui Exp $
+   $Id: index.jsp,v 1.2 2009-12-15 01:28:22 huacui Exp $
 
 --%>
 
@@ -43,7 +43,7 @@
         </h2>
         <form name="consumer_reg" action="registerconsumer.jsp" method="POST">
             Service Consumer Name: <input type="text" name="name" value="" size="30" /><br><br>
-            Service Consumer URI: <input type="text" name="svcuri" value="http://" size="100" /><br><br>
+            Service Consumer X509 Certificate (optional): <br><textarea name="cert" rows="10" cols="80"></textarea><br><br><br>
             Register this Service Consumer <input type="submit" value="Register" name="cons_reg" /><br>
         </form>
         <hr><br>

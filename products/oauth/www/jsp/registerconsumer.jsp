@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: registerconsumer.jsp,v 1.1 2009-11-20 19:25:15 huacui Exp $
+   $Id: registerconsumer.jsp,v 1.2 2009-12-15 01:28:22 huacui Exp $
 
 --%>
 
@@ -40,8 +40,7 @@
         <h1>Registering Service...</h1>
         <%
             String name = request.getParameter("name");
-            String svcuri = request.getParameter("svcuri");
-            String rsakey = request.getParameter("rsakey");
+            String cert = request.getParameter("cert");
             String protocol = request.getScheme();
             String host = request.getServerName();
             int port = request.getServerPort();
@@ -59,12 +58,11 @@
                 conn.setUseCaches(false);
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 java.io.DataOutputStream dos = new java.io.DataOutputStream(conn.getOutputStream());
-                String postmsg = "name=" + java.net.URLEncoder.encode(name)
-                        + "&service=" + java.net.URLEncoder.encode(svcuri);
-                if (rsakey != null) {
-                    rsakey = rsakey.replaceAll("[\\r\\n]", "");
-                    postmsg += "&rsapublickey=" + java.net.URLEncoder.encode(rsakey);
-                    }
+                String postmsg = "name=" + java.net.URLEncoder.encode(name);
+                if (cert != null) {
+                    //cert = cert.replaceAll("[\\r\\n]", "");
+                    postmsg += "&certificate=" + java.net.URLEncoder.encode(cert);
+                }
                 dos.writeBytes(postmsg);
                 dos.flush();
                 dos.close();

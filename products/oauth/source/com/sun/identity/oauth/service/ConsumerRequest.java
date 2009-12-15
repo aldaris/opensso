@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConsumerRequest.java,v 1.2 2009-12-09 21:46:40 huacui Exp $
+ * $Id: ConsumerRequest.java,v 1.3 2009-12-15 01:27:48 huacui Exp $
  *
  */
 
@@ -108,7 +108,7 @@ public class ConsumerRequest implements OAuthServiceConstants {
         OAuthResourceManager oauthResMgr = OAuthResourceManager.getInstance();
         try {
             Consumer cons = new Consumer();
-            String sigmeth = null;
+            String cert = null;
             String tmpsecret = null;
             Boolean keyed = false;
 
@@ -131,8 +131,8 @@ public class ConsumerRequest implements OAuthServiceConstants {
                            .type(MediaType.APPLICATION_FORM_URLENCODED).build();
                     }
                     cons.setConsName(consumerName);
-                } else if (key.equalsIgnoreCase(C_SIGNATURE_METHOD)) {
-                    sigmeth = URLDecoder.decode(val);
+                } else if (key.equalsIgnoreCase(C_CERT)) {
+                    cert = val; // The cert is in PEM format (no URL decode needed)
                 } else if (key.equalsIgnoreCase(C_SECRET)) {
                     tmpsecret = URLDecoder.decode(val);
                 } else if (key.equalsIgnoreCase(C_KEY)) {
@@ -155,13 +155,12 @@ public class ConsumerRequest implements OAuthServiceConstants {
                 }
             }
 
+            if (cert != null) {
+                cons.setConsRsakey(cert);
+            }
+
             if (tmpsecret != null) {
-                if ((sigmeth != null) && sigmeth.equalsIgnoreCase(RSA_SHA1.NAME)) {
-                    cons.setConsRsakey(tmpsecret);
-                    cons.setConsSecret(new UniqueRandomString().getString());
-                } else {
-                    cons.setConsSecret(tmpsecret);
-                }
+                cons.setConsSecret(tmpsecret);
             } else {
                 cons.setConsSecret(new UniqueRandomString().getString());
             }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessTokenRequest.java,v 1.1 2009-11-20 19:31:57 huacui Exp $
+ * $Id: AccessTokenRequest.java,v 1.2 2009-12-15 01:27:48 huacui Exp $
  *
  */
 
@@ -50,6 +50,7 @@ import com.sun.jersey.oauth.signature.OAuthParameters;
 import com.sun.jersey.oauth.signature.OAuthSecrets;
 import com.sun.jersey.oauth.signature.OAuthSignature;
 import com.sun.jersey.oauth.signature.OAuthSignatureException;
+import com.sun.jersey.oauth.signature.RSA_SHA1;
 import com.sun.identity.oauth.service.util.UniqueRandomString;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
@@ -109,14 +110,28 @@ public class AccessTokenRequest implements OAuthServiceConstants {
                 throw new WebApplicationException(new Throwable(
                             "Consumer key is missing."), BAD_REQUEST);
             }
+
+            String signatureMethod = params.getSignatureMethod();
+            if (signatureMethod == null) {
+                throw new WebApplicationException(new Throwable(
+                      "Signature Method is missing."), BAD_REQUEST);
+            }
+
             cons = rt.getConsumerId();
             if (cons == null) {
                 throw new WebApplicationException(new Throwable(
                  "Consumer key invalid or service not registered"), BAD_REQUEST);
             }
 
+            String secret = null;
+            if (signatureMethod.equalsIgnoreCase(RSA_SHA1.NAME)) {
+                secret = cons.getConsRsakey();
+            } else {
+                secret = cons.getConsSecret();
+            }
+
             OAuthSecrets secrets = new OAuthSecrets().consumerSecret(
-               cons.getConsSecret()).tokenSecret(rt.getReqtSecret());
+               secret).tokenSecret(rt.getReqtSecret());
             try {
                 sigIsOk = OAuthSignature.verify(request, params, secrets);
             } catch (OAuthSignatureException ex) {

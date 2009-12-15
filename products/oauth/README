@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.2 2009-12-04 00:08:20 huacui Exp $
+$Id: README,v 1.3 2009-12-15 01:26:52 huacui Exp $
 
 ------------------------------------------------------------------------
 
@@ -44,7 +44,8 @@ II. Use OAuth Token Service in OpenSSO
 
 The OpenSSO OAuth Token Service supports Consumer registration, 
 Request Token request, Request Token authorization, and Access Token
-request. The signature methods supported are HMAC-SHA1 and PLAINTEXT.
+request. The signature methods supported are HMAC-SHA1, RSA-SHA1,
+and PLAINTEXT.
 The following URLs can be used to access the services (The host, port, 
 and deploy-uri are the fully qualified host name, port number, and 
 deployment URI of OpenSSO server):
@@ -67,8 +68,10 @@ An OAuth Consumer needs to register to OpenSSO OAuth Token Service first
 before it can request for OAuth tokens.
 The registration can be done using the OAuth Consumer Registation URL 
 http(s)://host:port/deploy-uri/oauth/index.jsp
-Enter a Service Consumer Name and an optional Service Consumer URI, 
-then Click on the Register button to register the consumer.
+Enter a Service Consumer Name and an optional Service Consumer 
+X509 certificate in PEM format. The certificate is required for RSA-SHA1
+signature method. Then Click on the Register button to register the 
+consumer.
 Upon successful registration, the Oauth Service sends back a response:
   Service Consumer registered.
   consumer_key=http(s)://host:port/deploy-uri/resources/1/oauth/consumer/7faf3762e2b048e2b4998f3e65c376b4

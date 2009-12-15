@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OAuthServiceConstants.java,v 1.1 2009-11-20 19:31:57 huacui Exp $
+ * $Id: OAuthServiceConstants.java,v 1.2 2009-12-15 01:27:48 huacui Exp $
  *
  */
 
@@ -75,6 +75,7 @@ public interface OAuthServiceConstants {
     public static final String OAUTH_SHARED_SECRET = "shared_secret";
 
     public static final String C_NAME = "name";
+    public static final String C_CERT = "certificate";
     public static final String C_SIGNATURE_METHOD = "signature_method";
     public static final String C_SECRET = "secret";
     public static final String C_KEY = "cons_key";
