@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.18 2009-07-27 19:50:55 bigfatrat Exp $
+ * $Id: DBHandler.java,v 1.19 2009-12-15 17:59:16 bigfatrat Exp $
  *
  */
 
@@ -88,8 +88,7 @@ public class DBHandler extends Handler {
     private LinkedList recordBuffer;
     private TimeBufferingTask bufferTask;
     private boolean timeBufferingEnabled = false;
-    private SsoServerLoggingSvcImpl logServiceImplForMonitoring =
-        (SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
+    private SsoServerLoggingSvcImpl logServiceImplForMonitoring = null;
     private SsoServerLoggingHdlrEntryImpl dbLogHandlerForMonitoring = null;
     //
     //  this is to keep track when the connection to the DB
@@ -236,8 +235,17 @@ public class DBHandler extends Handler {
         throws ConnectionException, DriverLoadException 
     {
         //Monit start
-        if (Agent.isRunning() && dbLogHandlerForMonitoring != null) {
-            dbLogHandlerForMonitoring.incHandlerConnectionRequests(1);
+        if (Agent.isRunning()) {
+            if (dbLogHandlerForMonitoring == null) {
+                logServiceImplForMonitoring =
+                    (SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
+                dbLogHandlerForMonitoring =
+                    logServiceImplForMonitoring.getHandler(
+                        SsoServerLoggingSvcImpl.DB_HANDLER_NAME);
+            }
+            if (dbLogHandlerForMonitoring != null) {
+                dbLogHandlerForMonitoring.incHandlerConnectionRequests(1);
+            }
         }
         //Monit end
         try {
@@ -384,6 +392,8 @@ public class DBHandler extends Handler {
         }
 
         if (Agent.isRunning()) {
+            logServiceImplForMonitoring =
+                (SsoServerLoggingSvcImpl) Agent.getLoggingSvcMBean();
             dbLogHandlerForMonitoring = logServiceImplForMonitoring.getHandler(
                 SsoServerLoggingSvcImpl.DB_HANDLER_NAME);
         }
