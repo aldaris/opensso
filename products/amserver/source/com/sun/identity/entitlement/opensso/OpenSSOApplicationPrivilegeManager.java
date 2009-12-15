@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.8 2009-12-07 19:46:46 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.9 2009-12-15 00:57:54 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -712,10 +712,10 @@ public class OpenSSOApplicationPrivilegeManager extends
         String name = app.getName();
         for (ReferredApplication a : appls) {
             if (a.getName().equals(name)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @Override
