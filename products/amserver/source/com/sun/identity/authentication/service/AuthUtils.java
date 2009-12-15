@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.32 2009-11-25 12:03:19 manish_rustagi Exp $
+ * $Id: AuthUtils.java,v 1.33 2009-12-15 16:39:47 qcheng Exp $
  *
  */
 
 
 package com.sun.identity.authentication.service;
 
+import java.net.URL;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -55,11 +56,13 @@ import com.iplanet.sso.SSOToken;
 
 import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.Session;
+import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
 
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.iplanet.am.util.Misc;
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.common.Constants;
 
 import com.sun.identity.security.AdminTokenAction;
@@ -120,6 +123,8 @@ public class AuthUtils extends AuthClientUtils {
     private static Hashtable moduleService = new Hashtable();
     private static ResourceBundle bundle;
     static Debug utilDebug = Debug.getInstance("amAuthUtils");    
+    private static String serviceURI = SystemProperties.get(
+        Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR) + "/UI/Login";
 
     /*
      * Private constructor to prevent any instances being created
@@ -206,6 +211,40 @@ public class AuthUtils extends AuthClientUtils {
                                   + sid);
                 utilDebug.message("AuthUtil:getAuthContext:authContext is..: "
                 + authContext);
+            }
+
+            if(!sid.isNull() && authContext == null) {
+                String authCookieValue = getAuthCookieValue(request);
+                if ((authCookieValue != null) && (authCookieValue.length() != 0)
+                        && (!authCookieValue.equalsIgnoreCase("LOGOUT"))) {
+                    String cookieURL = null;
+                    try {
+                        SessionID sessionID = new SessionID(authCookieValue);
+                        URL sessionServerURL = 
+                            Session.getSessionServiceURL(sessionID);
+                        cookieURL = sessionServerURL.getProtocol()
+                            + "://" + sessionServerURL.getHost() + ":"
+                            + Integer.toString(sessionServerURL.getPort()) 
+                            + serviceURI;
+                    } catch (SessionException e) {
+                        if (utilDebug.messageEnabled()) {
+                        	utilDebug.message("AuthUtils:getAuthContext():"
+                                + e.toString());
+                        }
+                    }
+                    if (utilDebug.messageEnabled()) {
+                    	utilDebug.message("AuthUtils:getAuthContext():"
+                            + "cookieURL : " + cookieURL);
+                    }
+                    if ((cookieURL != null) && (cookieURL.length() != 0) &&
+                        (isLocalServer(cookieURL,true))) {
+                        utilDebug.error("AuthUtils:getAuthContext(): "
+                            + "Invalid Session Timed out");
+                        clearAllCookies(request, response);
+                        throw new AuthException(
+                            AMAuthErrorCode.AUTH_TIMEOUT, null);
+                    }            	
+                }
             }
             
             if (utilDebug.messageEnabled()) {
