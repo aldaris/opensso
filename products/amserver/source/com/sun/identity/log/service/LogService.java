@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogService.java,v 1.4 2008-06-25 05:43:39 qcheng Exp $
+ * $Id: LogService.java,v 1.5 2009-12-15 18:00:14 bigfatrat Exp $
  *
  */
 
@@ -47,6 +47,9 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.log.spi.Debug;
+import com.sun.identity.monitoring.Agent;
+import com.sun.identity.monitoring.SsoServerLoggingHdlrEntryImpl;
+import com.sun.identity.monitoring.SsoServerLoggingSvcImpl;
 import com.sun.identity.session.util.RestrictedTokenHelper;
 import com.sun.identity.session.util.SessionUtils;
 
@@ -169,6 +172,14 @@ public class LogService implements RequestHandler {
                         Debug.error("LogService::process():",e);
                     // FORMAT ERROR RESPONSE HERE
                     res = new Response("ERROR");
+                    if (Agent.isRunning()) {
+                        SsoServerLoggingSvcImpl slsi =
+                            (SsoServerLoggingSvcImpl)Agent.getLoggingSvcMBean();
+                        SsoServerLoggingHdlrEntryImpl slei =
+                            slsi.getHandler(
+                                SsoServerLoggingSvcImpl.REMOTE_HANDLER_NAME);
+                        slei.incHandlerFailureCount(1);
+                    }
                 }
                 rset.addResponse(res);
             }
