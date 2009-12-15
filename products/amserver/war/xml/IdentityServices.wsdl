@@ -453,6 +453,7 @@
             <output message="tns:attributesResponse"></output>
             <fault message="tns:TokenExpired" name="TokenExpired"></fault>
             <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+            <fault message="tns:AccessDenied" name="AccessDenied"></fault>
         </operation>
         <operation name="authenticate">
             <input message="tns:authenticate"></input>
@@ -514,6 +515,7 @@
             <fault message="tns:NeedMoreCredentials" name="NeedMoreCredentials"></fault>
             <fault message="tns:ObjectNotFound" name="ObjectNotFound"></fault>
             <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+            <fault message="tns:AccessDenied" name="AccessDenied"></fault>
         </operation>
         <operation name="update">
             <input message="tns:update"></input>
@@ -522,6 +524,7 @@
             <fault message="tns:NeedMoreCredentials" name="NeedMoreCredentials"></fault>
             <fault message="tns:ObjectNotFound" name="ObjectNotFound"></fault>
             <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+            <fault message="tns:AccessDenied" name="AccessDenied"></fault>
         </operation>
         <operation name="delete">
             <input message="tns:delete"></input>
@@ -530,6 +533,7 @@
             <fault message="tns:NeedMoreCredentials" name="NeedMoreCredentials"></fault>
             <fault message="tns:ObjectNotFound" name="ObjectNotFound"></fault>
             <fault message="tns:GeneralFailure" name="GeneralFailure"></fault>
+            <fault message="tns:AccessDenied" name="AccessDenied"></fault>
         </operation>
     </portType>
     <binding name="IdentityServicesImplPortBinding" type="tns:IdentityServicesImpl">
@@ -565,6 +569,9 @@
             </fault>
             <fault name="GeneralFailure">
                 <soap:fault name="GeneralFailure" use="literal"></soap:fault>
+            </fault>
+            <fault name="AccessDenied">
+                <soap:fault name="AccessDenied" use="literal"></soap:fault>
             </fault>
         </operation>
         <operation name="authenticate">
@@ -722,6 +729,9 @@
             <fault name="GeneralFailure">
                 <soap:fault name="GeneralFailure" use="literal"></soap:fault>
             </fault>
+            <fault name="AccessDenied">
+                <soap:fault name="AccessDenied" use="literal"></soap:fault>
+            </fault>
         </operation>
         <operation name="update">
             <soap:operation soapAction=""></soap:operation>
@@ -743,6 +753,9 @@
             <fault name="GeneralFailure">
                 <soap:fault name="GeneralFailure" use="literal"></soap:fault>
             </fault>
+            <fault name="AccessDenied">
+                <soap:fault name="AccessDenied" use="literal"></soap:fault>
+            </fault>
         </operation>
         <operation name="delete">
             <soap:operation soapAction=""></soap:operation>
@@ -763,6 +776,9 @@
             </fault>
             <fault name="GeneralFailure">
                 <soap:fault name="GeneralFailure" use="literal"></soap:fault>
+            </fault>
+            <fault name="AccessDenied">
+                <soap:fault name="AccessDenied" use="literal"></soap:fault>
             </fault>
         </operation>
     </binding>

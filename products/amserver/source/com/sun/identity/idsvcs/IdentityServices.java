@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServices.java,v 1.4 2008-06-25 05:43:33 qcheng Exp $
+ * $Id: IdentityServices.java,v 1.5 2009-12-15 00:34:57 veiming Exp $
  *
  */
 
@@ -85,9 +85,10 @@ public interface IdentityServices extends Remote {
      * @return User details for the subject.
      * @throws TokenExpired when Token has expired.
      * @throws GeneralFailure on other errors.
+     * @throws AccessDenied if reading of attributes for the user is disallowed
      */
     public UserDetails attributes(List attributeNames, Token subject)
-        throws TokenExpired, GeneralFailure, RemoteException;
+        throws TokenExpired, GeneralFailure, RemoteException, AccessDenied;
 
     /**
      * Logs a message on behalf of the authenticated app.
@@ -151,10 +152,11 @@ public interface IdentityServices extends Remote {
      * @throws ObjectNotFound if no subject is found that matches the input criteria.
      * @throws TokenExpired when subject's token has expired.
      * @throws GeneralFailure on other errors.
+     * @throws AccessDenied if reading of attributes for the user is disallowed
      */
     public IdentityDetails read(String name, List attributes, Token admin)
         throws NeedMoreCredentials, ObjectNotFound, TokenExpired,
-        GeneralFailure, RemoteException;
+        GeneralFailure, RemoteException, AccessDenied;
 
     /**
      * Updates an identity object with the specified attributes.
@@ -167,10 +169,11 @@ public interface IdentityServices extends Remote {
      * @throws ObjectNotFound if the requested object to update cannot be found.
      * @throws TokenExpired when subject's token has expired.
      * @throws GeneralFailure on other errors.
+     * @throws AccessDenied if reading of attributes for the user is disallowed
      */
     public void update(IdentityDetails identity, Token admin)
         throws NeedMoreCredentials, ObjectNotFound, TokenExpired,
-        GeneralFailure, RemoteException;
+        GeneralFailure, RemoteException, AccessDenied;
 
     /**
      * Deletes an identity object matching input criteria.
@@ -188,10 +191,11 @@ public interface IdentityServices extends Remote {
      * @throws ObjectNotFound if no subject is found that matches the input criteria.
      * @throws TokenExpired when subject's token has expired.
      * @throws GeneralFailure on other errors.
+     * @throws AccessDenied if deleting special users.
      */
     public void delete(IdentityDetails identity, Token admin)
         throws NeedMoreCredentials, ObjectNotFound, TokenExpired,
-        GeneralFailure, RemoteException;
+        GeneralFailure, RemoteException, AccessDenied;
     
     /**
      * Validates the <class>token</class> obtained during validation

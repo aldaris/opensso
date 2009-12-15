@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.18 2009-12-12 00:01:26 veiming Exp $
+ * $Id: IdentityServicesImpl.java,v 1.19 2009-12-15 00:34:57 veiming Exp $
  *
  */
 
@@ -89,7 +89,6 @@ import com.sun.identity.shared.debug.Debug;
 
 import com.sun.identity.sm.SMSException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.rmi.RemoteException;
 import java.security.AccessController;
 import java.util.Collections;
@@ -358,9 +357,10 @@ public class IdentityServicesImpl
      * @return User details for the subject.
      * @throws TokenExpired when Token has expired.
      * @throws GeneralFailure on other errors.
+     * @throws AccessDenied if reading of attributes for the user is disallowed.
      */
     public UserDetails attributes(String[] attributeNames, Token subject)
-        throws TokenExpired, GeneralFailure, RemoteException {
+        throws TokenExpired, GeneralFailure, RemoteException, AccessDenied {
         List attrNames = null;
         if ((attributeNames != null) && (attributeNames.length > 0)) {
             attrNames = new ArrayList();
@@ -380,7 +380,7 @@ public class IdentityServicesImpl
      * @throws GeneralFailure on other errors.
      */
     public UserDetails attributes(List attributeNames, Token subject)
-        throws TokenExpired, GeneralFailure, RemoteException {
+        throws TokenExpired, GeneralFailure, RemoteException, AccessDenied {
         UserDetails details = new UserDetails();
         try {
             SSOToken ssoToken = getSSOToken(subject);
@@ -400,6 +400,10 @@ public class IdentityServicesImpl
             } 
             // Obtain user memberships (roles and groups)
             AMIdentity userIdentity = IdUtils.getIdentity(ssoToken);
+            if (isSpecialUser(userIdentity)) {
+                throw new AccessDenied(
+                    "Cannot retrieve attributes for this user.");
+            }
 
             // Determine the types that can have members
             SSOToken adminToken = (SSOToken) AccessController
@@ -513,9 +517,11 @@ public class IdentityServicesImpl
      * @throws TokenExpired when subject's token has expired.
      * @throws GeneralFailure on other errors.
      */
-    public String[] search(String filter, Attribute[] attributes,
-                           Token admin)
-        throws TokenExpired, GeneralFailure, RemoteException
+    public String[] search(
+        String filter,
+        Attribute[] attributes,
+        Token admin
+    ) throws TokenExpired, GeneralFailure, RemoteException
     {
         String[] rv = null;
         List searchAttrsList = null;
@@ -530,7 +536,7 @@ public class IdentityServicesImpl
 
         List identities = search(filter, searchAttrsList, admin);
 
-        if ((identities != null) && (identities.size() > 0)) {
+        if (!identities.isEmpty()) {
             rv = new String[identities.size()];
             identities.toArray(rv);
         }
@@ -538,67 +544,62 @@ public class IdentityServicesImpl
         return rv;
     }
 
-    public List search(String filter, List attributes, Token admin)
+    private String attractValues(
+        String name,
+        Map<String, Set<String>> map,
+        String defaultValue
+    ) {
+        Set<String> set = map.get(name);
+        if ((set != null) && !set.isEmpty()) {
+            String value= set.iterator().next().trim();
+            map.remove(name);
+            return (value.length() == 0) ? defaultValue : value;
+        } else {
+            return defaultValue;
+        }
+
+    }
+
+    private List search(String filter, List attributes, Token admin)
         throws TokenExpired, GeneralFailure, RemoteException
     {
-        List rv = null;
+        List rv = Collections.EMPTY_LIST;
 
         try {
-            String realm =  null;
-            String objectType = null;
+            String realm = "/";
+            String objectType = "User";
             Map searchModifiers = attributesToMap(attributes);
             if (searchModifiers != null) {
-                Set set = (Set) searchModifiers.get("realm");
-                if ((set != null) && !set.isEmpty()) {
-                    realm = set.iterator().next().toString();
-                    searchModifiers.remove("realm");
-                }
-                set = (Set) searchModifiers.get("objecttype");
-                if ((set != null) && !set.isEmpty()) {
-                    objectType = set.iterator().next().toString();
-                    searchModifiers.remove("objecttype");
-                }
-            }
-
-            // Verify Realm and ObjectType has valid values
-            if ((realm == null) || (realm.length() < 1)) {
-                // Default to root realm
-                realm = "/";
-            }
-            if ((objectType == null) || (objectType.length() < 1)) {
-                // Default to user type
-                objectType = "User";
+                realm = attractValues("realm", searchModifiers, "/");
+                objectType = attractValues("objecttype", searchModifiers,
+                    "User");
             }
 
             AMIdentityRepository repo = getRepo(admin, realm);
             IdType idType = getIdType(objectType);
-            List objList = null;
 
             if ((idType != null)) {
                 if ((filter == null) || (filter.length() == 0)) {
                     filter = "*";
                 }
 
-                objList = fetchAMIdentities(idType, filter, false, repo,
-                    searchModifiers);
+                List<AMIdentity> objList = fetchAMIdentities(
+                    idType, filter, false, repo, searchModifiers);
+                if ((objList != null) && !objList.isEmpty()) {
+                    List<String> names = getNames(realm, idType, objList);
+
+                    if (!names.isEmpty()) {
+                        rv = new ArrayList();
+                        for (String name : names) {
+                            rv.add(name);
+                        }
+                    }
+                }
             } else {
                 debug.error("IdentityServicesImpl:search unsupported IdType" +
                     objectType);
                 throw new GeneralFailure("search unsupported IdType: " +
                     objectType);
-            }
-
-            if (objList != null) {
-                Iterator objIter = objList.iterator();
-                rv = new ArrayList();
-
-                while (objIter.hasNext()) {
-                    AMIdentity identity = (AMIdentity)objIter.next();
-
-                    if (identityExists(identity)) {
-                        rv.add(identity.getName());
-                    }
-                }
             }
         } catch (IdRepoException e) {
             debug.error("IdentityServicesImpl:list", e);
@@ -610,6 +611,64 @@ public class IdentityServicesImpl
 
         return rv;
     }
+    
+    private List<String> getNames(
+        String realm,
+        IdType idType, 
+        List<AMIdentity> objList
+    ) throws SSOException, IdRepoException {
+        List<String> names = new ArrayList<String>();
+
+        if ((objList != null) && !objList.isEmpty()) {
+            for (AMIdentity identity : objList) {
+                if (identityExists(identity)) {
+                    names.add(identity.getName());
+                }
+            }
+        }
+
+        if (idType.equals(IdType.USER)) {
+            Set<String> specialUserNames = getSpecialUserNames(realm);
+            names.removeAll(specialUserNames);
+        }
+        return names;
+    }
+
+    private boolean isSpecialUser(AMIdentity identity) {
+        Set<AMIdentity> specialUsers = getSpecialUsers(identity.getRealm());
+        return (specialUsers != null) ? specialUsers.contains(identity) :
+            false;
+    }
+
+    private Set<AMIdentity> getSpecialUsers(String realmName) {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction. getInstance());
+
+        try {
+            AMIdentityRepository repo = new AMIdentityRepository(
+                adminToken, realmName);
+            IdSearchResults results = repo.getSpecialIdentities(IdType.USER);
+            return results.getSearchResults();
+        } catch (IdRepoException e) {
+            debug.warning("AMModelBase.getSpecialUsers", e);
+        } catch (SSOException e) {
+            debug.warning("AMModelBase.getSpecialUsers", e);
+        }
+
+        return Collections.EMPTY_SET;
+    }
+
+    private Set<String> getSpecialUserNames(String realmName) {
+        Set<String> identities = new HashSet<String>();
+        Set<AMIdentity> set = getSpecialUsers(realmName);
+        if (set != null) {
+            for (AMIdentity amid : set) {
+                identities.add(amid.getName());
+            }
+        }
+        return identities;
+    }
+
 
     /**
      * Creates an identity object with the specified attributes.
@@ -839,9 +898,11 @@ public class IdentityServicesImpl
      * criteria.
      * @throws TokenExpired when subject's token has expired.
      * @throws GeneralFailure on other errors.
+     * @throws AccessDenied if reading of attributes for the user is disallowed.
      */
     public IdentityDetails read(String name, Attribute[] attributes, Token admin)
-        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, GeneralFailure
+        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, 
+        GeneralFailure, AccessDenied
     {
         List attrList = null;
 
@@ -856,8 +917,9 @@ public class IdentityServicesImpl
         return read(name, attrList, admin);
     }
 
-    public IdentityDetails read(String name, List attributes, Token admin)
-        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, GeneralFailure
+    private IdentityDetails read(String name, List attributes, Token admin)
+        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, 
+        GeneralFailure, AccessDenied
     {
         IdentityDetails rv = null;
         String realm = null;
@@ -905,6 +967,10 @@ public class IdentityServicesImpl
         try {
             AMIdentity amIdentity = getAMIdentity(admin, identityType, name,
                                                   repoRealm);
+            if (isSpecialUser(amIdentity)) {
+                throw new AccessDenied(
+                    "Cannot retrieve attributes for this user.");
+            }
 
             if (!identityExists(amIdentity)) {
                 debug.error("IdentityServicesImpl:read identity not found");
@@ -941,9 +1007,11 @@ public class IdentityServicesImpl
      * cannot be found.
      * @throws TokenExpired when subject's token has expired.
      * @throws GeneralFailure on other errors.
+     * @throws AccessDenied if reading of attributes for the user is disallowed
      */
     public UpdateResponse update(IdentityDetails identity, Token admin)
-        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, GeneralFailure
+        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, 
+        GeneralFailure, AccessDenied
     {
         String idName = identity.getName();
         String idType = identity.getType();
@@ -978,6 +1046,11 @@ public class IdentityServicesImpl
                 String msg = "Object \'" + idName + "\' of type \'" +
                     idType + "\' not found.'";
                 throw new ObjectNotFound(msg);
+            }
+
+            if (isSpecialUser(amIdentity)) {
+                throw new AccessDenied(
+                    "Cannot update attributes for this user.");
             }
 
             Attribute[] attrs = identity.getAttributes();
@@ -1099,7 +1172,8 @@ public class IdentityServicesImpl
      * @throws GeneralFailure on other errors.
      */
     public DeleteResponse delete(IdentityDetails identity, Token admin)
-        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, GeneralFailure
+        throws NeedMoreCredentials, ObjectNotFound, TokenExpired, 
+        GeneralFailure, AccessDenied
     {
         if (identity == null) {
             throw new GeneralFailure("delete failed: identity object not specified.");
@@ -1122,6 +1196,10 @@ public class IdentityServicesImpl
                                                   realm);
 
             if (identityExists(amIdentity)) {
+                if (isSpecialUser(amIdentity)) {
+                    throw new AccessDenied("Cannot delete user.");
+                }
+
                 AMIdentityRepository repo = getRepo(admin, realm);
                 IdType idType = amIdentity.getType();
 
