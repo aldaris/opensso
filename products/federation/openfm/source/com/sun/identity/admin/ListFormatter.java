@@ -22,20 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListFormatter.java,v 1.1 2009-08-19 05:40:44 veiming Exp $
+ * $Id: ListFormatter.java,v 1.2 2009-12-16 18:16:31 farble1670 Exp $
  */
-
 package com.sun.identity.admin;
 
 import com.icesoft.faces.context.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 
 public class ListFormatter {
+
     private List list;
+    private boolean useTitle = false;
 
     public ListFormatter(List list) {
         this.list = list;
+    }
+
+    public ListFormatter(List list, boolean useTitle) {
+        this.list = list;
+        this.useTitle = useTitle;
     }
 
     @Override
@@ -43,7 +51,12 @@ public class ListFormatter {
         StringBuffer b = new StringBuffer();
 
         for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
-            b.append(i.next());
+            Object o = i.next();
+            if (useTitle) {
+                b.append(getTitle(o));
+            } else {
+                b.append(o.toString());
+            }
             if (i.hasNext()) {
                 b.append(",");
             }
@@ -57,7 +70,12 @@ public class ListFormatter {
         StringBuffer b = new StringBuffer();
 
         for (Iterator<Resource> i = list.iterator(); i.hasNext();) {
-            b.append(i.next());
+            Object o = i.next();
+            if (useTitle) {
+                b.append(getTitle(o));
+            } else {
+                b.append(o.toString());
+            }
             if (i.hasNext()) {
                 b.append("\n");
             }
@@ -65,5 +83,21 @@ public class ListFormatter {
         }
 
         return b.toString();
+    }
+
+    private String getTitle(Object o) {
+        try {
+            Class cls = o.getClass();
+            Method meth = cls.getMethod("getTitle");
+            Object retobj = meth.invoke(o);
+            String retval = (String) retobj;
+            return retval;
+        } catch (NoSuchMethodException nsme) {
+            throw new RuntimeException(nsme);
+        } catch (IllegalAccessException iae) {
+            throw new RuntimeException(iae);
+        } catch (InvocationTargetException ite) {
+            throw new RuntimeException(ite);
+        }
     }
 }

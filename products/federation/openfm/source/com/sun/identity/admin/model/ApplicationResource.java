@@ -22,21 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationResource.java,v 1.3 2009-12-09 23:53:43 farble1670 Exp $
+ * $Id: ApplicationResource.java,v 1.4 2009-12-16 18:16:32 farble1670 Exp $
  */
-
 package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
+import com.sun.identity.admin.AsciiSerializer;
 import com.sun.identity.admin.Functions;
 import com.sun.identity.admin.handler.MultiPanelHandler;
+import java.io.IOException;
 import javax.faces.event.ActionEvent;
 
 public class ApplicationResource
-    extends Resource
-    implements MultiPanelBean, MultiPanelHandler, PolicyResourcesBean {
+        extends Resource
+        implements MultiPanelBean, MultiPanelHandler, PolicyResourcesBean {
 
     private Effect panelExpandEffect = null;
     private Effect panelEffect = null;
@@ -45,10 +46,9 @@ public class ApplicationResource
     private ViewEntitlement viewEntitlement = new ViewEntitlement();
 
     public Resource deepClone() {
-        ApplicationResource rr = new ApplicationResource();
-        rr.setName(getName());
-
-        return rr;
+        String s = toString();
+        ApplicationResource ar = valueOf(s);
+        return ar;
     }
 
     public void panelExpandListener(ActionEvent event) {
@@ -81,7 +81,7 @@ public class ApplicationResource
     private ViewApplication getViewApplication() {
         ViewApplicationsBean vasb = ViewApplicationsBean.getInstance();
         ViewApplication va = vasb.getViewApplications().get(getName());
-        assert(va != null);
+        assert (va != null);
 
         return va;
     }
@@ -96,7 +96,7 @@ public class ApplicationResource
         if (title == null) {
             title = getName();
         }
-        
+
         return title;
     }
 
@@ -134,5 +134,24 @@ public class ApplicationResource
 
     public ViewEntitlement getViewEntitlement() {
         return viewEntitlement;
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return AsciiSerializer.serialize(this);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+    }
+
+    public static ApplicationResource valueOf(String s) {
+        try {
+            return (ApplicationResource) AsciiSerializer.deserialize(s);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        } catch (ClassNotFoundException cnfe) {
+            throw new RuntimeException(cnfe);
+        }
     }
 }

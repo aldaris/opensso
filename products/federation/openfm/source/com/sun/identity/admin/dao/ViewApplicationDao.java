@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplicationDao.java,v 1.8 2009-12-07 19:46:49 veiming Exp $
+ * $Id: ViewApplicationDao.java,v 1.9 2009-12-16 18:16:32 farble1670 Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -121,7 +121,8 @@ public class ViewApplicationDao implements Serializable {
                 }
 
                 ViewApplication va = new ViewApplication(a);
-                va.setWritable(apm.hasPrivilege(a, Action.MODIFY));
+                boolean writable = apm.hasPrivilege(a, Action.MODIFY);
+                va.setWritable(writable);
 
                 viewApplications.put(va.getName(), va);
             }

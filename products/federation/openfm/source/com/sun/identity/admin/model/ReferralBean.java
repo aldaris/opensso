@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralBean.java,v 1.3 2009-11-10 20:26:35 farble1670 Exp $
+ * $Id: ReferralBean.java,v 1.4 2009-12-16 18:16:32 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -281,7 +281,7 @@ public class ReferralBean {
     }
 
     public String getResourcesToString() {
-        return new ListFormatter(resources).toFormattedString();
+        return new ListFormatter(resources, true).toFormattedString();
     }
 
     public String getSubjectsToString() {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardBean.java,v 1.11 2009-12-11 16:06:47 farble1670 Exp $
+ * $Id: DelegationWizardBean.java,v 1.12 2009-12-16 18:16:32 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -196,6 +196,11 @@ public abstract class DelegationWizardBean extends WizardBean {
                 ApplicationResource selectedAr = (ApplicationResource) delegationBean.getResources().get(i);
                 List<Resource> selectedResources = selectedAr.getViewEntitlement().getResources();
                 ar.getViewEntitlement().setResources(selectedResources);
+                for (Resource r: selectedResources) {
+                    if (!ar.getViewEntitlement().getAvailableResources().contains(r)) {
+                        ar.getViewEntitlement().getAvailableResources().add(r);
+                    }
+                }
             }
             availableResources.add(ar);
         }

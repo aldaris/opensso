@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewEntitlement.java,v 1.1 2009-08-19 05:40:57 veiming Exp $
+ * $Id: ViewEntitlement.java,v 1.2 2009-12-16 18:16:33 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -94,8 +94,6 @@ public class ViewEntitlement implements Serializable {
 
             resources.add(r);
         }
-
-        resetAvailableResources();
 
         // exceptions
         for (String rs : e.getExcludedResourceNames()) {
@@ -239,7 +237,7 @@ public class ViewEntitlement implements Serializable {
     public List<SelectItem> getAvailableResourceItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
 
-        for (Resource r : getAvailableResources()) {
+        for (Resource r : availableResources) {
             items.add(new SelectItem(r, r.getName()));
         }
 

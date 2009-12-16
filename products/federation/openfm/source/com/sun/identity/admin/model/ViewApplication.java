@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.6 2009-12-02 23:02:01 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.7 2009-12-16 18:16:32 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -34,8 +34,6 @@ import com.sun.identity.admin.Token;
 import com.sun.identity.admin.dao.ViewApplicationDao;
 import com.sun.identity.admin.handler.BooleanActionsHandler;
 import com.sun.identity.entitlement.Application;
-import com.sun.identity.entitlement.ApplicationType;
-import com.sun.identity.entitlement.ApplicationTypeManager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;

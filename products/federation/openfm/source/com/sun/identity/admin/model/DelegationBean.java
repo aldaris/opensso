@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationBean.java,v 1.9 2009-11-18 23:55:17 farble1670 Exp $
+ * $Id: DelegationBean.java,v 1.10 2009-12-16 18:16:32 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -238,6 +238,13 @@ public class DelegationBean implements Serializable {
                     }
 
                     ar.getViewEntitlement().getResources().add(r);
+
+                    // if AP contains a resource for the given app that is
+                    // *not* in the application itself, add that resource
+                    // to the set of available resources
+                    if (!ar.getViewEntitlement().getAvailableResources().contains(r)) {
+                        ar.getViewEntitlement().getAvailableResources().add(r);
+                    }
                 } catch (InstantiationException ie) {
                     throw new RuntimeException(ie);
                 } catch (IllegalAccessException iae) {
@@ -300,7 +307,7 @@ public class DelegationBean implements Serializable {
         } catch (EntitlementException ee) {
             throw new RuntimeException(ee);
         }
-        
+
         // action
         ap.setActionValues(ApplicationPrivilege.PossibleAction.valueOf(action.toString()));
 
@@ -308,7 +315,7 @@ public class DelegationBean implements Serializable {
     }
 
     public String getResourcesToString() {
-        return new ListFormatter(resources).toString();
+        return new ListFormatter(resources, true).toString();
     }
 
     public String getResourcesToFormattedString() {
