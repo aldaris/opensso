@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseImpl.java,v 1.3 2008-06-25 05:48:00 qcheng Exp $
+ * $Id: ResponseImpl.java,v 1.4 2009-12-16 05:26:39 ericow Exp $
  *
  */
 
@@ -47,6 +47,7 @@ import org.w3c.dom.NodeList;
 
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.DateUtils;
+import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.saml.xmlsig.XMLSignatureException;
 import com.sun.identity.saml2.assertion.Assertion;
 import com.sun.identity.saml2.assertion.EncryptedAssertion;
@@ -235,8 +236,14 @@ public class ResponseImpl extends StatusResponseImpl implements Response {
 		    if (assertions == null) {
 			assertions = new ArrayList();
 		    }
-		    assertions.add(AssertionFactory.getInstance().
-			createAssertion((Element) child));
+                    Element canoEle = SAMLUtils.getCanonicalElement(child);
+                    if (canoEle == null) {
+                        throw new SAML2Exception(
+                            SAML2SDKUtils.bundle.getString("errorCanonical"));
+                    }
+
+                    assertions.add(AssertionFactory.getInstance().
+                        createAssertion(canoEle));
                 } else if (childName.equals("EncryptedAssertion")) {
 		    if (encAssertions == null) {
 			encAssertions = new ArrayList();
