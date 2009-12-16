@@ -77,7 +77,15 @@ endif
 ifeq ($(OS_ARCH), Linux)
 CC = g++
 else
+ifeq ($(OS_ARCH), AIX)
+CC = xlC_r
+else
+ifeq ($(OS_ARCH), HP-UX)
+CC = aCC
+else
 CC = cc
+endif
+endif
 endif
 ifdef   OS_IS_CYGWIN
 CC=cl
@@ -97,6 +105,12 @@ else
 ifeq ($(OS_ARCH), Linux)
 LIBS = -lamsdk -lxml2 -lssl3 -lnss3 -lplc4 -lplds4 -lnspr4
 else
+ifeq ($(OS_ARCH), HP-UX)
+LIBS = -lamsdk -lxml2 -lssl3 -lnss3 -lplc4 -lplds4 -lnspr4
+else
+ifeq ($(OS_ARCH), AIX)
+LIBS = -lamsdk -lxml2 -lssl3 -lnss3 -lplc4 -lplds4 -lnspr4
+else
 ifeq ($(BUILD_VERSION), 64)
 LIBS = -lamsdk -lxml2 \
 	-L /usr/lib/mps/64 -lssl3 -lnss3 -lplc4 -lplds4 -lnspr4
@@ -107,11 +121,21 @@ LIBS = -lamsdk -lxml2 \
 endif
 endif
 endif
+endif
+endif
 
 #
 # Compiler flags
 #
+ifeq ($(OS_ARCH), HP-UX)
+CFLAGS = -I$(AM_INCLUDE_DIR) -DHPUX
+else
+ifeq ($(OS_ARCH), AIX)
+CFLAGS = -I$(AM_INCLUDE_DIR) -DAIX
+else
 CFLAGS = -I$(AM_INCLUDE_DIR)
+endif
+endif
 LDFLAGS = -L$(AM_LIB_DIR) $(LIBS) 
 ifeq ($(OS_ARCH), WINNT)
 CFLAGS += -DWINNT
