@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: application-resources-url.xhtml,v 1.1 2009-08-19 05:41:09 veiming Exp $
+   $Id: application-resources-url.xhtml,v 1.2 2009-12-16 17:29:47 farble1670 Exp $
 
 -->
 
@@ -62,7 +62,7 @@
                             value="#{urlResource.name}"/>
                         <ice:commandLink
                             actionListener="#{urlApplicationResourcesHandler.removeListener}"
-                            rendered="#{o:indexOf(resourcesBean.viewApplication.resources,urlResource) &lt; o:size(resourcesBean.viewApplication.resources)-1}"
+                            rendered="#{o:size(resourcesBean.viewApplication.resources) > 1}"
                             styleClass="command-link">
                             <f:attribute
                                 name="viewApplication"
@@ -77,8 +77,9 @@
                         </ice:commandLink>
                         <ice:commandLink
                             actionListener="#{urlApplicationResourcesHandler.addListener}"
-                            rendered="#{!(urlResource.blank) &amp;&amp; o:indexOf(resourcesBean.viewApplication.resources,urlResource) &gt;= o:size(resourcesBean.viewApplication.resources)-1}"
-                            styleClass="command-link">
+                            rendered="#{o:isLast(resourcesBean.viewApplication.resources,urlResource) &amp;&amp; !urlResource.blank}"
+                            styleClass="command-link"
+                            style="padding-left: 5px">
                             <f:attribute
                                 name="viewApplication"
                                 value="#{resourcesBean.viewApplication}"/>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Functions.java,v 1.1 2009-08-19 05:40:44 veiming Exp $
+ * $Id: Functions.java,v 1.2 2009-12-16 17:29:48 farble1670 Exp $
  */
 package com.sun.identity.admin;
 
@@ -41,6 +41,17 @@ public class Functions {
             return false;
         }
         return c.contains(o);
+    }
+
+    public static boolean isLast(List l, Object o) {
+        int i = l.indexOf(o);
+        if (i == -1) {
+            return false;
+        }
+        if (i != l.size()-1) {
+            return false;
+        }
+        return true;
     }
 
     public static String truncate(String s, int length) {

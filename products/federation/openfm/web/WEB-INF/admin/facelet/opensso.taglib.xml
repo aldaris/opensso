@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: opensso.taglib.xml,v 1.6 2009-10-09 20:17:14 farble1670 Exp $
+  $Id: opensso.taglib.xml,v 1.7 2009-12-16 17:29:48 farble1670 Exp $
 
 -->
 <!DOCTYPE facelet-taglib PUBLIC "-//Sun Microsystems, Inc.//DTD Facelet Taglib 1.0//EN" "http://java.sun.com/dtd/facelet-taglib_1_0.dtd"> 
@@ -142,6 +142,11 @@
         <function-name>contains</function-name>
         <function-class>com.sun.identity.admin.Functions</function-class>
         <function-signature>boolean contains(java.util.Collection, java.lang.Object)</function-signature>
+    </function>
+    <function>
+        <function-name>isLast</function-name>
+        <function-class>com.sun.identity.admin.Functions</function-class>
+        <function-signature>boolean isLast(java.util.List, java.lang.Object)</function-signature>
     </function>
     <function>
         <function-name>truncate</function-name>
