@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.10 2009-12-17 18:03:50 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.11 2009-12-17 18:35:16 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -63,6 +63,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.AccessController;
 import java.security.Principal;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,11 +80,9 @@ public class OpenSSOApplicationPrivilegeManager extends
     private static final String APPL_NAME = 
         DelegationManager.DELEGATION_SERVICE;
     private static final String SUN_AM_REALM_RESOURCE =
-        "sms://" + SMSEntry.getRootSuffix() + 
-        "/sunAMRealmService/1.0/organizationconfig/default/*";
+        "sms://{0}/sunAMRealmService/1.0/organizationconfig/default/*";
     private static final String SUN_IDREPO_RESOURCE =
-        "sms://*" + SMSEntry.getRootSuffix() +
-        "/sunIdentityRepositoryService/1.0/application/*";
+        "sms://*{0}/sunIdentityRepositoryService/1.0/application/*";
 
     private static final String HIDDEN_REALM_DN =
         "o=sunamhiddenrealmdelegationservicepermissions,ou=services,";
@@ -212,8 +211,12 @@ public class OpenSSOApplicationPrivilegeManager extends
             ghostP.setName(GHOST_PRIVILEGE_NAME_PREFIX +
                 appPrivilege.getName());
             Set<String> ghostRes = new HashSet<String>();
-            ghostRes.add(SUN_AM_REALM_RESOURCE);
-            ghostRes.add(SUN_IDREPO_RESOURCE);
+
+            String currentOrgDN = DNMapper.orgNameToDN(realm);
+            Object[] param = {currentOrgDN};
+
+            ghostRes.add(MessageFormat.format(SUN_AM_REALM_RESOURCE, param));
+            ghostRes.add(MessageFormat.format(SUN_IDREPO_RESOURCE, param));
             entitlement = new Entitlement(APPL_NAME, ghostRes,
                 getActionValues(ApplicationPrivilege.PossibleAction.READ));
             ghostP.setEntitlement(entitlement);
