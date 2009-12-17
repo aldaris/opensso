@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.2 2009-11-05 21:13:47 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.3 2009-12-17 18:03:50 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -645,8 +645,6 @@ public class PrivilegeUtils {
         Set<Rule> rules = new HashSet<Rule>();
         String appName = entitlement.getApplicationName();
 
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance()); //TODO - who added?
         String realmName = (DN.isDN(realm)) ?
             DNMapper.orgNameToRealmName(realm) : realm;
 

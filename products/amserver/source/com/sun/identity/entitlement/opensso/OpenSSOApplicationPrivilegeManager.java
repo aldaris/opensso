@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.9 2009-12-15 00:57:54 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.10 2009-12-17 18:03:50 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -834,7 +834,9 @@ public class OpenSSOApplicationPrivilegeManager extends
                 Map<String, Set<String>> map = getResourceNames(p);
 
                 if ((map != null) && !map.isEmpty()) {
-                    addToMap(appNameToResourceNames, map);
+                    if (!bPolicyAdmin) {
+                        addToMap(appNameToResourceNames, map);
+                    }
                     privileges.put(p.getName(), p);
                 }
             }
