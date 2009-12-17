@@ -172,16 +172,14 @@
     }
 
     function localPortResponse(response) {
-        var image = okImage;
         var message = response.responseText;
-        if (message == "true") {
-             message = $page.getLocalizedString("ok.string");
+        if (message == "ok") {
+            $('localConfigPortStatus').innerHTML = okString;
         } else {
-            image = errorImage;
+            $('localConfigPortStatus').innerHTML = errorImage +
+                '<small>' + message + '</small>';
+            $('nextTabButton').disabled = true;
         }
-        
-        $('localConfigPortStatus').innerHTML = image +
-            '<small>' + message + '</small>';
     }
     
     function validateLocalConfigPort() {        
