@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PWResetUserValidationViewBean.java,v 1.2 2008-06-25 05:43:42 qcheng Exp $
+ * $Id: PWResetUserValidationViewBean.java,v 1.3 2009-12-18 03:30:51 222713 Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import com.iplanet.jato.view.html.Button;
 import com.iplanet.jato.view.html.HiddenField;
 import com.iplanet.jato.view.html.StaticTextField;
 import com.iplanet.jato.view.html.TextField;
+import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.password.ui.model.PWResetException;
 import com.sun.identity.password.ui.model.PWResetModel;
 import com.sun.identity.password.ui.model.PWResetUserValidationModel;
@@ -179,6 +180,12 @@ public class PWResetUserValidationViewBean extends PWResetViewBeanBase  {
         HttpServletRequest req = context.getRequest();
         PWResetUserValidationModel model = 
             (PWResetUserValidationModel)getModel();
+
+        ISLocaleContext localeContext = new ISLocaleContext();
+        localeContext.setLocale(req);
+        java.util.Locale locale = localeContext.getLocale();
+        model.setUserLocale(locale.toString());
+
         String orgDN = (String)getPageSessionAttribute(ORG_DN);
         if (orgDN == null) {
             String orgName = req.getParameter(ORG);
@@ -220,7 +227,13 @@ public class PWResetUserValidationViewBean extends PWResetViewBeanBase  {
         String userAttrName = (String) hf.getValue();
         String orgDN = (String)getPageSessionAttribute(ORG_DN);
         String orgDNFlag = (String)getPageSessionAttribute(ORG_DN_FLAG);
-	String locale = (String) getPageSessionAttribute(URL_LOCALE);
+
+        RequestContext reqContext = event.getRequestContext();
+        ISLocaleContext localeContext = new ISLocaleContext();
+        localeContext.setLocale(reqContext.getRequest());
+        java.util.Locale localeObj = localeContext.getLocale();
+        String locale = localeObj.toString();
+        model.setUserLocale(locale);
 
         if (orgDNFlag != null && orgDNFlag.equals (STRING_TRUE)) {
             model.setRealmFlag(true);
