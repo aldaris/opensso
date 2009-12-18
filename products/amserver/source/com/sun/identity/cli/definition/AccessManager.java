@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.112 2009-11-25 18:54:09 dillidorai Exp $
+ * $Id: AccessManager.java,v 1.113 2009-12-18 07:13:27 dillidorai Exp $
  *
  */
 
@@ -528,8 +528,11 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={
             "policynames|p|m|Names of policy. This can be an wildcard. All policy definition in the realm will be returned if this option is not provided.",
-            "outfile|o|s|Filename where policy definition will be printed to. Definition will be printed in standard output if this option is not provided."},
+            "outfile|o|s|Filename where policy definition will be printed to. Definition will be printed in standard output if this option is not provided.",
+            "namesonly|n|u|Returns only names of matching policies. Policies are not returned." },
         resourceStrings={
+            "get-policy-names-in-realm-succeed=Policy names were returned under realm, {0}.",
+            "get-policy-names-in-realm-no-policies=There were not matching policy names under realm, {0}.",
             "get-policy-in-realm-succeed=Policy definitions were returned under realm, {0}.",
             "get-policy-in-realm-no-policies=There were not matching policies under realm, {0}."})
     private String list_policies;
@@ -2789,9 +2792,12 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={
             "policynames|p|m|Names of policy. This can be a wildcard. All policy definition in the realm will be returned if this option is not provided.",
-            "outfile|o|s|Filename where policy definition will be printed to. Definition will be printed in standard output if this option is not provided."},
+            "outfile|o|s|Filename where policy definition will be printed to. Definition will be printed in standard output if this option is not provided.",
+            "namesonly|n|u|Returns only names of matching policies. Policies are not returned." },
         resourceStrings={
             "list-xacml-not-supported-in-legacy-policy-mode=list-xacml not supported in legacy policy mode",
+            "get-policy-names-in-realm-succeed=Policy names were returned under realm, {0}.",
+            "get-policy-names-in-realm-no-policies=There were not matching policy names under realm, {0}.",
             "get-policy-in-realm-succeed=Policy definitions were returned under realm, {0}.",
             "get-policy-in-realm-no-policies=There were not matching policies under realm, {0}."})
     private String list_xacml;

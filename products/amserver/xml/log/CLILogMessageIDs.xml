@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.35 2009-11-10 19:01:06 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.36 2009-12-18 07:13:28 dillidorai Exp $
 
 -->
 
@@ -2356,6 +2356,36 @@
         <actions>
             <item>Look under debug file for more information.</item>
         </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_TO_GET_POLICY_NAMES_IN_REALM" id="2433" loglevel="LL_INFO"
+        description="Attempt to get policy names in realm.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get policy names in realm Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="GOT_POLICY_NAMES_IN_REALM" id="2434" loglevel="LL_INFO"
+        description="Got policy names in realm.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get policy names in realm Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_GET_POLICY_NAMES_IN_REALM" id="2435" loglevel="LL_INFO"
+        description="Unable to get policy names in realm.">
+        <datainfo>
+            <item>name of realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute get policy names in realm Commandline interface.</item>
+        </triggers>
+        <actions />
     </logmessage>
     <logmessage name="ATTEMPT_GET_POLICY_IN_REALM" id="2440"
         loglevel="LL_INFO"

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IArgument.java,v 1.11 2008-11-01 03:07:14 veiming Exp $
+ * $Id: IArgument.java,v 1.12 2009-12-18 07:13:25 dillidorai Exp $
  *
  */
 
@@ -227,4 +227,9 @@ public interface IArgument {
      * File option name.
      */
     String FILE = "file";
+
+    /**
+     * Names Only option
+     */
+    String NAMES_ONLY = "namesonly";
 }

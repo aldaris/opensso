@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmGetPolicy.java,v 1.5 2009-11-10 00:16:43 veiming Exp $
+ * $Id: RealmGetPolicy.java,v 1.6 2009-12-18 07:13:27 dillidorai Exp $
  *
  */
 
@@ -56,7 +56,13 @@ import java.util.logging.Level;
  * Gets policies in a realm.
  */
 public class RealmGetPolicy extends AuthenticatedCommand {
-    private static final String ARGUMENT_POLICY_NAMES = "policynames";
+    public static final String ARGUMENT_POLICY_NAMES = "policynames";
+    private SSOToken adminSSOToken;
+    private String realm;
+    private List filters;
+    private String outfile;
+    private boolean getPolicyNamesOnly;
+    private IOutput outputWriter;
     
     /**
      * Services a Commandline Request.
@@ -68,15 +74,31 @@ public class RealmGetPolicy extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         ldapLogin();
-        SSOToken adminSSOToken = getAdminSSOToken();
-        String realm = getStringOptionValue(IArgument.REALM_NAME);
-        List filters = (List)rc.getOption(ARGUMENT_POLICY_NAMES);
-        String outfile = getStringOptionValue(IArgument.OUTPUT_FILE);
-        IOutput outputWriter = getOutputWriter();
-        String currentPolicyName = null;
+        adminSSOToken = getAdminSSOToken();
+        realm = getStringOptionValue(IArgument.REALM_NAME);
+        filters = (List)rc.getOption(ARGUMENT_POLICY_NAMES);
+        outfile = getStringOptionValue(IArgument.OUTPUT_FILE);
+        getPolicyNamesOnly = isOptionSet("namesonly");
+        outputWriter = getOutputWriter();
+        if (getPolicyNamesOnly) {
+            getPolicyNames();
+        } else {
+            getPolicies();
+        }
 
+    }
+
+    private void getPolicyNames() throws CLIException {
         try {
             PolicyManager pm = new PolicyManager(adminSSOToken, realm);
+
+            String currentPolicyName;
+            String[] parameters = new String[1];
+            parameters[0] = realm;
+
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "ATTEMPT_TO_GET_POLICY_NAMES_IN_REALM", parameters);
+            
             Set policyNames = null;
 
             if ((filters == null) || filters.isEmpty()) {
@@ -88,8 +110,13 @@ public class RealmGetPolicy extends AuthenticatedCommand {
                         pm.getPolicyNames((String)i.next()));
                 }
             }
-            
+
             if ((policyNames != null) && !policyNames.isEmpty()) {
+                StringBuilder buff = new StringBuilder();
+                for (Object s : policyNames) {
+                    String str = (String)s;
+                    buff.append(str).append("\n");
+                }
                 FileOutputStream fout = null;
                 PrintWriter pwout = null;
                 
@@ -119,9 +146,65 @@ public class RealmGetPolicy extends AuthenticatedCommand {
                         throw new CLIException(e, ExitCodes.IO_EXCEPTION);
                     }
                 }
-            
-                String[] params = new String[2];
-                params[0] = realm;
+                if (pwout != null) {
+                    pwout.write(buff.toString());
+                    try {
+                        pwout.close();
+                        fout.close();
+                    } catch (IOException e) {
+                        //do nothing
+                    }
+                } else {
+                    outputWriter.printlnMessage(buff.toString());
+                }
+            } else {
+                String[] arg = {realm};
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("get-policy-names-in-realm-no-policies"),
+                    (Object[])arg));
+            }
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "GOT_POLICY_NAMES_IN_REALM", parameters);
+            String[] arg = {realm};
+            outputWriter.printlnMessage(MessageFormat.format(
+                getResourceString("get-policy-names-in-realm-succeed"),
+                (Object[])arg));
+        } catch (PolicyException e) {
+            String[] args = {realm, e.getMessage()};
+            debugError("RealmGetPolicy.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_GET_POLICY_NAMES_IN_REALM", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (SSOException e) {
+            String[] args = {realm, e.getMessage()};
+            debugError("RealmGetPolicy.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_GET_POLICY_NAMES_IN_REALM", args);
+            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+    
+    }
+    private void getPolicies() throws CLIException {
+        try {
+            PolicyManager pm = new PolicyManager(adminSSOToken, realm);
+
+            String currentPolicyName;
+            String[] params = new String[2];
+            params[0] = realm;
+
+            Set policyNames = null;
+
+            if ((filters == null) || filters.isEmpty()) {
+                policyNames = pm.getPolicyNames();
+            } else {
+                policyNames = new HashSet();
+                for (Iterator i = filters.iterator(); i.hasNext(); ) {
+                    policyNames.addAll(
+                        pm.getPolicyNames((String)i.next()));
+                }
+            }
+
+            if ((policyNames != null) && !policyNames.isEmpty()) {
                 StringBuilder buff = new StringBuilder();
                 buff.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n")
                     .append("<!DOCTYPE Policies \n")
@@ -145,6 +228,41 @@ public class RealmGetPolicy extends AuthenticatedCommand {
 
                 buff.append("\n</Policies>\n");
 
+                FileOutputStream fout = null;
+                PrintWriter pwout = null;
+                
+                if (outfile != null) {
+                    try {
+                        fout = new FileOutputStream(outfile, true);
+                        pwout = new PrintWriter(fout, true);
+                    } catch (FileNotFoundException e) {
+                        debugError("RealmGetPolicy.handleRequest", e);
+                        try {
+                            if (fout != null) {
+                                fout.close();
+                            }
+                        } catch (IOException ex) {
+                            //do nothing
+                        }
+                        throw new CLIException(e, ExitCodes.IO_EXCEPTION);
+                    } catch (SecurityException e) {
+                        debugError("RealmGetPolicy.handleRequest", e);
+                        try {
+                            if (fout != null) {
+                                fout.close();
+                            }
+                        } catch (IOException ex) {
+                            //do nothing
+                        }
+                        throw new CLIException(e, ExitCodes.IO_EXCEPTION);
+                    }
+                }
+
+                String[] arg = {realm};
+                outputWriter.printlnMessage(MessageFormat.format(
+                    getResourceString("get-policy-in-realm-succeed"), 
+                    (Object[])arg));
+
                 if (pwout != null) {
                     pwout.write(buff.toString());
                     try {
@@ -156,31 +274,27 @@ public class RealmGetPolicy extends AuthenticatedCommand {
                 } else {
                     outputWriter.printlnMessage(buff.toString());
                 }
-
-                String[] arg = {realm};
-                outputWriter.printlnMessage(MessageFormat.format(
-                    getResourceString("get-policy-in-realm-succeed"), 
-                    (Object[])arg));
             } else {
                 String[] arg = {realm};
                 outputWriter.printlnMessage(MessageFormat.format(
                     getResourceString("get-policy-in-realm-no-policies"),
                     (Object[])arg));
             }
-            
         } catch (PolicyException e) {
-            String[] args = {realm, currentPolicyName, e.getMessage()};
+            String[] args = {realm, e.getMessage()};
             debugError("RealmGetPolicy.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_GET_POLICY_IN_REALM", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
-            String[] args = {realm, currentPolicyName, e.getMessage()};
+            String[] args = {realm, e.getMessage()};
             debugError("RealmGetPolicy.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_GET_POLICY_IN_REALM", args);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
+    
     }
+
     
 }
