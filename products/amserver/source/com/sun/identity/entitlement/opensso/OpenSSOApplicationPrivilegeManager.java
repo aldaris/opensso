@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.11 2009-12-17 18:35:16 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.12 2009-12-18 21:56:56 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -181,6 +181,8 @@ public class OpenSSOApplicationPrivilegeManager extends
                 getHiddenRealmDN(), dsameUserSubject);
             pm.modifyPrivilege(privileges[0]);
             cachePrivilege(privileges[0]);
+            pm.modifyPrivilege(privileges[1]);
+            cachePrivilege(privileges[1]);
         } else {
             //TOFIX: not permission warning
         }
