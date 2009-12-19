@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceProviderEdit.jsp,v 1.9 2009-12-03 23:38:29 asyhuang Exp $
+   $Id: WebServiceProviderEdit.jsp,v 1.10 2009-12-19 00:04:51 asyhuang Exp $
 
 --%>
 
@@ -181,6 +181,13 @@
                 name="btnDump"
                 bundleID="amConsole"
                 defaultValue="agentconfig.button.dump"
+                type="primary" />
+        </td>
+        <td>
+            <cc:button
+                name="btnExportPolicy"
+                bundleID="amConsole"
+                defaultValue="agentconfig.button.export.policy"
                 type="primary" />
         </td>
     </tr>

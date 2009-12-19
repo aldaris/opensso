@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSPolicyManager.java,v 1.1 2009-09-17 05:49:29 mallas Exp $
+ * $Id: WSSPolicyManager.java,v 1.2 2009-12-19 00:09:41 asyhuang Exp $
  *
  */
 package com.sun.identity.wss.policy;
@@ -68,6 +68,7 @@ import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.security.SecurityMechanism;
 import com.sun.identity.wss.security.WSSConstants;
 import com.sun.identity.wss.security.WSSUtils;
+import com.sun.identity.wss.sts.config.STSRemoteConfig;
 
 
 /**
@@ -324,7 +325,41 @@ public class WSSPolicyManager {
             throw new WSSPolicyException(je.getMessage());
         }
     }
-    
+
+    /**
+     * Returns the STS end point policy
+     * @return the XML String representation of ws-security policy for the
+     * STS service.
+     * @throws WSSPolicyException
+     */
+    public String getSTSPolicy()
+            throws WSSPolicyException {
+         return getPolicy(getSTSConfig());
+
+    }
+
+    /**
+     * Returns the input policy for the STS service
+     * @return the XML String representation of ws-security policy for the
+     *         STS service.
+     * @throws com.sun.identity.wss.policy.WSSPolicyException
+     */
+    public String getSTSInputPolicy() throws WSSPolicyException {
+        return getInputPolicy(getSTSConfig());
+
+    }
+
+    /**
+     * Returns the output policy for the STS service
+     * @return the XML String representation of ws-security policy for the
+     *         STS service.
+     * @throws com.sun.identity.wss.policy.WSSPolicyException
+     */
+
+    public String getSTSOutputPolicy() throws WSSPolicyException {
+        return getOutputPolicy(getSTSConfig());
+    }
+
     private InitiatorTokenElement createInitiatorTokenElement(
             String secMech) throws WSSPolicyException {
         
@@ -572,5 +607,46 @@ public class WSSPolicyManager {
             throw new WSSPolicyException (je.getMessage());
         }
         
+    }
+
+    private ProviderConfig getSTSConfig() throws WSSPolicyException {
+        try {
+            STSRemoteConfig stsConfig = new STSRemoteConfig();
+            ProviderConfig pc = ProviderConfig.getProvider(
+                     stsConfig.getIssuer(), ProviderConfig.WSP, false);
+            pc.setKDCDomain(stsConfig.getKDCDomain());
+            pc.setKDCServer(stsConfig.getKDCServer());
+            pc.setKerberosServicePrincipal(
+                     stsConfig.getKerberosServicePrincipal());
+            pc.setKeyTabFile(stsConfig.getKeyTabFile());
+            pc.setValidateKerberosSignature(
+                     stsConfig.isValidateKerberosSignature());
+            pc.setSecurityMechanisms(stsConfig.getSecurityMechanisms());
+            pc.setUsers(stsConfig.getUsers());
+            pc.setRequestEncryptEnabled(stsConfig.isRequestEncryptEnabled());
+            pc.setRequestHeaderEncryptEnabled(
+                    stsConfig.isRequestHeaderEncryptEnabled());
+            pc.setRequestSignEnabled(stsConfig.isRequestSignEnabled());
+            pc.setResponseEncryptEnabled(stsConfig.isResponseEncryptEnabled());
+            pc.setResponseSignEnabled(stsConfig.isResponseSignEnabled());
+            pc.setPreserveSecurityHeader(false);
+            pc.setPublicKeyAlias(stsConfig.getPublicKeyAlias());
+            pc.setKeyAlias(stsConfig.getPrivateKeyAlias());
+            pc.setEncryptionAlgorithm(stsConfig.getEncryptionAlgorithm());
+            pc.setEncryptionStrength(stsConfig.getEncryptionStrength());
+            pc.setSigningRefType(stsConfig.getSigningRefType());
+            pc.setAuthenticationChain(stsConfig.getAuthenticationChain());
+            pc.setDetectUserTokenReplay(
+                     stsConfig.isUserTokenDetectReplayEnabled());
+            pc.setMessageReplayDetection(
+                     stsConfig.isMessageReplayDetectionEnabled());
+            pc.setDNSClaim(stsConfig.getIssuer());
+            pc.setSignedElements(stsConfig.getSignedElements());
+            return pc;
+        } catch (Exception ex) {
+            WSSUtils.debug.error("WSSPolicyManager.getSTSConfig: "
+                    +  " Exception ", ex);
+            throw new WSSPolicyException(ex.getMessage());
+        }
     }
 }

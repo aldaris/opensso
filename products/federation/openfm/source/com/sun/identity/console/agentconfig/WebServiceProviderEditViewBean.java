@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceProviderEditViewBean.java,v 1.9 2009-12-03 23:55:33 asyhuang Exp $
+ * $Id: WebServiceProviderEditViewBean.java,v 1.10 2009-12-19 00:06:54 asyhuang Exp $
  *
  */
 
@@ -43,6 +43,7 @@ import com.sun.web.ui.model.CCActionTableModelInterface;
 import com.sun.web.ui.model.CCEditableListModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.editablelist.CCEditableList;
+import com.sun.web.ui.view.html.CCButton;
 import com.sun.web.ui.view.html.CCSelectableList;
 import com.sun.web.ui.view.table.CCActionTable;
 import java.io.Serializable;
@@ -85,7 +86,9 @@ public class WebServiceProviderEditViewBean
     private Set providerUIProperties = parseExternalizeUIProperties(
         "webServiceProviderUI");
     private CCActionTableModel tblUserCredential;
-    
+
+    static final String BTN_EXPORT_POLICY = "btnExportPolicy";
+
     static {
         attrToChildNames.put("userpassword", "userpassword");
         attrToChildNames.put("WSPProxyEndpoint", "wssproxyEndPoint");
@@ -126,6 +129,7 @@ public class WebServiceProviderEditViewBean
     protected void registerChildren() {
         super.registerChildren();
         registerChild(TBL_USER_CRED, CCActionTable.class);
+        registerChild(BTN_EXPORT_POLICY, CCButton.class);
         tblUserCredential.registerChildren(this);
     }
 
@@ -390,6 +394,14 @@ public class WebServiceProviderEditViewBean
         }
     }
 
+    public void handleBtnExportPolicyRequest(RequestInvocationEvent event) throws ModelControlException {
+        AgentExportPolicyViewBean vb =(AgentExportPolicyViewBean)getViewBean(AgentExportPolicyViewBean.class);
+        getViewBean(AgentExportPolicyViewBean.class);
+        vb.setPageSessionAttribute(AgentExportPolicyViewBean.PG_ATTR_CONFIG_PAGE, getClass().getName());
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
+    }
+    
     /**
      * Handles edit user token credential request.
      *

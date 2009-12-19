@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenServiceViewBean.java,v 1.4 2009-12-10 17:14:03 ggennaro Exp $
+ * $Id: SecurityTokenServiceViewBean.java,v 1.5 2009-12-19 00:14:36 asyhuang Exp $
  *
  */
 package com.sun.identity.console.service;
@@ -44,6 +44,7 @@ import com.sun.identity.console.service.model.SecurityTokenServiceModel;
 import com.sun.identity.console.service.model.SecurityTokenServiceModelImpl;
 import com.sun.identity.wss.security.ConfiguredSignedElements;
 import com.sun.web.ui.view.alert.CCAlert;
+import com.sun.web.ui.view.html.CCButton;
 import com.sun.web.ui.view.html.CCSelectableList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,6 +62,7 @@ public class SecurityTokenServiceViewBean
     public static final String PAGE_MODIFIED = "pageModified";
     private static final String AUTHENTICATION_CHAIN =
             "AuthenticationChain";
+    static final String BTN_STS_EXPORT_POLICY = "btnSTSExportPolicy";
 
     /**
      * Creates a authentication domains view bean.
@@ -81,6 +83,11 @@ public class SecurityTokenServiceViewBean
         }
     }
 
+    protected void registerChildren() {
+        super.registerChildren();
+        registerChild(BTN_STS_EXPORT_POLICY, CCButton.class);
+    }
+
     protected View createChild(String name) {
         return super.createChild(name);
     }
@@ -99,7 +106,7 @@ public class SecurityTokenServiceViewBean
                     AUTHENTICATION_CHAIN);
             cb.setOptions(getAuthChainOptionList());
             propertySheetModel.setValue(AUTHENTICATION_CHAIN, authChains);
-          
+
             setSignedElements(values);
             setEncryptionFlag(values);
             if (!isInlineAlertMessageSet()) {
@@ -109,29 +116,41 @@ public class SecurityTokenServiceViewBean
                             "message.profile.modified");
                 }
             }
-        } catch (AMConsoleException ex) {          
+        } catch (AMConsoleException ex) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     ex.getMessage());
         }
     }
 
     void setEncryptionFlag(Map values) {
-         Set set = (Set)values.get("isRequestEncrypt");
-         String isrequestencrypted = ((set != null) && !set.isEmpty()) ?
-             (String)set.iterator().next() : "";
+        Set set = (Set) values.get("isRequestEncrypt");
+        String isrequestencrypted = ((set != null) && !set.isEmpty()) ? (String) set.iterator().next() : "";
 
-         set = (Set)values.get("isRequestHeaderEncrypt");
-         String isRequestHeaderEncrypt = ((set != null) && !set.isEmpty()) ?
-             (String)set.iterator().next() : "";
+        set = (Set) values.get("isRequestHeaderEncrypt");
+        String isRequestHeaderEncrypt = ((set != null) && !set.isEmpty()) ? (String) set.iterator().next() : "";
 
-         if(((isrequestencrypted != null) && (isrequestencrypted.equals("true")))
-             || ((isRequestHeaderEncrypt != null) && (isRequestHeaderEncrypt.equals("true"))))
-         {
-             propertySheetModel.setValue("isRequestEncryptedEnabled", "true");
-         }
+        if (((isrequestencrypted != null) && (isrequestencrypted.equals("true"))) || ((isRequestHeaderEncrypt != null) && (isRequestHeaderEncrypt.equals("true")))) {
+            propertySheetModel.setValue("isRequestEncryptedEnabled", "true");
+        }
     }
+
     void setSignedElements(Map values) {
         Set set = (Set) values.get("SignedElements");
+<<<<<<< SecurityTokenServiceViewBean.java
+        String isresponsesigned = (String) values.get("isrequestsigned");
+        ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
+        Map map = configuredSignedElements.getChoiceValues();
+        if ((set.isEmpty() || set.size() == 0) && (isresponsesigned != null) && (isresponsesigned.equals("true"))) {
+            propertySheetModel.setValue("Body", "true");
+        } else {
+            Iterator it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pairs = (Map.Entry) it.next();
+                if (set.contains(pairs.getKey())) {
+                    propertySheetModel.setValue(pairs.getKey().toString(), "true");
+                }
+            }
+=======
         
         if( set != null ) {
             ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
@@ -150,32 +169,32 @@ public class SecurityTokenServiceViewBean
                     }
                 }            
             }
+>>>>>>> 1.4
         }
     }
 
-
-    private void getSignedElements(Map values){
-        String val=null;
+    private void getSignedElements(Map values) {
+        String val = null;
         Set set = new HashSet();
         ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
         Map map = configuredSignedElements.getChoiceValues();
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry)it.next();            
-            val = (String)propertySheetModel.getValue(pairs.getKey().toString());
-            if(val.equals("true")){
+            Map.Entry pairs = (Map.Entry) it.next();
+            val = (String) propertySheetModel.getValue(pairs.getKey().toString());
+            if (val.equals("true")) {
                 set.add(pairs.getValue());
             }
-        }    
+        }
 
-        val = (String)propertySheetModel.getValue("isResponseSign");
-        if(val.equals("true") && set.isEmpty()) {
-             set.add("Body");
+        val = (String) propertySheetModel.getValue("isResponseSign");
+        if (val.equals("true") && set.isEmpty()) {
+            set.add("Body");
         }
         values.put("SignedElements", set);
 
     }
-    
+
     private OptionList getAuthChainOptionList()
             throws AMConsoleException {
         Set config = ((SecurityTokenServiceModel) getModel()).getAuthenticationChains();
@@ -231,7 +250,7 @@ public class SecurityTokenServiceViewBean
         /*super.handleButton1Request(event);*/
 
         submitCycle = true;
-        AMServiceProfileModel model = (AMServiceProfileModel)getModel();
+        AMServiceProfileModel model = (AMServiceProfileModel) getModel();
 
         if (model != null) {
             try {
@@ -240,10 +259,10 @@ public class SecurityTokenServiceViewBean
                 getSignedElements(values);
                 model.setAttributeValues(values);
                 setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                    "message.updated");
+                        "message.updated");
             } catch (AMConsoleException e) {
                 setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                    e.getMessage());
+                        e.getMessage());
             }
         }
         forwardTo();
@@ -280,5 +299,13 @@ public class SecurityTokenServiceViewBean
             debug.warning(
                     "SecurityTokenServiceViewBean.handleButton3Request:", e);
         }
+    }
+
+    public void handleBtnSTSExportPolicyRequest(RequestInvocationEvent event) throws ModelControlException {
+        STSExportPolicyViewBean vb = (STSExportPolicyViewBean) getViewBean(STSExportPolicyViewBean.class);
+        getViewBean(STSExportPolicyViewBean.class);
+        vb.setPageSessionAttribute(STSExportPolicyViewBean.PG_ATTR_CONFIG_PAGE, getClass().getName());
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
     }
 }

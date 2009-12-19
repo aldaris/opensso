@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SecurityTokenService.jsp,v 1.2 2009-12-03 23:56:38 asyhuang Exp $
+   $Id: SecurityTokenService.jsp,v 1.3 2009-12-19 00:10:28 asyhuang Exp $
 
 --%>
 
@@ -95,7 +95,7 @@
         }
     }
 </script>
-<cc:form name="SecurityTokenService" method="post" defaultCommandChild="/button1" >
+<cc:form name="SecurityTokenService" method="post">
 <cc:hidden name="tfPageModified" />
 
 <script language="javascript">
@@ -116,6 +116,19 @@
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
 <cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+
+
+<table border="0" cellpadding="10" cellspacing="0">
+    <tr>
+        <td>
+            <cc:button
+                name="btnSTSExportPolicy"
+                bundleID="amConsole"
+                defaultValue="sts.button.export.policy"
+                type="primary" />
+        </td>
+    </tr>
+</table>
 
 <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="true" />
 
