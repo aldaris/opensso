@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: webex-config-opensso.xhtml,v 1.1 2009-12-08 01:47:14 babysunil Exp $
+   $Id: webex-config-opensso.xhtml,v 1.2 2009-12-19 00:27:38 babysunil Exp $
 
 -->
 
@@ -193,13 +193,14 @@
             <ice:panelGrid columns="2">
                 <ice:outputLabel
                        value="#{resources['webex-configuration.opensso.remote.service.provider']}"/>
-                <ice:inputText id="remspname" readonly="true"
+                <ice:inputText id="remspname" disabled="true" readonly="true"
                        style="width:250px;" maxlength="256" value="#{webExConfigWizardBean.webexSiteUrl}"/>
             </ice:panelGrid>
         </ui:define>
     </o:section>
 
-    <ice:outputText
+    <ice:outputLabel
         value="#{resources['webex-configuration.opensso.side.finish.configuration']}"/>
         
 </span>
+

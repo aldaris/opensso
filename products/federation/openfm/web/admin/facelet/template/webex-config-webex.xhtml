@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: webex-config-webex.xhtml,v 1.1 2009-12-08 01:47:14 babysunil Exp $
+   $Id: webex-config-webex.xhtml,v 1.2 2009-12-19 00:27:38 babysunil Exp $
 
 -->
 
@@ -65,7 +65,7 @@
                     id="imgRsource"
                     resource="#{webExConfigWizardBean.fileResource}"
                     label="#{resources['webex-configuration.webex.click.to.download']}"
-                    fileName="cert.txt" mimeType="application/octet-stream" attachment="true" />
+                    fileName="#{resources['webex-opensso.download.name.cert']}" mimeType="application/octet-stream" attachment="true" />
             </ice:panelGrid>
         </ice:panelGrid>
 
@@ -76,11 +76,6 @@
 <ice:panelGrid  padding-left="30px">
         <ice:panelGrid columns="3">
             <ice:outputText value="#{resources['webex-configuration.setup.one.section-details']}"/>
-            <ice:outputLink value="http://www.webex.com" target="_blank">
-                <ice:outputText styleClass="link-for-html-text" value="#{resources['webex-configuration.setup.two.section-details']}"/>
-            </ice:outputLink>
-            <ice:outputText value="#{resources['webex-configuration.setup.three.section-details']}"/>
-
         </ice:panelGrid>
         <ice:panelGrid>
             <ice:outputText
@@ -89,6 +84,11 @@
         <ice:panelGrid>
             <ice:outputText
                 value="#{resources['webex-configuration.webexconfig.load.cert']}"/>
+        </ice:panelGrid>
+
+        <ice:panelGrid>
+            <ice:outputText
+                value="#{resources['webex-configuration.webexconfig.remove.old.cert']}"/>
         </ice:panelGrid>
 
         <ice:panelGrid>
