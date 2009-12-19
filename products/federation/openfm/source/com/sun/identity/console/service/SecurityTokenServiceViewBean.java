@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenServiceViewBean.java,v 1.5 2009-12-19 00:14:36 asyhuang Exp $
+ * $Id: SecurityTokenServiceViewBean.java,v 1.6 2009-12-19 02:17:03 asyhuang Exp $
  *
  */
 package com.sun.identity.console.service;
@@ -136,22 +136,6 @@ public class SecurityTokenServiceViewBean
 
     void setSignedElements(Map values) {
         Set set = (Set) values.get("SignedElements");
-<<<<<<< SecurityTokenServiceViewBean.java
-        String isresponsesigned = (String) values.get("isrequestsigned");
-        ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
-        Map map = configuredSignedElements.getChoiceValues();
-        if ((set.isEmpty() || set.size() == 0) && (isresponsesigned != null) && (isresponsesigned.equals("true"))) {
-            propertySheetModel.setValue("Body", "true");
-        } else {
-            Iterator it = map.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry) it.next();
-                if (set.contains(pairs.getKey())) {
-                    propertySheetModel.setValue(pairs.getKey().toString(), "true");
-                }
-            }
-=======
-        
         if( set != null ) {
             ConfiguredSignedElements configuredSignedElements = new ConfiguredSignedElements();
             Map map = configuredSignedElements.getChoiceValues();
@@ -169,7 +153,6 @@ public class SecurityTokenServiceViewBean
                     }
                 }            
             }
->>>>>>> 1.4
         }
     }
 
