@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthFilter.java,v 1.1 2009-08-19 05:40:43 veiming Exp $
+ * $Id: AuthFilter.java,v 1.2 2009-12-21 23:54:47 farble1670 Exp $
  */
 
 package com.sun.identity.admin;
@@ -65,7 +65,7 @@ public class AuthFilter implements Filter {
         String gotoUrl = getGotoUrl(request);
         String loginUrl = getLoginUrl(request);
 
-        return loginUrl + "?goto=" + gotoUrl;
+        return loginUrl + "?goto=" + gotoUrl + "&service=adminconsoleservice";
     }
 
     private String getLoginUrl(HttpServletRequest request) {
