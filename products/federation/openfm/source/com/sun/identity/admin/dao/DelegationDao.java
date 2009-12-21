@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationDao.java,v 1.6 2009-11-19 01:06:08 farble1670 Exp $
+ * $Id: DelegationDao.java,v 1.7 2009-12-21 23:17:04 veiming Exp $
  */
 package com.sun.identity.admin.dao;
 
@@ -63,11 +63,13 @@ public class DelegationDao implements Serializable {
 
         Token token = new Token();
         Subject adminSubject = token.getAdminSubject();
-        RealmBean realmBean = RealmsBean.getInstance().getRealmBean();
         List<SubjectType> subjectTypes = new ArrayList<SubjectType>();
 
         try {
-            Application a = ApplicationManager.getApplication(adminSubject, realmBean.getName(), "sunAMDelegationService");
+            // always get the delegation service application in the root realm.
+            // because this application is not referrable to sub realm.
+            Application a = ApplicationManager.getApplication(adminSubject, 
+                "/", "sunAMDelegationService");
             if (a.getResources() == null || a.getResources().size() == 0) {
                 return subjectTypes;
             }
