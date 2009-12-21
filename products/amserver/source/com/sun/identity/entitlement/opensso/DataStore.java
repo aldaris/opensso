@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.8 2009-12-12 00:03:13 veiming Exp $
+ * $Id: DataStore.java,v 1.9 2009-12-21 22:02:43 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -951,33 +951,29 @@ public class DataStore {
             filter.append("(|").append(hostBuffer.toString()).append(")");
         }
 
+        StringBuilder pathBuffer = new StringBuilder();
+        Set<String> pathIndexes = indexes.getPathIndexes();
+
+        if ((pathIndexes != null) && !pathIndexes.isEmpty()) {
+            for (String p : pathIndexes) {
+                Object[] o = {p};
+                pathBuffer.append(MessageFormat.format(
+                    PATH_FILTER_TEMPLATE, o));
+            }
+        }
+
         if (bSubTree) {
-            StringBuilder parentPathBuffer = new StringBuilder();
             Set<String> parentPathIndexes = indexes.getParentPathIndexes();
             if ((parentPathIndexes != null) && !parentPathIndexes.isEmpty()) {
                 for (String p : parentPathIndexes) {
                     Object[] o = {p};
-                    parentPathBuffer.append(MessageFormat.format(
+                    pathBuffer.append(MessageFormat.format(
                         PATH_PARENT_FILTER_TEMPLATE, o));
                 }
             }
-            if (parentPathBuffer.length() > 0) {
-                filter.append("(|").append(parentPathBuffer.toString())
-                    .append(")");
-            }
-        } else {
-            Set<String> pathIndexes = indexes.getPathIndexes();
-            StringBuilder pathBuffer = new StringBuilder();
-            if ((pathIndexes != null) && !pathIndexes.isEmpty()) {
-                for (String p : pathIndexes) {
-                    Object[] o = {p};
-                    pathBuffer.append(MessageFormat.format(
-                        PATH_FILTER_TEMPLATE, o));
-                }
-            }
-            if (pathBuffer.length() > 0) {
-                filter.append("(|").append(pathBuffer.toString()).append(")");
-            }
+        }
+        if (pathBuffer.length() > 0) {
+            filter.append("(|").append(pathBuffer.toString()).append(")");
         }
 
         String result = filter.toString();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.5 2009-12-07 19:46:45 veiming Exp $
+ * $Id: Entitlement.java,v 1.6 2009-12-21 22:02:43 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -463,9 +463,7 @@ public class Entitlement {
                 if (resComparator instanceof RegExResourceName) {
                     ResourceMatch match = resComparator.compare(
                         r, resourceName, true);
-                    if (match.equals(ResourceMatch.EXACT_MATCH) ||
-                        match.equals(ResourceMatch.SUPER_RESOURCE_MATCH) ||
-                        match.equals(ResourceMatch.WILDCARD_MATCH)) {
+                    if (!match.equals(ResourceMatch.NO_MATCH)) {
                         matched.add(r);
                     }
                 } else {

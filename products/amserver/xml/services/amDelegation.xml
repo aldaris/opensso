@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amDelegation.xml,v 1.14 2009-11-26 17:06:07 veiming Exp $
+   $Id: amDelegation.xml,v 1.15 2009-12-21 22:02:42 veiming Exp $
   
 -->
 
@@ -260,7 +260,7 @@
                             <Attribute name="actions" />
                             <Value>READ</Value>
                             <Value>MODIFY</Value>
-                            <Value>DELEGATION</Value>
+                            <Value>DELEGATE</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="EntitlementRESTDecision" id="Permission">
