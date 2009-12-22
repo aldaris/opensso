@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.12 2009-12-18 21:56:56 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.13 2009-12-22 18:00:25 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -50,6 +50,7 @@ import com.sun.identity.entitlement.RegExResourceName;
 import com.sun.identity.entitlement.ResourceMatch;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
+import com.sun.identity.entitlement.SubjectDecision;
 import com.sun.identity.entitlement.SubjectImplementation;
 import com.sun.identity.entitlement.TimeCondition;
 import com.sun.identity.entitlement.interfaces.ResourceName;
@@ -87,6 +88,8 @@ public class OpenSSOApplicationPrivilegeManager extends
     private static final String HIDDEN_REALM_DN =
         "o=sunamhiddenrealmdelegationservicepermissions,ou=services,";
     private static final String GHOST_PRIVILEGE_NAME_PREFIX = "^^";
+    private static final RegExResourceName regExComparator = new
+        RegExResourceName();
 
     private String realm;
     private Subject caller;
@@ -168,7 +171,7 @@ public class OpenSSOApplicationPrivilegeManager extends
             modifiables.removePrivilege(name);
             delegatables.removePrivilege(name);
         } else {
-            //TOFIX: not permission warning
+            throw new EntitlementException(326);
         }
     }
 
@@ -184,7 +187,7 @@ public class OpenSSOApplicationPrivilegeManager extends
             pm.modifyPrivilege(privileges[1]);
             cachePrivilege(privileges[1]);
         } else {
-            //TOFIX: not permission warning
+            throw new EntitlementException(326);
         }
     }
 
@@ -502,6 +505,44 @@ public class OpenSSOApplicationPrivilegeManager extends
 
     private void initPrivilegeNames()
         throws EntitlementException {
+        initPermissionObjects();
+        getPrivileges();
+        getSubResourceRelatedPrivileges();
+    }
+    
+    private void getSubResourceRelatedPrivileges() throws EntitlementException {
+        if (!bPolicyAdmin) {
+            Set<String> applNames = new HashSet<String>();
+            applNames.addAll(readables.getApplications());
+            applNames.addAll(modifiables.getApplications());
+            applNames.addAll(delegatables.getApplications());
+            
+            if (!applNames.isEmpty()) {
+                Set<String> hostIndex = new HashSet<String>();
+                hostIndex.add("://" + DNMapper.orgNameToDN(realm));
+                Set<String> pathParentIndexes = new HashSet<String>();
+                
+                for (String applName : applNames) {
+                    pathParentIndexes.add(RESOURCE_PREFIX + "/" + applName);
+                }
+                ResourceSearchIndexes rIndex = new ResourceSearchIndexes(
+                    hostIndex, null, pathParentIndexes);
+                OpenSSOIndexStore db = new OpenSSOIndexStore(dsameUserSubject,
+                            getHiddenRealmDN());
+                Iterator<IPrivilege> results = db.search("/", rIndex,
+                    Collections.EMPTY_SET, true, false);
+
+                while (results.hasNext()) {
+                    Privilege p = (Privilege) results.next();
+                    delegatables.evaluate(p, true);
+                    modifiables.evaluate(p, true);
+                    readables.evaluate(p, true);
+                }
+            }
+        }
+    }
+
+    private void getPrivileges() throws EntitlementException {
         Set<String> hostIndex = new HashSet<String>();
         hostIndex.add("://" + DNMapper.orgNameToDN(realm));
         Set<String> pathParentIndex = new HashSet<String>();
@@ -518,6 +559,29 @@ public class OpenSSOApplicationPrivilegeManager extends
         Iterator<IPrivilege> results = db.search("/", rIndex, subjectIndex,
             true, false);
 
+        while (results.hasNext()) {
+            Privilege p = (Privilege) results.next();
+
+            if (bPolicyAdmin || doesSubjectMatch(p, resourcePrefix)) {
+                delegatables.evaluate(p);
+                modifiables.evaluate(p);
+                readables.evaluate(p);
+            }
+        }
+    }
+
+    private boolean doesSubjectMatch(
+        Privilege privilege,
+        String resourceName
+   ) throws EntitlementException {
+        SubjectAttributesManager mgr =
+            SubjectAttributesManager.getInstance(dsameUserSubject, realm);
+        SubjectDecision sDecision = privilege.getSubject().evaluate(realm,
+            mgr, caller, resourceName, Collections.EMPTY_MAP);
+        return sDecision.isSatisfied();
+    }
+
+    private void initPermissionObjects() throws EntitlementException {
         Set<String> actions = new HashSet<String>();
         actions.add(ACTION_READ);
         actions.add(ACTION_DELEGATE);
@@ -534,13 +598,6 @@ public class OpenSSOApplicationPrivilegeManager extends
         actions.add(ACTION_READ);
         readables = new Permission(actions, bPolicyAdmin,
             resourcePrefix);
-
-        while (results.hasNext()) {
-            Privilege p = (Privilege) results.next();
-            delegatables.evaluate(p);
-            modifiables.evaluate(p);
-            readables.evaluate(p);
-        }
     }
 
     private void addToMap(
@@ -593,7 +650,9 @@ public class OpenSSOApplicationPrivilegeManager extends
                 String s = st.nextToken();
                 resources.add(URLDecoder.decode(s, "UTF-8"));
             } catch (UnsupportedEncodingException ex) {
-                //TOFIX: error condition
+                PrivilegeManager.debug.error(
+                    "OpenSSOApplicationPrivilegeManager " +
+                        ".getApplicationPrivilegeResourceNames", ex);
                 return Collections.EMPTY_MAP;
             }
         }
@@ -818,6 +877,46 @@ public class OpenSSOApplicationPrivilegeManager extends
                 map.put(s, appl.getResources());
             }
             return map;
+        }
+
+        private void evaluate(Privilege p, boolean subResource) {
+            if (!privileges.keySet().contains(p.getName())) {
+                Map<String, Set<String>> mapAppToRes = getResourceNames(p);
+
+                for (String app : mapAppToRes.keySet()) {
+                    if (isSubResource(app, mapAppToRes.get(app))) {
+                        addToMap(appNameToResourceNames, mapAppToRes);
+                        privileges.put(p.getName(), p);
+                    }
+                }
+            }
+        }
+
+        private boolean isSubResource(String app, Set<String> targets) {
+            Set<String> resources = appNameToResourceNames.get(app);
+            if ((resources == null) || resources.isEmpty()) {
+                return false;
+            }
+
+            for (String t : targets) {
+                if (!isSubResource(resources, t)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private boolean isSubResource(Set<String> resources, String target) {
+            for (String r : resources) {
+                if (r.endsWith("/*")) {
+                    r = r.substring(0, r.length()-2);
+                }
+                ResourceMatch m = regExComparator.compare(r, target, true);
+                if (m.equals(ResourceMatch.SUB_RESOURCE_MATCH)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void evaluate(Privilege p) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationIsAllowedSubResourceTest.java,v 1.2 2009-12-07 19:46:50 veiming Exp $
+ * $Id: DelegationIsAllowedSubResourceTest.java,v 1.3 2009-12-22 18:00:24 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -77,7 +77,6 @@ public class DelegationIsAllowedSubResourceTest {
     private boolean migrated = EntitlementConfiguration.getInstance(
         adminSubject, "/").migratedToEntitlementService();
     private AMIdentity user1;
-    private Subject testUserSubject;
 
     @BeforeClass
     public void setup()

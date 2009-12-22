@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectDecision.java,v 1.1 2009-08-19 05:40:34 veiming Exp $
+ * $Id: SubjectDecision.java,v 1.2 2009-12-22 18:00:25 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -53,7 +53,7 @@ public class SubjectDecision {
      * Returns boolean result of subject decsion
      * @return boolean result of subject decision
      */
-    boolean isSatisfied() {
+    public boolean isSatisfied() {
         return satisfied;
     }
 

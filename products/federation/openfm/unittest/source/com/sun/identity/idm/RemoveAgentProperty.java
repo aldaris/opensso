@@ -22,20 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveAgentProperty.java,v 1.1 2009-11-03 00:07:47 hengming Exp $
+ * $Id: RemoveAgentProperty.java,v 1.2 2009-12-22 18:00:25 veiming Exp $
  */
 
 package com.sun.identity.idm;
 
-import com.iplanet.sso.SSOException;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.configuration.AgentConfiguration;
-import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
-import com.sun.identity.idm.IdType;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -50,9 +46,8 @@ public class RemoveAgentProperty {
     private static String agentType = AgentConfiguration.AGENT_TYPE_J2EE;
     private static Map<String, Set<String>> attrValues =
         new HashMap<String, Set<String>>();
-    private static String serverURL = "http://isdev-4.red.iplanet.com:58080/fam";
-    private static String agentURL =
-        "http://isdev-4.red.iplanet.com:18080/agentapp";
+    private static String serverURL = SystemProperties.getServerInstanceName();
+    private static String agentURL = SystemProperties.getServerInstanceName();
 
     private SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
