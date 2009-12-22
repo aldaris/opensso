@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdServicesImpl.java,v 1.59 2009-11-10 01:48:01 hengming Exp $
+* $Id: IdServicesImpl.java,v 1.60 2009-12-22 08:29:35 hengming Exp $
 *
 */
 
@@ -1759,6 +1759,18 @@ public class IdServicesImpl implements IdServices {
        checkPermission(token, amOrgName, name, attrNames, IdOperation.EDIT,
            type);
        // Get the list of plugins that service/edit the create operation.
+
+       if (type.equals(IdType.USER)) {
+           IdRepoAttributeValidator attrValidator = 
+               IdRepoAttributeValidatorManager.getInstance().
+               getIdRepoAttributeValidator(amOrgName);
+           HashMap attributes = new HashMap();
+           Set values = new HashSet();
+           values.add(newPassword);
+           attributes.put(attrName, values);
+           attrValidator.validateAttributes(attributes, IdOperation.EDIT);
+       }
+
        Set configuredPluginClasses = 
            idrepoCache.getIdRepoPlugins(amOrgName, IdOperation.EDIT, type);
        if ((configuredPluginClasses == null) || 
