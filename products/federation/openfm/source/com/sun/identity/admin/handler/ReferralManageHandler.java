@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ReferralManageHandler.java,v 1.3 2009-10-12 20:51:58 farble1670 Exp $
+ * $Id: ReferralManageHandler.java,v 1.4 2009-12-22 23:33:14 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -36,7 +36,7 @@ import com.sun.identity.admin.model.FilterHolder;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.ReferralBean;
 import com.sun.identity.admin.model.ReferralManageBean;
-import com.sun.identity.admin.model.ReferralWizardBean;
+import com.sun.identity.admin.model.ViewApplicationsBean;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -214,5 +214,19 @@ public class ReferralManageHandler implements Serializable {
         addResetEvent();
     }
 
+    public String manageAction() {
+        ViewApplicationsBean vasb = ViewApplicationsBean.getInstance();
+        if (vasb.getViewApplications() == null || vasb.getViewApplications().size() == 0) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "noApplicationsSummary"));
+            mb.setDetail(r.getString(this, "noApplicationsDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            messagesBean.addMessageBean(mb);
 
+            return null;
+        } else {
+            return "referral-manage";
+        }
+    }
 }

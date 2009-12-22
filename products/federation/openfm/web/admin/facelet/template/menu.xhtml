@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: menu.xhtml,v 1.12 2009-12-08 03:22:53 babysunil Exp $
+   $Id: menu.xhtml,v 1.13 2009-12-22 23:33:14 farble1670 Exp $
 
 -->
 
@@ -54,7 +54,7 @@
                 <ice:menuItem
                     rendered="#{permissionsBean.policyManageAllowed}"
                     value="#{resources['menu.policyManageItemValue']}"
-                    action="policy-manage"/>
+                    action="#{policyManageHandler.manageAction}"/>
             </ice:menuItem>
             <ice:menuItem
                 rendered="#{permissionsBean.referralAllowed &amp;&amp; o:size(realmsBean.realmBeans) &gt; 1}"
@@ -66,7 +66,7 @@
                 <ice:menuItem
                     rendered="#{permissionsBean.referralManageAllowed}"
                     value="#{resources['menu.referralManageItemValue']}"
-                    action="referral-manage"/>
+                    action="#{referralManageHandler.manageAction}"/>
             </ice:menuItem>
             <ice:menuItem
                 rendered="#{permissionsBean.applicationAllowed}"
@@ -86,11 +86,11 @@
                 <ice:menuItem
                     rendered="#{permissionsBean.delegationCreateAllowed}"
                     value="#{resources['menu.delegationCreateItemValue']}"
-                    action="delegation-create"/>
+                    action="#{delegationCreateWizardHandler.createAction}"/>
                 <ice:menuItem
                     rendered="#{permissionsBean.delegationManageAllowed}"
                     value="#{resources['menu.delegationManageItemValue']}"
-                    action="delegation-manage"/>
+                    action="#{delegationManageHandler.manageAction}"/>
             </ice:menuItem>
         </ice:menuItem>
         <ice:menuItem

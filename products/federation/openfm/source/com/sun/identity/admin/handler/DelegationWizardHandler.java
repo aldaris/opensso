@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationWizardHandler.java,v 1.3 2009-11-02 22:30:50 farble1670 Exp $
+ * $Id: DelegationWizardHandler.java,v 1.4 2009-12-22 23:33:14 farble1670 Exp $
  */
 
 package com.sun.identity.admin.handler;
@@ -87,5 +87,9 @@ public abstract class DelegationWizardHandler extends WizardHandler {
     @Override
     public void cancelListener(ActionEvent event) {
         doCancelNext();
+    }
+
+    public MessagesBean getMessagesBean() {
+        return messagesBean;
     }
 }

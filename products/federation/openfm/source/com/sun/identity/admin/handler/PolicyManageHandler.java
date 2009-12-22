@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManageHandler.java,v 1.6 2009-11-06 19:56:13 farble1670 Exp $
+ * $Id: PolicyManageHandler.java,v 1.7 2009-12-22 23:33:14 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -33,11 +33,11 @@ import com.sun.identity.admin.model.MessagesBean;
 import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.FilterHolder;
 import com.sun.identity.admin.model.PolicyManageBean;
-import com.sun.identity.admin.model.PolicyWizardBean;
 import com.sun.identity.admin.model.PrivilegeBean;
 import com.sun.identity.admin.model.QueuedActionBean;
 import com.sun.identity.admin.model.RealmBean;
 import com.sun.identity.admin.model.RealmsBean;
+import com.sun.identity.admin.model.ViewApplicationsBean;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -294,6 +294,22 @@ public class PolicyManageHandler implements Serializable {
 
     public void setMessagesBean(MessagesBean messagesBean) {
         this.messagesBean = messagesBean;
+    }
+
+    public String manageAction() {
+        ViewApplicationsBean vasb = ViewApplicationsBean.getInstance();
+        if (vasb.getViewApplications() == null || vasb.getViewApplications().size() == 0) {
+            MessageBean mb = new MessageBean();
+            Resources r = new Resources();
+            mb.setSummary(r.getString(this, "noApplicationsSummary"));
+            mb.setDetail(r.getString(this, "noApplicationsDetail"));
+            mb.setSeverity(FacesMessage.SEVERITY_ERROR);
+            messagesBean.addMessageBean(mb);
+
+            return null;
+        } else {
+            return "policy-manage";
+        }
     }
 }
 
