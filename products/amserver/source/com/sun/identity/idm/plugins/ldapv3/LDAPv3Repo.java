@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.71 2009-11-20 23:52:54 ww203982 Exp $
+ * $Id: LDAPv3Repo.java,v 1.72 2009-12-22 19:11:55 veiming Exp $
  *
  */
 
@@ -66,7 +66,6 @@ import com.sun.identity.shared.ldap.LDAPSearchResults;
 import com.sun.identity.shared.ldap.LDAPUrl;
 import com.sun.identity.shared.ldap.LDAPv2;
 import com.sun.identity.shared.ldap.LDAPv3;
-import com.sun.identity.shared.ldap.controls.LDAPPasswordExpiredControl;
 import com.sun.identity.shared.ldap.controls.LDAPPasswordExpiringControl;
 import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
 import com.sun.identity.shared.ldap.factory.JSSESocketFactory;
@@ -81,7 +80,6 @@ import com.iplanet.am.sdk.AMCommonUtils;
 import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.am.util.AMURLEncDec;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.util.Base64;
 import com.iplanet.services.naming.ServerEntryNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.sso.SSOException;
