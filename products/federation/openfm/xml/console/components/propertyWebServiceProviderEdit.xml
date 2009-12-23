@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceProviderEdit.xml,v 1.17 2009-12-04 00:03:33 asyhuang Exp $
+   $Id: propertyWebServiceProviderEdit.xml,v 1.18 2009-12-23 00:20:59 babysunil Exp $
 
 -->
 
@@ -301,7 +301,7 @@
         <subsection  name="Encryption"  defaultValue="wss.header.encryption" >
             <property>
                 <label name="lblisrequestencrypted"
-            defaultValue="a323.title"
+            defaultValue="wsp.encryption.is.request.decrypted"
             labelFor="isRequestEncryptionEnabled" />
                 <cc name="isRequestEncryptedEnabled"
             tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">

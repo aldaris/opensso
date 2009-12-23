@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySecurityTokenService.xml,v 1.6 2009-12-22 21:54:41 veiming Exp $
+   $Id: propertySecurityTokenService.xml,v 1.7 2009-12-23 00:20:59 babysunil Exp $
 
 -->
 
@@ -281,7 +281,7 @@
         <subsection  name="Encryption"  defaultValue="web.services.security.token.singing.and.encryption.subsection.title.encryption" >
              <property>
                 <label name="lblisrequestencrypted"
-            defaultValue="web.services.security.token.isRequestEncryptionEnabled"
+            defaultValue="global.configuration.sts.is.request.decrypted"
             labelFor="isRequestEncryptionEnabled" />
                 <cc name="isRequestEncryptedEnabled"
             tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
