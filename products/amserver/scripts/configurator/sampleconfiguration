@@ -164,7 +164,7 @@ DS_DIRMGRPASSWD=11111111
 ### USERSTORE_PASSWD  is the password for the directory manager of the user
 ### data store
 ##############################################################################
-#USERSTORE_TYPE=LDAPv3ForAMDS
+#USERSTORE_TYPE=LDAPv3ForSUNDS
 #USERSTORE_SSL=SIMPLE
 #USERSTORE_DOMAINNAME=amqa.test.com 
 #USERSTORE_HOST=sample1.sun.com
