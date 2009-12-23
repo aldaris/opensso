@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.20 2009-10-13 23:19:48 mallas Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.21 2009-12-23 22:32:29 mrudul_uchil Exp $
  *
  */
 
@@ -66,6 +66,7 @@ import com.sun.identity.saml.assertion.AuthenticationStatement;
 import com.sun.identity.saml.assertion.AttributeStatement;
 import com.sun.identity.saml.assertion.Attribute;
 import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.wss.security.SecurityToken;
 import com.sun.identity.wss.security.SAML11AssertionValidator;
 import com.sun.identity.wss.security.SAML2AssertionValidator;
@@ -74,6 +75,9 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.wss.security.SecurityException;
 import com.sun.identity.wss.logging.LogUtil;
 import com.sun.identity.wss.trust.ClaimType;
+import com.sun.identity.session.util.RestrictedTokenAction;
+import com.sun.identity.session.util.RestrictedTokenContext;
+import com.sun.identity.common.SystemConfigurationUtil;
 
 /**
  * The STS attribute provider is used to retrieve an authenticated user or
@@ -100,6 +104,7 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
     
     private Map attributeMap = new HashMap();        
     private SSOToken ssoToken = null;
+    protected static SSOTokenManager tokenManager;
     
     /**
      * Returns all claimed attributes for a given subject.
@@ -334,13 +339,16 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
                          }
                          return null;
                       } else if(userToken.getType().equals(
-                              SecurityToken.WSS_FAM_SSO_TOKEN)) {                                                  
-                        SSOTokenManager manager = SSOTokenManager.getInstance();
-                        SSOToken currentToken = manager.createSSOToken(tokenID);
-                        if (manager.isValidToken(currentToken)) {
-                            ssoToken = currentToken;
-                        }                        
-                        return userToken.getPrincipalName();                        
+                              SecurityToken.WSS_FAM_SSO_TOKEN)) {
+
+                          String appTokenId = userToken.getAppTokenID();
+                          SSOToken currentToken = getSSOToken(tokenID,appTokenId);
+                          ssoToken = currentToken;
+                          if (ssoToken != null) {
+                              return ssoToken.getPrincipal().getName();
+                          } else {
+                              return null;
+                          }
                       } else {
                          return null;
                       }
@@ -472,6 +480,47 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
            }
         }
         return claimNames;
+    }
+
+    /**
+     * Check if agent token ID is appended to the token string.
+     * if yes, we use it as a restriction context. This is meant
+     * for cookie hijacking feature where agent appends the agent token ID
+     * to the user sso token before sending it over to the server for
+     * validation.
+     */
+    protected SSOToken getSSOToken(String token, String appTokenId) throws SSOException {
+
+        boolean useAppToken = Boolean.valueOf(
+                            SystemConfigurationUtil.getProperty(
+                            Constants.IS_ENABLE_UNIQUE_COOKIE,
+                            "false")).booleanValue();
+
+        if (tokenManager == null) {
+            tokenManager = SSOTokenManager.getInstance();
+        }
+        if (!useAppToken) {
+            return tokenManager.createSSOToken(token);
+        }
+
+        SSOToken stoken = null;
+        final String ftoken = token;
+
+        try {           
+            Object context = tokenManager.createSSOToken(appTokenId);
+            stoken = (SSOToken)RestrictedTokenContext.doUsing(context,
+                new RestrictedTokenAction() {
+                    public Object run() throws Exception {
+                        return tokenManager.createSSOToken(ftoken);
+                    }
+            });
+       } catch (SSOException e) {
+           STSUtils.debug.error("FAMSTSAttributeProvider:getSSOToken", e);
+           return tokenManager.createSSOToken(token);
+       } catch (Exception e) {
+           STSUtils.debug.error("FAMSTSAttributeProvider:getSSOToken", e);
+       }
+       return stoken;
     }
 }
 

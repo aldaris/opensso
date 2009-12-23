@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientUserToken.java,v 1.12 2008-08-19 19:12:26 veiming Exp $
+ * $Id: STSClientUserToken.java,v 1.13 2009-12-23 22:32:29 mrudul_uchil Exp $
  *
  */
 
@@ -50,7 +50,8 @@ public class STSClientUserToken implements ClientUserToken {
      
     FAMSecurityToken famToken = null;
     String tokenType = null;
-    String tokenValue = null;   
+    String tokenValue = null;
+    String appTokenID = null;
     
     /** Creates a new instance of STSClientUserToken */    
     public STSClientUserToken() {        
@@ -61,6 +62,8 @@ public class STSClientUserToken implements ClientUserToken {
             if(credential instanceof SSOToken) {
                famToken = new FAMSecurityToken((SSOToken)credential);               
                tokenType = SecurityToken.WSS_FAM_SSO_TOKEN;
+               tokenValue = famToken.getTokenID();
+               appTokenID = famToken.getAppTokenID();
             } else if (credential instanceof Element) {
                Element element = (Element)credential;
                if(!"Assertion".equals(element.getLocalName())) {
@@ -117,7 +120,9 @@ public class STSClientUserToken implements ClientUserToken {
             String childName = child.getLocalName();
             if(childName.equals("TokenValue")) {
                tokenValue = XMLUtils.getChildrenValue((Element)child);
-            } else if (childName.equals("TokenType")) {                
+            } else if(childName.equals("AppTokenValue")) {
+               appTokenID = XMLUtils.getElementValue((Element)child);
+            } else if (childName.equals("TokenType")) {
                tokenType = XMLUtils.getElementValue((Element)child);
             }
         }
@@ -152,17 +157,39 @@ public class STSClientUserToken implements ClientUserToken {
            }
         }
         StringBuffer sb = new StringBuffer();
-        sb.append("<fam:FAMToken xmlns:fam=\"")
-          .append(STSConstants.FAM_TOKEN_NS).append("\"").append(">")
-          .append("\n").append("<fam:TokenValue>").append(tokenValue)
-          .append("</fam:TokenValue>").append("\n").append("<fam:TokenType>")
-          .append(tokenType).append("</fam:TokenType>").append("\n")
-          .append("</fam:FAMToken>");
+        if ((appTokenID != null) && (appTokenID.length() != 0)) {
+            sb.append("<fam:FAMToken xmlns:fam=\"")
+               .append(STSConstants.FAM_TOKEN_NS).append("\"").append(">")
+               .append("\n").append("<fam:TokenValue>").append(tokenValue)
+               .append("</fam:TokenValue>").append("\n")
+               .append("<fam:AppTokenValue>").append(appTokenID)
+               .append("</fam:AppTokenValue>").append("\n")
+               .append("<fam:TokenType>").append(tokenType)
+               .append("</fam:TokenType>").append("\n")
+               .append("</fam:FAMToken>");
+        } else {
+            sb.append("<fam:FAMToken xmlns:fam=\"")
+               .append(STSConstants.FAM_TOKEN_NS).append("\"").append(">")
+               .append("\n").append("<fam:TokenValue>").append(tokenValue)
+               .append("</fam:TokenValue>").append("\n")
+               .append("<fam:TokenType>").append(tokenType)
+               .append("</fam:TokenType>").append("\n")
+               .append("</fam:FAMToken>");
+
+        }
+        
         return sb.toString();
     }
     
     public String getType() {
         return tokenType;
     }
-    
+
+    /**
+     * Returns the Application/Client token value.
+     * @return the Application/Client token value.
+     */
+    public String getAppTokenID() {
+        return appTokenID;
+    }
 }

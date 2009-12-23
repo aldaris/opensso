@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.45 2009-11-16 21:52:59 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.46 2009-12-23 22:32:29 mrudul_uchil Exp $
  *
  */
 
@@ -199,7 +199,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             HttpServletRequest request,
             HttpServletResponse response)
             throws SecurityException {
-       
+
+        if ( sharedState == null || sharedState.isEmpty() ) {
+            sharedState = new HashMap();
+        }
         ProviderConfig config = null;
         STSRemoteConfig stsConfig = null;
         if(debug.messageEnabled()) {
@@ -439,6 +442,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 WSSUtils.print(soapMessage.getSOAPPart()));
         }
 
+        if ( sharedState == null || sharedState.isEmpty() ) {
+            sharedState = new HashMap();
+        }
+        
         if (LogUtil.isLogEnabled()) {
             String[] data = {WSSUtils.print(soapMessage.getSOAPPart())};
             LogUtil.access(Level.FINE,

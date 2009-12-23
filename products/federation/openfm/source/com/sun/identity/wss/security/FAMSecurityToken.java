@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSecurityToken.java,v 1.5 2008-08-19 19:12:25 veiming Exp $
+ * $Id: FAMSecurityToken.java,v 1.6 2009-12-23 22:32:28 mrudul_uchil Exp $
  *
  */
 package com.sun.identity.wss.security;
@@ -49,6 +49,7 @@ public class FAMSecurityToken implements SecurityToken {
     
      private static Debug debug = WSSUtils.debug;
      private String tokenID = null;
+     private String appTokenID = null;
      private String tokenType = null;
     
      /**
@@ -61,6 +62,7 @@ public class FAMSecurityToken implements SecurityToken {
              SSOTokenManager.getInstance().validateToken(ssoToken); 
              tokenID = ssoToken.getTokenID().toString();
              tokenType = SecurityToken.WSS_FAM_SSO_TOKEN;
+             appTokenID = (WSSUtils.getAdminToken()).getTokenID().toString();
          } catch (SSOException se) {
              throw new SecurityException(se.getMessage());
          }
@@ -100,7 +102,9 @@ public class FAMSecurityToken implements SecurityToken {
             String childName = child.getLocalName();
             if(childName.equals("TokenValue")) {
                tokenID = XMLUtils.getElementValue((Element)child);
-            } else if (childName.equals("TokenType")) {                
+            } else if(childName.equals("AppTokenValue")) {
+               appTokenID = XMLUtils.getElementValue((Element)child);
+            } else if (childName.equals("TokenType")) {
                tokenType = XMLUtils.getElementValue((Element)child);
             }
         }
@@ -123,6 +127,14 @@ public class FAMSecurityToken implements SecurityToken {
          return tokenID;
      }
 
+     /**
+      * Returns the Application/Client token value.
+      * @return the Application/Client token value.
+      */
+     public String getAppTokenID() {
+         return appTokenID;
+     }
+
       /**
        * Convert the security token into DOM Object.
        * 
@@ -132,13 +144,26 @@ public class FAMSecurityToken implements SecurityToken {
        */
      public Element toDocumentElement() throws SecurityException {
          StringBuffer sb = new StringBuffer();
-         sb.append("<fam:FAMToken xmlns:fam=\"")
-           .append(STSConstants.FAM_TOKEN_NS).append("\"").append(">")
-           .append("\n").append("<fam:TokenValue>").append(tokenID)
-           .append("</fam:TokenValue>").append("\n").append("<fam:TokenType>")
-           .append(tokenType)
-           .append("</fam:TokenType>").append("\n")
-           .append("</fam:FAMToken>");          
+         if ((appTokenID != null) && (appTokenID.length() != 0)) {
+             sb.append("<fam:FAMToken xmlns:fam=\"")
+               .append(STSConstants.FAM_TOKEN_NS).append("\"").append(">")
+               .append("\n").append("<fam:TokenValue>").append(tokenID)
+               .append("</fam:TokenValue>").append("\n")
+               .append("<fam:AppTokenValue>").append(appTokenID)
+               .append("</fam:AppTokenValue>").append("\n")
+               .append("<fam:TokenType>").append(tokenType)
+               .append("</fam:TokenType>").append("\n")
+               .append("</fam:FAMToken>");
+         } else {
+             sb.append("<fam:FAMToken xmlns:fam=\"")
+               .append(STSConstants.FAM_TOKEN_NS).append("\"").append(">")
+               .append("\n").append("<fam:TokenValue>").append(tokenID)
+               .append("</fam:TokenValue>").append("\n")
+               .append("<fam:TokenType>").append(tokenType)
+               .append("</fam:TokenType>").append("\n")
+               .append("</fam:FAMToken>");
+
+         }
          Document document = XMLUtils.toDOMDocument(sb.toString(), debug);
          return document.getDocumentElement();          
      }
