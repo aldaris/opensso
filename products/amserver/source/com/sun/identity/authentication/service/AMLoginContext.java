@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.23 2009-12-14 23:40:35 mrudul_uchil Exp $
+ * $Id: AMLoginContext.java,v 1.24 2009-12-23 20:03:04 mrudul_uchil Exp $
  *
  */
 
@@ -94,8 +94,6 @@ public class AMLoginContext {
     public static AuthThreadManager authThread  = null;
     private String exceedRetryLimit=null;
     private static final String bundleName = "amAuth";
-    private static AuthD ad = AuthD.getAuth();
-    private static Debug debug = ad.debug;
     
     String configName; // jaas configuration name.
     String orgDN = null;
@@ -123,6 +121,8 @@ public class AMLoginContext {
 
     private static SsoServerAuthSvcImpl authImpl;
     static Configuration defaultConfig = null;
+    private static AuthD ad;
+    private static Debug debug;
     
     /**
      * Bundle to be used for localized error message. users can be differnt
@@ -140,21 +140,15 @@ public class AMLoginContext {
         try {
             defaultConfig = Configuration.getConfiguration();
         } catch (java.lang.SecurityException e) {
-            debug.message("AMLoginContext:Get default JAAS Config Error.");
-            if (debug.messageEnabled()) {
-                debug.message("Stack trace:", e);
-            }
+            //Continue
         }
         AMConfiguration ISConfig = new AMConfiguration(defaultConfig);
         try {
             Configuration.setConfiguration(ISConfig);
         } catch (java.lang.SecurityException e) {
-            debug.error("AMLoginContext:Set AM config error:" + e.getMessage());
-            if (debug.messageEnabled()) {
-                debug.message("AMLoginContext:Set AM config:Stack trace:", e);
-            }
+            System.err.println("AMLoginContext:Set AM config error:"
+                + e.getMessage());
         }
-        debug.message("Reset the auth Configuration !");
 
         if (Agent.isRunning()) {
             authImpl = (SsoServerAuthSvcImpl)Agent.getAuthSvcMBean();
@@ -168,10 +162,8 @@ public class AMLoginContext {
         try {
             Configuration.setConfiguration(defaultConfig);
         } catch (java.lang.SecurityException e) {
-            debug.error("AMLoginContext:resetJAASConfig:" + e.getMessage());
-            if (debug.messageEnabled()) {
-                debug.message("AMLoginContext:resetJAASConfig:Stack trace:", e);
-            }
+            System.err.println("AMLoginContext:resetJAASConfig to default:"
+                + e.getMessage());
         }
     }
 
@@ -188,6 +180,8 @@ public class AMLoginContext {
      * @param authContext <code>AuthContextLocal</code> object
      */
     public AMLoginContext(AuthContextLocal authContext) {
+        ad = AuthD.getAuth();
+        debug = AuthD.debug;
         if (debug.messageEnabled()) {
             debug.message("AMLoginContext:initialThread name is... :"
             + Thread.currentThread().getName());

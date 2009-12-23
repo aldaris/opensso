@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConfiguration.java,v 1.8 2009-02-18 03:47:08 222713 Exp $
+ * $Id: AMConfiguration.java,v 1.9 2009-12-23 20:03:04 mrudul_uchil Exp $
  *
  */
 
@@ -77,7 +77,6 @@ public class AMConfiguration extends Configuration {
     private static Debug debug = Debug.getInstance("amAuthConfig");
     
     private Configuration defConfig = null;
-    private SSOToken adminToken = null;
     private AMAuthenticationManager amAM = null;
     private static ServiceConfigManager scm = null;
     
@@ -87,7 +86,11 @@ public class AMConfiguration extends Configuration {
      */
     public AMConfiguration(Configuration config) {
         this.defConfig = config;
-        adminToken = AuthD.getAuth().getSSOAuthSession();
+    }
+
+    private static SSOToken getAdminToken() {
+        SSOToken adminToken = AuthD.getAuth().getSSOAuthSession();
+        return adminToken;
     }
     
     /**
@@ -315,7 +318,7 @@ public class AMConfiguration extends Configuration {
             if (scm == null) {
                 synchronized(jaasConfig) {
                     scm = new ServiceConfigManager(
-                    ISAuthConstants.AUTH_SERVICE_NAME, adminToken);
+                    ISAuthConstants.AUTH_SERVICE_NAME, getAdminToken());
                 }
             }
             ServiceConfig service = scm.getOrganizationConfig(orgDN, null);
@@ -444,7 +447,7 @@ public class AMConfiguration extends Configuration {
                 "getUserBasedConfig,  START " + orgDN + "|" + universalId);
         }
         try {
-            AMIdentity identity = IdUtils.getIdentity(adminToken,universalId);
+            AMIdentity identity = IdUtils.getIdentity(getAdminToken(),universalId);
             if (identity != null) {
                 Set configNames = identity.getAttribute(
                 ISAuthConstants.AUTHCONFIG_USER);
@@ -499,7 +502,7 @@ public class AMConfiguration extends Configuration {
         }
         try {
             Map attributeDataMap = AMAuthConfigUtils.getNamedConfig(
-            service, orgDN, adminToken);
+            service, orgDN, getAdminToken());
             
             Set xmlConfigValue = (Set) attributeDataMap.get(
             AMAuthConfigUtils.ATTR_NAME);
@@ -554,7 +557,7 @@ public class AMConfiguration extends Configuration {
         }
         try {
             AMIdentity identity =
-            IdUtils.getIdentity(adminToken,roleUniversalId);
+            IdUtils.getIdentity(getAdminToken(),roleUniversalId);
             if (identity != null) {
                 Set configNames = (Set)identity.getServiceAttributes(
                 ISAuthConstants.AUTHCONFIG_SERVICE_NAME).get(
@@ -665,7 +668,7 @@ public class AMConfiguration extends Configuration {
         String orgDN = type.getOrganization();
 
         try {
-            amAM = new AMAuthenticationManager(adminToken, orgDN);
+            amAM = new AMAuthenticationManager(getAdminToken(), orgDN);
         } catch (Exception e) {
             debug.error("Failed to obtain AMAuthenticationManager: " +
                 e.getMessage());
