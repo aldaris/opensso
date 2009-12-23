@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.45 2009-10-28 20:24:54 goodearth Exp $
+ * $Id: SetupConstants.java,v 1.46 2009-12-23 00:21:38 goodearth Exp $
  *
  */
 
@@ -194,9 +194,14 @@ public interface SetupConstants {
     String UM_LDAPv3ForOpenDS = "LDAPv3ForOpenDS";
 
     /**
-     * User Management datastore option - AD.
+     * User Management datastore option - AD with Host & Port.
      */
     String UM_LDAPv3ForAD = "LDAPv3ForAD";
+
+    /**
+     * User Management datastore option - AD with Domain Name.
+     */
+    String UM_LDAPv3ForADDC = "LDAPv3ForADDC";
 
     /**
      * User Management datastore option - ADAM.
