@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCreateWizardBean.java,v 1.1 2009-08-19 05:40:52 veiming Exp $
+ * $Id: PolicyCreateWizardBean.java,v 1.2 2009-12-23 23:54:41 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -37,13 +37,25 @@ public class PolicyCreateWizardBean extends PolicyWizardBean {
     }
 
     protected void resetPrivilegeBean() {
-        setPrivilegeBean(new PrivilegeBean());
+        PrivilegeBean pb = getPrivilegeBean();
+        String name = null;
+        String desc = null;
 
+        if (pb != null) {
+            name = pb.getName();
+            desc = pb.getDescription();
+        }
+
+        pb = new PrivilegeBean();
+        setPrivilegeBean(pb);
+
+        pb.setName(name);
+        pb.setDescription(desc);
 
         ConditionType oct = getConditionType("or");
-        getPrivilegeBean().setViewCondition(oct.newViewCondition());
+        pb.setViewCondition(oct.newViewCondition());
         SubjectType ost = getSubjectType("or");
-        getPrivilegeBean().setViewSubject(ost.newViewSubject());
+        pb.setViewSubject(ost.newViewSubject());
     }
 
 }

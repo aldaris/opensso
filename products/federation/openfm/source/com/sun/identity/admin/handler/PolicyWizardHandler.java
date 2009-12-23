@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardHandler.java,v 1.2 2009-12-11 18:06:37 farble1670 Exp $
+ * $Id: PolicyWizardHandler.java,v 1.3 2009-12-23 23:54:41 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -56,6 +56,7 @@ import com.sun.identity.entitlement.Privilege;
 import java.io.Serializable;
 import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 public abstract class PolicyWizardHandler
         extends WizardHandler
@@ -90,6 +91,10 @@ public abstract class PolicyWizardHandler
     public void cancelListener(ActionEvent event) {
         getPolicyWizardBean().reset();
         doCancelNext();
+    }
+
+    public void applicationChangedListener(ValueChangeEvent event) {
+        getPolicyWizardBean().reset();
     }
 
     public void conditionDropListener(DropEvent dropEvent) {

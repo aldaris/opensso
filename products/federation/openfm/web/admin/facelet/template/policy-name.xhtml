@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policy-name.xhtml,v 1.1 2009-08-19 05:41:10 veiming Exp $
+   $Id: policy-name.xhtml,v 1.2 2009-12-23 23:54:42 farble1670 Exp $
 
 -->
 
@@ -97,13 +97,22 @@
                         for="application-select"
                         value="#{resources['policy-name.application']}"/>
                 </ice:panelGroup>
-                <ice:panelGroup>
+                <ice:panelGroup
+                    rendered="#{policyNameBean.policyNameEditable}">
                     <ice:selectOneMenu
                         id="application-select"
+                        valueChangeListener="#{policyNameHandler.applicationChangedListener}"
                         value="#{policyNameBean.viewApplicationName}">
                         <f:selectItems
                             value="#{policyNameBean.viewApplicationNameItems}"/>
                     </ice:selectOneMenu>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    rendered="#{!policyNameBean.policyNameEditable}">
+                    <ice:inputText
+                        readonly="true"
+                        size="32"
+                        value="#{policyNameBean.privilegeBean.viewEntitlement.viewApplication.title}"/>
                 </ice:panelGroup>
             </ice:panelGrid>
         </ui:define>

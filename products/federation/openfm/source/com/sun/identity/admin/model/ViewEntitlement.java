@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewEntitlement.java,v 1.2 2009-12-16 18:16:33 farble1670 Exp $
+ * $Id: ViewEntitlement.java,v 1.3 2009-12-23 23:54:41 farble1670 Exp $
  */
 package com.sun.identity.admin.model;
 
@@ -52,7 +52,6 @@ public class ViewEntitlement implements Serializable {
     private BooleanActionsBean booleanActionsBean = new BooleanActionsBean();
     private ViewApplication viewApplication;
     private BooleanActionsHandler booleanActionsHandler = new BooleanActionsHandler();
-    ;
     private List<Resource> availableResources = new ArrayList<Resource>();
 
     public ViewEntitlement() {
