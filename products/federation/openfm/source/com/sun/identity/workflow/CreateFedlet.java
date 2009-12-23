@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.18 2009-11-12 17:32:00 exu Exp $
+ * $Id: CreateFedlet.java,v 1.19 2009-12-23 23:34:07 exu Exp $
  *
  */
 
@@ -87,6 +87,14 @@ public class CreateFedlet
             "com.sun.identity.plugin.log.impl.FedletLogger");
         FedConfigTagSwap.put("@SESSION_PROVIDER_CLASS@", 
             "com.sun.identity.plugin.session.impl.FedletSessionProvider");
+        FedConfigTagSwap.put("@MONAGENT_PROVIDER_CLASS@",
+            "com.sun.identity.plugin.monitoring.impl.FedletAgentProvider");
+        FedConfigTagSwap.put("@MONSAML1_PROVIDER_CLASS@",
+            "com.sun.identity.plugin.monitoring.impl.FedletMonSAML1SvcProvider");
+        FedConfigTagSwap.put("@MONSAML2_PROVIDER_CLASS@",
+            "com.sun.identity.plugin.monitoring.impl.FedletMonSAML2SvcProvider");
+        FedConfigTagSwap.put("@MONIDFF_PROVIDER_CLASS@",
+            "com.sun.identity.plugin.monitoring.impl.FedletMonIDFFSvcProvider");
         FedConfigTagSwap.put("@XML_SIGNATURE_PROVIDER@",
             "com.sun.identity.saml.xmlsig.AMSignatureProvider");
         FedConfigTagSwap.put("@XMLSIG_KEY_PROVIDER@", 
@@ -107,6 +115,10 @@ public class CreateFedlet
         FedConfigTagSwapOrder.add("@DATASTORE_PROVIDER_CLASS@");
         FedConfigTagSwapOrder.add("@LOG_PROVIDER_CLASS@");
         FedConfigTagSwapOrder.add("@SESSION_PROVIDER_CLASS@"); 
+        FedConfigTagSwapOrder.add("@MONAGENT_PROVIDER_CLASS@");
+        FedConfigTagSwapOrder.add("@MONSAML1_PROVIDER_CLASS@");
+        FedConfigTagSwapOrder.add("@MONSAML2_PROVIDER_CLASS@");
+        FedConfigTagSwapOrder.add("@MONIDFF_PROVIDER_CLASS@");
         FedConfigTagSwapOrder.add("@XML_SIGNATURE_PROVIDER@");
         FedConfigTagSwapOrder.add("@XMLSIG_KEY_PROVIDER@");
         FedConfigTagSwapOrder.add("com.sun.identity.saml.xmlsig.passwordDecoder=com.sun.identity.saml.xmlsig.FMPasswordDecoder");
