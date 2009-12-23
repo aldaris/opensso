@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.20 2009-10-27 05:33:39 hengming Exp $
+ * $Id: UserIdRepo.java,v 1.21 2009-12-23 00:22:34 goodearth Exp $
  *
  */
 
@@ -113,6 +113,10 @@ class UserIdRepo {
         } else if (type.equals(SetupConstants.UM_LDAPv3ForAD)) {
             strFiles = rb.getString(SetupConstants.AD_LDIF);
             configName = "Active Directory";
+        } else if (type.equals(SetupConstants.UM_LDAPv3ForADDC)) {
+            strFiles = rb.getString(SetupConstants.AD_LDIF);
+            configName = "Active Directory with Domain Name";
+            type = SetupConstants.UM_LDAPv3ForAD;
         } else if (type.equals(SetupConstants.UM_LDAPv3ForADAM)) {
             strFiles = rb.getString(SetupConstants.ADAM_LDIF);
             configName = "Active Directory Application Mode";
