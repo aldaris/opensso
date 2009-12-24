@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.13 2009-12-22 18:00:25 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.14 2009-12-24 23:08:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -81,7 +81,7 @@ public class OpenSSOApplicationPrivilegeManager extends
     private static final String APPL_NAME = 
         DelegationManager.DELEGATION_SERVICE;
     private static final String SUN_AM_REALM_RESOURCE =
-        "sms://{0}/sunAMRealmService/1.0/organizationconfig/default/*";
+        "sms://*{0}/sunAMRealmService/*";
     private static final String SUN_IDREPO_RESOURCE =
         "sms://*{0}/sunIdentityRepositoryService/1.0/application/*";
 
