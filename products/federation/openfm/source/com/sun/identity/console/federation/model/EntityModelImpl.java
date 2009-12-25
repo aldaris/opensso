@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityModelImpl.java,v 1.19 2009-11-10 01:19:49 exu Exp $
+ * $Id: EntityModelImpl.java,v 1.20 2009-12-25 09:13:22 babysunil Exp $
  *
  */
 
@@ -126,8 +126,10 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                     } else {
                         data.put(LOCATION, REMOTE);
                     }
+
+                    String entityNamewithRealm = entityName+","+realmName;
                     
-                    samlv2Map.put(entityName, (HashMap)data);
+                    samlv2Map.put(entityNamewithRealm, (HashMap)data);
                 }
             }
         } catch (SAML2MetaException e) {
@@ -173,9 +175,10 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                         data.put(LOCATION, HOSTED);
                     } else {
                         data.put(LOCATION, REMOTE);
-                    } 
-                    
-                    idffMap.put(name, (HashMap)data);
+                    }
+
+                    String entityNamewithRealm = name+","+realm;
+                    idffMap.put(entityNamewithRealm, (HashMap)data);
                 }
             }
         } catch (IDFFMetaException e) {
@@ -217,8 +220,9 @@ public class EntityModelImpl extends AMModelBase implements EntityModel {
                     } else {
                         data.put(LOCATION, REMOTE);
                     }
-                    
-                    wsfedMap.put(entity, (HashMap)data);
+
+                     String entityNamewithRealm = entity+","+realm;
+                    wsfedMap.put(entityNamewithRealm, (HashMap)data);
                 }
             } catch (WSFederationMetaException e) {
                 debug.error("EntityModel.getWSFedEntities", e);

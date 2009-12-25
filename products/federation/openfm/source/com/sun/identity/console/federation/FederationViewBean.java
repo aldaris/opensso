@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.25 2009-08-21 20:09:23 veiming Exp $
+ * $Id: FederationViewBean.java,v 1.26 2009-12-25 09:13:22 babysunil Exp $
  *
  */
 
@@ -349,8 +349,10 @@ public  class FederationViewBean
                 firstRow = false;
             }
 
-            String name = (String)i.next();
-            Map data = (Map)entities.get(name);
+            String entityNamewithRealm = (String)i.next();
+            int endIndex = entityNamewithRealm.indexOf(",");
+            String name = entityNamewithRealm.substring(0, endIndex);
+            Map data = (Map)entities.get(entityNamewithRealm);
             String protocol = (String)data.get(EntityModel.PROTOCOL);
             String realm = (String)data.get(EntityModel.REALM);
             String location = (String)data.get(eModel.LOCATION);
