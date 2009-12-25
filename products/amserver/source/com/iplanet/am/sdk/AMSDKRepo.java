@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.27 2009-10-08 20:31:15 hengming Exp $
+ * $Id: AMSDKRepo.java,v 1.28 2009-12-25 05:54:05 hengming Exp $
  *
  */
 
@@ -42,6 +42,7 @@ import com.sun.identity.authentication.modules.ldap.LDAPUtilException;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
 import com.sun.identity.idm.IdRepoBundle;
@@ -111,7 +112,6 @@ public class AMSDKRepo extends IdRepo {
     protected String amAuthLDAP = "amAuthLDAP";
 
     public AMSDKRepo() {
-        loadSupportedOps();
     }
 
     /*
@@ -604,6 +604,7 @@ public class AMSDKRepo extends IdRepo {
                 agentDN = agentName + "=" + agentValue + "," + orgDN;
             }
         }
+        loadSupportedOps();
     }
 
     public boolean isExists(SSOToken token, IdType type, String name)
@@ -1764,7 +1765,22 @@ public class AMSDKRepo extends IdRepo {
 
         op2Set.remove(IdOperation.SERVICE);
         supportedOps.put(IdType.GROUP, Collections.unmodifiableSet(op2Set));
-        supportedOps.put(IdType.AGENT, Collections.unmodifiableSet(op2Set));
+
+        try {
+            ServiceSchemaManager ssm = new ServiceSchemaManager(adminToken,
+                IdConstants.REPO_SERVICE, "1.0");
+            if (ssm.getRevisionNumber() < 30) {
+                supportedOps.put(IdType.AGENT,
+                    Collections.unmodifiableSet(op2Set));
+            }
+        } catch (SMSException smse) {
+            if (debug.messageEnabled()) {
+                debug.message("AMSDKRepo.loadSupportedOps:", smse);
+            }
+        } catch (SSOException ssoe) {
+            // should not happen
+        }
+
         Set op3Set = new HashSet(opSet);
         op3Set.remove(IdOperation.CREATE);
         op3Set.remove(IdOperation.DELETE);
