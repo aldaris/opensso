@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.72 2009-12-22 19:11:55 veiming Exp $
+ * $Id: LDAPv3Repo.java,v 1.73 2009-12-28 02:59:48 222713 Exp $
  *
  */
 
@@ -4041,18 +4041,24 @@ public class LDAPv3Repo extends IdRepo {
         }
 
         LDAPModificationSet ldapModSet = new LDAPModificationSet();
+        LDAPAttribute theOldAttr = new LDAPAttribute(attrName);
         LDAPAttribute theAttr = new LDAPAttribute(attrName);
         if (attrName.equals(unicodePwd) &&
-            dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD)) {
+            (dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3AD) ||
+            dsType.equalsIgnoreCase(LDAPv3Config_LDAPV3ADAM))) {
 
+            byte[] encodedOldPwd = encodeADPwd(oldPassword);
+            theOldAttr.addValue(encodedOldPwd);
             byte[] encodedNewPwd = encodeADPwd(newPassword);
             theAttr.addValue(encodedNewPwd);
         } else {
+            theOldAttr.addValue(oldPassword);
             theAttr.addValue(newPassword);
         }
 
         String eDN = getDN(type, name);
-        ldapModSet.add(LDAPModification.REPLACE, theAttr);
+        ldapModSet.add(LDAPModification.DELETE, theOldAttr);
+        ldapModSet.add(LDAPModification.ADD, theAttr);
 
         LDAPConnection ldc = null;
         int resultCode = 0;
