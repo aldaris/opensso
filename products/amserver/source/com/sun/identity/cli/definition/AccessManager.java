@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.113 2009-12-18 07:13:27 dillidorai Exp $
+ * $Id: AccessManager.java,v 1.114 2010-01-04 18:58:11 veiming Exp $
  *
  */
 
@@ -80,7 +80,7 @@ public class AccessManager {
         description="Do multiple requests in one command.",
         webSupport="true",
         mandatoryOptions={
-            "batchfile|D|s|Name of file that contains commands and options."},
+            "batchfile|Z|s|Name of file that contains commands and options."},
         optionAliases={},
         macro="authentication",
         optionalOptions={
