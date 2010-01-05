@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.20 2009-01-13 19:16:50 veiming Exp $
+ * $Id: RegisterServices.java,v 1.21 2010-01-05 18:11:34 goodearth Exp $
  *
  */
 
@@ -94,10 +94,25 @@ public class RegisterServices {
             Object[] params = {serviceFileName};
             SetupProgress.reportStart("emb.registerservice", params);
             String strXML = getResourceContent(serviceFileName);
+            // This string 'content' is to avoid plain text password
+            // in the files copied to the config/xml directory.
+            String content = strXML;
+            if (tagswap) {
+                content = StringUtils.strReplaceAll(content,
+                    "@UM_DS_DIRMGRPASSWD@", "********");
+                content =
+                    ServicesDefaultValues.tagSwap(content, true);
+            }
             if (tagswap) {
                 strXML = ServicesDefaultValues.tagSwap(strXML, true);
             }
-            AMSetupServlet.writeToFile(dirXML + "/" + serviceFileName, strXML);
+
+            // Write to file without visible password values.
+            AMSetupServlet.writeToFile(dirXML + "/" + serviceFileName,
+                content);
+
+            // Write to directory server with original password 
+            // values.
             registerService(strXML, adminToken);
             SetupProgress.reportEnd("emb.success", null);
         }
