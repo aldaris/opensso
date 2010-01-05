@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.6 2009-11-23 21:04:52 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.7 2010-01-05 15:19:11 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -446,7 +446,13 @@ public final class ApplicationManager {
             ApplicationPrivilegeManager.getInstance(realm,
             adminSubject);
         Set<String> applicationNames = apm.getApplications(action);
-        return applicationNames.contains(applicationName);
+
+        // applicationNames may be empty if the sub realm is removed.
+        // or the sub realm really do not have referral privilege assigned to
+        // it. In the latter case, clearing the cache for referral privilege
+        // should be ok.
+        return applicationNames.isEmpty() ||
+            applicationNames.contains(applicationName);
     }
 
     private static boolean hasAccessToApplication(

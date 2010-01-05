@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.10 2009-12-07 19:46:46 veiming Exp $
+ * $Id: EntitlementService.java,v 1.11 2010-01-05 15:19:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -1449,8 +1449,9 @@ public class EntitlementService extends EntitlementConfiguration {
 
     public Set<String> getParentAndPeerRealmNames()
         throws EntitlementException {
+        Set<String> results = new HashSet<String>();
+
         try {
-            Set<String> results = new HashSet<String>();
             OrganizationConfigManager mgr = new OrganizationConfigManager(
                 adminToken, realm);
             mgr = mgr.getParentOrgConfigManager();
@@ -1462,13 +1463,12 @@ public class EntitlementService extends EntitlementConfiguration {
             for (String o : orgNames) {
                 results.add(DNMapper.orgNameToRealmName(o));
             }
-
-            return results;
         } catch (SMSException ex) {
             PrivilegeManager.debug.error("EntitlementService.getSubRealmNames",
                 ex);
-            throw new EntitlementException(227);
+            // realm no longer exist
         }
+        return results;
     }
 
     private String getParentRealm(String realm) {
