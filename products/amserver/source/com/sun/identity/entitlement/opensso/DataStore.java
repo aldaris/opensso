@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.9 2009-12-21 22:02:43 veiming Exp $
+ * $Id: DataStore.java,v 1.10 2010-01-05 15:27:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -288,10 +288,11 @@ public class DataStore {
         countRWLock.readLock().lock();
         try {
             int totalPolicies = 0;
-            Integer tp = policiesPerRealm.get(realm);
+            String dnRealm = DNMapper.orgNameToDN(realm);
+            Integer tp = policiesPerRealm.get(dnRealm);
             if (tp == null) {
                 totalPolicies = getIndexCount(realm, false);
-                policiesPerRealm.put(realm, totalPolicies);
+                policiesPerRealm.put(dnRealm, totalPolicies);
             } else {
                 totalPolicies = tp.intValue();
             }
@@ -305,10 +306,11 @@ public class DataStore {
         countRWLock.readLock().lock();
         try {
             int referralCnt = 0;
-            Integer tp = referralsPerRealm.get(realm);
+            String dnRealm = DNMapper.orgNameToDN(realm);
+            Integer tp = referralsPerRealm.get(dnRealm);
             if (tp == null) {
                 referralCnt = getIndexCount(realm, true);
-                referralsPerRealm.put(realm, referralCnt);
+                referralsPerRealm.put(dnRealm, referralCnt);
             } else {
                 referralCnt = tp.intValue();
             }
