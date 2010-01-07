@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.51 2009-12-23 00:18:20 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.52 2010-01-07 18:07:39 veiming Exp $
  *
  */
 
@@ -43,9 +43,7 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.net.MalformedURLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -527,15 +525,6 @@ public class AgentConfiguration {
             Object[] param = { Integer.toString(port) };
             throw new ConfigurationException(
                     "agent.root.url.port.out.of.range", param);
-        }
-
-        String hostName = url.getHost();
-        try {
-            InetAddress.getByName(hostName);
-        } catch (UnknownHostException e) {
-            Object[] param = { hostName };
-            throw new ConfigurationException(
-                    "agent.root.url.unknown.host", param);
         }
     }
 
