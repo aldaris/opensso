@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.12 2009-12-15 00:44:18 veiming Exp $
+ * $Id: Privilege.java,v 1.13 2010-01-07 00:19:11 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -101,7 +101,7 @@ public abstract class Privilege implements IPrivilege {
 
     static {
         try {
-            //TODO: should be customizable
+            //REF: should be customizable
             privilegeClass = Class.forName(
                 "com.sun.identity.entitlement.opensso.OpenSSOPrivilege");
         } catch (ClassNotFoundException ex) {

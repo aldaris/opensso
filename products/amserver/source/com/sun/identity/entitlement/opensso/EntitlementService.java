@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.11 2010-01-05 15:19:11 veiming Exp $
+ * $Id: EntitlementService.java,v 1.12 2010-01-07 00:19:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -74,7 +74,6 @@ public class EntitlementService extends EntitlementConfiguration {
         "subjectAttributeNames";
     private static final String ATTR_NAME_META = "meta";
     private static final String CONFIG_APPLICATIONS = "registeredApplications";
-    private static final String CONFIG_APPLICATION = "application";
     private static final String CONFIG_APPLICATION_DESC = "description";
     private static final String SCHEMA_APPLICATIONS = "applications";
     private static final String CONFIG_APPLICATIONTYPE = "applicationType";
@@ -124,6 +123,21 @@ public class EntitlementService extends EntitlementConfiguration {
      */
     public Set<String> getConfiguration(String attrName) {
         return getConfiguration(adminToken, attrName);
+    }
+
+    public static int getConfiguration(String attrName, int defaultValue) {
+        Set<String> values = getConfiguration(adminToken, attrName);
+        if ((values == null) || values.isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(values.iterator().next());
+        } catch (NumberFormatException e) {
+            PrivilegeManager.debug.error(
+                "EntitlementService.getConfiguration: attribute name=" +
+                attrName, e);
+            return defaultValue;
+        }
     }
 
     private static Set<String> getConfiguration(

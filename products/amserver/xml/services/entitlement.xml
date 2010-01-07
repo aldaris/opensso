@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.8 2009-12-07 19:46:48 veiming Exp $
+   $Id: entitlement.xml,v 1.9 2010-01-07 00:19:12 veiming Exp $
 
 -->
 
@@ -96,6 +96,79 @@
                         <Value>100000</Value>
                     </DefaultValues>
                 </AttributeSchema>
+
+                <!-- entitlement notification, Connection timeout in millisec,
+                     max 5 mins -->
+                <AttributeSchema name="entitlement-notifier-conn-timeout"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="300000"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>1000</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="entitlement-notifier-retries"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="50"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>3</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <!-- duration between retries in millisec, max 5 mins -->
+                <AttributeSchema name="entitlement-notifier-duration-between-retries"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="300000"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>1000</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+
+                <!-- Privilege change notification
+                     Connection timeout in millisec, max 5 mins -->
+                <AttributeSchema name="privilege-notifier-conn-timeout"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="300000"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>1000</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="privilege-notifier-retries"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="50"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>3</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <!-- duration between retries in millisec, max 5 mins -->
+                <AttributeSchema name="privilege-notifier-duration-between-retries"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="300000"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>3000</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="privilege-notifier-threadpool-size"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="20"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>5</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+
+
                 <AttributeSchema name="listeners"
                     type="list"
                     syntax="string"

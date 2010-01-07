@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementConfiguration.java,v 1.5 2009-11-19 01:02:03 veiming Exp $
+ * $Id: EntitlementConfiguration.java,v 1.6 2010-01-07 00:19:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -49,7 +49,7 @@ public abstract class EntitlementConfiguration {
 
     static {
         try {
-            //TODO load different configuration plugin
+            //RFE: load different configuration plugin
             clazz = Class.forName(
                 "com.sun.identity.entitlement.opensso.EntitlementService");
         } catch (ClassNotFoundException e) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.6 2009-11-25 18:09:50 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.7 2010-01-07 00:19:11 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -45,7 +45,7 @@ public abstract class PrivilegeManager {
      */
     public static final IDebug debug = DebugFactory.getDebug("Entitlement");
 
-    //TODO: make configurable
+    //REF: make configurable
     private static final Pattern PRIVILEGE_NAME_PATTERN = Pattern.compile(
         "[a-zA-Z0-9\\- _]*");
     public static final Subject superAdminSubject = new Subject();
@@ -70,7 +70,7 @@ public abstract class PrivilegeManager {
         }
         PrivilegeManager pm = null;
         try {
-            //TODO: read the class name from configuration
+            //RFE: read the class name from configuration
             Class clazz = Class.forName(
                 "com.sun.identity.entitlement.opensso.PolicyPrivilegeManager");
             pm = (PrivilegeManager)clazz.newInstance();

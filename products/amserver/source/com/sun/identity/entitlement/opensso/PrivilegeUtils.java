@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.3 2009-12-17 18:03:50 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.4 2010-01-07 00:19:11 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -131,8 +131,9 @@ public class PrivilegeUtils {
              privileges.add(p);
         } else if (policyObject instanceof Policy) {
             policyToPrivileges((Policy) policyObject, privileges);
-        } else { //TODO: log error, unsupported policy type
-
+        } else {
+            String[] param = {policyObject.getClass().getName()};
+            throw new EntitlementException(329, param);
         }
         
         return privileges;
@@ -987,7 +988,8 @@ public class PrivilegeUtils {
         return av;
     }
 
-    static public String policyToXML(Object policy) {
+    public static String policyToXML(Object policy)
+        throws EntitlementException {
         String xmlString = "";
         if (policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
             com.sun.identity.entitlement.xacml3.core.Policy xacmlPolicy =
@@ -997,19 +999,22 @@ public class PrivilegeUtils {
         } else if (policy instanceof com.sun.identity.policy.Policy) {
             xmlString = ((com.sun.identity.policy.Policy) policy).toXML();
         } else {
-            //TODO: log error, unsupported policy type
+            String[] param = {policy.getClass().getName()};
+            throw new EntitlementException(329, param);
         }
         return xmlString;
     }
 
-    static public String getPolicyName(Object policy) {
+    public static String getPolicyName(Object policy)
+        throws EntitlementException {
         String name = "";
         if (policy instanceof com.sun.identity.entitlement.xacml3.core.Policy) {
             name = ((com.sun.identity.entitlement.xacml3.core.Policy)policy).getPolicyId();
         } else if (policy instanceof Policy) {
             name = ((Policy)policy).getName();
         } else {
-            //TODO: log error, unsupported policy type
+            String[] param = {policy.getClass().getName()};
+            throw new EntitlementException(329, param);
         }
         return name;
     }
@@ -1026,7 +1031,8 @@ public class PrivilegeUtils {
         } else if (policy instanceof Policy) {
              privileges = policyToPrivileges((Policy)policy);
         } else {
-            //TODO: log error, unsupported policy type
+            String[] param = {policy.getClass().getName()};
+            throw new EntitlementException(329, param);
         }
         return privileges;
     }
