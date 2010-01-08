@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.12 2010-01-07 00:19:11 veiming Exp $
+ * $Id: EntitlementService.java,v 1.13 2010-01-08 23:59:32 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -1458,6 +1458,16 @@ public class EntitlementService extends EntitlementConfiguration {
             } catch (EntitlementException ex) {
                 //ignore
             }
+        }
+    }
+
+    public boolean doesRealmExist() {
+        try {
+            OrganizationConfigManager mgr = new OrganizationConfigManager(
+                adminToken, realm);
+            return true;
+        } catch (SMSException ex) {
+            return false;
         }
     }
 

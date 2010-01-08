@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementConfiguration.java,v 1.6 2010-01-07 00:19:11 veiming Exp $
+ * $Id: EntitlementConfiguration.java,v 1.7 2010-01-08 23:59:31 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -277,4 +277,6 @@ public abstract class EntitlementConfiguration {
         throws EntitlementException;
 
     public abstract String getRealmName(String realm);
+
+    public abstract boolean doesRealmExist();
 }
