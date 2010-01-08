@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCondition.java,v 1.1 2009-08-19 05:40:36 veiming Exp $
+ * $Id: PolicyCondition.java,v 1.2 2010-01-08 22:12:49 farble1670 Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -67,6 +67,7 @@ public class PolicyCondition extends  EntitlementConditionAdaptor {
         String name,
         String className,
         Map<String, Set<String>> properties) {
+		this.name = name;
         this.className = className;
         this.properties = properties;
     }
@@ -217,4 +218,9 @@ public class PolicyCondition extends  EntitlementConditionAdaptor {
         }
         return compareMap(this.properties, other.properties);
     }
+
+	@Override
+	public String getDisplayType() {
+		return "policy";
+	}
 }
