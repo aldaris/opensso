@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: admin.css,v 1.6 2009-12-14 23:40:29 babysunil Exp $
+* $Id: admin.css,v 1.7 2010-01-08 22:12:05 farble1670 Exp $
 *
 */
 
@@ -1366,15 +1366,15 @@ span.button img.left {
 }
 
 .enhancedCheckboxGrp {
-	border: 0px none;
-	margin-top: 5px;
-	min-width: 600px;
+    border: 0px none;
+    margin-top: 5px;
+    min-width: 600px;
 }
 
 .enhancedCheckboxGrp .checkboxPanelDefault .icePnlGrp,
 .enhancedCheckboxGrp .checkboxPanelChecked .icePnlGrp,
 .enhancedCheckboxGrp .checkboxPanelActive  .icePnlGrp
- {
+{
     display: inline;
     padding: 0px 5px 0px 5px;
     z-index: 1;
@@ -1425,9 +1425,9 @@ span.button img.left {
 }
 
 .enhancedCheckboxGrp .spacerPanel {
-	border-top-color: #ddd;
-	border-style: solid;
-	border-top-width: 1px;
+    border-top-color: #ddd;
+    border-style: solid;
+    border-top-width: 1px;
     margin-top: -10px;
     margin-bottom: 9px;
     z-index: 0;
@@ -1456,38 +1456,38 @@ span.button img.left {
 .dynamicTableHdr,
 .dynamicTableColHdr1
 {
-	font-size: smaller;
-	text-align: left;
+    font-size: smaller;
+    text-align: left;
 }
 
 .dynamicTableFtr {
-	font-size: 1em;
+    font-size: 1em;
     line-height: 175%;
     padding: 3px 5px 2px 5px;
-	text-align: left;
+    text-align: left;
 }
 
 .dynamicTable .inputFieldColumn {
     line-height: 175%;
-	width: 200px;
+    width: 200px;
 }
 
 .dynamicTable .optionsColumn {
     line-height: 175%;
-	width: 100px;
+    width: 100px;
 }
 
 .dynamicTable .iceInpTxt, 
 .dynamicTable .iceInpSecrt, 
 .dynamicTable .iceInpTxtArea 
 {
-	margin: 0px;
-	padding: 0px;
+    margin: 0px;
+    padding: 0px;
 }
 
 .dynamicTable a span {
-	color: #5382A1;
-	text-decoration: underline;
+    color: #5382A1;
+    text-decoration: underline;
 }
 
 .limited {
@@ -1501,49 +1501,54 @@ span.button img.left {
 }
 
 .section-body-column {
-     width: 500px;
-     height: 100px;
-     text-align: right;
- }
+    width: 500px;
+    height: 100px;
+    text-align: right;
+}
 
- .section-body-middle-column {
-     width: 500px;
-     height: 100px;
-     text-align: left;
- }
+.section-body-middle-column {
+    width: 500px;
+    height: 100px;
+    text-align: left;
+}
 
- .section-body-end-column {
-     width: 500px;
-     height: 100px;
-     text-align: right;
- }
+.section-body-end-column {
+    width: 500px;
+    height: 100px;
+    text-align: right;
+}
 
- .link-for-html-text {
-     font-weight: bold;
-     color: #2B60DE;
- }
+.link-for-html-text {
+    font-weight: bold;
+    color: #2B60DE;
+}
 
- .fedattributesCol1 {
-     text-align: right;
-     padding-left: 10px;
-     padding-right: 10px;
-     min-width: 200px;
-     max-width: 300px;
- }
+.fedattributesCol1 {
+    text-align: right;
+    padding-left: 10px;
+    padding-right: 10px;
+    min-width: 200px;
+    max-width: 300px;
+}
 
- .fedattributesCol2 {
-     text-align: left;
-     padding-left: 10px;
-     padding-right: 10px;
-     min-width: 200px;
- }
+.fedattributesCol2 {
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    min-width: 200px;
+}
 
 
- .fedattributesCol3 {
-     text-align: center;
-     padding-left: 10px;
-     padding-right: 10px;
- }
+.fedattributesCol3 {
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.opensso-policy-warning {
+    font-weight: bold;
+    color: red !important;
+}
 
 /*
 #homeTabContent {

@@ -23,7 +23,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: faces-config.xml,v 1.41 2009-12-11 18:06:37 farble1670 Exp $
+  $Id: faces-config.xml,v 1.42 2010-01-08 22:12:04 farble1670 Exp $
 -->
 
 <faces-config version="1.2" 
@@ -745,6 +745,27 @@
             <value>/admin/image/not.png</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>policySubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.PolicySubjectType</managed-bean-class>
+
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>policy</value>
+        </managed-property>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-policy.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/role.png</value>
+        </managed-property></managed-bean>
 
     <managed-bean>
         <managed-bean-name>subjectTypes</managed-bean-name>
@@ -764,6 +785,7 @@
             <value>#{bankingSubjectType}</value>
             <value>#{virtualSubjectType}</value>
             <value>#{attributeSubjectType}</value>
+            <value>#{policySubjectType}</value>
         </list-entries>
     </managed-bean>
 
@@ -826,6 +848,10 @@
                 <key>com.sun.identity.entitlement.AttributeSubject</key>
                 <value>#{attributeSubjectType}</value>
             </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.opensso.PolicySubject</key>
+                <value>#{policySubjectType}</value>
+            </map-entry>
         </map-entries>
     </managed-bean>
 
@@ -883,6 +909,10 @@
             <map-entry>
                 <key>com.sun.identity.admin.model.AttributeViewSubject</key>
                 <value>#{attributeSubjectType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.admin.model.PolicyViewSubject</key>
+                <value>#{policySubjectType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
@@ -1448,6 +1478,27 @@
             <value>/admin/image/not.png</value>
         </managed-property>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>policyConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.PolicyConditionType</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>policy</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-policy.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/not.png</value>
+        </managed-property>
+    </managed-bean>
 
     <managed-bean>
         <managed-bean-name>conditionTypeNameMap</managed-bean-name>
@@ -1510,6 +1561,10 @@
                 <key>#{notConditionType.name}</key>
                 <value>#{notConditionType}</value>
             </map-entry>
+            <map-entry>
+                <key>#{policyConditionType.name}</key>
+                <value>#{policyConditionType}</value>
+            </map-entry>
         </map-entries>
     </managed-bean>
     <managed-bean>
@@ -1546,6 +1601,10 @@
             <map-entry>
                 <key>com.sun.identity.entitlement.LimitCondition</key>
                 <value>#{limitConditionType}</value>
+            </map-entry>
+            <map-entry>
+                <key>com.sun.identity.entitlement.opensso.PolicyCondition</key>
+                <value>#{policyConditionType}</value>
             </map-entry>
         </map-entries>
     </managed-bean>
@@ -2870,8 +2929,8 @@
     <!--remote -->
 
     <!--idp end -->
-    
-    
+
+
     <!-- webEx create - Start -->
         <managed-bean>
             <managed-bean-name>webExConfigWizardHandler</managed-bean-name>
@@ -3014,7 +3073,7 @@
            <from-outcome>webex-config</from-outcome>
             <to-view-id>/admin/facelet/webex-config.xhtml</to-view-id>
            <redirect />
-       </navigation-case> 
+       </navigation-case>
         <navigation-case>
             <from-outcome>policy-create</from-outcome>
             <to-view-id>/admin/facelet/policy-create.xhtml</to-view-id>
@@ -3149,6 +3208,8 @@
         </phase-listener>
     </lifecycle>
 </faces-config>
+
+
 
 
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyWizardHandler.java,v 1.3 2009-12-23 23:54:41 farble1670 Exp $
+ * $Id: PolicyWizardHandler.java,v 1.4 2010-01-08 22:12:04 farble1670 Exp $
  */
 package com.sun.identity.admin.handler;
 
@@ -137,7 +137,7 @@ public abstract class PolicyWizardHandler
 
                 // verify that value isn't being added 2x to the same
                 // subject expression
-                if (dropValue.getViewSubjects().contains(vs)) {
+                if (dropValue != null && dropValue.getViewSubjects().contains(vs)) {
                     MessageBean mb = new MessageBean();
                     Resources r = new Resources();
                     mb.setSummary(r.getString(this, "duplicateSubjectAddedSummary"));
