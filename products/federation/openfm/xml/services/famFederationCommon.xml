@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famFederationCommon.xml,v 1.3 2009-06-12 22:21:43 mallas Exp $
+   $Id: famFederationCommon.xml,v 1.4 2010-01-08 22:41:43 exu Exp $
                                                                                 
 -->
 
@@ -38,7 +38,7 @@
         <Schema 
             serviceHierarchy="/DSAMEConfig/sunFAMFederationCommon"
             i18nFileName="famFederationCommon" 
-            revisionNumber="20"
+            revisionNumber="30"
             i18nKey="sunFAMFederationCommon">
 
             <Global> 
@@ -191,6 +191,38 @@
                     i18nKey="a118">
                     <DefaultValues>
                         <Value>HTTP-POST</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="MonAgentClass"
+                    type="single"
+                    syntax="string"
+                    i18nKey="a119">
+                    <DefaultValues>
+                        <Value>com.sun.identity.plugin.monitoring.impl.AgentProvider</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="MonSAML1Class"
+                    type="single"
+                    syntax="string"
+                    i18nKey="a120">
+                    <DefaultValues>
+                        <Value>com.sun.identity.plugin.monitoring.impl.FedMonSAML1SvcProvider</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="MonSAML2Class"
+                    type="single"
+                    syntax="string"
+                    i18nKey="a121">
+                    <DefaultValues>
+                        <Value>com.sun.identity.plugin.monitoring.impl.FedMonSAML2SvcProvider</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="MonIDFFClass"
+                    type="single"
+                    syntax="string"
+                    i18nKey="a122">
+                    <DefaultValues>
+                        <Value>com.sun.identity.plugin.monitoring.impl.FedMonIDFFSvcProvider</Value>
                     </DefaultValues>
                 </AttributeSchema>
             </Global> 

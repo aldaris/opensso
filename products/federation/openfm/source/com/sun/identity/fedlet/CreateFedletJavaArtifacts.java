@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedletJavaArtifacts.java,v 1.3 2009-12-23 23:33:32 exu Exp $
+ * $Id: CreateFedletJavaArtifacts.java,v 1.4 2010-01-08 22:41:38 exu Exp $
  *
  */
 
@@ -89,8 +89,8 @@ public class CreateFedletJavaArtifacts {
             "com.sun.identity.saml.xmlsig.AMSignatureProvider");
         fedConfigTagSwap.put("@XMLSIG_KEY_PROVIDER@",
             "com.sun.identity.saml.xmlsig.JKSKeyProvider");
-        fedConfigTagSwap.put("com.sun.identity.saml.xmlsig.passwordDecoder=com.sun.identity.saml.xmlsig.FMPasswordDecoder",
-            "com.sun.identity.saml.xmlsig.passwordDecoder=com.sun.identity.fedlet.FedletEncodeDecode");
+        fedConfigTagSwap.put("@PASSWORD_DECODER_CLASS@",
+            "com.sun.identity.fedlet.FedletEncodeDecode");
         fedConfigTagSwap.put("%BASE_DIR%%SERVER_URI%", "@FEDLET_HOME@");
         fedConfigTagSwap.put("%BASE_DIR%", "@FEDLET_HOME@");
         fedConfigTagSwap.put("com.sun.identity.common.serverMode=true",
@@ -112,7 +112,7 @@ public class CreateFedletJavaArtifacts {
         fedConfigTagSwapOrder.add("@MONIDFF_PROVIDER_CLASS@");
         fedConfigTagSwapOrder.add("@XML_SIGNATURE_PROVIDER@");
         fedConfigTagSwapOrder.add("@XMLSIG_KEY_PROVIDER@");
-        fedConfigTagSwapOrder.add("com.sun.identity.saml.xmlsig.passwordDecoder=com.sun.identity.saml.xmlsig.FMPasswordDecoder");
+        fedConfigTagSwapOrder.add("@PASSWORD_DECODER_CLASS@");
         fedConfigTagSwapOrder.add("%BASE_DIR%%SERVER_URI%");
         fedConfigTagSwapOrder.add("%BASE_DIR%");
         fedConfigTagSwapOrder.add("com.sun.identity.common.serverMode=true");
