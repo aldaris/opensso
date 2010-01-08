@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.10 2010-01-05 15:27:45 veiming Exp $
+ * $Id: DataStore.java,v 1.11 2010-01-08 22:20:47 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.Privilege;
@@ -100,6 +101,8 @@ public class DataStore {
         NetworkMonitor.getInstance("dbLookupPrivileges");
     private static final NetworkMonitor DB_MONITOR_REFERRAL =
         NetworkMonitor.getInstance("dbLookupReferrals");
+    private static final String HIDDEN_REALM_DN =
+        "o=sunamhiddenrealmdelegationservicepermissions,ou=services,";
     
     // count of number of policies per realm
     private static ReadWriteLock countRWLock = new ReentrantReadWriteLock();
@@ -415,6 +418,13 @@ public class DataStore {
                 info.add(data);
                 info.add("|" + data);
             }
+
+            Entitlement ent = p.getEntitlement();
+            info.add(Privilege.APPLICATION_ATTRIBUTE + "=" +
+                ent.getApplicationName());
+            for (String a : p.getApplicationIndexes()) {
+                info.add(Privilege.APPLICATION_ATTRIBUTE + "=" + a);
+            }
             map.put("ou", info);
 
             s.setAttributes(map);
@@ -536,7 +546,9 @@ public class DataStore {
                 realm)) {
                 info.add(REFERRAL_APPLS + "=" + n);
             }
-
+            for (String n : referral.getMapApplNameToResources().keySet()) {
+                info.add(Privilege.APPLICATION_ATTRIBUTE + "=" + n);
+            }
             map.put("ou", info);
 
             s.setAttributes(map);
@@ -757,6 +769,58 @@ public class DataStore {
         return dnObj1.equals(dnObj2);
     }
 
+     public boolean hasPrivilgesWithApplication(
+        Subject adminSubject,
+        String realm,
+        String applName
+    ) throws EntitlementException {
+        SSOToken token = getSSOToken(adminSubject);
+
+         //Search privilege
+         String filter = "(ou=" + Privilege.APPLICATION_ATTRIBUTE + "=" +
+             applName + ")";
+         String baseDN = getSearchBaseDN(realm, null);
+         if (hasEntries(token, baseDN, filter)) {
+             return true;
+         }
+
+         //Search referral privilege
+         baseDN = getSearchBaseDN(realm, REFERRAL_STORE);
+         if (hasEntries(token, baseDN, filter)) {
+             return true;
+         }
+         
+         //Search delegation privilege
+         baseDN = getSearchBaseDN(getHiddenRealmDN(), null);
+         if (hasEntries(token, baseDN, filter)) {
+             return true;
+         }
+
+         return false;
+    }
+
+     private static String getHiddenRealmDN() {
+        return HIDDEN_REALM_DN + SMSEntry.getRootSuffix();
+    }
+
+    private boolean hasEntries(SSOToken token, String baseDN, String filter)
+        throws EntitlementException {
+         if (SMSEntry.checkIfEntryExists(baseDN, token)) {
+             try {
+                 Set<String> dns = SMSEntry.search(token, baseDN, filter,
+                     0, 0, false, false);
+                 if ((dns != null) && !dns.isEmpty()) {
+                     return true;
+                 }
+             } catch (SMSException e) {
+                 Object[] arg = {baseDN};
+                 throw new EntitlementException(52, arg, e);
+             }
+         }
+         return false;
+    }
+
+
     /**
      * Returns a set of privilege that satifies the resource and subject
      * indexes.
@@ -814,11 +878,6 @@ public class DataStore {
         }
 
         if (filter != null) {
-//            if (adminToken == null) {
-//                Object[] arg = {baseDN};
-//                throw new EntitlementException(56, arg);
-//            }
-
             SSOToken token = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
 

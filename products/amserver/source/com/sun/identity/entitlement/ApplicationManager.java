@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.7 2010-01-05 15:19:11 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.8 2010-01-08 22:20:47 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -360,10 +360,17 @@ public final class ApplicationManager {
             throw new EntitlementException(326);
         }
 
-        EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
-            adminSubject, realm);
-        ec.removeApplication(name);
-        clearCache(realm);
+        Application app = getApplication(adminSubject, realm, name);
+
+        if (app != null) {
+            if (!app.canBeDeleted()) {
+                throw new EntitlementException(404);
+            }
+            EntitlementConfiguration ec = EntitlementConfiguration.getInstance(
+                adminSubject, realm);
+            ec.removeApplication(name);
+            clearCache(realm);
+        }
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.14 2009-12-24 23:08:53 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.15 2010-01-08 22:20:47 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -238,6 +238,10 @@ public class OpenSSOApplicationPrivilegeManager extends
 
             ghostP.setSubject(orSubject);
             ghostP.setCondition(appPrivilege.getCondition());
+
+            Set<String> applIndexes = new HashSet<String>();
+            applIndexes.addAll(appPrivilege.getApplicationNames());
+            actualP.setApplicationIndexes(applIndexes);
 
             results[0] = actualP;
             results[1] = ghostP;
