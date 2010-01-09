@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.12 2009-06-19 02:51:03 bigfatrat Exp $
+ * $Id: AssertionManager.java,v 1.13 2010-01-09 19:41:06 qcheng Exp $
  *
  */
 
@@ -2048,7 +2048,11 @@ public final class AssertionManager {
         Object token = null; 
         try {
             Map infoMap = new HashMap();
-            infoMap.put(SessionProvider.REALM, "/");
+            if ((org != null) && (org.length() != 0)) {
+                infoMap.put(SessionProvider.REALM, org);
+            } else {
+                infoMap.put(SessionProvider.REALM, "/");
+            }
             infoMap.put(SessionProvider.PRINCIPAL_NAME, name);
             infoMap.put(SessionProvider.AUTH_LEVEL, "0");        
             token = SAMLUtils.generateSession(null, null, infoMap); 

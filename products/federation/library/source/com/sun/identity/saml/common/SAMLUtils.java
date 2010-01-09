@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.15 2009-06-12 22:21:39 mallas Exp $
+ * $Id: SAMLUtils.java,v 1.16 2010-01-09 19:41:06 qcheng Exp $
  *
  */
 
@@ -1065,12 +1065,14 @@ public class SAMLUtils  extends SAMLUtilsCommon {
     throws Exception {
         String srcID = partnerdest.getSourceID();
         String name = null;
+        String org = null;
         Map attrMap = new HashMap();
         PartnerAccountMapper paMapper = partnerdest.getPartnerAccountMapper();
         
         if (paMapper != null) {
             Map map = paMapper.getUser(assertions, srcID, target);
             name = (String) map.get(PartnerAccountMapper.NAME);
+            org =  (String) map.get(PartnerAccountMapper.ORG);
             attrMap = (Map) map.get(PartnerAccountMapper.ATTRIBUTE);
         }
         
@@ -1078,10 +1080,15 @@ public class SAMLUtils  extends SAMLUtilsCommon {
             attrMap = new HashMap();
         }
         attrMap.put(SAMLConstants.USER_NAME, name);
+        if ((org != null) && (org.length() != 0)) {
+            attrMap.put(SessionProvider.REALM, org);
+        } else {
+            attrMap.put(SessionProvider.REALM, "/");
+        }
         
         if (debug.messageEnabled()) {
             debug.message("getAttributeMap : " + "name = " +
-            name + ", attrMap = " + attrMap);
+            name + ", realm=" + org + ", attrMap = " + attrMap);
         }
         
         return attrMap;
@@ -1553,9 +1560,17 @@ public class SAMLUtils  extends SAMLUtilsCommon {
         HttpServletResponse response, 
         Map attrMap) throws SAMLException {  
         Map sessionInfoMap = new HashMap();
-        sessionInfoMap.put(SessionProvider.REALM, "/"); 
-        sessionInfoMap.put(SessionProvider.PRINCIPAL_NAME, 
-            attrMap.get(SAMLConstants.USER_NAME));
+        String realm = (String) attrMap.get(SessionProvider.REALM);
+        if ((realm == null) || (realm.length() == 0)) {
+            realm = "/";
+        } 
+        sessionInfoMap.put(SessionProvider.REALM, realm);
+        String principalName = 
+            (String) attrMap.get(SessionProvider.PRINCIPAL_NAME);
+        if (principalName == null) {
+            principalName = (String) attrMap.get(SAMLConstants.USER_NAME);
+        }
+        sessionInfoMap.put(SessionProvider.PRINCIPAL_NAME, principalName);
         //TODO: sessionInfoMap.put(SessionProvider.AUTH_LEVEL, "0");
         Object session = null;  
         try {  
@@ -1643,11 +1658,16 @@ public class SAMLUtils  extends SAMLUtilsCommon {
             for(Iterator iter = entrySet.iterator(); iter.hasNext();) {
                 Map.Entry entry = (Map.Entry)iter.next();
                 String attrName = (String)entry.getKey();
-                String[] attrValues;
-                if (attrName.equals(SAMLConstants.USER_NAME)) {
+                String[] attrValues = null;
+                if (attrName.equals(SAMLConstants.USER_NAME) ||
+                    attrName.equals(SessionProvider.PRINCIPAL_NAME)) {
                     String attrValue = (String)entry.getValue();
                     attrValues = new String[1];
                     attrValues[0] = attrValue;
+                } else if (attrName.equals(SessionProvider.REALM) ||
+                    attrName.equals(SessionProvider.AUTH_LEVEL)) {
+                    // ignore
+                    continue; 
                 } else {
                     attrValues = (String[])entry.getValue();
                 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDPartnerAccountMapper.java,v 1.4 2009-11-20 23:52:57 ww203982 Exp $
+ * $Id: NameIDPartnerAccountMapper.java,v 1.5 2010-01-09 19:41:52 qcheng Exp $
  *
  */
 
@@ -64,7 +64,7 @@ public class NameIDPartnerAccountMapper extends DefaultPartnerAccountMapper {
                 map.put(NAME, ANONYMOUS_USER);
             }
             String rootSuffix = SMSEntry.getRootSuffix(); 
-            map.put(ORG, rootSuffix);
+            map.put(ORG, "/");
         }
     }
 

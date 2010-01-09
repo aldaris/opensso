@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultPartnerAccountMapper.java,v 1.6 2009-01-28 05:35:10 ww203982 Exp $
+ * $Id: DefaultPartnerAccountMapper.java,v 1.7 2010-01-09 19:41:52 qcheng Exp $
  *
  */
 
@@ -214,7 +214,7 @@ public class DefaultPartnerAccountMapper implements PartnerAccountMapper {
                 // map to anonymous user
                 map.put(NAME, ANONYMOUS_USER); 
             }
-            map.put(ORG, rootSuffix); 
+            map.put(ORG, "/"); 
         }
     } 
 }
