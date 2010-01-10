@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateXACML.java,v 1.1 2009-11-25 18:54:08 dillidorai Exp $
+ * $Id: CreateXACML.java,v 1.2 2010-01-10 06:39:42 dillidorai Exp $
  *
  */
 
@@ -44,8 +44,12 @@ import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.entitlement.ReferralPrivilege;
+import com.sun.identity.entitlement.ReferralPrivilegeManager;
+
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 
+import com.sun.identity.entitlement.xacml3.core.Policy;
 import com.sun.identity.entitlement.xacml3.core.PolicySet;
 import com.sun.identity.entitlement.xacml3.XACMLPrivilegeUtils;
 
@@ -119,11 +123,18 @@ public class CreateXACML extends AuthenticatedCommand {
             }
 
             if (ps != null) {
-                PrivilegeManager pm = PrivilegeManager.getInstance(realm, adminSubject);
-                Set<Privilege> privileges = XACMLPrivilegeUtils.policySetToPrivileges(ps);
-                if (privileges != null) {
-                    for (Privilege p : privileges) {
-                       pm.addPrivilege(p);
+                PrivilegeManager pm = PrivilegeManager.getInstance(
+                        realm, adminSubject);
+                ReferralPrivilegeManager rpm = new ReferralPrivilegeManager(
+                        realm, adminSubject);
+                Set<Policy> policies
+                        = XACMLPrivilegeUtils.getPoliciesFromPolicySet(ps);
+                for (Policy policy : policies) {
+                    if (XACMLPrivilegeUtils.isReferralPolicy(policy)) {
+                        rpm.add(XACMLPrivilegeUtils.policyToReferral(policy));
+                    } else {
+                        pm.addPrivilege(
+                                XACMLPrivilegeUtils.policyToPrivilege(policy));
                     }
                 }
                 writeLog(LogWriter.LOG_ACCESS, Level.INFO,
