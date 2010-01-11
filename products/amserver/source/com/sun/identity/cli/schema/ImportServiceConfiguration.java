@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportServiceConfiguration.java,v 1.9 2009-11-03 22:14:13 hengming Exp $
+ * $Id: ImportServiceConfiguration.java,v 1.10 2010-01-11 17:34:33 veiming Exp $
  *
  */
 
@@ -76,7 +76,8 @@ import com.sun.identity.shared.ldap.util.LDIF;
  * Import service configuration data.
  */
 public class ImportServiceConfiguration extends AuthenticatedCommand {
-    private static final String DS_LDIF = "am_sm_ds_schema.ldif";
+    private static final String DS_LDIF = "sunds_config_schema.ldif";
+    private static final String DS_IDX = "sunds_config_index.ldif";
 
     /**
      * Services a Commandline Request.
@@ -343,15 +344,18 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
         DirectoryServerVendor.Vendor vendor, 
         LDAPConnection ld
     ) throws CLIException {
-        DataInputStream d = null;
+        DataInputStream ldif = null;
+        DataInputStream index = null;
 
         try {
             String vendorName = vendor.name;
             if (vendorName.equals(DirectoryServerVendor.SUNDS)) {
-                d = new DataInputStream(
+                ldif = new DataInputStream(
                     getClass().getClassLoader().getResourceAsStream(DS_LDIF));
-                LDIF ldif = new LDIF(d);
-                LDAPUtils.createSchemaFromLDIF(ldif, ld);
+                index = new DataInputStream(
+                    getClass().getClassLoader().getResourceAsStream(DS_IDX));
+                LDAPUtils.createSchemaFromLDIF(new LDIF(ldif), ld);
+                LDAPUtils.createSchemaFromLDIF(new LDIF(index), ld);
             }
         } catch (LDAPException e) {
             e.printStackTrace();
@@ -361,9 +365,16 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED, null);
         } finally {
-            if (d != null) {
+            if (ldif != null) {
                 try {
-                    d.close();
+                    ldif.close();
+                } catch (IOException ex) {
+                    //ignore
+                }
+            }
+            if (index != null) {
+                try {
+                    index.close();
                 } catch (IOException ex) {
                     //ignore
                 }

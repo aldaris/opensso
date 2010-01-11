@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.27 2009-12-21 22:00:53 veiming Exp $
+   $Id: build-tools.xml,v 1.28 2010-01-11 17:34:32 veiming Exp $
 
 -->
 
@@ -52,6 +52,7 @@
         value="${amserver.basedir}/scripts/tune"/> 
     <property name="amadm.tools.dir" value="${amserver.built.dir}/tools"/>
     <property name="amadm.res.dir" value="${amadm.tools.dir}/resources"/>
+    <property name="amadm.classes.dir" value="${amadm.tools.dir}/classes"/>
     <property name="amadm.lib.dir" value="${amadm.tools.dir}/lib"/>
     <property name="amadm.template.dir" value="${amadm.tools.dir}/template"/>
     <property name="amadm.windows.dir" value="${amadm.template.dir}/windows"/>
@@ -79,6 +80,7 @@
     
     <target name="prepareBuild">
         <mkdir dir="${amadm.res.dir}"/>
+        <mkdir dir="${amadm.classes.dir}"/>
         <mkdir dir="${amadm.lib.dir}"/>
         <mkdir dir="${amadm.template.dir}"/>
         <mkdir dir="${amadm.windows.dir}"/>
@@ -220,6 +222,10 @@
             <fileset dir="${amserver.built.res.dir}" includes="*.properties"
                 excludes="AMConfig.properties" />
         </copy>
+        <copy todir="${amadm.classes.dir}" overwrite="yes">
+            <fileset dir="${amserver.warbase.dir}/ldif/sunds" 
+                includes="sunds_config_schema.ldif, sunds_config_index.ldif" />
+        </copy>
         <copy todir="${amadm.tools.dir}" overwrite="yes" flatten="yes"
             encoding="UTF-8">
             <fileset dir="${products.license.dir}" includes="*.txt"/>
@@ -295,6 +301,7 @@
                 <exclude name="lib/ssomanifest.jar" />
                 <exclude name="resources/ssoPatch**/*" />                
                 <include name="lib/**/*"/>               
+                <include name="classes/*.ldif"/>
                 <include name="resources/**/*"/>
                 <include name="template/**/*"/>
             </zipfileset>
