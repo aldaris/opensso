@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: userconsole.jsp,v 1.1 2009-11-20 19:25:15 huacui Exp $
+   $Id: userconsole.jsp,v 1.2 2010-01-11 06:19:02 nithyas Exp $
 
 --%>
 
@@ -170,9 +170,9 @@ on Libraries node in Projects view can be used to add the JSTL 1.1 library.
 
     <hr><br>
     <h2>Do you authorize the Service Consumer to access your resource?</h2>
-    <form>
-        <input type="button" onclick="revoke('<%= otk%>')" value="Revoke">
-        <input type="button" onclick="makeithappen('<%= otk%>', '<%= cbk%>', '<%= uid%>')" value="Authorize">
+    <form name="AuthoriseToken" >
+        <input type="button" onclick="revoke('<%= otk%>')" value="Revoke" name="Revoke">
+        <input type="button" onclick="makeithappen('<%= otk%>', '<%= cbk%>', '<%= uid%>')" value="Authorize" name="Authorize">
     </form>
 
     <hr>
