@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.8 2010-01-08 22:20:47 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.9 2010-01-11 20:19:07 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -414,9 +414,26 @@ public final class ApplicationManager {
             principals.iterator().next().getName() : null;
 
         if (application.getCreationDate() == -1) {
-            application.setCreationDate(date.getTime());
-            if (principalName != null) {
-                application.setCreatedBy(principalName);
+            long creationDate = getApplicationCreationDate(realm,
+                application.getName());
+            if (creationDate == -1) {
+                application.setCreationDate(date.getTime());
+                if (principalName != null) {
+                    application.setCreatedBy(principalName);
+                }
+            } else {
+                application.setCreationDate(creationDate);
+                String createdBy = application.getCreatedBy();
+                if ((createdBy == null) || (createdBy.trim().length() == 0)) {
+                    createdBy = getApplicationCreatedBy(realm,
+                        application.getName());
+                    if ((createdBy == null) || (createdBy.trim().length() == 0))
+                    {
+                        application.setCreatedBy(principalName);
+                    } else {
+                        application.setCreatedBy(createdBy);
+                    }
+                }
             }
         }
         application.setLastModifiedDate(date.getTime());
@@ -429,6 +446,35 @@ public final class ApplicationManager {
         ec.storeApplication(application);
         clearCache(realm);
     }
+
+    private static String getApplicationCreatedBy(
+        String realm,
+        String applName
+    ) {
+        try {
+            Application appl = getApplication(PrivilegeManager.superAdminSubject,
+                realm, applName);
+            return (appl == null) ? null : appl.getCreatedBy();
+        } catch (EntitlementException ex) {
+            // new application.
+            return null;
+        }
+    }
+
+    private static long getApplicationCreationDate(
+        String realm,
+        String applName
+    ) {
+        try {
+            Application appl = getApplication(PrivilegeManager.superAdminSubject,
+                realm, applName);
+            return (appl == null) ? -1 : appl.getCreationDate();
+        } catch (EntitlementException ex) {
+            // new application.
+            return -1;
+        }
+    }
+
 
     private static boolean isReferredApplication(
         String realm,
