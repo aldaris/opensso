@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.11 2010-01-08 22:20:47 veiming Exp $
+ * $Id: DataStore.java,v 1.12 2010-01-11 20:15:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -944,10 +944,6 @@ public class DataStore {
         }
 
         if (filter != null) {
-/*            if (adminToken == null) {
-                Object[] arg = {baseDN};
-                throw new EntitlementException(56, arg);
-            }*/
             SSOToken token = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
             long start = DB_MONITOR_REFERRAL.start();
@@ -1078,5 +1074,31 @@ public class DataStore {
             return adminToken;
         }
         return SubjectUtils.getSSOToken(subject);
+    }
+
+    static Set<String> getReferralNames(String realm, String referredRealm)
+        throws EntitlementException {
+        try {
+            Set<String> results = new HashSet<String>();
+            String filter = "(ou=" + REFERRAL_REALMS + "=" + 
+                DNMapper.orgNameToRealmName(referredRealm) + ")";
+            String baseDN = getSearchBaseDN(realm, REFERRAL_STORE);
+
+            if (SMSEntry.checkIfEntryExists(baseDN, adminToken)) {
+                Set<String> dns = SMSEntry.search(adminToken, baseDN, filter,
+                    0, 0, false, false);
+                for (String dn : dns) {
+                    if (!areDNIdentical(baseDN, dn)) {
+                        String rdns[] = LDAPDN.explodeDN(dn, true);
+                        if ((rdns != null) && rdns.length > 0) {
+                            results.add(rdns[0]);
+                        }
+                    }
+                }
+            }
+            return results;
+        } catch (SMSException ex) {
+            throw new EntitlementException(215, ex);
+        }
     }
 }

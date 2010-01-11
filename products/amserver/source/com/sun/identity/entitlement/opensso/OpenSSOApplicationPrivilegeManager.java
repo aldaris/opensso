@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.15 2010-01-08 22:20:47 veiming Exp $
+ * $Id: OpenSSOApplicationPrivilegeManager.java,v 1.16 2010-01-11 20:15:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -818,6 +818,42 @@ public class OpenSSOApplicationPrivilegeManager extends
         }
         return p;
     }
+
+    static Iterator<IPrivilege> getPrivileges(String realm) throws EntitlementException {
+        Set<String> hostIndex = new HashSet<String>();
+        hostIndex.add("://" + DNMapper.orgNameToDN(realm));
+        Set<String> pathParentIndex = new HashSet<String>();
+        pathParentIndex.add(RESOURCE_PREFIX);
+        ResourceSearchIndexes rIndex = new ResourceSearchIndexes(
+            hostIndex, null, pathParentIndex);
+        Set<String> subjectIndex = Collections.EMPTY_SET;
+
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        Subject dsameUserSubject = SubjectUtils.createSubject(adminToken);
+
+        OpenSSOIndexStore db = new OpenSSOIndexStore(dsameUserSubject,
+            getHiddenRealmDN());
+        return db.search("/", rIndex, subjectIndex, true, false);
+    }
+
+    static void removeAllPrivileges(
+        String realm
+    ) throws EntitlementException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        Subject dsameUserSubject = SubjectUtils.createSubject(adminToken);
+
+        for (Iterator<IPrivilege> i = getPrivileges(realm) ; i.hasNext(); ) {
+            Privilege p = (Privilege)i.next();
+            String name = p.getName();
+            PrivilegeManager pm = PrivilegeManager.getInstance(
+                getHiddenRealmDN(), dsameUserSubject);
+            pm.removePrivilege(name);
+            pm.removePrivilege(GHOST_PRIVILEGE_NAME_PREFIX + name);
+        }
+    }
+
 
     private class Permission {
         private Map<String, Privilege> privileges;

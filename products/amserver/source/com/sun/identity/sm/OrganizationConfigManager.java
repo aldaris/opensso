@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.28 2009-10-14 19:21:33 hengming Exp $
+ * $Id: OrganizationConfigManager.java,v 1.29 2010-01-11 20:15:46 veiming Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.CaseInsensitiveHashSet;
+import com.sun.identity.entitlement.opensso.SubRealmObserver;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.shared.Constants;
 
@@ -110,6 +111,7 @@ public class OrganizationConfigManager {
 
     static {
         initializeFlags();
+        SubRealmObserver.registerListener();
     }
 
     /**
