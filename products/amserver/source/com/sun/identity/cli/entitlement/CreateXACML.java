@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateXACML.java,v 1.2 2010-01-10 06:39:42 dillidorai Exp $
+ * $Id: CreateXACML.java,v 1.3 2010-01-11 01:21:01 dillidorai Exp $
  *
  */
 
@@ -63,6 +63,7 @@ import java.util.logging.Level;
 import javax.security.auth.Subject;
 import javax.xml.bind.JAXBException;
 
+import org.json.JSONException;
 
 /**
  * Creates policy in a realm.
@@ -151,6 +152,12 @@ public class CreateXACML extends AuthenticatedCommand {
                 outputWriter.printlnMessage("policy set is null");
             }
         } catch (JAXBException e) {
+            String[] args = {realm, e.getMessage()};
+            debugError("CreateXACML.handleRequest", e);
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_CREATE_POLICY_IN_REALM", args);
+            throw new CLIException(e ,ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        } catch (JSONException e) {
             String[] args = {realm, e.getMessage()};
             debugError("CreateXACML.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
