@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.115 2009-11-16 21:52:57 mallas Exp $
+ * $Id: AMSetupServlet.java,v 1.116 2010-01-11 21:55:09 goodearth Exp $
  *
  */
 
@@ -2479,7 +2479,7 @@ public class AMSetupServlet extends HttpServlet {
             String myDSPort = null;
             // Get server list
             Set serverSet = ServerConfiguration.getServers(adminToken);
-            if (serverSet == null || serverSet.size() < 2) {
+            if (serverSet == null) { 
                 return true;
             }
 
