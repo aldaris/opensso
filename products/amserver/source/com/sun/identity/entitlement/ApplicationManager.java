@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.9 2010-01-11 20:19:07 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.10 2010-01-12 07:27:29 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -571,7 +572,14 @@ public final class ApplicationManager {
     public static void clearCache(String realm) {
         readWriteLock.writeLock().lock();
         try {
-            applications.remove(realm);
+            for (Iterator<String> i = applications.keySet().iterator();
+                i.hasNext(); ) {
+                String name = i.next();
+                if (name.equalsIgnoreCase(realm)) {
+                    i.remove();
+                    break;
+                }
+            }
         } finally {
             readWriteLock.writeLock().unlock();
         }

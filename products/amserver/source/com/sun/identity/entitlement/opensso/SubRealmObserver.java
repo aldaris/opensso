@@ -22,19 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubRealmObserver.java,v 1.1 2010-01-11 20:15:45 veiming Exp $
+ * $Id: SubRealmObserver.java,v 1.2 2010-01-12 07:27:29 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.ApplicationManager;
 import com.sun.identity.entitlement.EntitlementConfiguration;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ReferralPrivilegeManager;
-import com.sun.identity.policy.PolicyConfig;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSException;
@@ -64,7 +65,7 @@ public class SubRealmObserver implements ServiceListener {
         if (ec.migratedToEntitlementService()) {
             try {
                 ServiceConfigManager scm = new ServiceConfigManager(
-                    PolicyConfig.POLICY_CONFIG_SERVICE, adminToken);
+                    IdConstants.REPO_SERVICE, adminToken);
                 scm.addListener(new SubRealmObserver());
             } catch (SMSException e) {
                 PrivilegeManager.debug.error(
@@ -94,6 +95,7 @@ public class SubRealmObserver implements ServiceListener {
         int type
     ) {
         if (type == ServiceListener.REMOVED) {
+            ApplicationManager.clearCache(DNMapper.orgNameToRealmName(orgName));
             try {
                 OpenSSOApplicationPrivilegeManager.removeAllPrivileges(orgName);
             } catch (EntitlementException ex) {
@@ -120,6 +122,8 @@ public class SubRealmObserver implements ServiceListener {
                     "SubRealmObserver.organizationConfigChanged: " +
                     "Unable to remove referral privileges", ex);
             }
+        } else if (type == ServiceListener.MODIFIED) {
+            ApplicationManager.clearCache(DNMapper.orgNameToRealmName(orgName));
         }
     }
 
