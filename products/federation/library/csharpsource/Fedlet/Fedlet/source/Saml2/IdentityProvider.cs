@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
- * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2009-2010 Sun Microsystems Inc. All Rights Reserved
  * 
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: IdentityProvider.cs,v 1.4 2009-11-11 18:13:39 ggennaro Exp $
+ * $Id: IdentityProvider.cs,v 1.5 2010-01-12 18:04:54 ggennaro Exp $
  */
 
 using System.Collections;
@@ -65,7 +65,7 @@ namespace Sun.Identity.Saml2
         /// <summary>
         /// Identity Provider's X509 certificate.
         /// </summary>
-        private X509Certificate2 certificate;
+        private X509Certificate2 signingCertificate;
         #endregion
 
         #region Constructors
@@ -92,7 +92,7 @@ namespace Sun.Identity.Saml2
                 // Load now since a) it doesn't change and b) its a 
                 // performance dog on Win 2003 64-bit.
                 byte[] byteArray = Encoding.UTF8.GetBytes(this.EncodedSigningCertificate);
-                this.certificate = new X509Certificate2(byteArray);
+                this.signingCertificate = new X509Certificate2(byteArray);
             }
             catch (DirectoryNotFoundException dnfe)
             {
@@ -148,7 +148,7 @@ namespace Sun.Identity.Saml2
         {
             get
             {
-                return this.certificate;
+                return this.signingCertificate;
             }
         }
 

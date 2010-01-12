@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
- * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2009-2010 Sun Microsystems Inc. All Rights Reserved
  * 
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,15 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProvider.cs,v 1.4 2009-11-11 18:13:39 ggennaro Exp $
+ * $Id: ServiceProvider.cs,v 1.5 2010-01-12 18:04:54 ggennaro Exp $
  */
 
 using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Security;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
+using Sun.Identity.Common;
 using Sun.Identity.Properties;
 using Sun.Identity.Saml2.Exceptions;
 
@@ -152,6 +157,48 @@ namespace Sun.Identity.Saml2
                 XmlNode root = this.extendedMetadata.DocumentElement;
                 XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
                 return node.Attributes["metaAlias"].Value.Trim();
+            }
+        }
+
+        /// <summary>
+        /// Gets the certificate alias, installed on this service provider, 
+        /// for encryption.
+        /// </summary>
+        public string EncryptionCertificateAlias
+        {
+            get
+            {
+                string xpath = "/mdx:EntityConfig/mdx:SPSSOConfig/mdx:Attribute[@name='encryptionCertAlias']/mdx:Value";
+                XmlNode root = this.extendedMetadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
+
+                if (node != null)
+                {
+                    return node.InnerText.Trim();
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the certificate alias, installed on this service provider, 
+        /// for signing.
+        /// </summary>
+        public string SigningCertificateAlias
+        {
+            get
+            {
+                string xpath = "/mdx:EntityConfig/mdx:SPSSOConfig/mdx:Attribute[@name='signingCertAlias']/mdx:Value";
+                XmlNode root = this.extendedMetadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
+
+                if (node != null)
+                {
+                    return node.InnerText.Trim();
+                }
+
+                return null;
             }
         }
 
@@ -385,6 +432,47 @@ namespace Sun.Identity.Saml2
             }
 
             return classReference;
+        }
+
+        /// <summary>
+        /// Returns a string representing the configured metadata for
+        /// this service provider.  This will include key information
+        /// as well if the metadata and extended metadata have this
+        /// information specified.
+        /// </summary>
+        /// <param name="signMetadata">
+        /// Flag to specify if the exportable metadata should be signed.
+        /// </param>
+        /// <returns>
+        /// String with runtime representation of the metadata for this
+        /// service provider.
+        /// </returns>
+        public string GetExportableMetadata(bool signMetadata)
+        {
+            XmlDocument exportableXml = (XmlDocument)this.metadata.CloneNode(true);
+            XmlNode entityDescriptorNode
+                = exportableXml.SelectSingleNode("/md:EntityDescriptor", this.metadataNsMgr);
+
+            if (entityDescriptorNode == null)
+            {
+                throw new Saml2Exception(Resources.ServiceProviderEntityDescriptorNodeNotFound);
+            }
+
+            if (signMetadata && string.IsNullOrEmpty(this.SigningCertificateAlias))
+            {
+                throw new Saml2Exception(Resources.ServiceProviderCantSignMetadataWithoutCertificateAlias);
+            }
+
+            if (signMetadata)
+            {
+                XmlAttribute descriptorId = exportableXml.CreateAttribute("ID");
+                descriptorId.Value = Saml2Utils.GenerateId();
+                entityDescriptorNode.Attributes.Append(descriptorId);
+
+                Saml2Utils.SignXml(this.SigningCertificateAlias, exportableXml, descriptorId.Value, true);
+            }
+
+            return exportableXml.InnerXml;
         }
 
         /// <summary>
