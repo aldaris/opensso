@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.29 2010-01-11 20:15:46 veiming Exp $
+ * $Id: OrganizationConfigManager.java,v 1.30 2010-01-12 21:27:09 veiming Exp $
  *
  */
 
 package com.sun.identity.sm;
 
 import com.iplanet.am.util.SystemProperties;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,9 +46,9 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.CaseInsensitiveHashSet;
-import com.sun.identity.entitlement.opensso.SubRealmObserver;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.shared.Constants;
+import java.lang.reflect.Method;
 
 /**
  * The class <code>OrganizationConfigManager</code> provides interfaces to
@@ -111,7 +112,30 @@ public class OrganizationConfigManager {
 
     static {
         initializeFlags();
-        SubRealmObserver.registerListener();
+        registerEntitlementListener();
+    }
+
+    private static void registerEntitlementListener() {
+        try {
+            Class clazz = Class.forName(
+                "com.sun.identity.entitlement.opensso.SubRealmObserver");
+            Class[] param = null;
+            Method method = clazz.getMethod("registerListener", param);
+            Object[] args = null;
+            method.invoke(null, args);
+        } catch (IllegalAccessException ex) {
+            SMSEntry.debug.error("OrganizationConfigManager.init", ex);
+        } catch (IllegalArgumentException ex) {
+            SMSEntry.debug.error("OrganizationConfigManager.init", ex);
+        } catch (InvocationTargetException ex) {
+            SMSEntry.debug.error("OrganizationConfigManager.init", ex);
+        } catch (NoSuchMethodException ex) {
+            SMSEntry.debug.error("OrganizationConfigManager.init", ex);
+        } catch (SecurityException ex) {
+            SMSEntry.debug.error("OrganizationConfigManager.init", ex);
+        } catch (ClassNotFoundException ex) {
+            // ignore
+        }
     }
 
     /**
