@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ViewApplication.java,v 1.8 2010-01-11 18:39:41 farble1670 Exp $
+ * $Id: ViewApplication.java,v 1.9 2010-01-13 18:41:54 farble1670 Exp $
  */
 
 package com.sun.identity.admin.model;
@@ -94,6 +94,14 @@ public class ViewApplication implements Serializable {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public boolean isInUse() {
+        return inUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        this.inUse = inUse;
     }
 
     public static class NameComparator extends TableColumnComparator {
@@ -253,6 +261,7 @@ public class ViewApplication implements Serializable {
     private Date modified;
     private String author;
     private String modifier;
+    private boolean inUse = false;
 
     public ViewApplication() {
         booleanActionsHandler.setBooleanActionsBean(booleanActionsBean);
@@ -529,5 +538,10 @@ public class ViewApplication implements Serializable {
 
     public String getConditionTypesToFormattedString() {
         return new ListFormatter(conditionTypes).toFormattedString();
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
