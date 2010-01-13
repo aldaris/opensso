@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.15 2009-11-20 23:52:55 ww203982 Exp $
+ * $Id: PolicyUtils.java,v 1.16 2010-01-13 03:01:15 dillidorai Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMOrganization;
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLHandler;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.services.ldap.DSConfigMgr;
@@ -89,6 +90,7 @@ public class PolicyUtils {
     public static final String ADVICES_START_TAG = "<Advices>";
     public static final String ADVICES_END_TAG = "</Advices>";
 
+    static Debug debug = Debug.getInstance("amPolicy");
     private static LogMessageProvider msgProvider;
     private static Logger accessLogger;
     private static Logger errorLogger;
@@ -273,7 +275,7 @@ public class PolicyUtils {
         Node node = null;
         Set nodeSet = XMLUtils.getChildNodes(pNode, ATTRIBUTE_VALUE_PAIR);
         if (nodeSet == null) {
-            PolicyManager.debug.error("parseEnvParameters: missing element " 
+            debug.error("parseEnvParameters: missing element " 
                     + ATTRIBUTE_VALUE_PAIR);
             String objs[] = { ATTRIBUTE_VALUE_PAIR };
             throw new PolicyException(ResBundleUtils.rbName, 
@@ -287,7 +289,7 @@ public class PolicyUtils {
             node = (Node)nodes.next();
             String attributeName = getAttributeName(node);
             if (attributeName == null) {
-                PolicyManager.debug.error("PolicyUtils.parseEnvParameters():"
+                debug.error("PolicyUtils.parseEnvParameters():"
                         + " missing attribute name");
                 String objs[] = { ATTRIBUTE_NAME };
                 throw new PolicyException(ResBundleUtils.rbName, 
@@ -295,7 +297,7 @@ public class PolicyUtils {
             }
             Set values = getAttributeValues(node);
             if (values == null) {
-                PolicyManager.debug.error("PolicyUtils.parseEnvParameters():"
+                debug.error("PolicyUtils.parseEnvParameters():"
                         + " missing attribute value");
                 String objs[] = { VALUE };
                 throw new PolicyException(ResBundleUtils.rbName,
@@ -322,7 +324,7 @@ public class PolicyUtils {
     {
         Set nodeSet = XMLUtils.getChildNodes(pNode, ATTRIBUTE);
         if (nodeSet == null) {
-            PolicyManager.debug.error("parseResponseAttributes: "
+            debug.error("parseResponseAttributes: "
                     + " missing element " + ATTRIBUTE);
             String objs[] = { ATTRIBUTE };
             throw new PolicyException(ResBundleUtils.rbName,
@@ -337,7 +339,7 @@ public class PolicyUtils {
             String attrName = XMLUtils.getNodeAttributeValue(node, 
                     ATTRIBUTE_NAME);
             if (attrName == null) {
-                PolicyManager.debug.error("parseResponseAttributes: "
+                debug.error("parseResponseAttributes: "
                         + " missing attribute " + ATTRIBUTE_NAME);
                 String objs[] = { ATTRIBUTE_NAME };
                 throw new PolicyException(ResBundleUtils.rbName,
@@ -362,7 +364,7 @@ public class PolicyUtils {
         Node node = null;
         Set nodeSet = XMLUtils.getChildNodes(pNode, ATTRIBUTE_VALUE_PAIR);
         if (nodeSet == null) {
-            PolicyManager.debug.error("parseAttribiteValuePairs: "
+            debug.error("parseAttribiteValuePairs: "
                     +"missing element " + ATTRIBUTE_VALUE_PAIR);
             return null;
         }
@@ -374,13 +376,13 @@ public class PolicyUtils {
             node = (Node)nodes.next();
             String attributeName = getAttributeName(node);
             if (attributeName == null) {
-                PolicyManager.debug.error("PolicyUtils.parseAttribiteValuePairs"
+                debug.error("PolicyUtils.parseAttribiteValuePairs"
                         +"():missing attribute name");
                 return null;
             }
             Set values = getAttributeValues(node);
             if (values == null) {
-                PolicyManager.debug.error("PolicyUtils.parseAttribiteValuePairs"
+                debug.error("PolicyUtils.parseAttribiteValuePairs"
                         +"():missing attribute value");
                 return null;
             }
@@ -401,14 +403,14 @@ public class PolicyUtils {
     {
         Node node = XMLUtils.getChildNode(pNode, ATTRIBUTE);
         if (node == null) {
-            PolicyManager.debug.error("PolicyUtils.getAttributeName(): "
+            debug.error("PolicyUtils.getAttributeName(): "
                 +"missing element " + ATTRIBUTE);
             return null;
         }
 
         String attrName = XMLUtils.getNodeAttributeValue(node, ATTRIBUTE_NAME);
         if (attrName == null) {
-            PolicyManager.debug.error("PolicyUtils.getAttributeName(): "
+            debug.error("PolicyUtils.getAttributeName(): "
                 +"missing attribute " + ATTRIBUTE_NAME + " for element " 
                 + ATTRIBUTE);
             return null;
@@ -429,7 +431,7 @@ public class PolicyUtils {
     {
         Set nodeSet = XMLUtils.getChildNodes(pNode, VALUE);
         if (nodeSet == null) {
-            PolicyManager.debug.error("PolicyUtils.getAttributeValues() : "
+            debug.error("PolicyUtils.getAttributeValues() : "
                 +"missing element " + VALUE);
             return null;
         }
@@ -618,8 +620,8 @@ public class PolicyUtils {
                 msgProvider = MessageProviderFactory.getProvider("Policy");
             }
         } catch (IOException e) {
-            PolicyManager.debug.error("PolicyUtils.logAccessMessage()", e);
-            PolicyManager.debug.error("PolicyUtils.logAccessMessage():" 
+            debug.error("PolicyUtils.logAccessMessage()", e);
+            debug.error("PolicyUtils.logAccessMessage():" 
                     + "disabling logging");
             logStatus = false;
         }
@@ -655,8 +657,8 @@ public class PolicyUtils {
                 msgProvider = MessageProviderFactory.getProvider("Policy");
             }
         } catch (IOException e) {
-            PolicyManager.debug.error("PolicyUtils.logErrorMessage()", e);
-            PolicyManager.debug.error("PolicyUtils.logAccessMessage():" 
+            debug.error("PolicyUtils.logErrorMessage()", e);
+            debug.error("PolicyUtils.logAccessMessage():" 
                     + "disabling logging");
             logStatus = false;
         }
@@ -684,7 +686,7 @@ public class PolicyUtils {
             DSConfigMgr mgr = DSConfigMgr.getDSConfigMgr();
             return mgr.getHostName(DSConfigMgr.DEFAULT);
         } catch (LDAPServiceException e) {
-            PolicyManager.debug.error(
+            debug.error(
                 "Unable to get LDAP server host from DSConfigMgr: ", e);
             return null;
         }
@@ -760,8 +762,8 @@ public class PolicyUtils {
             userFilter.append("(").append(userRDNAttrName)
                 .append("=").append(userName).append("))");
         }
-        if (PolicyManager.debug.messageEnabled()) {
-            PolicyManager.debug.message(
+        if (debug.messageEnabled()) {
+            debug.message(
                 "PolicyUtils.constructUserFilter(): filter: " +
                     userFilter.toString());
         }
@@ -820,7 +822,7 @@ public class PolicyUtils {
                                         if (PolicyManager.
                                             debug.messageEnabled()) 
                                         {
-                                            PolicyManager.debug.message(
+                                            debug.message(
                                             "PolicyUtils.removePolicyRules():"+
                                             "policy: " + policyName +",rule: "
                                             +ruleName);
@@ -874,9 +876,9 @@ public class PolicyUtils {
                                      rule = p.getRule(ruleName);
                                      if ((rule.getServiceTypeName())
                                         .equalsIgnoreCase(serviceName)) {
-                                         if (PolicyManager.debug.messageEnabled(
+                                         if (debug.messageEnabled(
                                             )) {
-                                             PolicyManager.debug.message(
+                                             debug.message(
                                              "PolicyUtils.removePolicyRules():"+
                                              "referral policy: " + policyName +
                                              ",rule: "+ruleName);
@@ -894,7 +896,7 @@ public class PolicyUtils {
             
             
         } catch (PolicyException pe){
-             PolicyManager.debug.error(
+             debug.error(
                  "PolicyUtils.removePolicyRules():" ,pe);
        }
     }
@@ -997,15 +999,15 @@ public class PolicyUtils {
     public static Map parseAdvicesXML(String advicesXML) 
             throws PolicyException {
 
-        if(PolicyManager.debug.messageEnabled()) {
-            PolicyManager.debug.message("PolicyUtils.parseAdvicesXML():"
+        if(debug.messageEnabled()) {
+            debug.message("PolicyUtils.parseAdvicesXML():"
                     + " entering, advicesXML= " + advicesXML);
         }
 
         Map advices = null;
         if (advicesXML != null) {
             Document document = XMLUtils.toDOMDocument(advicesXML, 
-                    PolicyManager.debug);
+                    debug);
             if (document != null) {
                 Node advicesNode 
                         = XMLUtils.getRootNode(document, ADVICES_TAG_NAME);
@@ -1013,23 +1015,23 @@ public class PolicyUtils {
                     advices = XMLUtils.parseAttributeValuePairTags(
                             advicesNode);
                 } else {
-                    if(PolicyManager.debug.messageEnabled()) {
-                        PolicyManager.debug.message(
+                    if(debug.messageEnabled()) {
+                        debug.message(
                                 "PolicyUtils.parseAdvicesXML():"
                                 + " advicesNode is null");
                     }
                 }
             } else {
-                if(PolicyManager.debug.messageEnabled()) {
-                    PolicyManager.debug.message(
+                if(debug.messageEnabled()) {
+                    debug.message(
                             "PolicyUtils.parseAdvicesXML():"
                             + " document is null");
                 }
             }
         }
 
-        if(PolicyManager.debug.messageEnabled()) {
-            PolicyManager.debug.message("PolicyUtils.parseAdvicesXML():"
+        if(debug.messageEnabled()) {
+            debug.message("PolicyUtils.parseAdvicesXML():"
                     + " returning, advices= " + advices);
         }
 
@@ -1046,11 +1048,6 @@ public class PolicyUtils {
     public static String advicesToXMLString(Map advices) 
             throws PolicyException {
 
-        if(PolicyManager.debug.messageEnabled()) {
-            PolicyManager.debug.message("PolicyUtils.advicesToXMLString():"
-                    + " entering, advices = " + advices);
-        }
-
         String advicesXML = null;
         StringBuffer sb = new StringBuffer(200);
         sb.append(ADVICES_START_TAG).append(NEW_LINE);
@@ -1059,11 +1056,6 @@ public class PolicyUtils {
         }
         sb.append(ADVICES_END_TAG).append(NEW_LINE);
         advicesXML = sb.toString();
-
-        if(PolicyManager.debug.messageEnabled()) {
-            PolicyManager.debug.message("PolicyUtils.advicesToXMLString():"
-                    + " returning, advicesXML = " + advicesXML);
-        }
 
         return advicesXML;
     }
