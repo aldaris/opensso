@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.10 2010-01-12 07:27:29 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.11 2010-01-13 23:41:57 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -174,6 +174,9 @@ public final class ApplicationManager {
 
     private static boolean match(String value, String strPattern) {
         if ((strPattern != null) && (strPattern.length() > 0)) {
+            if ((value == null) || (value.trim().length() == 0)) {
+                return strPattern.equals("*");
+            }
             value = value.toLowerCase();
             strPattern = strPattern.toLowerCase();
             StringBuilder buff = new StringBuilder();
