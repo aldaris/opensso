@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.18 2010-01-13 03:01:15 dillidorai Exp $
+ * $Id: PolicyEvaluator.java,v 1.19 2010-01-14 23:18:35 dillidorai Exp $
  *
  */
 
@@ -1499,23 +1499,16 @@ public class PolicyEvaluator {
                         as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN);
                 }
 
-                if (isBooleanAction) { // service declared boolean action
+                if (isBooleanAction) {
 
                     Boolean values = (Boolean) actionValues.get(actionName);
 
-                    if (values == null) { // action value is null
-                        // empty values, leave action value set empty
-                        if (DEBUG.messageEnabled()) {
-                            DEBUG.message("PolicyEvaluator." +
-                                "entitlementToPolicyDecision(): action value null for action:"
-                                + actionName, null);
-                        }
-                    } else if (values.booleanValue()) {
+                    if (values.booleanValue()) {
                         set.add(getActionTrueBooleanValue(actionName));
                     } else {
                         set.add(getActionFalseBooleanValue(actionName));
                     }
-                } else { // non boolean action
+                } else {
                     // Parse the action name to get the value
                     int index = actionName.indexOf('_');
                     if (index != -1) {
@@ -1530,19 +1523,33 @@ public class PolicyEvaluator {
                 ad.setAdvices(entitlement.getAdvices());
                 pd.addActionDecision(ad, serviceType);
             }
-        } else { // actionValues is null or empty
+        } else {
             Map advices = entitlement.getAdvices();
             if ((advices != null) && (!advices.isEmpty()) &&
                 ((actionNames == null) || actionNames.isEmpty())) {
                 actionNames = serviceType.getActionNames();
             }
             for (String actionName : actionNames) {
-                if (DEBUG.messageEnabled()) {
-                    DEBUG.message("PolicyEvaluator." +
-                        "entitlementToPolicyDecision(): action value null for action:"
-                        + actionName, null);
+                Set set = new HashSet();
+                // Determinte if the serviceType have boolean action values
+                ActionSchema as = null;
+                if (serviceType != null) {
+                    try {
+                        as = serviceType.getActionSchema(actionName);
+                    } catch (InvalidNameException inex) {
+                        if (DEBUG.warningEnabled()) {
+                            DEBUG.warning("PolicyEvaluator." +
+                                "entitlementToPolicyDecision:", inex);
+                        }
+                    }
                 }
-                ActionDecision ad = new ActionDecision(actionName, Collections.EMPTY_SET);
+                if ((as == null) ||
+                    as.getSyntax().equals(AttributeSchema.Syntax.BOOLEAN)) {
+                    set.add(getActionFalseBooleanValue(actionName));
+                } else {
+                    set.addAll(as.getDefaultValues());
+                }
+                ActionDecision ad = new ActionDecision(actionName, set);
                 ad.setAdvices(entitlement.getAdvices());
                 pd.addActionDecision(ad, serviceType);
             }
