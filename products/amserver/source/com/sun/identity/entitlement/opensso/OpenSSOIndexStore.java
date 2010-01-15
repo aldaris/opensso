@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.11 2010-01-08 22:20:47 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.12 2010-01-15 18:09:46 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -393,10 +393,9 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
         }
 
         if (bReferral) {
-            if (DN.isDN(realm)) {
-                realm = DNMapper.orgNameToRealmName(realm);
-            }
-            if (realm.equals("/")) {
+            String tmp = (DN.isDN(realm)) ?
+                DNMapper.orgNameToRealmName(realm) : realm;
+            if (tmp.equals("/")) { 
                 ReferralPrivilege ref = getOrgAliasReferral(indexes);
                 if (ref != null) {
                     iterator.add(ref);
