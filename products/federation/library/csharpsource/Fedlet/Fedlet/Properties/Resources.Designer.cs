@@ -691,6 +691,15 @@ namespace Sun.Identity.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to XML can not be signed due to either empty or unknown signature certificate alias in extended metadata..
+        /// </summary>
+        public static string ServiceProviderUtilitySignFailedNoCertAlias {
+            get {
+                return ResourceManager.GetString("ServiceProviderUtilitySignFailedNoCertAlias", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Specified logout binding is not supported..
         /// </summary>
         public static string ServiceProviderUtilityUnsupportedLogoutBinding {

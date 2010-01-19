@@ -2,7 +2,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
- * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2009-2010 Sun Microsystems Inc. All Rights Reserved
  * 
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: spinitiatedslo.aspx,v 1.1 2009-11-11 18:13:40 ggennaro Exp $
+ * $Id: spinitiatedslo.aspx,v 1.2 2010-01-19 18:23:10 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" Debug="true" %>
@@ -44,6 +44,9 @@
      *                     urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST (default)
      *                     urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
      *                     urn:oasis:names:tc:SAML:2.0:bindings:SOAP
+     *                    
+     * Destination        A URI Reference indicating the address to which the
+     *                    request has been sent.
      *                     
      * idpEntityID        Identifier for Identity Provider to issue the logout
      *                    request.
@@ -72,8 +75,8 @@
 
     if (String.IsNullOrEmpty(parameters[Saml2Constants.Binding]))
     {
-        // If the binding is null, use POST.
-        parameters[Saml2Constants.Binding] = Saml2Constants.HttpPostProtocolBinding;
+        // If the binding is null, use HttpRedirect.
+        parameters[Saml2Constants.Binding] = Saml2Constants.HttpRedirectProtocolBinding;
     }
     
     if (String.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))

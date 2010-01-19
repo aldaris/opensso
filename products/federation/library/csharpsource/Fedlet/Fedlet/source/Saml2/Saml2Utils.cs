@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: Saml2Utils.cs,v 1.6 2010-01-12 18:04:54 ggennaro Exp $
+ * $Id: Saml2Utils.cs,v 1.7 2010-01-19 18:23:09 ggennaro Exp $
  */
 
 using System;
@@ -186,6 +186,29 @@ namespace Sun.Identity.Saml2
             catch (FormatException)
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the delimeter in the context of a query string depending
+        /// on the existence of a question mark within the given URL.
+        /// </summary>
+        /// <param name="location">
+        /// URL location to check for the presence of the question mark.
+        /// </param>
+        /// <returns>
+        /// Returns &quot; if it doesn't currently exist in the given URL, otherwise
+        /// &amp; is returned.
+        /// </returns>
+        public static string GetQueryStringDelimiter(string location)
+        {
+            if (location.Contains("?"))
+            {
+                return "&";
+            }
+            else
+            {
+                return "?";
             }
         }
 

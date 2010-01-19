@@ -3,7 +3,7 @@ README file for the .NET Fedlet
 ------------------------------------------------------------------------------
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
-Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+Copyright (c) 2009-2010 Sun Microsystems Inc. All Rights Reserved
   
 The contents of this file are subject to the terms
 of the Common Development and Distribution License
@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.net,v 1.6 2010-01-12 18:04:54 ggennaro Exp $
+$Id: README.net,v 1.7 2010-01-19 18:23:10 ggennaro Exp $
 
 %% Contents:
     %% 1. Contents of this directory 
@@ -408,4 +408,21 @@ cGy/F2Zuj8XJJpuQRSE6PtQqBuDEHjjmOQJ0rV/r8mO1ZCtHRhpZ5zYRjhRC9eCbjx9VrFax0JDC
 
       http://sp.example.com/SampleApp/exportmetadata.aspx?sign=true
 
+   The .NET Fedlet is now able to sign requests and responses to the identity
+   provider with the appropriate changes to the configured metadata.
+   
+      AuthnRequest
+      Set AuthnRequestsSigned attribute within the sp.xml metadata file or the
+      WantAuthnRequestsSigned within the idp.xml metadata file to true.
+      
+      ArtifactResolve
+      Set wantArtifactResolveSigned attribute within the idp-extended.xml 
+      metadata file to true.
+      
+      LogoutRequests
+      Set wantLogoutRequestSigned attribute within the idp-extended.xml
+      metadata file to true.
 
+      LogoutResponse
+      Set wantLogoutResponseSigned attribute within the idp-extended.xml
+      metadata file to true.

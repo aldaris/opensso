@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: IdentityProvider.cs,v 1.5 2010-01-12 18:04:54 ggennaro Exp $
+ * $Id: IdentityProvider.cs,v 1.6 2010-01-19 18:23:09 ggennaro Exp $
  */
 
 using System.Collections;
@@ -181,6 +181,95 @@ namespace Sun.Identity.Saml2
                 XmlNodeList nodeList = root.SelectNodes(xpath, this.metadataNsMgr);
 
                 return nodeList;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the extended metadata for
+        /// WantArtifactResolveSigned is true or false.
+        /// </summary>
+        public bool WantArtifactResolveSigned
+        {
+            get
+            {
+                string xpath = "/mdx:EntityConfig/mdx:IDPSSOConfig/mdx:Attribute[@name='wantArtifactResolveSigned']/mdx:Value";
+                XmlNode root = this.extendedMetadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
+
+                if (node != null)
+                {
+                    string value = node.InnerText.Trim();
+                    return Saml2Utils.GetBoolean(value);
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the metadata value for 
+        /// WantAuthnRequestsSigned is true or false.
+        /// </summary>
+        public bool WantAuthnRequestsSigned
+        {
+            get
+            {
+                string xpath = "/md:EntityDescriptor/md:IDPSSODescriptor";
+                XmlNode root = this.metadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.metadataNsMgr);
+
+                if (node != null)
+                {
+                    string value = node.Attributes["WantAuthnRequestsSigned"].Value;
+                    return Saml2Utils.GetBoolean(value);
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the metadata value for
+        /// WantLogoutRequestSigned is true or false.
+        /// </summary>
+        /// <returns></returns>
+        public bool WantLogoutRequestSigned
+        {
+            get
+            {
+                string xpath = "/mdx:EntityConfig/mdx:IDPSSOConfig/mdx:Attribute[@name='wantLogoutRequestSigned']/mdx:Value";
+                XmlNode root = this.extendedMetadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
+
+                if (node != null)
+                {
+                    string value = node.InnerText.Trim();
+                    return Saml2Utils.GetBoolean(value);
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the metadata value for
+        /// WantLogoutResponseSigned is true or false.
+        /// </summary>
+        public bool WantLogoutResponseSigned
+        {
+            get
+            {
+                string xpath = "/mdx:EntityConfig/mdx:IDPSSOConfig/mdx:Attribute[@name='wantLogoutResponseSigned']/mdx:Value";
+                XmlNode root = this.extendedMetadata.DocumentElement;
+                XmlNode node = root.SelectSingleNode(xpath, this.extendedMetadataNsMgr);
+
+                if (node != null)
+                {
+                    string value = node.InnerText.Trim();
+                    return Saml2Utils.GetBoolean(value);
+                }
+
+                return false;
             }
         }
 

@@ -390,4 +390,7 @@
   <data name="ServiceProviderEntityDescriptorNodeNotFound" xml:space="preserve">
     <value>EntityDescriptor element could not be found in the metadata.</value>
   </data>
+  <data name="ServiceProviderUtilitySignFailedNoCertAlias" xml:space="preserve">
+    <value>XML can not be signed due to either empty or unknown signature certificate alias in extended metadata.</value>
+  </data>
 </root>
