@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.73 2009-12-28 02:59:48 222713 Exp $
+ * $Id: LDAPv3Repo.java,v 1.74 2010-01-20 01:08:36 goodearth Exp $
  *
  */
 
@@ -5995,11 +5995,8 @@ public class LDAPv3Repo extends IdRepo {
             ide.setLDAPErrorCode(ldapError);
             throw ide;
         } else if (errorMessage !=null && errorMessage.length() > 0 ) {
-            args[0] = CLASS_NAME;
-            args[1] = ldapError;
-            args[2] = errorMessage;
             IdRepoException ide = new IdRepoException(
-                IdRepoBundle.BUNDLE_NAME, "313", args);
+                IdRepoBundle.BUNDLE_NAME, "311", args);
             ide.setLDAPErrorCode(ldapError);
             throw ide;
         } else if (resultCode == LDAPException.NO_SUCH_OBJECT) {
