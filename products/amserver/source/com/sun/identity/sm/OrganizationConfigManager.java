@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.30 2010-01-12 21:27:09 veiming Exp $
+ * $Id: OrganizationConfigManager.java,v 1.31 2010-01-20 17:01:36 veiming Exp $
  *
  */
 
 package com.sun.identity.sm;
 
 import com.iplanet.am.util.SystemProperties;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,7 +47,6 @@ import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.shared.Constants;
-import java.lang.reflect.Method;
 
 /**
  * The class <code>OrganizationConfigManager</code> provides interfaces to
@@ -112,30 +110,6 @@ public class OrganizationConfigManager {
 
     static {
         initializeFlags();
-        registerEntitlementListener();
-    }
-
-    private static void registerEntitlementListener() {
-        try {
-            Class clazz = Class.forName(
-                "com.sun.identity.entitlement.opensso.SubRealmObserver");
-            Class[] param = null;
-            Method method = clazz.getMethod("registerListener", param);
-            Object[] args = null;
-            method.invoke(null, args);
-        } catch (IllegalAccessException ex) {
-            SMSEntry.debug.error("OrganizationConfigManager.init", ex);
-        } catch (IllegalArgumentException ex) {
-            SMSEntry.debug.error("OrganizationConfigManager.init", ex);
-        } catch (InvocationTargetException ex) {
-            SMSEntry.debug.error("OrganizationConfigManager.init", ex);
-        } catch (NoSuchMethodException ex) {
-            SMSEntry.debug.error("OrganizationConfigManager.init", ex);
-        } catch (SecurityException ex) {
-            SMSEntry.debug.error("OrganizationConfigManager.init", ex);
-        } catch (ClassNotFoundException ex) {
-            // ignore
-        }
     }
 
     /**

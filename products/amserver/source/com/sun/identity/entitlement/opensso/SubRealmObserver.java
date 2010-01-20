@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubRealmObserver.java,v 1.2 2010-01-12 07:27:29 veiming Exp $
+ * $Id: SubRealmObserver.java,v 1.3 2010-01-20 17:01:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -37,6 +37,7 @@ import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ReferralPrivilegeManager;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.setup.SetupListener;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfigManager;
@@ -51,11 +52,14 @@ import javax.security.auth.Subject;
  * that have reference to a delete sub realm.
  * 
  */
-public class SubRealmObserver implements ServiceListener {
-
+public class SubRealmObserver implements ServiceListener, SetupListener {
     private static Subject adminSubject = SubjectUtils.createSuperAdminSubject();
 
-    public static void registerListener() {
+    public void addListener() {
+        registerListener();
+    }
+
+    private static void registerListener() {
         SSOToken adminToken =
             (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());

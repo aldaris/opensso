@@ -22,16 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationCacheAfterRealmChangeTest.java,v 1.1 2010-01-12 07:27:29 veiming Exp $
+ * $Id: ApplicationCacheAfterRealmChangeTest.java,v 1.2 2010-01-20 17:01:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.opensso.SubjectUtils;
 import com.sun.identity.idm.IdConstants;
+import com.sun.identity.policy.PolicyConfig;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.OrganizationConfigManager;
+import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SchemaType;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
@@ -68,6 +74,18 @@ public class ApplicationCacheAfterRealmChangeTest {
             adminToken, "/");
         String subRealm = SUB_REALM.substring(1);
         ocm.createSubOrganization(subRealm, Collections.EMPTY_MAP);
+        setOrgAlias(true);
+    }
+
+    private void setOrgAlias(boolean flag) throws SMSException, SSOException {
+        ServiceSchemaManager ssm = new ServiceSchemaManager(
+            PolicyConfig.POLICY_CONFIG_SERVICE, adminToken);
+        ServiceSchema global = ssm.getSchema(SchemaType.GLOBAL);
+        Set<String> values = new HashSet<String>();
+        values.add(Boolean.toString(flag));
+        global.setAttributeDefaults(
+            "sun-am-policy-config-org-alias-mapped-resources-enabled",
+            values);
     }
 
     @AfterClass
@@ -79,6 +97,7 @@ public class ApplicationCacheAfterRealmChangeTest {
             adminToken, "/");
         String subRealm = SUB_REALM.substring(1);
         ocm.deleteSubOrganization(subRealm, true);
+        setOrgAlias(false);
     }
 
     @Test

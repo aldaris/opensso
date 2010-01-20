@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.12 2010-01-11 20:15:45 veiming Exp $
+ * $Id: DataStore.java,v 1.13 2010-01-20 17:01:35 veiming Exp $
  */
 
 package com.sun.identity.entitlement.opensso;
@@ -35,6 +35,7 @@ import com.sun.identity.entitlement.IPrivilege;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
+import com.sun.identity.entitlement.ReferredApplicationManager;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SubjectAttributesManager;
@@ -647,6 +648,8 @@ public class DataStore {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(NotificationServlet.ATTR_NAME, name);
                 params.put(NotificationServlet.ATTR_REALM_NAME, realm);
+
+                ReferredApplicationManager.getInstance().clearCache();
                 Notifier.submit(NotificationServlet.REFERRAL_DELETED,
                     params);
             }
@@ -657,7 +660,6 @@ public class DataStore {
             throw new EntitlementException(10, null, e);
         }
     }
-
 
     /**
      * Returns a set of privilege names that satifies a search filter.
