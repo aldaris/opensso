@@ -1,7 +1,7 @@
 /**
  * Do NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2010 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetQuote.java.template,v 1.4 2010-01-11 07:06:42 nithyas Exp $
+ * $Id: GetQuote.java.template,v 1.5 2010-01-20 17:51:37 huacui Exp $
  *
  */
 
@@ -101,7 +101,8 @@ public class GetQuote extends HttpServlet {
             String cb = request.getParameter("callback");
             if(cb != null && cb.equals("true")) {
                String reqtoken = request.getParameter("oauth_token");
-               MultivaluedMap accessTokenResp = getAccessToken();
+               String verifier = request.getParameter("oauth_verifier");
+               MultivaluedMap accessTokenResp = getAccessToken(verifier);
                String accessToken = (String)accessTokenResp.getFirst(
                           "oauth_token");
                String accessTokenSecret = (String)accessTokenResp.getFirst(
@@ -127,9 +128,13 @@ public class GetQuote extends HttpServlet {
             ClientResponse clr = resource.get(ClientResponse.class);
             if(clr.getResponseStatus().getStatusCode() == 401) {
                //unauthorized
-               MultivaluedMap rtresp = getRequestToken();
-               //out.println("RT resp" + rtresp);
-              redirectForAuthentication(request, response, rtresp, symbol);
+               String callback = request.getScheme() + "://" +
+                        request.getServerName() + ":" +
+                        request.getServerPort() +
+                        "/StockClient/GetQuote?callback=true&symbol=" +
+                        symbol;
+               MultivaluedMap rtresp = getRequestToken(callback);
+               redirectForAuthentication(request, response, rtresp, symbol);
             } 
             //out.println(clr.getEntity(String.class));
         } catch (Exception ex) {
@@ -138,8 +143,9 @@ public class GetQuote extends HttpServlet {
         out.close();
     }
 
-    private MultivaluedMap getRequestToken() {
+    private MultivaluedMap getRequestToken(String callback) {
         OAuthParameters params = initOAuthParams();
+        params.callback(callback);
         OAuthSecrets secrets = initOAuthSecrets();
         OAuthClientFilter filter = getClientFilter(params, secrets);
         WebResource resource = client.resource(
@@ -153,12 +159,13 @@ public class GetQuote extends HttpServlet {
 
     }
 
-    private MultivaluedMap getAccessToken() {
+    private MultivaluedMap getAccessToken(String verifier) {
         OAuthParameters params = initOAuthParams();
         OAuthSecrets secrets = initOAuthSecrets();
         if(oauth_token_str != null) {
            params.token(oauth_token_str);
         }
+        params.verifier(verifier);
         secrets.tokenSecret(oauth_secret_str);
         OAuthClientFilter filter = getClientFilter(params, secrets);
         WebResource resource = client.resource(
@@ -207,11 +214,7 @@ public class GetQuote extends HttpServlet {
         System.out.println("OAuth token: " + oauthtoken);
  
         String url = "<PROTOCOL>://<HOST>:<PORT>/<DEPLOYURI>/oauth/userconsole.jsp?" +
-              "oauth_token=" + oauthtoken + "&" +
-              "oauth_callback=" + 
-              java.net.URLEncoder.encode(request.getScheme() + "://" +
-              request.getServerName() + ":" + request.getServerPort() +
-              "/StockClient/GetQuote?callback=true&symbol=" + symbol);
+              "oauth_token=" + oauthtoken;
         response.sendRedirect(url);
 
     }
