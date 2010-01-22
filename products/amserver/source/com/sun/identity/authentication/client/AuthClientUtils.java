@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.39 2010-01-15 01:33:25 qcheng Exp $
+ * $Id: AuthClientUtils.java,v 1.40 2010-01-22 03:31:01 222713 Exp $
  *
  */
 
@@ -165,7 +165,7 @@ public class AuthClientUtils {
     private static String serverURL = null;
     static Debug utilDebug = Debug.getInstance("amAuthClientUtils");
     private static String[] ignoreList = {
-        "IDtoken0", "IDtoken1", "IDtoken2", "IDButton", "AMAuthCookie", "encoded"
+        "IDtoken0", "IDtoken1", "IDtoken2", "IDButton", "AMAuthCookie", "encoded", "IDToken3"
     };
     private static boolean useCache = Boolean.getBoolean(SystemProperties.get(
         com.sun.identity.shared.Constants.URL_CONNECTION_USE_CACHE, "false"));
