@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Token.java,v 1.11 2010-01-15 18:54:34 mrudul_uchil Exp $
+ * $Id: SAML2Token.java,v 1.12 2010-01-23 00:20:26 mrudul_uchil Exp $
  *
  */
 
@@ -69,7 +69,6 @@ import com.sun.identity.saml2.assertion.AudienceRestriction;
 import com.sun.identity.saml2.assertion.Conditions;
 import com.sun.identity.saml2.assertion.AttributeStatement;
 import com.sun.identity.saml2.assertion.Attribute;
-import com.sun.identity.saml.common.SAMLUtils;
 
 /**
  * This class <code>SAML2Token</code> represents a SAML2
@@ -512,7 +511,7 @@ public class SAML2Token implements SecurityToken {
        */
       public Element toDocumentElement() throws SecurityException {
           if(assertionE != null) {
-             return SAMLUtils.getCanonicalElement(assertionE);
+              return WSSUtils.getCanonicalElement(assertionE);
           }
           Document document = null;
           try {
@@ -528,7 +527,7 @@ public class SAML2Token implements SecurityToken {
              throw new SecurityException(
                  WSSUtils.bundle.getString("cannotConvertToDocument"));
           }
-          return SAMLUtils.getCanonicalElement(document.getDocumentElement());
+          return WSSUtils.getCanonicalElement(document.getDocumentElement());
       }
       
      /**
