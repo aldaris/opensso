@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOIndexStore.java,v 1.12 2010-01-15 18:09:46 veiming Exp $
+ * $Id: OpenSSOIndexStore.java,v 1.13 2010-01-25 23:48:15 veiming Exp $
  */
 package com.sun.identity.entitlement.opensso;
 
@@ -43,6 +43,7 @@ import com.sun.identity.entitlement.PrivilegeIndexStore;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ReferralPrivilege;
 import com.sun.identity.entitlement.ReferredApplicationManager;
+import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.SequentialThreadPool;
 import com.sun.identity.entitlement.SubjectAttributesManager;
@@ -278,15 +279,16 @@ public class OpenSSOIndexStore extends PrivilegeIndexStore {
                 dn = deleteReferral(p.getName(), true);
             }
             if (indexCacheSize > 0) {
-                if (p instanceof Privilege) {
-                    indexCache.clear(p.getResourceSaveIndexes(
-                        adminSubject, DNMapper.orgNameToRealmName(realm)), dn);
-                } else {
-                    referralIndexCache.clear(p.getResourceSaveIndexes(
-                        adminSubject, DNMapper.orgNameToRealmName(realm)), dn);
+                ResourceSaveIndexes sIndex = p.getResourceSaveIndexes(
+                    adminSubject, DNMapper.orgNameToRealmName(realm));
+                if (sIndex != null) {
+                    if (p instanceof Privilege) {
+                        indexCache.clear(sIndex, dn);
+                    } else {
+                        referralIndexCache.clear(sIndex, dn);
+                    }
                 }
             }
-
         }
     }
 

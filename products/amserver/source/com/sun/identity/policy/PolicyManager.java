@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.18 2010-01-10 01:19:35 veiming Exp $
+ * $Id: PolicyManager.java,v 1.19 2010-01-25 23:48:15 veiming Exp $
  *
  */
 
@@ -851,9 +851,11 @@ public final class PolicyManager {
 
                 if (policy != null) {
                     if (isMigratedToEntitlementService()) {
+                        // should use super admin token to remove the index store
+                        // entry
                         PrivilegeIndexStore pis = PrivilegeIndexStore.
                             getInstance(
-                            SubjectUtils.createSubject(token),
+                            SubjectUtils.createSuperAdminSubject(),
                             getOrganizationDN());
                         if (policy.isReferralPolicy()) {
                             pis.deleteReferral((policyName));
