@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.7 2010-01-07 00:19:11 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.8 2010-01-26 20:10:15 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -253,6 +253,17 @@ public abstract class PrivilegeManager {
      * be obtained.
      */
     public abstract String getPrivilegeXML(String name)
+        throws EntitlementException;
+
+    /**
+     * Returns the XML representation of this privilege.
+     *
+     * @param names Name of Privileges to export as XML.
+     * @return XML representation of the specified privileges
+     * @throws EntitlementException if a specified privilege is not found, or cannot
+     * be obtained.
+     */
+    public abstract String getPrivilegesXML(Set<String> names)
         throws EntitlementException;
 
     protected Subject getAdminSubject() {
