@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: spinitiatedslo.aspx,v 1.2 2010-01-19 18:23:10 ggennaro Exp $
+ * $Id: spinitiatedslo.aspx,v 1.3 2010-01-26 01:20:14 ggennaro Exp $
  */
 --%>
 <%@ Page Language="C#" Debug="true" %>
@@ -108,7 +108,9 @@
         // If SOAP was the binding and no exception thrown, redirect to the relay state
         if (parameters[Saml2Constants.Binding] == Saml2Constants.HttpSoapProtocolBinding)
         {
-            Response.Redirect(parameters[Saml2Constants.RelayState]);
+            string relayState = parameters[Saml2Constants.RelayState];
+            Saml2Utils.ValidateRelayState(relayState, serviceProviderUtility.ServiceProvider.RelayStateUrlList);
+            Response.Redirect(relayState);
         }
     }
     catch (Saml2Exception se)

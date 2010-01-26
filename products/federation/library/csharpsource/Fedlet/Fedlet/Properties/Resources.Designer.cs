@@ -340,6 +340,15 @@ namespace Sun.Identity.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid relay state specified..
+        /// </summary>
+        public static string InvalidRelayState {
+            get {
+                return ResourceManager.GetString("InvalidRelayState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Validation failed due to an invalid StatusCode..
         /// </summary>
         public static string InvalidStatusCode {
@@ -498,6 +507,15 @@ namespace Sun.Identity.Properties {
         public static string LogoutResponseXmlException {
             get {
                 return ResourceManager.GetString("LogoutResponseXmlException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RelayState is not a valid URI..
+        /// </summary>
+        public static string MalformedRelayState {
+            get {
+                return ResourceManager.GetString("MalformedRelayState", resourceCulture);
             }
         }
         

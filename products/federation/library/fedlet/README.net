@@ -24,18 +24,19 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.net,v 1.7 2010-01-19 18:23:10 ggennaro Exp $
+$Id: README.net,v 1.8 2010-01-26 01:20:15 ggennaro Exp $
 
 %% Contents:
-    %% 1. Contents of this directory 
-    %% 2. What is currently supported
-    %% 3. How to configure and deploy the Fedlet for .NET
-    %% 4. How to use the Sample Application to test your deployment
-    %% 5. How to integrate with existing application after Single Sign-on
-    %% 6. How to enable support for multiple Identity Providers
-    %% 7. How to enable Identity Provider Discovery Service
-    %% 8. How to enable the Windows Event Log for debugging
-    %% 9. How to enable Signing of Requests/Responses
+    %%  1. Contents of this directory
+    %%  2. What is currently supported
+    %%  3. How to configure and deploy the Fedlet for .NET
+    %%  4. How to use the Sample Application to test your deployment
+    %%  5. How to integrate with existing application after Single Sign-on
+    %%  6. How to enable support for multiple Identity Providers
+    %%  7. How to enable Identity Provider Discovery Service
+    %%  8. How to enable the Windows Event Log for debugging
+    %%  9. How to enable Signing of Requests/Responses
+    %% 10. Subtle differences between Java and .NET Fedlet
 
 
 %% 1. Contents of this directory 
@@ -426,3 +427,17 @@ cGy/F2Zuj8XJJpuQRSE6PtQqBuDEHjjmOQJ0rV/r8mO1ZCtHRhpZ5zYRjhRC9eCbjx9VrFax0JDC
       LogoutResponse
       Set wantLogoutResponseSigned attribute within the idp-extended.xml
       metadata file to true.
+
+%% 10. Subtle differences between Java and .NET Fedlet
+
+   Beyond the obvious differences of language and deployment, there are subtle
+   differences between the Java Fedlet and the .NET Fedlet.  Those differences
+   are described below.
+
+      SP Extended Metadata - relayStateUrlList attribute
+      In the .NET Fedlet, the values for this optional attribute are expected
+      to be written as regular expressions. More information about .NET
+      Framework Regular Expressions is available at:
+      http://msdn.microsoft.com/en-us/library/hs600312.aspx
+
+

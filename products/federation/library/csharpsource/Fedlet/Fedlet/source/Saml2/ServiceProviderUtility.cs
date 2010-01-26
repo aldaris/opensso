@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProviderUtility.cs,v 1.8 2010-01-19 18:23:08 ggennaro Exp $
+ * $Id: ServiceProviderUtility.cs,v 1.9 2010-01-26 01:20:14 ggennaro Exp $
  */
 
 using System;
@@ -446,10 +446,13 @@ namespace Sun.Identity.Saml2
         /// AuthnRequest to packaged for a POST.
         /// </param>
         /// <param name="idpEntityId">Entity ID of the IDP.</param>
+        /// <param name="parameters">
+        /// NameVallueCollection of additional parameters.
+        /// </param>
         /// <returns>
         /// HTML with auto-form submission with POST of the AuthnRequest
         /// </returns>
-        public string GetAuthnRequestPostHtml(AuthnRequest authnRequest, string idpEntityId)
+        public string GetAuthnRequestPostHtml(AuthnRequest authnRequest, string idpEntityId, NameValueCollection parameters)
         {
             if (authnRequest == null)
             {
@@ -467,6 +470,14 @@ namespace Sun.Identity.Saml2
             {
                 throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdpSingleSignOnSvcLocNotDefined);
             }
+
+            string relayState = null;
+            if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
+            {
+                relayState = parameters[Saml2Constants.RelayState];
+                Saml2Utils.ValidateRelayState(relayState, this.ServiceProvider.RelayStateUrlList);
+            }
+
 
             XmlDocument authnRequestXml = (XmlDocument)authnRequest.XmlDom;
             if (this.ServiceProvider.AuthnRequestsSigned || idp.WantAuthnRequestsSigned)
@@ -487,6 +498,7 @@ namespace Sun.Identity.Saml2
             }
 
             string packagedAuthnRequest = Saml2Utils.ConvertToBase64(authnRequestXml.InnerXml);
+            string inputFieldFormat = "<input type=\"hidden\" name=\"{0}\" value=\"{1}\" />";
 
             StringBuilder html = new StringBuilder();
             html.Append("<html><head><title>OpenSSO - SP initiated SSO</title></head>");
@@ -499,6 +511,16 @@ namespace Sun.Identity.Saml2
             html.Append("\" value=\"");
             html.Append(packagedAuthnRequest);
             html.Append("\" />");
+
+            if (!string.IsNullOrEmpty(relayState))
+            {
+                html.Append(string.Format(
+                                          CultureInfo.InvariantCulture,
+                                          inputFieldFormat,
+                                          Saml2Constants.RelayState,
+                                          HttpUtility.HtmlEncode(relayState)));
+            }
+            
             html.Append("</form>");
             html.Append("</body>");
             html.Append("</html>");
@@ -514,10 +536,13 @@ namespace Sun.Identity.Saml2
         /// AuthnRequest to packaged for a redirect.
         /// </param>
         /// <param name="idpEntityId">Entity ID of the IDP.</param>
+        /// <param name="parameters">
+        /// NameVallueCollection of additional parameters.
+        /// </param>
         /// <returns>
         /// URL with query string parameter for the specified IDP.
         /// </returns>
-        public string GetAuthnRequestRedirectLocation(AuthnRequest authnRequest, string idpEntityId)
+        public string GetAuthnRequestRedirectLocation(AuthnRequest authnRequest, string idpEntityId, NameValueCollection parameters)
         {
             if (authnRequest == null)
             {
@@ -538,6 +563,14 @@ namespace Sun.Identity.Saml2
 
             string packagedAuthnRequest = Saml2Utils.CompressConvertToBase64UrlEncode(authnRequest.XmlDom);
             string queryString = Saml2Constants.RequestParameter + "=" + packagedAuthnRequest;
+
+            if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
+            {
+                string relayState = parameters[Saml2Constants.RelayState];
+                Saml2Utils.ValidateRelayState(relayState, this.ServiceProvider.RelayStateUrlList);
+                queryString += "&" + Saml2Constants.RelayState;
+                queryString += "=" + HttpUtility.UrlEncode(relayState);
+            }
 
             if (this.ServiceProvider.AuthnRequestsSigned || idp.WantAuthnRequestsSigned)
             {
@@ -595,6 +628,13 @@ namespace Sun.Identity.Saml2
                 throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdpSingleLogoutSvcLocNotDefined);
             }
 
+            string relayState = null;
+            if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
+            {
+                relayState = parameters[Saml2Constants.RelayState];
+                Saml2Utils.ValidateRelayState(relayState, this.ServiceProvider.RelayStateUrlList);
+            }
+
             XmlDocument logoutRequestXml = (XmlDocument)logoutRequest.XmlDom;
 
             if (idp.WantLogoutRequestSigned)
@@ -628,13 +668,13 @@ namespace Sun.Identity.Saml2
             html.Append(packagedLogoutRequest);
             html.Append("\" />");
 
-            if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
+            if (!string.IsNullOrEmpty(relayState))
             {
                 html.Append(string.Format(
                                           CultureInfo.InvariantCulture,
                                           inputFieldFormat,
                                           Saml2Constants.RelayState,
-                                          HttpUtility.HtmlEncode(parameters[Saml2Constants.RelayState])));
+                                          HttpUtility.HtmlEncode(relayState)));
             }
 
             html.Append("</form>");
@@ -682,8 +722,10 @@ namespace Sun.Identity.Saml2
 
             if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
             {
+                string relayState = parameters[Saml2Constants.RelayState];
+                Saml2Utils.ValidateRelayState(relayState, this.ServiceProvider.RelayStateUrlList);
                 queryString += "&" + Saml2Constants.RelayState;
-                queryString += "=" + HttpUtility.UrlEncode(parameters[Saml2Constants.RelayState]);
+                queryString += "=" + HttpUtility.UrlEncode(relayState);
             }
 
             if (idp.WantLogoutRequestSigned)
@@ -742,6 +784,13 @@ namespace Sun.Identity.Saml2
                 throw new ServiceProviderUtilityException(Resources.ServiceProviderUtilityIdpSingleLogoutSvcResLocNotDefined);
             }
 
+            string relayState = null;
+            if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
+            {
+                relayState = parameters[Saml2Constants.RelayState];
+                Saml2Utils.ValidateRelayState(relayState, this.ServiceProvider.RelayStateUrlList);
+            }
+
             XmlDocument logoutResponseXml = (XmlDocument)logoutResponse.XmlDom;
 
             if (idp.WantLogoutResponseSigned)
@@ -775,13 +824,13 @@ namespace Sun.Identity.Saml2
             html.Append(packagedLogoutResponse);
             html.Append("\" />");
 
-            if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
+            if (!string.IsNullOrEmpty(relayState))
             {
                 html.Append(string.Format(
                                           CultureInfo.InvariantCulture,
                                           inputFieldFormat,
                                           Saml2Constants.RelayState,
-                                          HttpUtility.HtmlEncode(parameters[Saml2Constants.RelayState])));
+                                          HttpUtility.HtmlEncode(relayState)));
             }
 
             html.Append("</form>");
@@ -829,8 +878,10 @@ namespace Sun.Identity.Saml2
 
             if (parameters != null && !string.IsNullOrEmpty(parameters[Saml2Constants.RelayState]))
             {
+                string relayState = parameters[Saml2Constants.RelayState];
+                Saml2Utils.ValidateRelayState(relayState, this.ServiceProvider.RelayStateUrlList);
                 queryString += "&" + Saml2Constants.RelayState;
-                queryString += "=" + HttpUtility.UrlEncode(parameters[Saml2Constants.RelayState]);
+                queryString += "=" + HttpUtility.UrlEncode(relayState);
             }
 
             if (idp.WantLogoutResponseSigned)
@@ -898,13 +949,13 @@ namespace Sun.Identity.Saml2
             // Send with Redirect or Post based on the 'reqBinding' parameter.
             if (parameters[Saml2Constants.RequestBinding] == Saml2Constants.HttpPostProtocolBinding)
             {
-                string postHtml = this.GetAuthnRequestPostHtml(authnRequest, idpEntityId);
+                string postHtml = this.GetAuthnRequestPostHtml(authnRequest, idpEntityId, parameters);
                 context.Response.Write(postHtml);
                 context.Response.End();
             }
             else
             {
-                string redirectUrl = this.GetAuthnRequestRedirectLocation(authnRequest, idpEntityId);
+                string redirectUrl = this.GetAuthnRequestRedirectLocation(authnRequest, idpEntityId, parameters);
                 context.Response.Redirect(redirectUrl.ToString(), true);
             }
         }

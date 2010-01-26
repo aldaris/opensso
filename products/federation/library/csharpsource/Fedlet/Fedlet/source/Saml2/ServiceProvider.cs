@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: ServiceProvider.cs,v 1.5 2010-01-12 18:04:54 ggennaro Exp $
+ * $Id: ServiceProvider.cs,v 1.6 2010-01-26 01:20:14 ggennaro Exp $
  */
 
 using System;
@@ -178,6 +178,31 @@ namespace Sun.Identity.Saml2
                 }
 
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a list of relay state URLs that are considered acceptable
+        /// as a parameter in the various SAMLv2 profiles.
+        /// </summary>
+        public ArrayList RelayStateUrlList
+        {
+            get
+            {
+                ArrayList values = new ArrayList();
+                string xpath = "/mdx:EntityConfig/mdx:SPSSOConfig/mdx:Attribute[@name='relayStateUrlList']/mdx:Value";
+                XmlNode root = this.extendedMetadata.DocumentElement;
+                XmlNodeList nodeList = root.SelectNodes(xpath, this.extendedMetadataNsMgr);
+
+                if (nodeList != null)
+                {
+                    foreach (XmlNode node in nodeList)
+                    {
+                        values.Add(node.InnerText.Trim());
+                    }
+                }
+
+                return values;
             }
         }
 

@@ -22,19 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: Saml2Utils.cs,v 1.7 2010-01-19 18:23:09 ggennaro Exp $
+ * $Id: Saml2Utils.cs,v 1.8 2010-01-26 01:20:14 ggennaro Exp $
  */
 
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
-using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Xml.XPath;
@@ -420,6 +421,52 @@ namespace Sun.Identity.Saml2
                 // Insert as a child to the target reference id
                 XmlNode targetNode = xml.DocumentElement.SelectSingleNode("//*[@ID='" + targetReferenceId + "']", nsMgr);
                 targetNode.PrependChild(xmlSignature);
+            }
+        }
+
+        /// <summary>
+        /// Validates a relay state URL with a list of allowed relay states,
+        /// each expected to be written as a regular expression pattern. If
+        /// the list is empty, then by default all are allowed.
+        /// </summary>
+        /// <param name="relayState">The relay state URL to check</param>
+        /// <param name="allowedRelayStates">
+        /// ArrayList of allowed relay states written as a regular expression pattern
+        /// </param>
+        /// <exception cref="Saml2Exception">
+        /// Throws Saml2Exception if a relay state is provided and does not
+        /// match any of the allowed relay states.
+        /// </exception>
+        public static void ValidateRelayState(string relayState, ArrayList allowedRelayStates)
+        {
+            if (string.IsNullOrEmpty(relayState) || allowedRelayStates == null || allowedRelayStates.Count == 0)
+            {
+                // If none specified, default to valid for backwards compatability
+                return;
+            }
+
+            try
+            {
+                Uri relayStateUrl = new Uri(relayState);
+            }
+            catch (UriFormatException)
+            {
+                throw new Saml2Exception(Resources.MalformedRelayState);
+            }
+            
+            bool valid = false;
+            foreach (string pattern in allowedRelayStates)
+            {
+                if (!string.IsNullOrEmpty(pattern) && Regex.IsMatch(relayState, pattern))
+                {
+                    valid = true;
+                    break;
+                }
+            }
+
+            if (!valid)
+            {
+                throw new Saml2Exception(Resources.InvalidRelayState);
             }
         }
 

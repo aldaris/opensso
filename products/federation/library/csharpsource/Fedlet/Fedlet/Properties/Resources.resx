@@ -393,4 +393,10 @@
   <data name="ServiceProviderUtilitySignFailedNoCertAlias" xml:space="preserve">
     <value>XML can not be signed due to either empty or unknown signature certificate alias in extended metadata.</value>
   </data>
+  <data name="InvalidRelayState" xml:space="preserve">
+    <value>Invalid relay state specified.</value>
+  </data>
+  <data name="MalformedRelayState" xml:space="preserve">
+    <value>RelayState is not a valid URI.</value>
+  </data>
 </root>
