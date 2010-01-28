@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PWResetUserValidationViewBean.java,v 1.3 2009-12-18 03:30:51 222713 Exp $
+ * $Id: PWResetUserValidationViewBean.java,v 1.4 2010-01-28 08:17:10 bina Exp $
  *
  */
 
@@ -44,6 +44,7 @@ import com.sun.identity.password.ui.model.PWResetModel;
 import com.sun.identity.password.ui.model.PWResetUserValidationModel;
 import com.sun.identity.password.ui.model.PWResetUserValidationModelImpl;
 import javax.servlet.http.HttpServletRequest;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * <code>PWResetUserValidationViewBean</code> validates user's identity for
@@ -51,6 +52,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class PWResetUserValidationViewBean extends PWResetViewBeanBase  {
 
+    private final Debug debug = Debug.getInstance("PasswordReset");
     /**
      * Name of title peer component
      */
@@ -81,7 +83,15 @@ public class PWResetUserValidationViewBean extends PWResetViewBeanBase  {
      */
     public static final String FLD_USER_ATTR = "fldUserAttr";
 
+    /** 
+     * Name of org attribute  
+     */
     private static final String ORG = "org";
+
+    /** 
+     * Name of realm attribute  
+     */
+    private static final String REALM = "realm";
 
 
     /** 
@@ -177,6 +187,7 @@ public class PWResetUserValidationViewBean extends PWResetViewBeanBase  {
      * @param context  request context
      */
     public void forwardTo(RequestContext context) {
+        String classMethod = "PWResetUserValidationViewBean:forwardTo : ";
         HttpServletRequest req = context.getRequest();
         PWResetUserValidationModel model = 
             (PWResetUserValidationModel)getModel();
@@ -189,9 +200,21 @@ public class PWResetUserValidationViewBean extends PWResetViewBeanBase  {
         String orgDN = (String)getPageSessionAttribute(ORG_DN);
         if (orgDN == null) {
             String orgName = req.getParameter(ORG);
+            if (debug.messageEnabled()) {
+	        debug.message(classMethod + "org parameter is:" + orgName);
+            }
+	    if (orgName == null || orgName.length() <= 0) {
+		orgName = req.getParameter(REALM);
+                if (debug.messageEnabled()) {
+	            debug.error(classMethod + "realmParameter is:" + orgName);
+                }
+	    }
             try {
                  orgDN = model.getRealm(orgName);
-                 setPageSessionAttribute(ORG_DN,  orgDN);
+                 if (debug.messageEnabled()) {
+		     debug.message(classMethod + "orgDN is :" + orgDN);
+                 }
+                 setPageSessionAttribute(ORG_DN,orgDN);
                  /*
                   * Set the flag to indicate that user enter the orgname in
                   * the url.
