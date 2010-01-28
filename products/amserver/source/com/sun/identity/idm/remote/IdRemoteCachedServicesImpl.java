@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteCachedServicesImpl.java,v 1.19 2010-01-25 23:47:28 bigfatrat Exp $
+ * $Id: IdRemoteCachedServicesImpl.java,v 1.20 2010-01-28 00:45:25 bigfatrat Exp $
  *
  */
 
@@ -47,8 +47,6 @@ import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.common.IdCacheBlock;
 import com.sun.identity.idm.common.IdCacheStats;
 import com.sun.identity.common.DNUtils;
-import com.sun.identity.monitoring.Agent;
-import com.sun.identity.monitoring.SsoServerIdRepoSvcImpl;
 import com.sun.identity.shared.stats.Stats;
 import com.sun.identity.sm.ServiceManager;
 
@@ -80,7 +78,7 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
 
     private static Stats stats;
 
-    private static SsoServerIdRepoSvcImpl monIdRepo;
+    private static com.sun.identity.monitoring.SsoServerIdRepoSvcImpl monIdRepo;
 
     private IdRemoteCachedServicesImpl() {
         super();
@@ -92,8 +90,11 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         stats = Stats.getInstance(getClass().getName());
         cacheStats = new IdCacheStats(IdConstants.IDREPO_CACHESTAT);
         stats.addStatsListener(cacheStats);
-        if (Agent.isRunning()) {
-            monIdRepo = (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean();
+        if (SystemProperties.isServerMode() &&
+            com.sun.identity.monitoring.Agent.isRunning())
+        {
+            monIdRepo = (com.sun.identity.monitoring.SsoServerIdRepoSvcImpl)
+                com.sun.identity.monitoring.Agent.getIdrepoSvcMBean();
         }
     }
     
@@ -347,10 +348,11 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         }
         
         cacheStats.incrementGetRequestCount(getSize());
-        if (Agent.isRunning() && 
-            ((monIdRepo = (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
-	    null))
-	{
+        if (SystemProperties.isServerMode() &&
+            com.sun.identity.monitoring.Agent.isRunning() && 
+            ((monIdRepo = (com.sun.identity.monitoring.SsoServerIdRepoSvcImpl)
+                com.sun.identity.monitoring.Agent.getIdrepoSvcMBean()) != null))
+        {
             long li = (long)getSize();
             monIdRepo.incGetRqts(li);
         }
@@ -425,11 +427,13 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
                         false, !isStringValues);
             } else { // All attributes found in cache
                 cacheStats.updateGetHitCount(getSize());
-                if (Agent.isRunning() && 
-                    ((monIdRepo =
-		     (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
-	             null))
-	        {
+                if (SystemProperties.isServerMode() &&
+                    com.sun.identity.monitoring.Agent.isRunning() && 
+                    ((monIdRepo = 
+                        (com.sun.identity.monitoring.SsoServerIdRepoSvcImpl)
+                        com.sun.identity.monitoring.Agent.getIdrepoSvcMBean()) !=
+                           null))
+                {
                     long li = (long)getSize();
                     monIdRepo.incCacheHits(li);
                 }
@@ -449,10 +453,11 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         throws IdRepoException, SSOException {
         
         cacheStats.incrementGetRequestCount(getSize());
-        if (Agent.isRunning() && 
-            ((monIdRepo = (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
-	    null))
-	{
+        if (SystemProperties.isServerMode() &&
+            com.sun.identity.monitoring.Agent.isRunning() && 
+            ((monIdRepo = (com.sun.identity.monitoring.SsoServerIdRepoSvcImpl)
+                com.sun.identity.monitoring.Agent.getIdrepoSvcMBean()) != null))
+        {
             long li = (long)getSize();
             monIdRepo.incGetRqts(li);
         }
@@ -468,11 +473,12 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         AMHashMap attributes;
         if ((cb != null) && cb.hasCompleteSet(principalDN)) {
             cacheStats.updateGetHitCount(getSize());
-            if (Agent.isRunning() && 
-                ((monIdRepo =
-		 (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
-	         null))
-	    {
+            if (SystemProperties.isServerMode() &&
+                com.sun.identity.monitoring.Agent.isRunning() && 
+                ((monIdRepo = (com.sun.identity.monitoring.SsoServerIdRepoSvcImpl)
+                    com.sun.identity.monitoring.Agent.getIdrepoSvcMBean()) !=
+                        null))
+            {
                 long li = (long)getSize();
                 monIdRepo.incCacheHits(li);
             }
@@ -583,10 +589,11 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
         // otherwise unix and anonymous login will fail.
         
         cacheStats.incrementSearchRequestCount(getSize());
-        if (Agent.isRunning() && 
-            ((monIdRepo = (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
-	    null))
-	{
+        if (SystemProperties.isServerMode() &&
+            com.sun.identity.monitoring.Agent.isRunning() && 
+            ((monIdRepo = (com.sun.identity.monitoring.SsoServerIdRepoSvcImpl)
+                com.sun.identity.monitoring.Agent.getIdrepoSvcMBean()) != null))
+        {
             long li = (long)getSize();
             monIdRepo.incSearchRqts(li);
         }
@@ -607,11 +614,13 @@ public class IdRemoteCachedServicesImpl extends IdRemoteServicesImpl implements
                 Map attributes;
                 try {
                     cacheStats.updateSearchHitCount(getSize());
-                    if (Agent.isRunning() && 
+                    if (SystemProperties.isServerMode() &&
+                        com.sun.identity.monitoring.Agent.isRunning() && 
                         ((monIdRepo =
-			 (SsoServerIdRepoSvcImpl)Agent.getIdrepoSvcMBean()) !=
-	                 null))
-	            {
+                        (com.sun.identity.monitoring.SsoServerIdRepoSvcImpl)
+                        com.sun.identity.monitoring.Agent.getIdrepoSvcMBean()) !=
+                             null))
+                    {
                         long li = (long)getSize();
                         monIdRepo.incSearchCacheHits(li);
                     }
