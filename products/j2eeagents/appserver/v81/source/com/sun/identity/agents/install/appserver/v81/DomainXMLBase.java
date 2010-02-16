@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainXMLBase.java,v 1.13 2010-02-09 21:34:01 hari44 Exp $
+ * $Id: DomainXMLBase.java,v 1.14 2010-02-16 22:01:06 hari44 Exp $
  *
  */
 
@@ -99,10 +99,17 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
             Process p = Runtime.getRuntime().exec(command);
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((line = input.readLine()) != null) {
-                  if(line.startsWith("Version") && line.indexOf( "v3" ) > -1)
+                  if(line.startsWith("Version") && line.indexOf( "v3" ) > -1) {
                      version = true;
+                     Debug.log("Identified Glassfish server version:" + line); 
+                  }
+		  else{
+		     Debug.log("Info:" + line);	
+                  }
             }
-         }catch (IOException e){ }
+         }catch (IOException e){ 
+              Debug.log("Version check: Error - Unable to identify Glassfish server version");
+          }
        return version;
       }
 
@@ -127,6 +134,8 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
            buffer.append(getAgentInstanceName(stateAccess)).append(FILE_SEP);
            buffer.append(INSTANCE_CONFIG_DIR_NAME);
            sb.append(STR_SERVER_CLASSPATH_SEP).append(buffer.toString());
+           Debug.log("DomainXMLBase.appendAgentClassPath(): Copied jar files" +
+                     LibDir + "and resource files to" + LibClassDir);
         }
         else { 
            for (int i = 0; i < count; i++) {
@@ -153,6 +162,7 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
                sb.append("java ").append(option).append("\n");
                FileUtils.appendDataToFile(LOG_FILE,sb.toString());
                sb.delete(0, sb.length());
+               Debug.log("DomainXMLBase.addAgentJVMOptions: Addedd log options to" + LOG_FILE);
             }
         } else{
            while (iter.hasNext()) {
@@ -246,12 +256,13 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
 
     private void removeAgentFiles(IStateAccess stateAccess) {
           String ConfigDir = (String)stateAccess.get(STR_KEY_AS_INST_CONFIG_DIR);
-          String LibDir = ConfigDir + "/../lib";
-          String LibClassDir = LibDir + "/classes";
+          String LibDir = ConfigDir + FILE_SEP + "../lib";
+          String LibClassDir = LibDir + FILE_SEP + "classes";
           String localeDir = ConfigUtil.getLocaleDirPath();
           FileUtils.removeJarFiles(LibDir,STR_AGENT_JAR);
           FileUtils.removeJarFiles(LibDir,STR_FM_CLIENT_SDK_JAR);
           FileUtils.removeFiles(localeDir,LibClassDir);
+          Debug.log("DomainXMLBase.removeAgentFiles: Deleted Agent files from" + LibDir);
     }
 
     private String deleteAgentClasspath(String classpath, 
@@ -293,6 +304,7 @@ public class DomainXMLBase implements InstallConstants, IConfigKeys, IConstants
          String LOG_FILE = (String)stateAccess.get(STR_KEY_AS_INST_CONFIG_DIR) + FILE_SEP + "logging.properties";
          FileUtils.removeLines(LOG_FILE,STR_LOG_COMPATMODE_OPTION);
          FileUtils.removeLines(LOG_FILE,STR_LOG_CONFIG_FILE_OPTION_PREFIX);
+         Debug.log("DomainXMLBase.removeAgentLogOptions: Removed Agent log options from" + LOG_FILE);
     }
     
     private void removeAgentJVMOptions(XMLElement javaConfig, 
