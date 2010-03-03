@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.util.Vector;
 import java.util.Hashtable;
@@ -75,7 +75,7 @@ abstract class LDAPMessageQueue implements java.io.Serializable {
      * Constructor
      * @param asynchOp a boolean flag  that is true if the object is used 
      * for asynchronous LDAP operations
-     * @see iplanet.ldap.LDAPAsynchronousConnection
+     * @see com.sun.identity.shared.ldap.LDAPAsynchronousConnection
      */   
     //okok
     LDAPMessageQueue (boolean asynchOp) {
@@ -86,7 +86,7 @@ abstract class LDAPMessageQueue implements java.io.Serializable {
      * Returns a flag whether the listener is used for asynchronous LDAP
      * operations
      * @return asynchronous operation flag.
-     * @see iplanet.ldap.LDAPAsynchronousConnection
+     * @see com.sun.identity.shared.ldap.LDAPAsynchronousConnection
      */
     //okok
     public boolean isAsynchOp() {
@@ -131,8 +131,8 @@ abstract class LDAPMessageQueue implements java.io.Serializable {
     /**
      * Resets the state of this object, so it can be recycled.
      * Used by LDAPConnection synchronous operations.
-     * @see iplanet.ldap.LDAPConnection#getResponseListener
-     * @see iplanet.ldap.LDAPConnection#getSearchListener
+     * @see com.sun.identity.shared.ldap.LDAPConnection#getResponseListener
+     * @see com.sun.identity.shared.ldap.LDAPConnection#getSearchListener
      */
     protected abstract void reset();
     

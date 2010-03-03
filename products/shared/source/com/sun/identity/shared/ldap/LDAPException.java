@@ -19,11 +19,11 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.util.*;
-import iplanet.ldap.client.*;
-import iplanet.ldap.client.opers.*;
+import com.sun.identity.shared.ldap.client.*;
+import com.sun.identity.shared.ldap.client.opers.*;
 import java.io.*;
 
 /**
@@ -128,7 +128,7 @@ import java.io.*;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.LDAPReferralException
+ * @see com.sun.identity.shared.ldap.LDAPReferralException
  */
 public class LDAPException extends java.lang.Exception
                            implements java.io.Serializable {
@@ -163,8 +163,8 @@ public class LDAPException extends java.lang.Exception
      * method or the <CODE>LDAPSearchConstraints.setServerTimeLimit</CODE>
      * method.<P>
      *
-     * @see iplanet.ldap.LDAPConnection#setOption
-     * @see iplanet.ldap.LDAPSearchConstraints#setServerTimeLimit
+     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see com.sun.identity.shared.ldap.LDAPSearchConstraints#setServerTimeLimit
      */
     public final static int TIME_LIMIT_EXCEEDED          = 3;
 
@@ -174,8 +174,8 @@ public class LDAPException extends java.lang.Exception
      * <CODE>LDAPConnection.setOption</CODE> method or the
      * <CODE>LDAPSearchConstraints.setSizeLimit</CODE> method.<P>
      *
-     * @see iplanet.ldap.LDAPConnection#setOption
-     * @see iplanet.ldap.LDAPSearchConstraints#setMaxResults
+     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see com.sun.identity.shared.ldap.LDAPSearchConstraints#setMaxResults
      */
     public final static int SIZE_LIMIT_EXCEEDED          = 4;
 
@@ -184,7 +184,7 @@ public class LDAPException extends java.lang.Exception
      * specified attribute and value is not found in the entry
      * (no matching value found).
      *
-     * @see iplanet.ldap.LDAPConnection#compare
+     * @see com.sun.identity.shared.ldap.LDAPConnection#compare
      */
     public final static int COMPARE_FALSE                = 5;
 
@@ -193,7 +193,7 @@ public class LDAPException extends java.lang.Exception
      * specified attribute and value is found in the entry
      * (matching value found).
      *
-     * @see iplanet.ldap.LDAPConnection#compare
+     * @see com.sun.identity.shared.ldap.LDAPConnection#compare
      */
     public final static int COMPARE_TRUE                 = 6;
 
@@ -247,12 +247,12 @@ public class LDAPException extends java.lang.Exception
      * (<CODE>LDAP_PARTIAL_RESULTS</CODE>) is raised.
      * <P>
      *
-     * @see iplanet.ldap.LDAPConnection#setOption
-     * @see iplanet.ldap.LDAPConstraints#setReferrals
-     * @see iplanet.ldap.LDAPConstraints#setRebindProc
-     * @see iplanet.ldap.LDAPRebind
-     * @see iplanet.ldap.LDAPRebindAuth
-     * @see iplanet.ldap.LDAPReferralException
+     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see com.sun.identity.shared.ldap.LDAPConstraints#setReferrals
+     * @see com.sun.identity.shared.ldap.LDAPConstraints#setRebindProc
+     * @see com.sun.identity.shared.ldap.LDAPRebind
+     * @see com.sun.identity.shared.ldap.LDAPRebindAuth
+     * @see com.sun.identity.shared.ldap.LDAPReferralException
      */
     public final static int LDAP_PARTIAL_RESULTS         = 9;
 
@@ -271,7 +271,7 @@ public class LDAPException extends java.lang.Exception
      * URLs from the exception.
      * <P>
      *
-     * @see iplanet.ldap.LDAPReferralException
+     * @see com.sun.identity.shared.ldap.LDAPReferralException
      */
     public final static int REFERRAL                     = 10;
 
@@ -293,7 +293,7 @@ public class LDAPException extends java.lang.Exception
      * (2) is inappropriate for the operation requested.
      * <P>
      *
-     * @see iplanet.ldap.LDAPControl
+     * @see com.sun.identity.shared.ldap.LDAPControl
      */
     public final static int UNAVAILABLE_CRITICAL_EXTENSION = 12;
 
@@ -472,8 +472,8 @@ public class LDAPException extends java.lang.Exception
      * to arbitrarily move entries and subtrees between servers.
      * <P>
      *
-     * @see iplanet.ldap.LDAPConnection#rename(java.lang.String, java.lang.String, java.lang.String, boolean)
-     * @see iplanet.ldap.LDAPConnection#rename(java.lang.String, java.lang.String, java.lang.String, boolean, LDAPConstraints)
+     * @see com.sun.identity.shared.ldap.LDAPConnection#rename(java.lang.String, java.lang.String, java.lang.String, boolean)
+     * @see com.sun.identity.shared.ldap.LDAPConnection#rename(java.lang.String, java.lang.String, java.lang.String, boolean, LDAPConstraints)
      */
     public final static int AFFECTS_MULTIPLE_DSAS        = 71;
 
@@ -494,7 +494,7 @@ public class LDAPException extends java.lang.Exception
      * by calling the <CODE>LDAPConstraints.setTimeLimit</CODE>
      * method.<P>
      *
-     * @see iplanet.ldap.LDAPConstraints#setTimeLimit
+     * @see com.sun.identity.shared.ldap.LDAPConstraints#setTimeLimit
      */
     public final static int LDAP_TIMEOUT                 = 0x55;
 
@@ -519,7 +519,7 @@ public class LDAPException extends java.lang.Exception
      * (93) The requested control is not found.
      * <P>
      *
-     * @see iplanet.ldap.LDAPControl
+     * @see com.sun.identity.shared.ldap.LDAPControl
      */
     public final static int CONTROL_NOT_FOUND            = 0x5d;
 
@@ -546,9 +546,9 @@ public class LDAPException extends java.lang.Exception
      * (the <CODE>LDAPv2.REFERRALS_HOP_LIMIT</CODE> option).
      * <P>
      *
-     * @see iplanet.ldap.LDAPv2#REFERRALS_HOP_LIMIT
-     * @see iplanet.ldap.LDAPConnection#getOption
-     * @see iplanet.ldap.LDAPConnection#setOption
+     * @see com.sun.identity.shared.ldap.LDAPv2#REFERRALS_HOP_LIMIT
+     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
+     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
      */
     public final static int REFERRAL_LIMIT_EXCEEDED      = 0x61;
 
@@ -557,7 +557,7 @@ public class LDAPException extends java.lang.Exception
      * of initiating a TLS session.
      * <P>
      *
-     * @see iplanet.ldap.LDAPConnection#startTLS
+     * @see com.sun.identity.shared.ldap.LDAPConnection#startTLS
      */
     public final static int TLS_NOT_SUPPORTED      = 0x70;
 
@@ -591,7 +591,7 @@ public class LDAPException extends java.lang.Exception
      * the result code from the exception.)
      * <P>
      * @param message the additional error information
-     * @see iplanet.ldap.LDAPException#toString()
+     * @see com.sun.identity.shared.ldap.LDAPException#toString()
      */
     public LDAPException( String message ) {
         super( message );
@@ -608,8 +608,8 @@ public class LDAPException extends java.lang.Exception
      * @param message the additional error information to specify
      * @param resultCode the result code returned from the
      * operation that caused this exception
-     * @see iplanet.ldap.LDAPException#toString()
-     * @see iplanet.ldap.LDAPException#getLDAPResultCode()
+     * @see com.sun.identity.shared.ldap.LDAPException#toString()
+     * @see com.sun.identity.shared.ldap.LDAPException#getLDAPResultCode()
      */
     public LDAPException( String message, int resultCode ) {
         super( message );
@@ -644,9 +644,9 @@ public class LDAPException extends java.lang.Exception
      * operation that caused this exception
      * @param serverErrorMessage error message specifying additional
      * information returned from the server
-     * @see iplanet.ldap.LDAPException#toString()
-     * @see iplanet.ldap.LDAPException#getLDAPResultCode()
-     * @see iplanet.ldap.LDAPException#getLDAPErrorMessage()
+     * @see com.sun.identity.shared.ldap.LDAPException#toString()
+     * @see com.sun.identity.shared.ldap.LDAPException#getLDAPResultCode()
+     * @see com.sun.identity.shared.ldap.LDAPException#getLDAPErrorMessage()
      */
     public LDAPException( String message, int resultCode,
       String serverErrorMessage ) {
@@ -690,10 +690,10 @@ public class LDAPException extends java.lang.Exception
      * returned from the server
      * @param matchedDN maximal subset of a specified DN which could be
      * matched by the server
-     * @see iplanet.ldap.LDAPException#toString()
-     * @see iplanet.ldap.LDAPException#getLDAPResultCode()
-     * @see iplanet.ldap.LDAPException#getLDAPErrorMessage()
-     * @see iplanet.ldap.LDAPException#getMatchedDN()
+     * @see com.sun.identity.shared.ldap.LDAPException#toString()
+     * @see com.sun.identity.shared.ldap.LDAPException#getLDAPResultCode()
+     * @see com.sun.identity.shared.ldap.LDAPException#getLDAPErrorMessage()
+     * @see com.sun.identity.shared.ldap.LDAPException#getMatchedDN()
      */
     public LDAPException( String message, int resultCode,
       String serverErrorMessage, String matchedDN ) {
@@ -734,7 +734,7 @@ public class LDAPException extends java.lang.Exception
      *
      * @return the error message of the last error (or <CODE>null</CODE>
      * if no message was set).
-     * @see iplanet.ldap.LDAPException#toString()
+     * @see com.sun.identity.shared.ldap.LDAPException#toString()
      */
     public String getLDAPErrorMessage () {
         return errorMessage;
@@ -790,7 +790,7 @@ public class LDAPException extends java.lang.Exception
      *
      * For example:
      *
-     * <PRE>iplanet.ldap.LDAPException: error result (32); server error message; matchedDN = ou=people,o=example.com; No such object</PRE>
+     * <PRE>com.sun.identity.shared.ldap.LDAPException: error result (32); server error message; matchedDN = ou=people,o=example.com; No such object</PRE>
      *
      * In this example, <CODE>error result</CODE> is the string of
      * additional information specified in the exception, <CODE>32</CODE> is
@@ -808,7 +808,7 @@ public class LDAPException extends java.lang.Exception
      * <P>
      *
      * @return string representation of exception.
-     * @see iplanet.ldap.LDAPException#errorCodeToString(int)
+     * @see com.sun.identity.shared.ldap.LDAPException#errorCodeToString(int)
      */
     public String toString() {
         String str = super.toString() + " (" + resultCode + ")" ;

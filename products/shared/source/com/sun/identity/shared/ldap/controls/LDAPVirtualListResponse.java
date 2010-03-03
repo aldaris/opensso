@@ -19,13 +19,13 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.controls;
+package com.sun.identity.shared.ldap.controls;
 
 import java.io.*;
-import iplanet.ldap.client.JDAPBERTagDecoder;
-import iplanet.ldap.LDAPControl;
-import iplanet.ldap.ber.stream.*;
-import iplanet.ldap.LDAPException;
+import com.sun.identity.shared.ldap.client.JDAPBERTagDecoder;
+import com.sun.identity.shared.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.ber.stream.*;
+import com.sun.identity.shared.ldap.LDAPException;
 
 /**
  * Represents control data for returning paged results from a search.
@@ -58,7 +58,7 @@ public class LDAPVirtualListResponse extends LDAPControl {
 
     /**
      * Blank constructor for internal use in <CODE>LDAPVirtualListResponse</CODE>.
-     * @see iplanet.ldap.LDAPControl
+     * @see com.sun.identity.shared.ldap.LDAPControl
      */
     LDAPVirtualListResponse() {
         super( VIRTUALLISTRESPONSE, true, null );
@@ -71,9 +71,9 @@ public class LDAPVirtualListResponse extends LDAPControl {
      * <CODE>LDAPException</CODE>is thrown
      * @param critical <code>true</code> if this control is critical
      * @param value the value associated with this control
-     * @exception iplanet.ldap.LDAPException If oid is not 
+     * @exception com.sun.identity.shared.ldap.LDAPException If oid is not 
      * <CODE>LDAPVirtualListResponse.VIRTUALLISTRESPONSE</CODE>.
-     * @see iplanet.ldap.LDAPControl#register
+     * @see com.sun.identity.shared.ldap.LDAPControl#register
      */ 
     public LDAPVirtualListResponse( String oid, boolean critical, 
                                     byte[] value ) throws LDAPException {
@@ -90,7 +90,7 @@ public class LDAPVirtualListResponse extends LDAPControl {
     /**
      * Constructs a new <CODE>LDAPVirtualListResponse</CODE> object.
      * @param value a BER encoded byte array
-     * @see iplanet.ldap.LDAPControl
+     * @see com.sun.identity.shared.ldap.LDAPControl
      */
     public LDAPVirtualListResponse( byte[] value ) {
         super( VIRTUALLISTRESPONSE, true, null );

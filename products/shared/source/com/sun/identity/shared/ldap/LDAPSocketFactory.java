@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.util.*;
 import java.io.*;
@@ -30,7 +30,7 @@ import java.net.*;
  * LDAP server.  You can write a class that implements this interface
  * if you want to use a TLS socket to connect to a secure server.
  * (The <CODE>LDAPSSLSocketFactory class</CODE>, which is included
- * in the <CODE>iplanet.ldap</CODE> package, implements this
+ * in the <CODE>com.sun.identity.shared.ldap</CODE> package, implements this
  * interface for SSL connections.)
  * <P>
  *
@@ -41,7 +41,7 @@ import java.net.*;
  * <P>
  *
  * @version 1.0
- * @see LDAPConnection#LDAPConnection(iplanet.ldap.LDAPSocketFactory)
+ * @see LDAPConnection#LDAPConnection(com.sun.identity.shared.ldap.LDAPSocketFactory)
  * @see LDAPSSLSocketFactory
  */
 public interface LDAPSocketFactory {

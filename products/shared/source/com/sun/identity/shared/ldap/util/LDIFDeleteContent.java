@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.util;
+package com.sun.identity.shared.ldap.util;
 
 /**
  * An object of this class represents the content of an LDIF record that
@@ -33,7 +33,7 @@ package iplanet.ldap.util;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.util.LDIFRecord#getContent
+ * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
  */
 public class LDIFDeleteContent extends LDIFBaseContent {
 
@@ -54,7 +54,7 @@ public class LDIFDeleteContent extends LDIFBaseContent {
      * object to determine the type of content specified in the record.
      * @return the content type (which is
      * <CODE>LDIFContent.DELETE_CONTENT</CODE>).
-     * @see iplanet.ldap.util.LDIFRecord#getContent
+     * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
      */
     public int getType() {
         return DELETE_CONTENT;

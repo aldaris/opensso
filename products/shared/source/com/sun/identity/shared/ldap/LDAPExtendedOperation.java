@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 /**
  * Version 3 of the LDAP protocol include the means to define additional
@@ -143,8 +143,8 @@ package iplanet.ldap;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.LDAPConnection#extendedOperation(iplanet.ldap.LDAPExtendedOperation)
- * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean)
+ * @see com.sun.identity.shared.ldap.LDAPConnection#extendedOperation(com.sun.identity.shared.ldap.LDAPExtendedOperation)
+ * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean)
  *
  */
 public class LDAPExtendedOperation implements java.io.Serializable {

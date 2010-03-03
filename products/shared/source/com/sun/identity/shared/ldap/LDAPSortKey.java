@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 /**
  * Represents sorting instructions for a particular attribute.
@@ -46,8 +46,8 @@ public class LDAPSortKey implements java.io.Serializable {
      * attribute in reverse order and use the matching rule identified
      * by the OID 1.2.3.4) <P>
      *</UL>
-     * @see iplanet.ldap.controls.LDAPSortControl
-     * @see iplanet.ldap.controls.LDAPVirtualListControl
+     * @see com.sun.identity.shared.ldap.controls.LDAPSortControl
+     * @see com.sun.identity.shared.ldap.controls.LDAPVirtualListControl
      */
     public LDAPSortKey( String keyDescription ) {
         if ( (keyDescription != null) && (keyDescription.length() > 0) ) {
@@ -80,8 +80,8 @@ public class LDAPSortKey implements java.io.Serializable {
      * </UL>
      * @param reverse if <CODE>true</CODE>, the sorting is done in
      * descending order
-     * @see iplanet.ldap.controls.LDAPSortControl
-     * @see iplanet.ldap.controls.LDAPVirtualListControl
+     * @see com.sun.identity.shared.ldap.controls.LDAPSortControl
+     * @see com.sun.identity.shared.ldap.controls.LDAPVirtualListControl
      */
     public LDAPSortKey( String key,
                         boolean reverse) {
@@ -105,8 +105,8 @@ public class LDAPSortKey implements java.io.Serializable {
      * descending order
      * @param matchRule object ID (OID) of the matching rule for
      * the attribute (for example, <CODE>1.2.3.4</CODE>)
-     * @see iplanet.ldap.controls.LDAPSortControl
-     * @see iplanet.ldap.controls.LDAPVirtualListControl
+     * @see com.sun.identity.shared.ldap.controls.LDAPSortControl
+     * @see com.sun.identity.shared.ldap.controls.LDAPVirtualListControl
      */
     public LDAPSortKey( String key,
                         boolean reverse,

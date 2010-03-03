@@ -19,10 +19,10 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.controls;
+package com.sun.identity.shared.ldap.controls;
 
-import iplanet.ldap.LDAPControl;
-import iplanet.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.LDAPException;
 
 /**
  * Represents an LDAP v3 server control that may be returned if a
@@ -31,7 +31,7 @@ import iplanet.ldap.LDAPException;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.LDAPControl
+ * @see com.sun.identity.shared.ldap.LDAPControl
  */
 public class LDAPPasswordExpiredControl extends LDAPStringControl {
     public final static String EXPIRED = "2.16.840.1.113730.3.4.4";
@@ -47,9 +47,9 @@ public class LDAPPasswordExpiredControl extends LDAPStringControl {
      * or an <CODE>LDAPException</CODE> is thrown
      * @param critical <code>true</code> if this control is critical
      * @param value the value associated with this control
-     * @exception iplanet.ldap.LDAPException If oid is not 
+     * @exception com.sun.identity.shared.ldap.LDAPException If oid is not 
      * <CODE>LDAPPasswordExpiredControl.EXPIRED</CODE>.
-     * @see iplanet.ldap.LDAPControl#register
+     * @see com.sun.identity.shared.ldap.LDAPControl#register
      */
     public LDAPPasswordExpiredControl( String oid, boolean critical, 
                                        byte[] value ) throws LDAPException {
@@ -72,7 +72,7 @@ public class LDAPPasswordExpiredControl extends LDAPStringControl {
      * <CODE>getResponseControls</CODE> method of the
      * <CODE>LDAPConnection</CODE> class.
      * @return an error message string, or null if none is in the control.
-     * @see iplanet.ldap.LDAPConnection#getResponseControls
+     * @see com.sun.identity.shared.ldap.LDAPConnection#getResponseControls
      * @deprecated LDAPPasswordExpiredControl controls are now automatically
      * instantiated.
      */

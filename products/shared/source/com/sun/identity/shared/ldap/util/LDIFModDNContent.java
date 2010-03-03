@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.util;
+package com.sun.identity.shared.ldap.util;
 
 /**
  * An object of this class represents the content of an LDIF record that
@@ -33,7 +33,7 @@ package iplanet.ldap.util;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.util.LDIFRecord#getContent
+ * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
  */
 public class LDIFModDNContent extends LDIFBaseContent {
     /**
@@ -49,9 +49,9 @@ public class LDIFModDNContent extends LDIFBaseContent {
      * To specify the modifications to be made to the entry, use
      * the <CODE>setRDN</CODE>, <CODE>setNewParent</CODE>,
      * and <CODE>setDeleteOldRDN</CODE> methods.
-     * @see iplanet.ldap.util.LDIFModDNContent#setRDN
-     * @see iplanet.ldap.util.LDIFModDNContent#setNewParent
-     * @see iplanet.ldap.util.LDIFModDNContent#setDeleteOldRDN
+     * @see com.sun.identity.shared.ldap.util.LDIFModDNContent#setRDN
+     * @see com.sun.identity.shared.ldap.util.LDIFModDNContent#setNewParent
+     * @see com.sun.identity.shared.ldap.util.LDIFModDNContent#setDeleteOldRDN
      */
     public LDIFModDNContent() {
     }
@@ -62,7 +62,7 @@ public class LDIFModDNContent extends LDIFBaseContent {
      * object to determine the type of content specified in the record.
      * @return the content type (which is
      * <CODE>LDIFContent.MODDN_CONTENT</CODE>).
-     * @see iplanet.ldap.util.LDIFRecord#getContent
+     * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
      */
     public int getType() {
         return MODDN_CONTENT;
@@ -71,7 +71,7 @@ public class LDIFModDNContent extends LDIFBaseContent {
     /**
      * Sets the new RDN that should be assigned to the entry.
      * @param rdn the new RDN
-     * @see iplanet.ldap.util.LDIFModDNContent#getRDN
+     * @see com.sun.identity.shared.ldap.util.LDIFModDNContent#getRDN
      */
     public void setRDN(String rdn) {
         m_rdn = rdn;
@@ -80,7 +80,7 @@ public class LDIFModDNContent extends LDIFBaseContent {
     /**
      * Returns the new RDN specified in the content of the LDIF record.
      * @return the new RDN.
-     * @see iplanet.ldap.util.LDIFModDNContent#setRDN
+     * @see com.sun.identity.shared.ldap.util.LDIFModDNContent#setRDN
      */
     public String getRDN() {
         return m_rdn;
@@ -89,7 +89,7 @@ public class LDIFModDNContent extends LDIFBaseContent {
     /**
      * Sets the new parent DN that should be assigned to the entry.
      * @param parent the new parent DN for the entry
-     * @see iplanet.ldap.util.LDIFModDNContent#getNewParent
+     * @see com.sun.identity.shared.ldap.util.LDIFModDNContent#getNewParent
      */
     public void setNewParent(String parent) {
         m_newParent = parent;
@@ -99,7 +99,7 @@ public class LDIFModDNContent extends LDIFBaseContent {
      * Returns the entry's new parent DN, if specified in the content
      * of the LDIF record.
      * @return the new parent of the entry.
-     * @see iplanet.ldap.util.LDIFModDNContent#setNewParent
+     * @see com.sun.identity.shared.ldap.util.LDIFModDNContent#setNewParent
      */
     public String getNewParent() {
         return m_newParent;
@@ -110,7 +110,7 @@ public class LDIFModDNContent extends LDIFBaseContent {
      * attribute in the entry.
      * @param bool if <CODE>true</CODE>, remove the attribute representing
      * the RDN.  If <CODE>false</CODE>, leave the attribute in the entry.
-     * @see iplanet.ldap.util.LDIFModDNContent#getDeleteOldRDN
+     * @see com.sun.identity.shared.ldap.util.LDIFModDNContent#getDeleteOldRDN
      */
     public void setDeleteOldRDN(boolean bool) {
         m_deleteOldRDN = bool;
@@ -123,7 +123,7 @@ public class LDIFModDNContent extends LDIFBaseContent {
      * the attribute representing the RDN should be removed,
      * <CODE>false</CODE> if the change specifies that the attribute
      * should be left in the entry.
-     * @see iplanet.ldap.util.LDIFModDNContent#setDeleteOldRDN
+     * @see com.sun.identity.shared.ldap.util.LDIFModDNContent#setDeleteOldRDN
      */
     public boolean getDeleteOldRDN() {
         return m_deleteOldRDN;

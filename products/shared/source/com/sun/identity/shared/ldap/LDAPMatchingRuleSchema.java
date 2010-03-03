@@ -20,7 +20,7 @@
  * Contributor(s): 
  *   	Ingo Schaefer (ingo.schaefer@fh-brandenburg.de)
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.util.*;
 
@@ -97,7 +97,7 @@ import java.util.*;
  * manages their relationships transparently.
  *
  * @version 1.0
- * @see iplanet.ldap.LDAPSchemaElement
+ * @see com.sun.identity.shared.ldap.LDAPSchemaElement
  **/
 
 public class LDAPMatchingRuleSchema extends LDAPAttributeSchema {

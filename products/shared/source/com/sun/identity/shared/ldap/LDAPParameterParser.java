@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPParameterParser.java,v 1.2 2010-03-03 21:31:28 beomsuk Exp $
+ * $Id: LDAPParameterParser.java,v 1.3 2010-03-03 21:57:03 veiming Exp $
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
-import iplanet.ldap.ber.stream.BERElement;
+import com.sun.identity.shared.ldap.ber.stream.BERElement;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;

@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.util;
+package com.sun.identity.shared.ldap.util;
 
 /** Implements a plaintext -> Base64 encoder.
  */

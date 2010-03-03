@@ -19,12 +19,12 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.controls;
+package com.sun.identity.shared.ldap.controls;
 
 import java.io.*;
-import iplanet.ldap.client.JDAPBERTagDecoder;
-import iplanet.ldap.LDAPControl;
-import iplanet.ldap.ber.stream.*;
+import com.sun.identity.shared.ldap.client.JDAPBERTagDecoder;
+import com.sun.identity.shared.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.ber.stream.*;
 
 /**
  * Represents control data for returning paged results from a search.
@@ -228,7 +228,7 @@ public class LDAPVirtualListControl extends LDAPControl {
 
     /**
      * Blank constructor for internal use in <CODE>LDAPVirtualListControl</CODE>.
-     * @see iplanet.ldap.LDAPControl
+     * @see com.sun.identity.shared.ldap.LDAPControl
      */
     LDAPVirtualListControl() {
         super( VIRTUALLIST, true, null );
@@ -243,7 +243,7 @@ public class LDAPVirtualListControl extends LDAPControl {
      * return per page
      * @param afterCount the number of results after the top/center to
      * return per page
-     * @see iplanet.ldap.LDAPControl
+     * @see com.sun.identity.shared.ldap.LDAPControl
      */
     public LDAPVirtualListControl( String jumpTo, int beforeCount,
                                    int afterCount  ) {
@@ -267,7 +267,7 @@ public class LDAPVirtualListControl extends LDAPControl {
      * return per page
      * @param afterCount the number of results after the top/center to
      * return per page
-     * @see iplanet.ldap.LDAPControl
+     * @see com.sun.identity.shared.ldap.LDAPControl
      */
     public LDAPVirtualListControl( int startIndex, int beforeCount,
                                    int afterCount, int contentCount  ) {
@@ -297,7 +297,7 @@ public class LDAPVirtualListControl extends LDAPControl {
      * return per page
      * @param afterCount the number of results after startIndex to
      * return per page
-     * @see iplanet.ldap.LDAPControl
+     * @see com.sun.identity.shared.ldap.LDAPControl
      */
     public void setRange( int startIndex, int beforeCount, int afterCount  ) {
         m_beforeCount = beforeCount;
@@ -316,7 +316,7 @@ public class LDAPVirtualListControl extends LDAPControl {
      * return per page
      * @param afterCount the number of results after startIndex to
      * return per page
-     * @see iplanet.ldap.LDAPControl
+     * @see com.sun.identity.shared.ldap.LDAPControl
      */
     public void setRange( String jumpTo, int beforeCount, int afterCount  ) {
         m_beforeCount = beforeCount;

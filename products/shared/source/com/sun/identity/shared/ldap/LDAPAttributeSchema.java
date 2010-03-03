@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.util.*;
 
@@ -109,7 +109,7 @@ import java.util.*;
  * </PRE>
  *
  * @version 1.0
- * @see iplanet.ldap.LDAPSchemaElement
+ * @see com.sun.identity.shared.ldap.LDAPSchemaElement
  **/
 
 public class LDAPAttributeSchema extends LDAPSchemaElement {

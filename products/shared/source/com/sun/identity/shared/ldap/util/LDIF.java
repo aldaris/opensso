@@ -19,11 +19,11 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.util;
+package com.sun.identity.shared.ldap.util;
 
 import java.util.*;
-import iplanet.ldap.*;
-import iplanet.ldap.client.*;
+import com.sun.identity.shared.ldap.*;
+import com.sun.identity.shared.ldap.client.*;
 import java.io.*;
 import java.net.*;
 
@@ -43,7 +43,7 @@ import java.net.*;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.util.LDIFRecord
+ * @see com.sun.identity.shared.ldap.util.LDIFRecord
  */
 public class LDIF implements Serializable {
 
@@ -102,7 +102,7 @@ public class LDIF implements Serializable {
      * @return the next record as an <CODE>LDIFRecord</CODE>
      * object or null if there are no more records.
      * @exception IOException An I/O error has occurred.
-     * @see iplanet.ldap.util.LDIFRecord
+     * @see com.sun.identity.shared.ldap.util.LDIFRecord
      */
     public LDIFRecord nextRecord() throws IOException {
         if ( m_done )

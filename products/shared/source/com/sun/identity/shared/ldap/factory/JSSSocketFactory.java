@@ -19,12 +19,12 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.factory;
+package com.sun.identity.shared.ldap.factory;
 
 import java.net.*;
 import java.io.*;
 
-import iplanet.ldap.*;
+import com.sun.identity.shared.ldap.*;
 
 import org.mozilla.jss.ssl.SSLSocket;
 import org.mozilla.jss.ssl.SSLCertificateApprovalCallback.ValidityStatus;
@@ -45,7 +45,7 @@ import org.mozilla.jss.CryptoManager;
  * 
  * @version 1.1
  * @see LDAPSocketFactory
- * @see LDAPConnection#LDAPConnection(iplanet.ldap.LDAPSocketFactory)
+ * @see LDAPConnection#LDAPConnection(com.sun.identity.shared.ldap.LDAPSocketFactory)
  */
 
 
@@ -63,7 +63,7 @@ public class JSSSocketFactory implements Serializable,
      * The current directory is assumed to be the certificate database directory.
      * 
      * @exception LDAPException on initialization error
-     * @see iplanet.ldap.factory.JSSSocketFactory#JSSSocketFactory(java.lang.String)
+     * @see com.sun.identity.shared.ldap.factory.JSSSocketFactory#JSSSocketFactory(java.lang.String)
      */
     public JSSSocketFactory() throws LDAPException{
         initialize(".");
@@ -98,7 +98,7 @@ public class JSSSocketFactory implements Serializable,
      * @param certdbDir The full path, relative or absolute, of the certificate
      * database directory.
      * @exception LDAPException on initialization error
-     * @see iplanet.ldap.factory.JSSSocketFactory#JSSSocketFactory(String)
+     * @see com.sun.identity.shared.ldap.factory.JSSSocketFactory#JSSSocketFactory(String)
      */
     public static void initialize( String certdbDir ) throws LDAPException {
         try {

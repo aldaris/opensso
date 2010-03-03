@@ -19,9 +19,9 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.util;
+package com.sun.identity.shared.ldap.util;
 
-import iplanet.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.LDAPControl;
 
 /**
  *
@@ -31,7 +31,7 @@ import iplanet.ldap.LDAPControl;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.util.LDIFRecord#getContent
+ * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
  */
 public abstract class LDIFBaseContent
                       implements LDIFContent, java.io.Serializable {

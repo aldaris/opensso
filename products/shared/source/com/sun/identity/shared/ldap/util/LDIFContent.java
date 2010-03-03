@@ -19,9 +19,9 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.util;
+package com.sun.identity.shared.ldap.util;
 
-import iplanet.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.LDAPControl;
 
 /**
  * This interface represents the content of an LDIF record.
@@ -47,12 +47,12 @@ import iplanet.ldap.LDAPControl;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.util.LDIFRecord
- * @see iplanet.ldap.util.LDIFAttributeContent
- * @see iplanet.ldap.util.LDIFAddContent
- * @see iplanet.ldap.util.LDIFModifyContent
- * @see iplanet.ldap.util.LDIFDeleteContent
- * @see iplanet.ldap.util.LDIFModDNContent
+ * @see com.sun.identity.shared.ldap.util.LDIFRecord
+ * @see com.sun.identity.shared.ldap.util.LDIFAttributeContent
+ * @see com.sun.identity.shared.ldap.util.LDIFAddContent
+ * @see com.sun.identity.shared.ldap.util.LDIFModifyContent
+ * @see com.sun.identity.shared.ldap.util.LDIFDeleteContent
+ * @see com.sun.identity.shared.ldap.util.LDIFModDNContent
  */
 public interface LDIFContent {
 

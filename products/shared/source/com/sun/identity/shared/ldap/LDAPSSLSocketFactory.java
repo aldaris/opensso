@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.io.*;
 import java.net.*;
@@ -43,7 +43,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @version 1.0
  * @see LDAPSSLSocketFactoryExt
- * @see LDAPConnection#LDAPConnection(iplanet.ldap.LDAPSocketFactory)
+ * @see LDAPConnection#LDAPConnection(com.sun.identity.shared.ldap.LDAPSocketFactory)
  */
 public class LDAPSSLSocketFactory implements LDAPSSLSocketFactoryExt,
     java.io.Serializable {    
@@ -161,8 +161,8 @@ public class LDAPSSLSocketFactory implements LDAPSSLSocketFactoryExt,
      * that provides transparent certificate database management.
      *
      * Call this method before you call <CODE>makeSocket</CODE>.
-     * @see iplanet.ldap.LDAPSSLSocketFactory#isClientAuth
-     * @see iplanet.ldap.LDAPSSLSocketFactory#makeSocket
+     * @see com.sun.identity.shared.ldap.LDAPSSLSocketFactory#isClientAuth
+     * @see com.sun.identity.shared.ldap.LDAPSSLSocketFactory#makeSocket
      * Note: enableClientAuth() is deprecated. This method is replaced
      * by any one of the following constructors:
      * <p>
@@ -185,8 +185,8 @@ public class LDAPSSLSocketFactory implements LDAPSSLSocketFactoryExt,
      * @param keypwd the password for the private key database
      * @param certnickname the alias for the certificate
      * @param keynickname the alias for the key
-     * @see iplanet.ldap.LDAPSSLSocketFactory#isClientAuth
-     * @see iplanet.ldap.LDAPSSLSocketFactory#makeSocket
+     * @see com.sun.identity.shared.ldap.LDAPSSLSocketFactory#isClientAuth
+     * @see com.sun.identity.shared.ldap.LDAPSSLSocketFactory#makeSocket
      * @exception LDAPException Since this method is not yet implemented,
      * calling this method throws an exception.
      * Note: <CODE>enableClientAuth(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)</CODE> is deprecated. 
@@ -203,7 +203,7 @@ public class LDAPSSLSocketFactory implements LDAPSSLSocketFactoryExt,
 
     /**
      * Returns <code>true</code> if client authentication is enabled.
-     * @see iplanet.ldap.LDAPSSLSocketFactory
+     * @see com.sun.identity.shared.ldap.LDAPSSLSocketFactory
      */
     public boolean isClientAuth() {
         return m_clientAuth;
@@ -236,7 +236,7 @@ public class LDAPSSLSocketFactory implements LDAPSSLSocketFactoryExt,
      * @return the socket to the host name and port number.
      * @exception LDAPException A socket to the specified host and port
      * could not be created.
-     * @see iplanet.ldap.LDAPSSLSocketFactory
+     * @see com.sun.identity.shared.ldap.LDAPSSLSocketFactory
      */    
     public Socket makeSocket(String host, int port)
       throws LDAPException {

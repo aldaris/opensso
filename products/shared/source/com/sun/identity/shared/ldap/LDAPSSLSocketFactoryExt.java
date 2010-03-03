@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import javax.net.SocketFactory;
 
@@ -31,7 +31,7 @@ import javax.net.SocketFactory;
  *
  * @version 1.0
  * @see LDAPSocketFactory
- * @see LDAPConnection#LDAPConnection(iplanet.ldap.LDAPSocketFactory)
+ * @see LDAPConnection#LDAPConnection(com.sun.identity.shared.ldap.LDAPSocketFactory)
  */
 public interface LDAPSSLSocketFactoryExt extends LDAPSocketFactory {
 
@@ -45,7 +45,7 @@ public interface LDAPSSLSocketFactoryExt extends LDAPSocketFactory {
     
     /**
      * Returns <code>true</code> if client authentication is enabled.
-     * @see iplanet.ldap.LDAPSSLSocketFactory#enableClientAuth
+     * @see com.sun.identity.shared.ldap.LDAPSSLSocketFactory#enableClientAuth
      */
     public abstract boolean isClientAuth();
 }

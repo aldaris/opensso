@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.ber.stream;
+package com.sun.identity.shared.ldap.ber.stream;
 
 import java.util.*;
 import java.io.*;

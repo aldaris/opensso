@@ -19,11 +19,11 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.client;
+package com.sun.identity.shared.ldap.client;
 
 import java.util.Vector;
 import java.io.*;
-import iplanet.ldap.ber.stream.*;
+import com.sun.identity.shared.ldap.ber.stream.*;
 
 /**
  * This class provides miscellaneous operations for JDAPFilter object.

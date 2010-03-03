@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 /**
  * Performs explicit bind processing on a referral. A client may
@@ -39,8 +39,8 @@ public interface LDAPBind {
      * <CODE>LDAPConnection</CODE> in order to decide on an appropriate 
      * authentication mechanism.<BR> 
      * The bind method can also interact with a user or external module. 
-     * @exception iplanet.ldap.LDAPException
-     * @see iplanet.ldap.LDAPConnection#bind
+     * @exception com.sun.identity.shared.ldap.LDAPException
+     * @see com.sun.identity.shared.ldap.LDAPConnection#bind
      * @param conn an established connection to an LDAP server
      */
 

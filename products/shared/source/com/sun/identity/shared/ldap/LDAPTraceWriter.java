@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 /**
  * The <CODE>LDAPTraceWriter</CODE> interface enables logging of LDAP
@@ -42,7 +42,7 @@ package iplanet.ldap;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.LDAPConnection#setProperty(java.lang.String, java.lang.Object)
+ * @see com.sun.identity.shared.ldap.LDAPConnection#setProperty(java.lang.String, java.lang.Object)
  */
 public interface LDAPTraceWriter {
 
@@ -52,7 +52,7 @@ public interface LDAPTraceWriter {
      * @param msg An incoming or outgoing LDAP message
      *
      * @version 1.0
-     * @see iplanet.ldap.LDAPConnection#setProperty(java.lang.String, java.lang.Object)
+     * @see com.sun.identity.shared.ldap.LDAPConnection#setProperty(java.lang.String, java.lang.Object)
      */
     public void write (String msg);
 

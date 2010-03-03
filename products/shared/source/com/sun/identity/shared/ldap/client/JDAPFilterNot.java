@@ -19,12 +19,12 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.client;
+package com.sun.identity.shared.ldap.client;
 
 import java.util.*;
-import iplanet.ldap.ber.stream.*;
+import com.sun.identity.shared.ldap.ber.stream.*;
 import java.io.*;
-import iplanet.ldap.LDAPRequestParser;
+import com.sun.identity.shared.ldap.LDAPRequestParser;
 
 /**
  * This class implements the filter not.

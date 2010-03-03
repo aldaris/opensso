@@ -19,14 +19,17 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.util.*;
-import iplanet.ldap.client.opers.*;
-import iplanet.ldap.ber.stream.*;
+import com.sun.identity.shared.ldap.client.*;
+import com.sun.identity.shared.ldap.client.opers.*;
+import com.sun.identity.shared.ldap.ber.stream.*;
+import com.sun.identity.shared.ldap.util.*;
 import java.io.*;
 import java.net.*;
 import java.text.SimpleDateFormat;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * Multiple LDAPConnection clones can share a single physical connection,

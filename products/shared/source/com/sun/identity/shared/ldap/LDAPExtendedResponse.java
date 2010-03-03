@@ -19,11 +19,11 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
-import iplanet.ldap.client.opers.JDAPExtendedResponse;
+import com.sun.identity.shared.ldap.client.opers.JDAPExtendedResponse;
 import java.util.ArrayList;
-import iplanet.ldap.ber.stream.BERElement;
+import com.sun.identity.shared.ldap.ber.stream.BERElement;
 
 /**
  * Represents a server response to an extended operation request.

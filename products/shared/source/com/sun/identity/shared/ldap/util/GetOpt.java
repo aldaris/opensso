@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.util;
+package com.sun.identity.shared.ldap.util;
 import java.util.*;
 
 /**
@@ -62,9 +62,9 @@ import java.util.*;
  * the hostname, port number, DN, and password to use when
  * connecting and authenticating to an LDAP server.
  * <PRE>
- * import iplanet.ldap.*;
- * import iplanet.ldap.controls.*;
- * import iplanet.ldap.util.*;
+ * import com.sun.identity.shared.ldap.*;
+ * import com.sun.identity.shared.ldap.controls.*;
+ * import com.sun.identity.shared.ldap.util.*;
  * import java.util.*;
  *
  * public class SearchDirectory {

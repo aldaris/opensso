@@ -19,11 +19,11 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.util.*;
-import iplanet.ldap.client.*;
-import iplanet.ldap.client.opers.*;
+import com.sun.identity.shared.ldap.client.*;
+import com.sun.identity.shared.ldap.client.opers.*;
 import java.io.*;
 
 /**
@@ -33,7 +33,7 @@ import java.io.*;
  * using the <CODE>getURLs</CODE> method.
  *
  * @version 1.0
- * @see iplanet.ldap.LDAPException
+ * @see com.sun.identity.shared.ldap.LDAPException
  */
 public class LDAPReferralException extends LDAPException {
 
@@ -156,7 +156,7 @@ public class LDAPReferralException extends LDAPException {
      *  from the LDAP server and the list of referrals.
      *
      * @return string representation of exception.
-     * @see iplanet.ldap.LDAPException#errorCodeToString(int)
+     * @see com.sun.identity.shared.ldap.LDAPException#errorCodeToString(int)
      */
     public String toString() {
         String str = super.toString();

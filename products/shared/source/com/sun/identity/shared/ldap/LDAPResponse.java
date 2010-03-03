@@ -19,12 +19,12 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
-import iplanet.ldap.client.opers.JDAPProtocolOp;
-import iplanet.ldap.client.opers.JDAPResult;
+import com.sun.identity.shared.ldap.client.opers.JDAPProtocolOp;
+import com.sun.identity.shared.ldap.client.opers.JDAPResult;
 import java.util.BitSet;
-import iplanet.ldap.ber.stream.BERElement;
+import com.sun.identity.shared.ldap.ber.stream.BERElement;
 import java.util.LinkedList;
 
 /**

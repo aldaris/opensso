@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 /**
  * The <CODE>LDAPEntryComparator</CODE> interface represents the
@@ -28,7 +28,7 @@ package iplanet.ldap;
  * determines the order in which the two entries should be sorted.
  * <P>
  *
- * The <CODE>iplanet.ldap</CODE> package includes a class that
+ * The <CODE>com.sun.identity.shared.ldap</CODE> package includes a class that
  * implements this interface.  The <CODE>LDAPCompareAttrNames</CODE>
  * class represents a comparator that sorts the two entries alphabetically,
  * based on the value of one or more attributes.
@@ -41,8 +41,8 @@ package iplanet.ldap;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.LDAPCompareAttrNames
- * @see iplanet.ldap.LDAPSearchResults#sort
+ * @see com.sun.identity.shared.ldap.LDAPCompareAttrNames
+ * @see com.sun.identity.shared.ldap.LDAPSearchResults#sort
  */
 public interface LDAPEntryComparator {
 
@@ -58,8 +58,8 @@ public interface LDAPEntryComparator {
      * <P>
      *
      * @version 1.0
-     * @see iplanet.ldap.LDAPCompareAttrNames
-     * @see iplanet.ldap.LDAPSearchResults#sort
+     * @see com.sun.identity.shared.ldap.LDAPCompareAttrNames
+     * @see com.sun.identity.shared.ldap.LDAPSearchResults#sort
      */
     public boolean isGreater (LDAPEntry greater, LDAPEntry less);
 

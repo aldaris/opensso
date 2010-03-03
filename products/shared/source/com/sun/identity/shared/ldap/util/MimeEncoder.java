@@ -19,12 +19,12 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.util;
+package com.sun.identity.shared.ldap.util;
 
 /** This abstract class is the parent of those classes which implement
     MIME encoding and decoding: base64.
-    @see iplanet.ldap.util.MimeBase64Encoder
-    @see iplanet.ldap.util.MimeBase64Decoder
+    @see com.sun.identity.shared.ldap.util.MimeBase64Encoder
+    @see com.sun.identity.shared.ldap.util.MimeBase64Decoder
  */
 
 public abstract class MimeEncoder implements java.io.Serializable {

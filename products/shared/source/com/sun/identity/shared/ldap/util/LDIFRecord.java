@@ -19,10 +19,10 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.util;
+package com.sun.identity.shared.ldap.util;
 
 import java.io.Serializable;
-import iplanet.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.LDAPControl;
 
 /**
  * An object of this class represents an LDIF record in an LDIF
@@ -56,11 +56,11 @@ import iplanet.ldap.LDAPControl;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.util.LDIF
- * @see iplanet.ldap.util.LDIFAddContent
- * @see iplanet.ldap.util.LDIFModifyContent
- * @see iplanet.ldap.util.LDIFDeleteContent
- * @see iplanet.ldap.util.LDIFAttributeContent
+ * @see com.sun.identity.shared.ldap.util.LDIF
+ * @see com.sun.identity.shared.ldap.util.LDIFAddContent
+ * @see com.sun.identity.shared.ldap.util.LDIFModifyContent
+ * @see com.sun.identity.shared.ldap.util.LDIFDeleteContent
+ * @see com.sun.identity.shared.ldap.util.LDIFAttributeContent
  */
 public class LDIFRecord implements Serializable {
 
@@ -80,10 +80,10 @@ public class LDIFRecord implements Serializable {
      * an object of the <CODE>LDIFAttributeContent</CODE>,
      * <CODE>LDIFAddContent</CODE>, <CODE>LDIFModifyContent</CODE>,
      * or <CODE>LDIFDeleteContent</CODE> classes.
-     * @see iplanet.ldap.util.LDIFAddContent
-     * @see iplanet.ldap.util.LDIFModifyContent
-     * @see iplanet.ldap.util.LDIFDeleteContent
-     * @see iplanet.ldap.util.LDIFAttributeContent
+     * @see com.sun.identity.shared.ldap.util.LDIFAddContent
+     * @see com.sun.identity.shared.ldap.util.LDIFModifyContent
+     * @see com.sun.identity.shared.ldap.util.LDIFDeleteContent
+     * @see com.sun.identity.shared.ldap.util.LDIFAttributeContent
      */
     public LDIFRecord(String dn, LDIFContent content) {
         m_dn = dn;
@@ -123,8 +123,8 @@ public class LDIFRecord implements Serializable {
      * For example:
      * <PRE>
      * ...
-     * import iplanet.ldap.*;
-     * import iplanet.ldap.util.*;
+     * import com.sun.identity.shared.ldap.*;
+     * import com.sun.identity.shared.ldap.util.*;
      * import java.io.*;
      * import java.util.*;
      * ...
@@ -167,10 +167,10 @@ public class LDIFRecord implements Serializable {
      * </PRE>
      *
      * @return the content of the LDIF record.
-     * @see iplanet.ldap.util.LDIFAddContent
-     * @see iplanet.ldap.util.LDIFModifyContent
-     * @see iplanet.ldap.util.LDIFDeleteContent
-     * @see iplanet.ldap.util.LDIFAttributeContent
+     * @see com.sun.identity.shared.ldap.util.LDIFAddContent
+     * @see com.sun.identity.shared.ldap.util.LDIFModifyContent
+     * @see com.sun.identity.shared.ldap.util.LDIFDeleteContent
+     * @see com.sun.identity.shared.ldap.util.LDIFAttributeContent
      */
     public LDIFContent getContent() {
         return m_content;

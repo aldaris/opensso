@@ -22,9 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPRequest.java,v 1.2 2010-03-03 21:31:29 beomsuk Exp $
+ * $Id: LDAPRequest.java,v 1.3 2010-03-03 21:57:04 veiming Exp $
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.util.LinkedList;
 

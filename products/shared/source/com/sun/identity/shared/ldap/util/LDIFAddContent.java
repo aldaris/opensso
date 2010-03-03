@@ -19,9 +19,9 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap.util;
+package com.sun.identity.shared.ldap.util;
 
-import iplanet.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttribute;
 
 /**
  *
@@ -36,7 +36,7 @@ import iplanet.ldap.LDAPAttribute;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.util.LDIFRecord#getContent
+ * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
  */
 public class LDIFAddContent extends LDIFBaseContent {
 
@@ -62,7 +62,7 @@ public class LDIFAddContent extends LDIFBaseContent {
      * object to determine the type of content specified in the record.
      * @return the content type (which is
      * <CODE>LDIFContent.ADD_CONTENT</CODE>).
-     * @see iplanet.ldap.util.LDIFRecord#getContent
+     * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
      */
     public int getType() {
         return ADD_CONTENT;

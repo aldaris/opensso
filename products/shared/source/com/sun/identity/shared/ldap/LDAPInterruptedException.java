@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 /**
  * An exception thrown when the LDAP operation being invoked has
@@ -39,7 +39,7 @@ public class LDAPInterruptedException extends LDAPException {
      * <P>
      *
      * @param message the additional information
-     * @see iplanet.ldap.LDAPInterruptedException#toString()
+     * @see com.sun.identity.shared.ldap.LDAPInterruptedException#toString()
      */
     LDAPInterruptedException( String message ) {
         super( message, LDAPException.OTHER, null);
@@ -49,7 +49,7 @@ public class LDAPInterruptedException extends LDAPException {
      * Gets the string representation of the exception.
      */
     public String toString() {
-        String str = "iplanet.ldap.LDAPInterruptedException: ";
+        String str = "com.sun.identity.shared.ldap.LDAPInterruptedException: ";
         String msg = super.getMessage();
         if (msg != null) {
             str +=msg;

@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.util.*;
 
@@ -34,8 +34,8 @@ import java.util.*;
  * <P>
  *
  * @version 1.0
- * @see iplanet.ldap.LDAPModification
- * @see iplanet.ldap.LDAPConnection#modify(java.lang.String, iplanet.ldap.LDAPModificationSet)
+ * @see com.sun.identity.shared.ldap.LDAPModification
+ * @see com.sun.identity.shared.ldap.LDAPConnection#modify(java.lang.String, com.sun.identity.shared.ldap.LDAPModificationSet)
  */
 public class LDAPModificationSet implements java.io.Serializable {
 
