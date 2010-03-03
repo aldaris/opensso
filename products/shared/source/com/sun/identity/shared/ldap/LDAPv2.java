@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 import java.io.*;
@@ -51,7 +51,7 @@ public interface LDAPv2 {
      * The default port number for LDAP servers.  You can specify
      * this identifier when calling the <CODE>LDAPConnection.connect</CODE>
      * method to connect to an LDAP server.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#connect
+     * @see iplanet.ldap.LDAPConnection#connect
      */
     public final static int DEFAULT_PORT = 389;
 
@@ -68,8 +68,8 @@ public interface LDAPv2 {
      * </UL>
      * <P>
      *
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int DEREF = 2;
 
@@ -78,16 +78,16 @@ public interface LDAPv2 {
      * return.
      * <P>
      *
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int SIZELIMIT = 3;
 
     /**
      * Option specifying the maximum number of milliseconds to
      * wait for an operation to complete.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int TIMELIMIT = 4;
 
@@ -95,18 +95,18 @@ public interface LDAPv2 {
      * Option specifying the maximum number of milliseconds the 
      * server should spend returning search results before aborting
      * the search. 
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int SERVER_TIMELIMIT = 5;
 
     /**
      * Option specifying whether or not referrals to other LDAP
      * servers are followed automatically.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
-     * @see com.sun.identity.shared.ldap.LDAPRebind
-     * @see com.sun.identity.shared.ldap.LDAPRebindAuth
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPRebind
+     * @see iplanet.ldap.LDAPRebindAuth
      */
     public static final int REFERRALS = 8;
 
@@ -117,27 +117,27 @@ public interface LDAPv2 {
      * referred to another LDAP server, your client uses this object
      * to obtain the DN and password.  Your client authenticates to
      * the LDAP server using this DN and password.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
-     * @see com.sun.identity.shared.ldap.LDAPRebind
-     * @see com.sun.identity.shared.ldap.LDAPRebindAuth
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPRebind
+     * @see iplanet.ldap.LDAPRebindAuth
      */
     public static final int REFERRALS_REBIND_PROC = 9;
 
     /**
      * Option specifying the maximum number of referrals to follow
      * in a sequence when requesting an LDAP operation.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int REFERRALS_HOP_LIMIT   = 10;
     
     /**
      * Option specifying the object containing the method for
      * authenticating to the server.  
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
-     * @see com.sun.identity.shared.ldap.LDAPBind
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPBind
      */
     public static final int BIND = 13;
 
@@ -149,16 +149,16 @@ public interface LDAPv2 {
      * or extended operations), you should set this version to 3
      * or specify version 3 as an argument to the <CODE>authenticate</CODE>
      * method of the <CODE>LDAPConnection</CODE> object.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#authenticate(int, java.lang.String, java.lang.String)
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#authenticate(int, java.lang.String, java.lang.String)
      */
     public static final int PROTOCOL_VERSION = 17;
 
     /**
      * Option specifying the number of results to return at a time.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int BATCHSIZE = 20;
 
@@ -170,21 +170,21 @@ public interface LDAPv2 {
     /**
      * Specifies that the scope of a search includes
      * only the base DN (distinguished name).
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, iplanet.ldap.LDAPSearchConstraints)
      */
     public static final int SCOPE_BASE = 0;
 
     /**
      * Specifies that the scope of a search includes
      * only the entries one level below the base DN (distinguished name).
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)   */
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, iplanet.ldap.LDAPSearchConstraints)   */
     public static final int SCOPE_ONE = 1;
 
     /**
      * Specifies that the scope of a search includes
      * the base DN (distinguished name) and all entries at all levels
      * beneath that base.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)   */
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, iplanet.ldap.LDAPSearchConstraints)   */
     public static final int SCOPE_SUB = 2;
 
 
@@ -194,8 +194,8 @@ public interface LDAPv2 {
 
     /**
      * Specifies that aliases are never dereferenced.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int DEREF_NEVER = 0;
 
@@ -203,8 +203,8 @@ public interface LDAPv2 {
      * Specifies that aliases are dereferenced when searching the
      * entries beneath the starting point of the search (but
      * not when finding the starting entry).
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int DEREF_SEARCHING = 1;
 
@@ -212,15 +212,15 @@ public interface LDAPv2 {
      * Specifies that aliases are dereferenced when finding the
      * starting point for the search (but not when searching
      * under that starting entry).
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int DEREF_FINDING = 2;
 
     /**
      * Specifies that aliases are always dereferenced.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int DEREF_ALWAYS = 3;
 

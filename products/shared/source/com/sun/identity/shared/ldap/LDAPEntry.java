@@ -19,9 +19,9 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
-import com.sun.identity.shared.ldap.ber.stream.BERElement;
+import iplanet.ldap.ber.stream.BERElement;
 import java.util.*;
 
 /**
@@ -64,7 +64,7 @@ public class LDAPEntry implements java.io.Serializable {
      * set of attributes.
      * @param distinguishedName the distinguished name of the new entry
      * @param attrs the set of attributes to assign to the new entry
-     * @see com.sun.identity.shared.ldap.LDAPAttributeSet
+     * @see iplanet.ldap.LDAPAttributeSet
      */
     public LDAPEntry( String distinguishedName, LDAPAttributeSet attrs ) {
         dn = distinguishedName;
@@ -249,7 +249,7 @@ public class LDAPEntry implements java.io.Serializable {
     /**
      * Returns the attribute set of the entry.
      * @return set of attributes in the entry.
-     * @see com.sun.identity.shared.ldap.LDAPAttributeSet
+     * @see iplanet.ldap.LDAPAttributeSet
      */
     public LDAPAttributeSet getAttributeSet() {
         if ((content != null) && (offsetIndex != LDAPMessage.END)) {
@@ -293,8 +293,8 @@ public class LDAPEntry implements java.io.Serializable {
      *</PRE>
      * @return attribute set containing the attributes that have
      * the specified subtypes.
-     * @see com.sun.identity.shared.ldap.LDAPAttributeSet
-     * @see com.sun.identity.shared.ldap.LDAPAttributeSet#getSubset
+     * @see iplanet.ldap.LDAPAttributeSet
+     * @see iplanet.ldap.LDAPAttributeSet#getSubset
      */
     public LDAPAttributeSet getAttributeSet(String subtype) {
         if ((content != null) && (offsetIndex != LDAPMessage.END)) {
@@ -315,7 +315,7 @@ public class LDAPEntry implements java.io.Serializable {
      *</PRE>
      * @return attribute in the current entry that has exactly the same name,
      * or null (if no attribute in the entry matches the specified name).
-     * @see com.sun.identity.shared.ldap.LDAPAttribute
+     * @see iplanet.ldap.LDAPAttribute
      */
     public LDAPAttribute getAttribute(String attrName) {
         if ((content != null) && (offsetIndex != LDAPMessage.END)) {
@@ -349,7 +349,7 @@ public class LDAPEntry implements java.io.Serializable {
      * @param lang a language specification (for example, <CODE>lang-en</CODE>)
      * @return the attribute that matches the base name and that best
      * matches any specified language subtype.
-     * @see com.sun.identity.shared.ldap.LDAPAttribute
+     * @see iplanet.ldap.LDAPAttribute
      */
     public LDAPAttribute getAttribute( String attrName, String lang ) {
         if ((content != null) && (offsetIndex != LDAPMessage.END)) {

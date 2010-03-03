@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.util;
+package iplanet.ldap.util;
 
 import java.util.*;
 
@@ -41,7 +41,7 @@ import java.util.*;
  * <P>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.util.DN
+ * @see iplanet.ldap.util.DN
  */
 public final class RDN implements java.io.Serializable {
 
@@ -313,8 +313,8 @@ public final class RDN implements java.io.Serializable {
      * @param rdn the DN component to compare against the
      * current DN component.
      * @return <code>true</code> if the two DN components are equal.
-     * @see com.sun.identity.shared.ldap.util.RDN#registerAttributeSyntax
-     * @see com.sun.identity.shared.ldap.util.RDN#getAttributeSyntax
+     * @see iplanet.ldap.util.RDN#registerAttributeSyntax
+     * @see iplanet.ldap.util.RDN#getAttributeSyntax
      */
     public boolean equals(RDN rdn) {
         String[] this_types = (String[])getTypes().clone(); 
@@ -375,10 +375,10 @@ public final class RDN implements java.io.Serializable {
      * <code>equals()</code> method.
      * @param attr the attribute to register.
      * @param oid the syntax to register with the attribute.
-     * @see com.sun.identity.shared.ldap.util.RDN#equals
-     * @see com.sun.identity.shared.ldap.util.RDN#unregisterAttributeSyntax
-     * @see com.sun.identity.shared.ldap.util.RDN#getAttributeSyntax
-     * @see com.sun.identity.shared.ldap.util.RDN#getAttributesForSyntax
+     * @see iplanet.ldap.util.RDN#equals
+     * @see iplanet.ldap.util.RDN#unregisterAttributeSyntax
+     * @see iplanet.ldap.util.RDN#getAttributeSyntax
+     * @see iplanet.ldap.util.RDN#getAttributesForSyntax
      */
     public static void registerAttributeSyntax( String attr, String oid ) {
         m_attributehash.put( attr.toLowerCase(), oid );
@@ -387,9 +387,9 @@ public final class RDN implements java.io.Serializable {
     /**
      * Removes the the given attribute from the attribute syntax table. 
      * @param attr the attribute to remove.
-     * @see com.sun.identity.shared.ldap.util.RDN#registerAttributeSyntax
-     * @see com.sun.identity.shared.ldap.util.RDN#getAttributeSyntax
-     * @see com.sun.identity.shared.ldap.util.RDN#getAttributesForSyntax
+     * @see iplanet.ldap.util.RDN#registerAttributeSyntax
+     * @see iplanet.ldap.util.RDN#getAttributeSyntax
+     * @see iplanet.ldap.util.RDN#getAttributesForSyntax
      */
     public static void unregisterAttributeSyntax( String attr ) {
         m_attributehash.remove( attr.toLowerCase() );
@@ -400,9 +400,9 @@ public final class RDN implements java.io.Serializable {
      * in the internal attribute table.
      * @param attr the attribute to lookup in the table.
      * @return the syntax of the attribute if found, null otherwise.
-     * @see com.sun.identity.shared.ldap.util.RDN#unregisterAttributeSyntax
-     * @see com.sun.identity.shared.ldap.util.RDN#registerAttributeSyntax
-     * @see com.sun.identity.shared.ldap.util.RDN#getAttributesForSyntax
+     * @see iplanet.ldap.util.RDN#unregisterAttributeSyntax
+     * @see iplanet.ldap.util.RDN#registerAttributeSyntax
+     * @see iplanet.ldap.util.RDN#getAttributesForSyntax
      */
     public static String getAttributeSyntax( String attr ) {
         return (String)m_attributehash.get( attr.toLowerCase() );
@@ -413,9 +413,9 @@ public final class RDN implements java.io.Serializable {
      * <code>String</code> Array.
      * @param oid the syntax to look up in the table.
      * @return all attributes for the given syntax as a <code>String[]</code>
-     * @see com.sun.identity.shared.ldap.util.RDN#unregisterAttributeSyntax
-     * @see com.sun.identity.shared.ldap.util.RDN#registerAttributeSyntax
-     * @see com.sun.identity.shared.ldap.util.RDN#getAttributeSyntax
+     * @see iplanet.ldap.util.RDN#unregisterAttributeSyntax
+     * @see iplanet.ldap.util.RDN#registerAttributeSyntax
+     * @see iplanet.ldap.util.RDN#getAttributeSyntax
      */
     public static String[] getAttributesForSyntax( String oid ) {
         Enumeration itr = m_attributehash.keys();

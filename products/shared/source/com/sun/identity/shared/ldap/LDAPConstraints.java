@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 /**
  * Represents a set of operation preferences.
@@ -75,7 +75,7 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
      * (This field is <CODE>null</CODE> by default.)
      * @param hop_limit maximum number of referrals to follow in a
      * sequence when attempting to resolve a request
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption(int, java.lang.Object)
+     * @see iplanet.ldap.LDAPConnection#setOption(int, java.lang.Object)
      */
     public LDAPConstraints( int msLimit, boolean doReferrals, 
         LDAPRebind rebind_proc, int hop_limit) {
@@ -104,7 +104,7 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
      * server on referrals. (This field is <CODE>null</CODE> by default.)
      * @param hop_limit maximum number of referrals to follow in a
      * sequence when attempting to resolve a request
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption(int, java.lang.Object)
+     * @see iplanet.ldap.LDAPConnection#setOption(int, java.lang.Object)
      */
     public LDAPConstraints( int msLimit, boolean doReferrals, 
         LDAPBind bind_proc, int hop_limit) {
@@ -146,7 +146,7 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
      * server on referrals. This object must implement the <CODE>LDAPBind</CODE>
      * interface.
      * @return object to use to authenticate to the server on referrals.
-     * @see com.sun.identity.shared.ldap.LDAPBind
+     * @see iplanet.ldap.LDAPBind
      */
     public LDAPBind getBindProc() {
         return m_bind_proc;
@@ -158,8 +158,8 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
      * implement the <CODE>LDAPRebind</CODE> interface.
      * @return object to use to obtain information for
      * authenticating to other LDAP servers during referrals.
-     * @see com.sun.identity.shared.ldap.LDAPRebind
-     * @see com.sun.identity.shared.ldap.LDAPRebindAuth
+     * @see iplanet.ldap.LDAPRebind
+     * @see iplanet.ldap.LDAPRebindAuth
      */
     public LDAPRebind getRebindProc() {
         return m_rebind_proc;
@@ -177,9 +177,9 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
      * Returns any client controls to be applied by the client
      * to LDAP operations.
      * @return client controls for the client to apply to LDAP operations.
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public LDAPControl[] getClientControls() {
         return m_clientControls;
@@ -189,9 +189,9 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
      * Returns any server controls to be applied by the server
      * to LDAP operations.
      * @return server controls for the server to apply to LDAP operations.
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public LDAPControl[] getServerControls() {
         return m_serverControls;
@@ -206,7 +206,7 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
      * @param msLimit Maximum number of milliseconds to wait for operation
      * results (0 by default, which means that there is no maximum time 
      * limit.)
-     * @see com.sun.identity.shared.ldap.LDAPException#LDAP_TIMEOUT
+     * @see iplanet.ldap.LDAPException#LDAP_TIMEOUT
      */
     public void setTimeLimit( int msLimit ) {
         m_time_limit = msLimit;
@@ -233,9 +233,9 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
      * @param doReferrals set to <CODE>true</CODE> if referrals should be 
      * followed automatically, or <CODE>False</CODE> if referrals should throw 
      * an <CODE>LDAPReferralException</CODE>
-     * @see com.sun.identity.shared.ldap.LDAPBind
-     * @see com.sun.identity.shared.ldap.LDAPRebind
-     * @see com.sun.identity.shared.ldap.LDAPRebindAuth
+     * @see iplanet.ldap.LDAPBind
+     * @see iplanet.ldap.LDAPRebind
+     * @see iplanet.ldap.LDAPRebindAuth
      */
     public void setReferrals( boolean doReferrals ) {
         referrals = doReferrals;
@@ -249,7 +249,7 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
      * object to null for this constraint.
      * @param bind_proc object to use to authenticate to the server
      * on referrals
-     * @see com.sun.identity.shared.ldap.LDAPBind
+     * @see iplanet.ldap.LDAPBind
      */
     public void setBindProc( LDAPBind bind_proc ) {
         m_bind_proc = bind_proc;
@@ -286,7 +286,7 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
     /**
      * Sets a client control for LDAP operations.
      * @param control client control for LDAP operations
-     * @see com.sun.identity.shared.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPControl
      */
     public void setClientControls( LDAPControl control ) {
         m_clientControls = new LDAPControl[1];
@@ -296,7 +296,7 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
     /**
      * Sets an array of client controls for LDAP operations.
      * @param controls array of client controls for LDAP operations
-     * @see com.sun.identity.shared.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPControl
      */
     public void setClientControls( LDAPControl[] controls ) {
         m_clientControls = controls;
@@ -305,7 +305,7 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
     /**
      * Sets a server control for LDAP operations.
      * @param control server control for LDAP operations
-     * @see com.sun.identity.shared.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPControl
      */
     public void setServerControls( LDAPControl control ) {
         m_serverControls = new LDAPControl[1];
@@ -315,7 +315,7 @@ public class LDAPConstraints implements Cloneable, java.io.Serializable {
     /**
      * Sets an array of server controls for LDAP operations.
      * @param controls an array of server controls for LDAP operations
-     * @see com.sun.identity.shared.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPControl
      */
     public void setServerControls( LDAPControl[] controls ) {
         m_serverControls = controls;

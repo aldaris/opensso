@@ -19,12 +19,12 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.client;
+package iplanet.ldap.client;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.ber.stream.*;
+import iplanet.ldap.ber.stream.*;
 import java.io.*;
-import com.sun.identity.shared.ldap.LDAPRequestParser;
+import iplanet.ldap.LDAPRequestParser;
 
 /**
  * This class implements the attribute value assertion filter.

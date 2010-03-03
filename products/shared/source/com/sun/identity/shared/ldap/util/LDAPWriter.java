@@ -19,10 +19,10 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.util;
+package iplanet.ldap.util;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.*;
+import iplanet.ldap.*;
 import java.io.*;
 
 /**

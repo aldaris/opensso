@@ -19,9 +19,9 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
-import com.sun.identity.shared.ldap.*;
+import iplanet.ldap.*;
 import java.io.*;
 import java.net.*;
 import java.util.Hashtable;
@@ -39,7 +39,7 @@ import java.util.Hashtable;
  *
  * @version 1.0
  * @see LDAPSocketFactory
- * @see LDAPConnection#LDAPConnection(com.sun.identity.shared.ldap.LDAPSocketFactory)
+ * @see LDAPConnection#LDAPConnection(iplanet.ldap.LDAPSocketFactory)
  */
 public class LDAPSSLSocketWrapFactory implements LDAPSSLSocketFactoryExt,
     java.io.Serializable {

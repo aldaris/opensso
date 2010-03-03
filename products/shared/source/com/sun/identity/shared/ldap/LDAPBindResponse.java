@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPBindResponse.java,v 1.1 2009-11-20 23:52:58 ww203982 Exp $
+ * $Id: LDAPBindResponse.java,v 1.2 2010-03-03 21:31:24 beomsuk Exp $
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
-import com.sun.identity.shared.ldap.client.opers.JDAPBindResponse;
-import com.sun.identity.shared.ldap.ber.stream.BERElement;
+import iplanet.ldap.client.opers.JDAPBindResponse;
+import iplanet.ldap.ber.stream.BERElement;
 
 public class LDAPBindResponse extends LDAPResponse {
 

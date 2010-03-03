@@ -19,13 +19,13 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.client.*;
-import com.sun.identity.shared.ldap.client.opers.*;
-import com.sun.identity.shared.ldap.ber.stream.*;
-import com.sun.identity.shared.ldap.util.*;
+import iplanet.ldap.client.*;
+import iplanet.ldap.client.opers.*;
+import iplanet.ldap.ber.stream.*;
+import iplanet.ldap.util.*;
 import java.io.*;
 import java.net.*;
 //import javax.security.auth.callback.CallbackHandler;

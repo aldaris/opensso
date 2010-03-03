@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 import java.io.*;
@@ -51,7 +51,7 @@ import java.io.*;
  * } </PRE>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPRebind
+ * @see iplanet.ldap.LDAPRebind
  */
 public class LDAPRebindAuth implements java.io.Serializable {
 

@@ -20,10 +20,10 @@
  * Contributor(s):
  *     bugzilla 62700: Joe Rank (joer@trapdoor.net)
  */
-package com.sun.identity.shared.ldap.util;
+package iplanet.ldap.util;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.*;
+import iplanet.ldap.*;
 import java.io.*;
 
 /**

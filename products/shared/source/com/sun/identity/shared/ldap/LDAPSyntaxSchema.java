@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 
@@ -68,7 +68,7 @@ import java.util.*;
  * abstract class.
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPSchemaElement
+ * @see iplanet.ldap.LDAPSchemaElement
  **/
 
 public class LDAPSyntaxSchema extends LDAPSchemaElement {

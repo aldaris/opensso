@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 /**
  * Represents a set of search preferences.
@@ -94,11 +94,11 @@ public class LDAPSearchConstraints extends LDAPConstraints
      * (This field is <CODE>null</CODE> by default.)
      * @param hop_limit maximum number of referrals to follow in a
      * sequence when attempting to resolve a request
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption(int, java.lang.Object)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(com.sun.identity.shared.ldap.LDAPUrl,
-com.sun.identity.shared.ldap.LDAPSearchConstraints)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String,
-java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
+     * @see iplanet.ldap.LDAPConnection#setOption(int, java.lang.Object)
+     * @see iplanet.ldap.LDAPConnection#search(iplanet.ldap.LDAPUrl,
+iplanet.ldap.LDAPSearchConstraints)
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String,
+java.lang.String[], boolean, iplanet.ldap.LDAPSearchConstraints)
      */
     public LDAPSearchConstraints( int msLimit, int dereference,
         int maxResults, boolean doReferrals, int batchSize,
@@ -140,11 +140,11 @@ java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
      * (This field is <CODE>null</CODE> by default.)
      * @param hop_limit maximum number of referrals to follow in a
      * sequence when attempting to resolve a request
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption(int, java.lang.Object)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(com.sun.identity.shared.ldap.LDAPUrl,
-com.sun.identity.shared.ldap.LDAPSearchConstraints)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String,
-java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
+     * @see iplanet.ldap.LDAPConnection#setOption(int, java.lang.Object)
+     * @see iplanet.ldap.LDAPConnection#search(iplanet.ldap.LDAPUrl,
+iplanet.ldap.LDAPSearchConstraints)
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String,
+java.lang.String[], boolean, iplanet.ldap.LDAPSearchConstraints)
      */
     public LDAPSearchConstraints( int msLimit, int timeLimit,
                                   int dereference,
@@ -188,11 +188,11 @@ java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
      * (This field is <CODE>null</CODE> by default.)
      * @param hop_limit maximum number of referrals to follow in a
      * sequence when attempting to resolve a request
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption(int, java.lang.Object)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(com.sun.identity.shared.ldap.LDAPUrl,
-com.sun.identity.shared.ldap.LDAPSearchConstraints)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String,
-java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
+     * @see iplanet.ldap.LDAPConnection#setOption(int, java.lang.Object)
+     * @see iplanet.ldap.LDAPConnection#search(iplanet.ldap.LDAPUrl,
+iplanet.ldap.LDAPSearchConstraints)
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String,
+java.lang.String[], boolean, iplanet.ldap.LDAPSearchConstraints)
      */
     public LDAPSearchConstraints( int msLimit, int timeLimit,
                                   int dereference,
@@ -350,7 +350,7 @@ java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
      * reference, <CODE>REFERRAL_ERROR_EXCEPTION</CODE> if such an error is to
      * cause an <CODE>LDAPException</CODE>.
      * 
-     * @see com.sun.identity.shared.ldap.LDAPConstraints#setReferrals
+     * @see iplanet.ldap.LDAPConstraints#setReferrals
      * @since LDAPJDK 4.17
      */
     public int getReferralErrors() {
@@ -391,9 +391,9 @@ java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
      * search continuation reference or <CODE>REFERRAL_ERROR_EXCEPTION</CODE>
      * if such an error is to cause an <CODE>LDAPException</CODE>.
      * 
-     * @see com.sun.identity.shared.ldap.LDAPSearchConstraints#getReferralErrors
-     * @see com.sun.identity.shared.ldap.LDAPSearchResults#next
-     * @see com.sun.identity.shared.ldap.LDAPSearchResults#nextElement
+     * @see iplanet.ldap.LDAPSearchConstraints#getReferralErrors
+     * @see iplanet.ldap.LDAPSearchResults#next
+     * @see iplanet.ldap.LDAPSearchResults#nextElement
      * @since LDAPJDK 4.17
      */
     public void setReferralErrors(int errorBehavior) {

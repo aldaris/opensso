@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 
@@ -50,7 +50,7 @@ import java.util.*;
  * <P>
  *
  * <PRE>
- * import com.sun.identity.shared.ldap.*;
+ * import iplanet.ldap.*;
  * public class TestSchema {
  *     public static void main( String[] args ) {
  *         String HOSTNAME = "ldap.example.com";
@@ -141,10 +141,10 @@ import java.util.*;
  * }
  * </PRE>
  *
- * @see com.sun.identity.shared.ldap.LDAPAttributeSchema
- * @see com.sun.identity.shared.ldap.LDAPObjectClassSchema
- * @see com.sun.identity.shared.ldap.LDAPMatchingRuleSchema
- * @see com.sun.identity.shared.ldap.LDAPSchemaElement
+ * @see iplanet.ldap.LDAPAttributeSchema
+ * @see iplanet.ldap.LDAPObjectClassSchema
+ * @see iplanet.ldap.LDAPMatchingRuleSchema
+ * @see iplanet.ldap.LDAPSchemaElement
  * @version 1.0
  * @author Rob Weltman
  **/
@@ -162,7 +162,7 @@ public class LDAPSchema implements java.io.Serializable {
      * <CODE>main</CODE> method. For example, you can enter
      * the following command:
      * <PRE>
-     * java com.sun.identity.shared.ldap.LDAPSchema myhost.mydomain.com 389
+     * java iplanet.ldap.LDAPSchema myhost.mydomain.com 389
      * </PRE>
      *
      * Note that you need to call <CODE>fetchSchema</CODE>
@@ -170,8 +170,8 @@ public class LDAPSchema implements java.io.Serializable {
      * object does not fetch the schema.
      * <P>
      *
-     * @see com.sun.identity.shared.ldap.LDAPSchema#fetchSchema
-     * @see com.sun.identity.shared.ldap.LDAPSchema#main
+     * @see iplanet.ldap.LDAPSchema#fetchSchema
+     * @see iplanet.ldap.LDAPSchema#main
      */
     public LDAPSchema() {
     }
@@ -201,9 +201,9 @@ public class LDAPSchema implements java.io.Serializable {
      *
      * @param objectSchema <CODE>LDAPObjectClassSchema</CODE> object
      * representing the object class schema definition to add
-     * @see com.sun.identity.shared.ldap.LDAPObjectClassSchema
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#add
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#remove
+     * @see iplanet.ldap.LDAPObjectClassSchema
+     * @see iplanet.ldap.LDAPSchemaElement#add
+     * @see iplanet.ldap.LDAPSchemaElement#remove
      */
     public void addObjectClass( LDAPObjectClassSchema objectSchema ) {
         objectClasses.put( objectSchema.getName().toLowerCase(),
@@ -231,9 +231,9 @@ public class LDAPSchema implements java.io.Serializable {
      *
      * @param attrSchema <CODE>LDAPAttributeSchema</CODE> object
      * representing the attribute type schema definition to add
-     * @see com.sun.identity.shared.ldap.LDAPAttributeSchema
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#add
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#remove
+     * @see iplanet.ldap.LDAPAttributeSchema
+     * @see iplanet.ldap.LDAPSchemaElement#add
+     * @see iplanet.ldap.LDAPSchemaElement#remove
      */
     public void addAttribute( LDAPAttributeSchema attrSchema ) {
         attributes.put( attrSchema.getName().toLowerCase(), attrSchema );
@@ -260,9 +260,9 @@ public class LDAPSchema implements java.io.Serializable {
      *
      * @param matchSchema <CODE>LDAPMatchingRuleSchema</CODE> object
      * representing the matching rule schema definition to add
-     * @see com.sun.identity.shared.ldap.LDAPMatchingRuleSchema
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#add
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#remove
+     * @see iplanet.ldap.LDAPMatchingRuleSchema
+     * @see iplanet.ldap.LDAPSchemaElement#add
+     * @see iplanet.ldap.LDAPSchemaElement#remove
      */
     public void addMatchingRule( LDAPMatchingRuleSchema matchSchema ) {
         matchingRules.put( matchSchema.getName().toLowerCase(), matchSchema );
@@ -289,9 +289,9 @@ public class LDAPSchema implements java.io.Serializable {
      *
      * @param syntaxSchema <CODE>LDAPSyntaxSchema</CODE> object
      * representing the syntax schema definition to add
-     * @see com.sun.identity.shared.ldap.LDAPSyntaxSchema
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#add
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#remove
+     * @see iplanet.ldap.LDAPSyntaxSchema
+     * @see iplanet.ldap.LDAPSchemaElement#add
+     * @see iplanet.ldap.LDAPSchemaElement#remove
      */
     public void addSyntax( LDAPSyntaxSchema syntaxSchema ) {
         String name = syntaxSchema.getName().toLowerCase();
@@ -322,9 +322,9 @@ public class LDAPSchema implements java.io.Serializable {
      *
      * @param rule <CODE>LDAPDITStructureRuleSchema</CODE> object
      * representing the structure rule definition to add
-     * @see com.sun.identity.shared.ldap.LDAPDITStructureRuleSchema
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#add
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#remove
+     * @see iplanet.ldap.LDAPDITStructureRuleSchema
+     * @see iplanet.ldap.LDAPSchemaElement#add
+     * @see iplanet.ldap.LDAPSchemaElement#remove
      */
     public void addDITStructureRule( LDAPDITStructureRuleSchema rule ) {
         String name = rule.getName().toLowerCase();
@@ -353,9 +353,9 @@ public class LDAPSchema implements java.io.Serializable {
      *
      * @param rule <CODE>LDAPDITContentRuleSchema</CODE> object
      * representing the content rule definition to add
-     * @see com.sun.identity.shared.ldap.LDAPDITContentRuleSchema
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#add
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#remove
+     * @see iplanet.ldap.LDAPDITContentRuleSchema
+     * @see iplanet.ldap.LDAPSchemaElement#add
+     * @see iplanet.ldap.LDAPSchemaElement#remove
      */
     public void addDITContentRule( LDAPDITContentRuleSchema rule ) {
         String name = rule.getName().toLowerCase();
@@ -383,9 +383,9 @@ public class LDAPSchema implements java.io.Serializable {
      *
      * @param nameForm <CODE>LDAPNameFormSchema</CODE> object
      * representing the name form definition to add
-     * @see com.sun.identity.shared.ldap.LDAPNameFormSchema
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#add
-     * @see com.sun.identity.shared.ldap.LDAPSchemaElement#remove
+     * @see iplanet.ldap.LDAPNameFormSchema
+     * @see iplanet.ldap.LDAPSchemaElement#add
+     * @see iplanet.ldap.LDAPSchemaElement#remove
      */
     public void addNameForm( LDAPNameFormSchema nameForm ) {
         String name = nameForm.getName().toLowerCase();
@@ -883,16 +883,16 @@ public class LDAPSchema implements java.io.Serializable {
      * same as the format expected by an LDAP server).  For example,
      * you can enter the following command to print the schema:
      * <PRE>
-     * java com.sun.identity.shared.ldap.LDAPSchema myhost.mydomain.com 389
+     * java iplanet.ldap.LDAPSchema myhost.mydomain.com 389
      * </PRE>
      *
      * @param args the host name and the port number of the LDAP server
-     * (for example, <CODE>com.sun.identity.shared.ldap.LDAPSchema ds.example.com
+     * (for example, <CODE>iplanet.ldap.LDAPSchema ds.example.com
      * 389</CODE>)
      */
     public static void main( String[] args ) {
         if ( args.length < 2 ) {
-            System.err.println( "Usage: com.sun.identity.shared.ldap.LDAPSchema HOST PORT" );
+            System.err.println( "Usage: iplanet.ldap.LDAPSchema HOST PORT" );
             System.exit(1 );
         }
         int port = Integer.parseInt( args[1] );

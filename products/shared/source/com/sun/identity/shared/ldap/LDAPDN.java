@@ -19,10 +19,10 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.util.*;
+import iplanet.ldap.util.*;
 import java.io.*;
 
 /**
@@ -44,7 +44,7 @@ public class LDAPDN {
      * @param noTypes if <CODE>true</CODE>, returns only the values of the
      * components and not the names (such as 'cn=')
      * @return an array of strings representing the components of the DN.
-     * @see com.sun.identity.shared.ldap.LDAPDN#explodeRDN(java.lang.String, boolean)
+     * @see iplanet.ldap.LDAPDN#explodeRDN(java.lang.String, boolean)
      */
     public static String[] explodeDN (String dn, boolean noTypes) {
         return explodeDN(new DN(dn), noTypes);
@@ -60,7 +60,7 @@ public class LDAPDN {
      * @param noTypes if <CODE>true</CODE>, returns only the values of the
      * components and not the names (such as 'cn=')
      * @return an array of strings representing the components of the RDN.
-     * @see com.sun.identity.shared.ldap.LDAPDN#explodeDN(java.lang.String, boolean)
+     * @see iplanet.ldap.LDAPDN#explodeDN(java.lang.String, boolean)
      */
     public static String[] explodeRDN (String rdn, boolean noTypes) {
         return explodeRDN(new RDN(rdn), noTypes);
@@ -78,13 +78,13 @@ public class LDAPDN {
 
     /**
      * Returns the RDN after escaping the characters specified
-     * by <CODE>com.sun.identity.shared.ldap.util.DN.ESCAPED_CHAR</CODE>.
+     * by <CODE>iplanet.ldap.util.DN.ESCAPED_CHAR</CODE>.
      * <P>
      *
      * @param rdn the RDN to escape
      * @return the RDN with the characters escaped.
-     * @see com.sun.identity.shared.ldap.util.DN#ESCAPED_CHAR
-     * @see com.sun.identity.shared.ldap.LDAPDN#unEscapeRDN(java.lang.String)
+     * @see iplanet.ldap.util.DN#ESCAPED_CHAR
+     * @see iplanet.ldap.LDAPDN#unEscapeRDN(java.lang.String)
      */
     public static String escapeRDN(String rdn) {
 
@@ -159,13 +159,13 @@ public class LDAPDN {
     /**
      * Returns the RDN after unescaping any escaped characters.
      * For a list of characters that are typically escaped in a
-     * DN, see <CODE>com.sun.identity.shared.ldap.LDAPDN.ESCAPED_CHAR</CODE>.
+     * DN, see <CODE>iplanet.ldap.LDAPDN.ESCAPED_CHAR</CODE>.
      * <P>
      *
      * @param rdn the RDN to unescape
      * @return the unescaped RDN.
-     * @see com.sun.identity.shared.ldap.util.DN#ESCAPED_CHAR
-     * @see com.sun.identity.shared.ldap.LDAPDN#escapeRDN(java.lang.String)
+     * @see iplanet.ldap.util.DN#ESCAPED_CHAR
+     * @see iplanet.ldap.LDAPDN#escapeRDN(java.lang.String)
      */
     public static String unEscapeRDN(String rdn) {
         RDN name = new RDN(rdn);

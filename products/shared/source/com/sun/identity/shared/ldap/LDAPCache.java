@@ -19,16 +19,16 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
-import com.sun.identity.common.GeneralTaskRunnable;
-import com.sun.identity.common.SystemTimerPool;
-import com.sun.identity.common.TimerPool;
-import com.sun.identity.shared.ldap.*;
+import iplanet.common.GeneralTaskRunnable;
+import iplanet.common.SystemTimerPool;
+import iplanet.common.TimerPool;
+import iplanet.ldap.*;
 import java.util.*;
 import java.io.*;
-import com.sun.identity.shared.ldap.client.*;
-import com.sun.identity.shared.ldap.util.*;
+import iplanet.ldap.client.*;
+import iplanet.ldap.util.*;
 import java.util.zip.CRC32;
 
 /**
@@ -107,8 +107,8 @@ import java.util.zip.CRC32;
  * for flushing entries from the cache.
  * <P>
  *
- * @see com.sun.identity.shared.ldap.LDAPConnection#setCache(com.sun.identity.shared.ldap.LDAPCache)
- * @see com.sun.identity.shared.ldap.LDAPConnection#getCache
+ * @see iplanet.ldap.LDAPConnection#setCache(iplanet.ldap.LDAPCache)
+ * @see iplanet.ldap.LDAPConnection#getCache
  */
 public class LDAPCache implements Serializable {
     static final long serialVersionUID = 6275167993337814294L;

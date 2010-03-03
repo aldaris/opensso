@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 /*
  * This object represents the value of the LDAPConnection.m_responseControlTable hashtable.

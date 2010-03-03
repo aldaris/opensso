@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 
 /**
@@ -40,7 +40,7 @@ public class LDAPResponseListener extends LDAPMessageQueue {
      * Constructor
      * @param asynchOp a boolean flag that is true if the object is used for 
      * asynchronous LDAP operations
-     * @see com.sun.identity.shared.ldap.LDAPAsynchronousConnection
+     * @see iplanet.ldap.LDAPAsynchronousConnection
      */
     LDAPResponseListener(boolean asynchOp) {
         super(asynchOp);

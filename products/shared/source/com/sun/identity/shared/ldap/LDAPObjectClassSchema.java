@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 
@@ -101,7 +101,7 @@ import java.util.*;
  * </PRE>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPSchemaElement
+ * @see iplanet.ldap.LDAPSchemaElement
  **/
 public class LDAPObjectClassSchema extends LDAPSchemaElement {
 
@@ -235,7 +235,7 @@ public class LDAPObjectClassSchema extends LDAPSchemaElement {
      * @return the name of the object class from which this class
      * inherits. If it inherits from more than one class, only one
      * is returned.
-     * @see com.sun.identity.shared.ldap.LDAPObjectClassSchema#getSuperiors
+     * @see iplanet.ldap.LDAPObjectClassSchema#getSuperiors
      */
     public String getSuperior() {
         String[] superiors = getSuperiors();

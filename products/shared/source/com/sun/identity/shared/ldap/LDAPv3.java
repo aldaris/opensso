@@ -19,11 +19,11 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.client.*;
-import com.sun.identity.shared.ldap.client.opers.*;
+import iplanet.ldap.client.*;
+import iplanet.ldap.client.opers.*;
 import java.io.*;
 
 /**
@@ -140,7 +140,7 @@ public interface LDAPv3 extends LDAPv2 {
      * Returns an array of the latest controls (if any) from the server.
      * @return an array of the controls returned by an operation,
      * or <CODE>null</CODE> if none.
-     * @see com.sun.identity.shared.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPControl
      */
     public LDAPControl[] getResponseControls();
 
@@ -148,9 +148,9 @@ public interface LDAPv3 extends LDAPv2 {
      * Option specifying client controls for LDAP operations. These
      * controls are interpreted by the client and are not passed
      * to the LDAP server.
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int CLIENTCONTROLS   = 11;
 
@@ -158,9 +158,9 @@ public interface LDAPv3 extends LDAPv2 {
      * Option specifying server controls for LDAP operations. These
      * controls are passed to the LDAP server. They may also be returned by
      * the server.
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int SERVERCONTROLS   = 12;
 
@@ -168,7 +168,7 @@ public interface LDAPv3 extends LDAPv2 {
      * Attribute type that you can specify in the LDAPConnection
      * search method if you don't want to retrieve any of the
      * attribute types for entries found by the search.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search
+     * @see iplanet.ldap.LDAPConnection#search
      */
     public static final String NO_ATTRS = "1.1";
 
@@ -187,7 +187,7 @@ public interface LDAPv3 extends LDAPv2 {
      *     LDAPConnection.SCOPE_SUB, MY_FILTER, MY_ATTRS, false, cons );
      * ...
      * </PRE>
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search
+     * @see iplanet.ldap.LDAPConnection#search
      */
     public static final String ALL_USER_ATTRS = "*";
 

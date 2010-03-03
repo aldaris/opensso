@@ -19,10 +19,10 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.util;
+package iplanet.ldap.util;
 
 import java.util.Vector;
-import com.sun.identity.shared.ldap.LDAPAttribute;
+import iplanet.ldap.LDAPAttribute;
 
 /**
  * An object of this class represents the content of an LDIF record that
@@ -36,7 +36,7 @@ import com.sun.identity.shared.ldap.LDAPAttribute;
  * <P>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
+ * @see iplanet.ldap.util.LDIFRecord#getContent
  */
 public class LDIFAttributeContent extends LDIFBaseContent {
 
@@ -50,7 +50,7 @@ public class LDIFAttributeContent extends LDIFBaseContent {
      * Constructs an empty <CODE>LDIFAttributeContent</CODE> object with
      * no attributes specified.  You can use the <CODE>addElement</CODE>
      * method to add attributes to this object.
-     * @see com.sun.identity.shared.ldap.util.LDIFAttributeContent#addElement
+     * @see iplanet.ldap.util.LDIFAttributeContent#addElement
      */
     public LDIFAttributeContent() {
     }
@@ -61,7 +61,7 @@ public class LDIFAttributeContent extends LDIFBaseContent {
      * object to determine the type of content specified in the record.
      * @return the content type (which is
      * <CODE>LDIFContent.ATTRIBUTE_CONTENT</CODE>).
-     * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
+     * @see iplanet.ldap.util.LDIFRecord#getContent
      */
     public int getType() {
         return ATTRIBUTE_CONTENT;

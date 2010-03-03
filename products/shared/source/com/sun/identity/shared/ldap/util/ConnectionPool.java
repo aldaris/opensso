@@ -28,10 +28,10 @@
  *                would not affect pool operations.
  *
  */
-package com.sun.identity.shared.ldap.util;
+package iplanet.ldap.util;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.*;
+import iplanet.ldap.*;
 
 /**
  * Class to maintain a pool of individual connections to the

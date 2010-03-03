@@ -19,15 +19,15 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
-import com.sun.identity.shared.ldap.ber.stream.*;
-import com.sun.identity.shared.ldap.client.*;
-import com.sun.identity.shared.ldap.util.*;
-import com.sun.identity.shared.ldap.controls.*;
+import iplanet.ldap.ber.stream.*;
+import iplanet.ldap.client.*;
+import iplanet.ldap.util.*;
+import iplanet.ldap.controls.*;
 
 /**
  * Represents arbitrary control data that can be used with a
@@ -160,16 +160,16 @@ import com.sun.identity.shared.ldap.controls.*;
  * <P>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPv3#CLIENTCONTROLS
- * @see com.sun.identity.shared.ldap.LDAPv3#SERVERCONTROLS
- * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean)
- * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
- * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
- * @see com.sun.identity.shared.ldap.LDAPConnection#getResponseControls
- * @see com.sun.identity.shared.ldap.LDAPConstraints#getClientControls
- * @see com.sun.identity.shared.ldap.LDAPConstraints#getServerControls
- * @see com.sun.identity.shared.ldap.LDAPConstraints#setClientControls
- * @see com.sun.identity.shared.ldap.LDAPConstraints#setServerControls
+ * @see iplanet.ldap.LDAPv3#CLIENTCONTROLS
+ * @see iplanet.ldap.LDAPv3#SERVERCONTROLS
+ * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean)
+ * @see iplanet.ldap.LDAPConnection#getOption
+ * @see iplanet.ldap.LDAPConnection#setOption
+ * @see iplanet.ldap.LDAPConnection#getResponseControls
+ * @see iplanet.ldap.LDAPConstraints#getClientControls
+ * @see iplanet.ldap.LDAPConstraints#getServerControls
+ * @see iplanet.ldap.LDAPConstraints#setClientControls
+ * @see iplanet.ldap.LDAPConstraints#setServerControls
  */
 public class LDAPControl implements Cloneable, java.io.Serializable {
     static final long serialVersionUID = 5149887553272603753L;
@@ -211,8 +211,8 @@ public class LDAPControl implements Cloneable, java.io.Serializable {
      * cancelled when the server does not support this control (in other
      * words, this control is critical to the LDAP operation)
      * @param vals control-specific data
-     * @see com.sun.identity.shared.ldap.LDAPConstraints#setClientControls
-     * @see com.sun.identity.shared.ldap.LDAPConstraints#setServerControls
+     * @see iplanet.ldap.LDAPConstraints#setClientControls
+     * @see iplanet.ldap.LDAPConstraints#setServerControls
      */
     public LDAPControl(String id,
              boolean critical,
@@ -314,7 +314,7 @@ public class LDAPControl implements Cloneable, java.io.Serializable {
      * @param oid the string representation of the oid
      * @param controlClass the class that instantatiates the control associated
      * with oid
-     * @exception com.sun.identity.shared.ldap.LDAPException If the class parameter is not
+     * @exception iplanet.ldap.LDAPException If the class parameter is not
      * a subclass of <CODE>LDAPControl</CODE> or the class parameter does not
      * implement the <CODE>LDAPControl(String oid, boolean critical, byte[] value)
      * </CODE> constructor.
@@ -360,7 +360,7 @@ public class LDAPControl implements Cloneable, java.io.Serializable {
      * @param oid a String that associates the control class to a control
      * @return a <CODE>Class</CODE> that can instantiate a control of the
      * type specified by oid.
-     * @see com.sun.identity.shared.ldap.LDAPControl#register
+     * @see iplanet.ldap.LDAPControl#register
      *
      */
     protected static Class lookupControlClass(String oid) {
@@ -381,7 +381,7 @@ public class LDAPControl implements Cloneable, java.io.Serializable {
      * @param critical <CODE>true</CODE> if this is a critical control
      * @param value the byte value for the control
      * @return a newly instantiated <CODE>LDAPControl</CODE>.
-     * @see com.sun.identity.shared.ldap.LDAPControl#register
+     * @see iplanet.ldap.LDAPControl#register
      */ 
   protected static LDAPControl createControl(String oid, boolean critical,
                                              byte[] value) {
@@ -434,7 +434,7 @@ public class LDAPControl implements Cloneable, java.io.Serializable {
      * is instantiated using the parameters.
      * @param el the <CODE>BERElement</CODE> containing the control
      * @return a newly instantiated <CODE>LDAPControl</CODE>.
-     * @see com.sun.identity.shared.ldap.LPAPControl#register
+     * @see iplanet.ldap.LPAPControl#register
      * 
      * Note:
      * This code was extracted from <CODE>JDAPControl(BERElement el)</CODE>
@@ -478,7 +478,7 @@ public class LDAPControl implements Cloneable, java.io.Serializable {
      * from the message fragment.
      * @exception java.lang.IOException If the data passed to this method
      * is not a valid LDAP message fragment.
-     * @see com.sun.identity.shared.ldap.LDAPControl#register
+     * @see iplanet.ldap.LDAPControl#register
      */
     public static LDAPControl[] newInstance(byte[] data) throws IOException {
         

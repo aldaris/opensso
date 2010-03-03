@@ -19,10 +19,10 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.util;
+package iplanet.ldap.util;
 
 import java.util.Vector;
-import com.sun.identity.shared.ldap.LDAPModification;
+import iplanet.ldap.LDAPModification;
 
 /**
  * An object of this class represents the content of an LDIF record that
@@ -36,7 +36,7 @@ import com.sun.identity.shared.ldap.LDAPModification;
  * <P>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
+ * @see iplanet.ldap.util.LDIFRecord#getContent
  */
 public class LDIFModifyContent extends LDIFBaseContent {
     /**
@@ -49,7 +49,7 @@ public class LDIFModifyContent extends LDIFBaseContent {
      * Constructs an empty <CODE>LDIFModifyContent</CODE> object.
      * To specify the modifications to be made to the entry, use
      * the <CODE>addElement</CODE> method.
-     * @see com.sun.identity.shared.ldap.util.LDIFModifyContent#addElement
+     * @see iplanet.ldap.util.LDIFModifyContent#addElement
      */
     public LDIFModifyContent() {
     }
@@ -60,7 +60,7 @@ public class LDIFModifyContent extends LDIFBaseContent {
      * object to determine the type of content specified in the record.
      * @return the content type (which is
      * <CODE>LDIFContent.MODIFICATION_CONTENT</CODE>).
-     * @see com.sun.identity.shared.ldap.util.LDIFRecord#getContent
+     * @see iplanet.ldap.util.LDIFRecord#getContent
      */
     public int getType() {
         return MODIFICATION_CONTENT;
@@ -71,7 +71,7 @@ public class LDIFModifyContent extends LDIFBaseContent {
      * the entry.
      * @param mod <CODE>LDAPModification</CODE> object representing
      * the change to make to the entry
-     * @see com.sun.identity.shared.ldap.LDAPModification
+     * @see iplanet.ldap.LDAPModification
      */
     public void addElement(LDAPModification mod) {
         m_mods.addElement(mod);
@@ -82,7 +82,7 @@ public class LDIFModifyContent extends LDIFBaseContent {
      * of the LDIF record.
      * @return an array of <CODE>LDAPModification</CODE> objects that
      * represent the modifications specified in the content of the LDIF record.
-     * @see com.sun.identity.shared.ldap.LDAPModification
+     * @see iplanet.ldap.LDAPModification
      */
     public LDAPModification[] getModifications() {
         LDAPModification mods[] = new LDAPModification[m_mods.size()];

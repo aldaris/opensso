@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 import java.io.*;
@@ -42,8 +42,8 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPSearchListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPEntry
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPEntry
+     * @see iplanet.ldap.LDAPResponseListener
      */    
     public LDAPResponseListener add(LDAPEntry entry,
                                     LDAPResponseListener listener)
@@ -64,9 +64,9 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPEntry
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPEntry
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     public LDAPResponseListener add(LDAPEntry entry,
                                     LDAPResponseListener listener,
@@ -92,7 +92,7 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPResponseListener
      */
     public LDAPResponseListener bind(String dn,
                                      String passwd,
@@ -120,8 +120,8 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     public LDAPResponseListener bind(String dn,
                                      String passwd,
@@ -139,8 +139,8 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     public LDAPResponseListener delete(String dn,
                                        LDAPResponseListener listener)
@@ -156,8 +156,8 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */    
     public LDAPResponseListener delete(String dn,
                                       LDAPResponseListener listener,
@@ -178,8 +178,8 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPModification
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPModification
+     * @see iplanet.ldap.LDAPResponseListener
      */
     public LDAPResponseListener modify(String dn,
                                        LDAPModification mod,
@@ -201,9 +201,9 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPModification
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPModification
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     public LDAPResponseListener modify(String dn,
                                        LDAPModification mod,
@@ -223,8 +223,8 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPModificationSet
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPModificationSet
+     * @see iplanet.ldap.LDAPResponseListener
      */
     public LDAPResponseListener modify(String dn,
                                        LDAPModificationSet mods,
@@ -244,9 +244,9 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPModificationSet
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPModificationSet
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     public LDAPResponseListener modify(String dn,
                                        LDAPModificationSet mods,
@@ -266,7 +266,7 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPResponseListener
      */
     public LDAPResponseListener rename(String dn,
                                        String newRdn,
@@ -287,8 +287,8 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     public LDAPResponseListener rename(String dn,
                                        String newRdn,
@@ -322,7 +322,7 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPSearchListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPAsynchronousConnection#abandon(com.sun.identity.shared.ldap.LDAPSearchListener)
+     * @see iplanet.ldap.LDAPAsynchronousConnection#abandon(iplanet.ldap.LDAPSearchListener)
      */
     public LDAPSearchListener search(String base,
                                      int scope,
@@ -362,7 +362,7 @@ public interface LDAPAsynchronousConnection {
      * @return LDAPSearchListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPAsynchronousConnection#abandon(com.sun.identity.shared.ldap.LDAPSearchListener)
+     * @see iplanet.ldap.LDAPAsynchronousConnection#abandon(iplanet.ldap.LDAPSearchListener)
      */
     public LDAPSearchListener search(String base,
                                      int scope,

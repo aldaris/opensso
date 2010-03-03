@@ -19,12 +19,12 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.controls;
+package iplanet.ldap.controls;
 
 import java.io.*;
-import com.sun.identity.shared.ldap.client.JDAPBERTagDecoder;
-import com.sun.identity.shared.ldap.LDAPControl;
-import com.sun.identity.shared.ldap.ber.stream.*;
+import iplanet.ldap.client.JDAPBERTagDecoder;
+import iplanet.ldap.LDAPControl;
+import iplanet.ldap.ber.stream.*;
 
 /**
  * Represents an LDAP v3 server control that specifies a persistent
@@ -107,8 +107,8 @@ import com.sun.identity.shared.ldap.ber.stream.*;
  * }
  * </PRE>
  *
- * @see com.sun.identity.shared.ldap.LDAPControl
- * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl
+ * @see iplanet.ldap.LDAPControl
+ * @see iplanet.ldap.controls.LDAPEntryChangeControl
  */
 
 public class LDAPPersistSearchControl extends LDAPControl {
@@ -148,8 +148,8 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * the search operation. (If the server does not support
      * this control, you may not want the server to perform the search
      * at all.)
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.controls.LDAPEntryChangeControl
      */
     public LDAPPersistSearchControl(int changeTypes, boolean changesOnly,
         boolean returnControls, boolean isCritical) {
@@ -171,7 +171,7 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * This value can be the bitwise OR of <code>ADD, DELETE, MODIFY,</code>
      * and/or <code>MODDN</code>. If the change type is unknown,
      * this method returns -1.
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#setChangeTypes
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#setChangeTypes
      */
     public int getChangeTypes() {
         return m_changeTypes;
@@ -185,7 +185,7 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * entries that have changed.  If <code>false</code>, the server
      * also returns any existing entries that match the search criteria
      * but have not changed.
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#setChangesOnly
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#setChangesOnly
      */
     public boolean getChangesOnly() {
         return m_changesOnly;
@@ -198,8 +198,8 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * @return <code>true</code> if the server includes "entry change
      * notification" controls with the entries it sends during the
      * persistent search.
-     * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#setReturnControls
+     * @see iplanet.ldap.controls.LDAPEntryChangeControl
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#setReturnControls
      */
     public boolean getReturnControls() {
         return m_returnECs;
@@ -210,7 +210,7 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * @param types integer representing the change types to monitor
      * This value can be the bitwise OR of <code>ADD, DELETE, MODIFY,</code>
      * and/or <code>MODDN</code>.
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#getChangeTypes
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#getChangeTypes
      */
     public void setChangeTypes(int types) {
         m_changeTypes = types;
@@ -224,7 +224,7 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * entries that have changed.  If <code>false</code>, the server
      * also returns any existing entries that match the search criteria
      * but have not changed.
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#getChangesOnly
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#getChangesOnly
      */
     public void setChangesOnly(boolean changesOnly) {
         m_changesOnly = changesOnly;
@@ -237,8 +237,8 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * @param returnControls if <code>true</code>, the server includes
      * "entry change notification" controls with the entries it sends
      * during the persistent search
-     * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#setReturnControls
+     * @see iplanet.ldap.controls.LDAPEntryChangeControl
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#setReturnControls
      */
     public void setReturnControls(boolean returnControls) {
         m_returnECs = returnControls;
@@ -381,8 +381,8 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * @return an <CODE>LDAPEntryChangeControl</CODE> object representing
      * the entry change control sent by the server.  If no entry change
      * control was sent, this method returns null.
-     * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getResponseControls
+     * @see iplanet.ldap.controls.LDAPEntryChangeControl
+     * @see iplanet.ldap.LDAPConnection#getResponseControls
      * @deprecated LDAPEntryChangeControl controls are now automatically 
      * instantiated.
      */
@@ -474,8 +474,8 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * entries to the directory.  You can either specify this change type
      * when constructing an <CODE>LDAPPersistSearchControl</CODE> or
      * by using the <CODE>setChangeTypes</CODE> method.
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#getChangeTypes
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#setChangeTypes
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#getChangeTypes
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#setChangeTypes
      */
     public static final int ADD = 1;
 
@@ -484,8 +484,8 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * entries from the directory.  You can either specify this change type
      * when constructing an <CODE>LDAPPersistSearchControl</CODE> or
      * by using the <CODE>setChangeTypes</CODE> method.
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#getChangeTypes
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#setChangeTypes
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#getChangeTypes
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#setChangeTypes
      */
     public static final int DELETE = 2;
 
@@ -494,8 +494,8 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * entries in the directory.  You can either specify this change type
      * when constructing an <CODE>LDAPPersistSearchControl</CODE> or
      * by using the <CODE>setChangeTypes</CODE> method.
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#getChangeTypes
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#setChangeTypes
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#getChangeTypes
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#setChangeTypes
      */
     public static final int MODIFY = 4;
 
@@ -504,8 +504,8 @@ public class LDAPPersistSearchControl extends LDAPControl {
      * DNs of entries in the directory.  You can either specify this change type
      * when constructing an <CODE>LDAPPersistSearchControl</CODE> or
      * by using the <CODE>setChangeTypes</CODE> method.
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#getChangeTypes
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl#setChangeTypes
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#getChangeTypes
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl#setChangeTypes
      */
     public static final int MODDN = 8;
     public final static String PERSISTENTSEARCH  = "2.16.840.1.113730.3.4.3";

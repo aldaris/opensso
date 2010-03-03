@@ -19,14 +19,14 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.controls;
+package iplanet.ldap.controls;
 
 import java.io.*;
-import com.sun.identity.shared.ldap.LDAPControl;
-import com.sun.identity.shared.ldap.LDAPSortKey;
-import com.sun.identity.shared.ldap.client.JDAPBERTagDecoder;
-import com.sun.identity.shared.ldap.LDAPException;
-import com.sun.identity.shared.ldap.ber.stream.*;
+import iplanet.ldap.LDAPControl;
+import iplanet.ldap.LDAPSortKey;
+import iplanet.ldap.client.JDAPBERTagDecoder;
+import iplanet.ldap.LDAPException;
+import iplanet.ldap.ber.stream.*;
 
 /**
  * Represents an LDAP v3 server control that specifies that you want
@@ -210,11 +210,11 @@ import com.sun.identity.shared.ldap.ber.stream.*;
  * <P>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPSortKey
- * @see com.sun.identity.shared.ldap.LDAPControl
- * @see com.sun.identity.shared.ldap.LDAPConstraints
- * @see com.sun.identity.shared.ldap.LDAPSearchConstraints
- * @see com.sun.identity.shared.ldap.LDAPConstraints#setServerControls(LDAPControl)
+ * @see iplanet.ldap.LDAPSortKey
+ * @see iplanet.ldap.LDAPControl
+ * @see iplanet.ldap.LDAPConstraints
+ * @see iplanet.ldap.LDAPSearchConstraints
+ * @see iplanet.ldap.LDAPConstraints#setServerControls(LDAPControl)
  */
 public class LDAPSortControl extends LDAPControl {
     public final static String SORTREQUEST  = "1.2.840.113556.1.4.473";
@@ -242,10 +242,10 @@ public class LDAPSortControl extends LDAPControl {
      * is thrown.
      * @param critical <code>true</code> if this control is critical to the operation
      * @param value the value associated with this control
-     * @exception com.sun.identity.shared.ldap.LDAPException If oid is not 
+     * @exception iplanet.ldap.LDAPException If oid is not 
      * <CODE>LDAPSortControl.SORTRESPONSE</CODE>.
      * @exception java.io.IOException If value contains an invalid BER sequence.
-     * @see com.sun.identity.shared.ldap.LDAPControl#register
+     * @see iplanet.ldap.LDAPControl#register
      */
     public LDAPSortControl( String oid, boolean critical, byte[] value ) 
         throws LDAPException, IOException {
@@ -304,8 +304,8 @@ public class LDAPSortControl extends LDAPControl {
      * @param critical <CODE>true</CODE> if the LDAP operation should be
      * discarded when the server does not support this control (in other
      * words, this control is critical to the LDAP operation)
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.LDAPSortKey
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPSortKey
      */
     public LDAPSortControl(LDAPSortKey key,
                            boolean critical) {
@@ -323,8 +323,8 @@ public class LDAPSortControl extends LDAPControl {
      * @param critical <CODE>true</CODE> if the LDAP operation should be
      * discarded when the server does not support this control (in other
      * words, this control is critical to the LDAP operation)
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.LDAPSortKey
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPSortKey
      */
     public LDAPSortControl(LDAPSortKey[] keys,
                            boolean critical) {
@@ -502,7 +502,7 @@ public class LDAPSortControl extends LDAPControl {
      * specifies the result code of the sorting operation.
      * @return the attribute that caused the error, or null if the server did
      * not specify which attribute caused the error.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getResponseControls
+     * @see iplanet.ldap.LDAPConnection#getResponseControls
      * @deprecated LDAPSortControl response controls are now automatically 
      * instantiated.
      */

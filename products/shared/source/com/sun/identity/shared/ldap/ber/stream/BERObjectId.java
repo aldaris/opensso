@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.ber.stream;
+package iplanet.ldap.ber.stream;
 
 import java.util.*;
 import java.util.StringTokenizer;

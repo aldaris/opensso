@@ -19,9 +19,9 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
-import com.sun.identity.shared.ldap.ber.stream.*;
+import iplanet.ldap.ber.stream.*;
 
 import java.util.LinkedList;
 
@@ -44,7 +44,7 @@ import java.util.LinkedList;
  * <P>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPConnection#modify(java.lang.String, com.sun.identity.shared.ldap.LDAPModification)
+ * @see iplanet.ldap.LDAPConnection#modify(java.lang.String, iplanet.ldap.LDAPModification)
  */
 public class LDAPModification implements java.io.Serializable {
 
@@ -81,7 +81,7 @@ public class LDAPModification implements java.io.Serializable {
      *   <LI><CODE>LDAPModification.REPLACE</CODE> (the value should replace the existing value of the attribute)
      *   </UL><P>
      * @param attr the attribute (possibly with values) to modify
-     * @see com.sun.identity.shared.ldap.LDAPAttribute
+     * @see iplanet.ldap.LDAPAttribute
      */
     public LDAPModification( int op, LDAPAttribute attr ) {
         operation = op;
@@ -105,7 +105,7 @@ public class LDAPModification implements java.io.Serializable {
     /**
      * Returns the attribute (possibly with values) to be modified.
      * @return the attribute to be modified.
-     * @see com.sun.identity.shared.ldap.LDAPAttribute
+     * @see iplanet.ldap.LDAPAttribute
      */
     public LDAPAttribute getAttribute() {
         return attribute;

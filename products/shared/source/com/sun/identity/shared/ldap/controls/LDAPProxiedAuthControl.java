@@ -19,13 +19,13 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.controls;
+package iplanet.ldap.controls;
 
 import java.io.*;
-import com.sun.identity.shared.ldap.LDAPControl;
-import com.sun.identity.shared.ldap.LDAPSortKey;
-import com.sun.identity.shared.ldap.client.JDAPBERTagDecoder;
-import com.sun.identity.shared.ldap.ber.stream.*;
+import iplanet.ldap.LDAPControl;
+import iplanet.ldap.LDAPSortKey;
+import iplanet.ldap.client.JDAPBERTagDecoder;
+import iplanet.ldap.ber.stream.*;
 
 /**
  * Represents an LDAP v3 server control that specifies that you want
@@ -69,10 +69,10 @@ import com.sun.identity.shared.ldap.ber.stream.*;
  * <P>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPControl
- * @see com.sun.identity.shared.ldap.LDAPConstraints
- * @see com.sun.identity.shared.ldap.LDAPSearchConstraints
- * @see com.sun.identity.shared.ldap.LDAPConstraints#setServerControls(LDAPControl)
+ * @see iplanet.ldap.LDAPControl
+ * @see iplanet.ldap.LDAPConstraints
+ * @see iplanet.ldap.LDAPSearchConstraints
+ * @see iplanet.ldap.LDAPConstraints#setServerControls(LDAPControl)
  */
 public class LDAPProxiedAuthControl extends LDAPControl {
     public final static String PROXIEDAUTHREQUEST  =
@@ -87,7 +87,7 @@ public class LDAPProxiedAuthControl extends LDAPControl {
      * @param critical <CODE>true</CODE> if the LDAP operation should be
      * discarded when the server does not support this control (in other
      * words, this control is critical to the LDAP operation)
-     * @see com.sun.identity.shared.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPControl
      */
     public LDAPProxiedAuthControl( String dn,
                                    boolean critical) {

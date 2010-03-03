@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 import java.io.*;
@@ -98,7 +98,7 @@ public class LDAPUrl implements java.io.Serializable {
 
     /**
      * The default port number for secure LDAP connections.
-     * @see com.sun.identity.shared.ldap.LDAPUrl#LDAPUrl(java.lang.String, int, java.lang.String, java.lang.String[], int, java.lang.String, boolean)
+     * @see iplanet.ldap.LDAPUrl#LDAPUrl(java.lang.String, int, java.lang.String, java.lang.String[], int, java.lang.String, boolean)
      */    
     public static final int DEFAULT_SECURE_PORT = 636;
 
@@ -575,7 +575,7 @@ public class LDAPUrl implements java.io.Serializable {
      * If the factory is not explicitly specified with
      * <CODE>LDAPUrl.setSocketFactory</CODE>, the method will
      * attempt the determine the default factory based on the
-     * available factories in the com.sun.identity.shared.ldap.factory package.
+     * available factories in the iplanet.ldap.factory package.
      *
      * @return the socket factory to be used for ldaps:// URLs
      */    
@@ -589,7 +589,7 @@ public class LDAPUrl implements java.io.Serializable {
             // the default one.
             try {
                 //  First try Mozilla JSSSocketFactory
-                Class c = Class.forName("com.sun.identity.shared.ldap.factory.JSSSocketFactory");                
+                Class c = Class.forName("iplanet.ldap.factory.JSSSocketFactory");                
                 m_factory = (LDAPSocketFactory) c.newInstance();                
             }
             catch (Throwable e) {
@@ -601,7 +601,7 @@ public class LDAPUrl implements java.io.Serializable {
 
             try {
                 // then try Sun JSSESocketFactory
-                Class c = Class.forName("com.sun.identity.shared.ldap.factory.JSSESocketFactory");                
+                Class c = Class.forName("iplanet.ldap.factory.JSSESocketFactory");                
                 m_factory = (LDAPSocketFactory) c.newInstance();                
             }
             catch (Throwable e) {
@@ -616,7 +616,7 @@ public class LDAPUrl implements java.io.Serializable {
      * Overrides the default factory assigned by the LDAPUrl
      * class.
      * @param factory the socket factory to be used for ldaps:// URLs
-     * @see com.sun.identity.shared.ldap.LDAPUrl#getSocketFactory
+     * @see iplanet.ldap.LDAPUrl#getSocketFactory
      */
     public static void setSocketFactory(LDAPSocketFactory factory) {
 

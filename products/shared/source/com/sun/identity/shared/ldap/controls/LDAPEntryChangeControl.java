@@ -19,12 +19,12 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.controls;
+package iplanet.ldap.controls;
 
 import java.io.*;
-import com.sun.identity.shared.ldap.ber.stream.*;
-import com.sun.identity.shared.ldap.client.JDAPBERTagDecoder;
-import com.sun.identity.shared.ldap.*;
+import iplanet.ldap.ber.stream.*;
+import iplanet.ldap.client.JDAPBERTagDecoder;
+import iplanet.ldap.*;
 
 /**
  * Represents an LDAP v3 server control that specifies information
@@ -59,16 +59,16 @@ import com.sun.identity.shared.ldap.*;
  * </UL>
  * <P>
  *
- * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl
- * @see com.sun.identity.shared.ldap.LDAPConnection#getResponseControls
+ * @see iplanet.ldap.controls.LDAPPersistSearchControl
+ * @see iplanet.ldap.LDAPConnection#getResponseControls
  */
 
 public class LDAPEntryChangeControl extends LDAPControl {
 
     /**
      * Constructs a new <CODE>LDAPEntryChangeControl</CODE> object.
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.controls.LDAPPersistSearchControl
      */
     public LDAPEntryChangeControl() {
         super(ENTRYCHANGED, false, null);
@@ -83,10 +83,10 @@ public class LDAPEntryChangeControl extends LDAPControl {
      * or an <CODE>LDAPException</CODE> is thrown
      * @param critical <code>true</code> if this control is critical
      * @param value the value associated with this control
-     * @exception com.sun.identity.shared.ldap.LDAPException If oid is not 
+     * @exception iplanet.ldap.LDAPException If oid is not 
      * <CODE>LDAPEntryChangeControl.ENTRYCHANGED</CODE>.
      * @exception java.io.IOException If value is not a valid BER sequence.
-     * @see com.sun.identity.shared.ldap.LDAPControl#register
+     * @see iplanet.ldap.LDAPControl#register
      */
     public LDAPEntryChangeControl(String oid, boolean critical, byte[] value) 
         throws LDAPException, IOException {
@@ -141,7 +141,7 @@ public class LDAPEntryChangeControl extends LDAPControl {
      * in the server's change log) in this "entry change notification"
      * control.
      * @param num change number to set
-     * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl#getChangeNumber
+     * @see iplanet.ldap.controls.LDAPEntryChangeControl#getChangeNumber
      */
     public void setChangeNumber(int num) {
         m_changeNumber = num;
@@ -166,7 +166,7 @@ public class LDAPEntryChangeControl extends LDAPControl {
      * </UL>
      * <P>
      *
-     * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl#getChangeType
+     * @see iplanet.ldap.controls.LDAPEntryChangeControl#getChangeType
      */
     public void setChangeType(int num) {
         m_changeTypes = num;
@@ -176,7 +176,7 @@ public class LDAPEntryChangeControl extends LDAPControl {
      * Sets the previous DN of the entry (if the entry was renamed)
      * in the "entry change notification control".
      * @param dn the previous distinguished name of the entry
-     * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl#getPreviousDN
+     * @see iplanet.ldap.controls.LDAPEntryChangeControl#getPreviousDN
      */
     public void setPreviousDN(String dn) {
         m_previousDN = dn;
@@ -186,7 +186,7 @@ public class LDAPEntryChangeControl extends LDAPControl {
      * Gets the change number, which identifies the record of the change
      * in the server's change log.
      * @return change number identifying the change made.
-     * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl#setChangeNumber
+     * @see iplanet.ldap.controls.LDAPEntryChangeControl#setChangeNumber
      */
     public int getChangeNumber() {
         return m_changeNumber;
@@ -211,7 +211,7 @@ public class LDAPEntryChangeControl extends LDAPControl {
      * </UL>
      * <P>
      *
-     * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl#setChangeType
+     * @see iplanet.ldap.controls.LDAPEntryChangeControl#setChangeType
      */
     public int getChangeType() {
         return m_changeTypes;
@@ -220,7 +220,7 @@ public class LDAPEntryChangeControl extends LDAPControl {
     /**
      * Gets the previous DN of the entry (if the entry was renamed).
      * @return the previous distinguished name of the entry.
-     * @see com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl#setPreviousDN
+     * @see iplanet.ldap.controls.LDAPEntryChangeControl#setPreviousDN
      */
     public String getPreviousDN() {
         return m_previousDN;

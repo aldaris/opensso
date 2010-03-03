@@ -19,13 +19,13 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.client.*;
-import com.sun.identity.shared.ldap.client.opers.*;
-import com.sun.identity.shared.ldap.ber.stream.*;
-import com.sun.identity.shared.ldap.util.*;
+import iplanet.ldap.client.*;
+import iplanet.ldap.client.opers.*;
+import iplanet.ldap.ber.stream.*;
+import iplanet.ldap.util.*;
 import java.io.*;
 import java.net.*;
 
@@ -85,11 +85,11 @@ import java.net.*;
  * <P>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPConstraints
- * @see com.sun.identity.shared.ldap.LDAPSearchConstraints
- * @see com.sun.identity.shared.ldap.LDAPRebind
- * @see com.sun.identity.shared.ldap.LDAPRebindAuth
- * @see com.sun.identity.shared.ldap.LDAPException
+ * @see iplanet.ldap.LDAPConstraints
+ * @see iplanet.ldap.LDAPSearchConstraints
+ * @see iplanet.ldap.LDAPRebind
+ * @see iplanet.ldap.LDAPRebindAuth
+ * @see iplanet.ldap.LDAPException
  */
 public class LDAPConnection
        implements LDAPv3, LDAPAsynchronousConnection, Cloneable, Serializable {
@@ -119,7 +119,7 @@ public class LDAPConnection
      * ld.authenticate( 3, myDN, myPW );
      * </PRE>
      *
-     * @see com.sun.identity.shared.ldap.LDAPConnection#authenticate(int, java.lang.String, java.lang.String)
+     * @see iplanet.ldap.LDAPConnection#authenticate(int, java.lang.String, java.lang.String)
      */
     public final static int LDAP_VERSION              = 2;
     /**
@@ -133,7 +133,7 @@ public class LDAPConnection
      *      Float sdkVersion = ( Float )myConn.getProperty( myConn.LDAP_PROPERTY_SDK );
      *      System.out.println( "SDK version: " + sdkVersion );
      *      ... </PRE>
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getProperty(java.lang.String)
+     * @see iplanet.ldap.LDAPConnection#getProperty(java.lang.String)
      */
     public final static String LDAP_PROPERTY_SDK      = "version.sdk";
     /**
@@ -148,7 +148,7 @@ public class LDAPConnection
      *      Float LDAPVersion = ( Float )myConn.getProperty( myConn.LDAP_PROPERTY_PROTOCOL );
      *      System.out.println( "Highest supported LDAP protocol version: " + LDAPVersion );
      *      ... </PRE>
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getProperty(java.lang.String)
+     * @see iplanet.ldap.LDAPConnection#getProperty(java.lang.String)
      */
     public final static String LDAP_PROPERTY_PROTOCOL = "version.protocol";
     /**
@@ -163,7 +163,7 @@ public class LDAPConnection
      *      String authTypes = ( String )myConn.getProperty( myConn.LDAP_PROPERTY_SECURITY );
      *      System.out.println( "Supported authentication types: " + authTypes );
      *      ... </PRE>
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getProperty(java.lang.String)
+     * @see iplanet.ldap.LDAPConnection#getProperty(java.lang.String)
      */
     public final static String LDAP_PROPERTY_SECURITY = "version.security";
 
@@ -185,14 +185,14 @@ public class LDAPConnection
      * an OutputStream or an instance of LDAPTraceWriter. To stop tracing,
      * <CODE>null</CODE> should be  passed as the property value.
      * 
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setProperty(java.lang.String, java.lang.Object)
+     * @see iplanet.ldap.LDAPConnection#setProperty(java.lang.String, java.lang.Object)
      */
-    public final static String TRACE_PROPERTY = "com.sun.identity.shared.ldap.trace";
+    public final static String TRACE_PROPERTY = "iplanet.ldap.trace";
 
     /**
      * Specifies the serial connection setup policy when a list of hosts is
      * passed to  the <CODE>connect</CODE> method.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnSetupDelay(int)
+     * @see iplanet.ldap.LDAPConnection#setConnSetupDelay(int)
      */    
     public final static int NODELAY_SERIAL = -1;
     /**
@@ -200,7 +200,7 @@ public class LDAPConnection
      * list of hosts is passed to the <CODE>connect</CODE> method.
      * For each host in the list, a separate thread is created to attempt
      * to connect to the host. All threads are started simultaneously.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnSetupDelay(int)
+     * @see iplanet.ldap.LDAPConnection#setConnSetupDelay(int)
      */    
     public final static int NODELAY_PARALLEL = 0;
 
@@ -264,16 +264,16 @@ public class LDAPConnection
     private final static Float MinorVersion = new Float(0.18f);
     private final static String DELIM = "#";
     private final static String PersistSearchPackageName =
-      "com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl";
+      "iplanet.ldap.controls.LDAPPersistSearchControl";
     final static String EXTERNAL_MECHANISM = "external";
     private final static String EXTERNAL_MECHANISM_PACKAGE =
       "com.sun.identity.shared.sasl";
     final static String DEFAULT_SASL_PACKAGE =
       "com.sun.identity.shared.sasl";
     final static String SCHEMA_BUG_PROPERTY =
-      "com.sun.identity.shared.ldap.schema.quoting";
+      "iplanet.ldap.schema.quoting";
     final static String SASL_PACKAGE_PROPERTY =
-      "com.sun.identity.shared.ldap.saslpackage";
+      "iplanet.ldap.saslpackage";
 
    /**
     * Constructs a new <CODE>LDAPConnection</CODE> object,
@@ -283,8 +283,8 @@ public class LDAPConnection
     * the connection.  To connect to the LDAP server, use the
     * <CODE>connect</CODE> method.
     *
-    * @see com.sun.identity.shared.ldap.LDAPConnection#connect(java.lang.String, int)
-    * @see com.sun.identity.shared.ldap.LDAPConnection#authenticate(java.lang.String, java.lang.String)
+    * @see iplanet.ldap.LDAPConnection#connect(java.lang.String, int)
+    * @see iplanet.ldap.LDAPConnection#authenticate(java.lang.String, java.lang.String)
     */
     public LDAPConnection () {
         super();
@@ -313,12 +313,12 @@ public class LDAPConnection
      * constructed when this method is called.
      * <P>
      *
-     * @see com.sun.identity.shared.ldap.LDAPSocketFactory
-     * @see com.sun.identity.shared.ldap.LDAPSSLSocketFactory
-     * @see com.sun.identity.shared.ldap.LDAPConnection#connect(java.lang.String, int)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#authenticate(java.lang.String, java.lang.String)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getSocketFactory
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setSocketFactory(com.sun.identity.shared.ldap.LDAPSocketFactory)
+     * @see iplanet.ldap.LDAPSocketFactory
+     * @see iplanet.ldap.LDAPSSLSocketFactory
+     * @see iplanet.ldap.LDAPConnection#connect(java.lang.String, int)
+     * @see iplanet.ldap.LDAPConnection#authenticate(java.lang.String, java.lang.String)
+     * @see iplanet.ldap.LDAPConnection#getSocketFactory
+     * @see iplanet.ldap.LDAPConnection#setSocketFactory(iplanet.ldap.LDAPSocketFactory)
      */
     
     public LDAPConnection ( LDAPSocketFactory factory ) {    
@@ -357,8 +357,8 @@ public class LDAPConnection
      *
      *  @param cache the <CODE>LDAPCache</CODE> object representing
      *  the cache that the current connection should use
-     *  @see com.sun.identity.shared.ldap.LDAPCache
-     *  @see com.sun.identity.shared.ldap.LDAPConnection#getCache
+     *  @see iplanet.ldap.LDAPCache
+     *  @see iplanet.ldap.LDAPConnection#getCache
      */
     public void setCache(LDAPCache cache) {
         if (cache != m_cache) {
@@ -382,8 +382,8 @@ public class LDAPConnection
      *
      * @return the <CODE>LDAPCache</CODE> object representing
      * the cache that the current connection should use
-     * @see com.sun.identity.shared.ldap.LDAPCache
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setCache(com.sun.identity.shared.ldap.LDAPCache)
+     * @see iplanet.ldap.LDAPCache
+     * @see iplanet.ldap.LDAPConnection#setCache(iplanet.ldap.LDAPCache)
      */
     public LDAPCache getCache() {
         return m_cache;
@@ -431,9 +431,9 @@ public class LDAPConnection
      * @exception LDAPException Unable to get the value of the
      * specified property. <P>
      *
-     * @see com.sun.identity.shared.ldap.LDAPConnection#LDAP_PROPERTY_SDK
-     * @see com.sun.identity.shared.ldap.LDAPConnection#LDAP_PROPERTY_PROTOCOL
-     * @see com.sun.identity.shared.ldap.LDAPConnection#LDAP_PROPERTY_SECURITY
+     * @see iplanet.ldap.LDAPConnection#LDAP_PROPERTY_SDK
+     * @see iplanet.ldap.LDAPConnection#LDAP_PROPERTY_PROTOCOL
+     * @see iplanet.ldap.LDAPConnection#LDAP_PROPERTY_SECURITY
      */
     public Object getProperty(String name) throws LDAPException {
         return m_properties.get( name );
@@ -443,11 +443,11 @@ public class LDAPConnection
      * Change a property of a connection. <P>
      *
      * The following properties are defined:<BR> 
-     * com.sun.identity.shared.ldap.schema.quoting - "standard" or "NetscapeBug"<BR> 
+     * iplanet.ldap.schema.quoting - "standard" or "NetscapeBug"<BR> 
      * Note: if this property is not set, the SDK will query the server 
      * to determine if attribute syntax values and objectclass superior 
      * values must be quoted when adding schema.<BR>
-     * com.sun.identity.shared.ldap.saslpackage - the default is "com.sun.identity.shared.sasl"<BR> 
+     * iplanet.ldap.saslpackage - the default is "com.sun.identity.shared.sasl"<BR> 
      * <P>
      *
      * @param name name of the property to set
@@ -590,7 +590,7 @@ public class LDAPConnection
     /**
      * Returns the maximum time to wait for the connection to be established.
      * @return the maximum connect time in seconds or 0 (unlimited)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnectTimeout
+     * @see iplanet.ldap.LDAPConnection#setConnectTimeout
      */
     public int getConnectTimeout () {
         return m_connectTimeout;
@@ -621,7 +621,7 @@ public class LDAPConnection
      *  is enabled.<br>
      * <CODE>delay > 0</CODE> The parallel connection setup policy with the delay of 
      * <CODE>delay</CODE> seconds is enabled.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnSetupDelay
+     * @see iplanet.ldap.LDAPConnection#setConnSetupDelay
      */
     public int getConnSetupDelay () {
         return m_connSetupDelay;
@@ -650,9 +650,9 @@ public class LDAPConnection
      * Start all connection setup threads immediately.<br>
      * <CODE>delay > 0</CODE> Use the parallel connection setup policy with delay.
      * Start another connection setup thread after <CODE>delay</CODE> seconds.<br>
-     * @see com.sun.identity.shared.ldap.LDAPConnection#NODELAY_SERIAL
-     * @see com.sun.identity.shared.ldap.LDAPConnection#NODELAY_PARALLEL
-     * @see com.sun.identity.shared.ldap.LDAPConnection#connect(java.lang.String, int)
+     * @see iplanet.ldap.LDAPConnection#NODELAY_SERIAL
+     * @see iplanet.ldap.LDAPConnection#NODELAY_PARALLEL
+     * @see iplanet.ldap.LDAPConnection#connect(java.lang.String, int)
      */
     public void setConnSetupDelay (int delay) {
         m_connSetupDelay = delay;
@@ -668,10 +668,10 @@ public class LDAPConnection
      *
      * @return the object representing the socket factory used to
      * establish a connection to a server or for the start TLS operation.
-     * @see com.sun.identity.shared.ldap.LDAPSocketFactory
-     * @see com.sun.identity.shared.ldap.LDAPSSLSocketFactory
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setSocketFactory(com.sun.identity.shared.ldap.LDAPSocketFactory)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#startTLS
+     * @see iplanet.ldap.LDAPSocketFactory
+     * @see iplanet.ldap.LDAPSSLSocketFactory
+     * @see iplanet.ldap.LDAPConnection#setSocketFactory(iplanet.ldap.LDAPSocketFactory)
+     * @see iplanet.ldap.LDAPConnection#startTLS
      */
 
     public LDAPSocketFactory getSocketFactory () {       
@@ -690,10 +690,10 @@ public class LDAPConnection
      * @param factory the object representing the socket factory that
      * you want to use to establish a connection to a server or for
      * the start TLS operation.
-     * @see com.sun.identity.shared.ldap.LDAPSocketFactory
-     * @see com.sun.identity.shared.ldap.LDAPSSLSocketFactory
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getSocketFactory
-     * @see com.sun.identity.shared.ldap.LDAPConnection#startTLS
+     * @see iplanet.ldap.LDAPSocketFactory
+     * @see iplanet.ldap.LDAPSSLSocketFactory
+     * @see iplanet.ldap.LDAPConnection#getSocketFactory
+     * @see iplanet.ldap.LDAPConnection#startTLS
      */
     
     public void setSocketFactory (LDAPSocketFactory factory) {        
@@ -795,8 +795,8 @@ public class LDAPConnection
      * This parameter is ignored for any host in the <CODE>host</CODE>
      * parameter which includes a colon and port number.
      * @exception LDAPException The connection failed.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnSetupDelay
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnectTimeout
+     * @see iplanet.ldap.LDAPConnection#setConnSetupDelay
+     * @see iplanet.ldap.LDAPConnection#setConnectTimeout
      */
     public void connect(String host, int port) throws LDAPException {
         connect( host, port, null, null, m_defaultConstraints, false );
@@ -863,8 +863,8 @@ public class LDAPConnection
      * @param dn distinguished name used for authentication
      * @param passwd password used for authentication
      * @exception LDAPException The connection or authentication failed.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnSetupDelay
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnectTimeout
+     * @see iplanet.ldap.LDAPConnection#setConnSetupDelay
+     * @see iplanet.ldap.LDAPConnection#setConnectTimeout
      */
     public void connect(String host, int port, String dn, String passwd)
         throws LDAPException {
@@ -902,8 +902,8 @@ public class LDAPConnection
      * @param passwd password used for authentication
      * @param cons preferences for the bind operation
      * @exception LDAPException The connection or authentication failed.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnSetupDelay
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnectTimeout
+     * @see iplanet.ldap.LDAPConnection#setConnSetupDelay
+     * @see iplanet.ldap.LDAPConnection#setConnectTimeout
      */
     public void connect(String host, int port, String dn, String passwd,
         LDAPConstraints cons) throws LDAPException {
@@ -1004,7 +1004,7 @@ public class LDAPConnection
      * all operations through it should authenticate with dn as the
      * distinguished name and passwd as password.
      * @exception LDAPException The connection or authentication failed.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnSetupDelay
+     * @see iplanet.ldap.LDAPConnection#setConnSetupDelay
      */
     public void connect(int version, String host, int port, String dn,
         String passwd) throws LDAPException {
@@ -1048,7 +1048,7 @@ public class LDAPConnection
      * distinguished name and passwd as password
      * @param cons preferences for the bind operation
      * @exception LDAPException The connection or authentication failed.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setConnSetupDelay
+     * @see iplanet.ldap.LDAPConnection#setConnSetupDelay
      */
     public void connect(int version, String host, int port, String dn,
         String passwd, LDAPConstraints cons) throws LDAPException {
@@ -1101,7 +1101,7 @@ public class LDAPConnection
             return createTraceOutput(traceOut);
         }
         
-        // Check if the property has been set with java -Dcom.sun.identity.shared.ldap.trace
+        // Check if the property has been set with java -Diplanet.ldap.trace
         // If the property does not have a value, send the trace to the System.err,
         // otherwise use the value as the output file name
         try {
@@ -1142,8 +1142,8 @@ public class LDAPConnection
      * @param searchResults the search results returned when the search
      * was started
      * @exception LDAPException Failed to notify the LDAP server.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
-     * @see com.sun.identity.shared.ldap.LDAPSearchResults
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, iplanet.ldap.LDAPSearchConstraints)
+     * @see iplanet.ldap.LDAPSearchResults
      */
     public void abandon( LDAPSearchResults searchResults )
                              throws LDAPException {
@@ -1347,7 +1347,7 @@ public class LDAPConnection
      * @param cbh a class which the SASL framework can call to
      * obtain additional required information
      * @exception LDAPException Failed to authenticate to the LDAP server.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#authenticate(java.lang.String,
+     * @see iplanet.ldap.LDAPConnection#authenticate(java.lang.String,
      * java.util.Hashtable, java.lang.Object)
      */
     public void authenticate(String dn, String[] mechanisms,
@@ -1447,8 +1447,8 @@ public class LDAPConnection
      * @return LDAPResponseListener Handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */    
     public LDAPResponseListener authenticate(int version,
                                              String dn,
@@ -1519,8 +1519,8 @@ public class LDAPConnection
      * @return LDAPResponseListener Handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */    
     public LDAPResponseListener authenticate(int version,
                                              String dn,
@@ -1682,7 +1682,7 @@ public class LDAPConnection
      * @param cbh a class which the SASL framework can call to
      * obtain additional required information
      * @exception LDAPException Failed to authenticate to the LDAP server.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#bind(java.lang.String,
+     * @see iplanet.ldap.LDAPConnection#bind(java.lang.String,
      * java.util.Hashtable, java.lang.Object)
      */
     public void bind(String dn, String[] mechanisms,
@@ -1722,9 +1722,9 @@ public class LDAPConnection
      * connection is already in the secure mode, an LDAPException is thrown. 
      * 
      * @exception LDAPException Failed to convert to a TLS session.
-     * @see com.sun.identity.shared.ldap.LDAPTLSSocketFactory
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setSocketFactory(com.sun.identity.shared.ldap.LDAPSocketFactory)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#isTLS
+     * @see iplanet.ldap.LDAPTLSSocketFactory
+     * @see iplanet.ldap.LDAPConnection#setSocketFactory(iplanet.ldap.LDAPSocketFactory)
+     * @see iplanet.ldap.LDAPConnection#isTLS
      * @since LDAPJDK 4.17
      */        
     public void startTLS() throws LDAPException {        
@@ -1787,7 +1787,7 @@ public class LDAPConnection
      * Indicates if the session is currently protected by TLS.
      * @return <CODE>true</CODE> if TLS was activated.
      * @since LDAPJDK 4.17
-     * @see com.sun.identity.shared.ldap.LDAPConnection#startTLS
+     * @see iplanet.ldap.LDAPConnection#startTLS
      */
     public boolean isTLS() { 
         return m_useTLS;
@@ -2048,8 +2048,8 @@ public class LDAPConnection
      * again, you need to reconnect to the server by calling
      * <CODE>connect</CODE>.
      * @exception LDAPException Failed to disconnect from the LDAP server.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#connect(java.lang.String, int)
-     * @see com.sun.identity.shared.ldap.LDAPConnection#connect(java.lang.String, int, java.lang.String, java.lang.String)
+     * @see iplanet.ldap.LDAPConnection#connect(java.lang.String, int)
+     * @see iplanet.ldap.LDAPConnection#connect(java.lang.String, int, java.lang.String, java.lang.String)
      */
     public synchronized void disconnect() throws LDAPException {
         if (!isConnected()) {
@@ -2327,8 +2327,8 @@ public class LDAPConnection
      * an exception if the entry is not found).
      * @exception LDAPException Failed to read the specified entry from
      * the directory.
-     * @see com.sun.identity.shared.ldap.LDAPUrl
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(com.sun.identity.shared.ldap.LDAPUrl)
+     * @see iplanet.ldap.LDAPUrl
+     * @see iplanet.ldap.LDAPConnection#search(iplanet.ldap.LDAPUrl)
      */
     public static LDAPEntry read (LDAPUrl toGet) throws LDAPException {
         String host = toGet.getHost ();
@@ -2414,9 +2414,9 @@ public class LDAPConnection
      * @return LDAPSearchResults the results of the search as an enumeration.
      * @exception LDAPException Failed to complete the search specified by
      * the LDAP URL.
-     * @see com.sun.identity.shared.ldap.LDAPUrl
-     * @see com.sun.identity.shared.ldap.LDAPSearchResults
-     * @see com.sun.identity.shared.ldap.LDAPConnection#abandon(com.sun.identity.shared.ldap.LDAPSearchResults)
+     * @see iplanet.ldap.LDAPUrl
+     * @see iplanet.ldap.LDAPSearchResults
+     * @see iplanet.ldap.LDAPConnection#abandon(iplanet.ldap.LDAPSearchResults)
      */
     public static LDAPSearchResults search (LDAPUrl toGet) throws LDAPException {
         return search (toGet, null);
@@ -2468,9 +2468,9 @@ public class LDAPConnection
      * @return LDAPSearchResults the results of the search as an enumeration.
      * @exception LDAPException Failed to complete the search specified
      * by the LDAP URL.
-     * @see com.sun.identity.shared.ldap.LDAPUrl
-     * @see com.sun.identity.shared.ldap.LDAPSearchResults
-     * @see com.sun.identity.shared.ldap.LDAPConnection#abandon(com.sun.identity.shared.ldap.LDAPSearchResults)
+     * @see iplanet.ldap.LDAPUrl
+     * @see iplanet.ldap.LDAPSearchResults
+     * @see iplanet.ldap.LDAPConnection#abandon(iplanet.ldap.LDAPSearchResults)
      */
     public static LDAPSearchResults search (LDAPUrl toGet,
         LDAPSearchConstraints cons) throws LDAPException {
@@ -2576,7 +2576,7 @@ public class LDAPConnection
      * attributes found
      * @return LDAPSearchResults the results of the search as an enumeration.
      * @exception LDAPException Failed to complete the specified search.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#abandon(com.sun.identity.shared.ldap.LDAPSearchResults)
+     * @see iplanet.ldap.LDAPConnection#abandon(iplanet.ldap.LDAPSearchResults)
      */
     public LDAPSearchResults search( String base, int scope, String filter,
         String[] attrs, boolean attrsOnly ) throws LDAPException {
@@ -2647,7 +2647,7 @@ public class LDAPConnection
      * attributes found
      * @return LDAPSearchResults the results of the search as an enumeration.
      * @exception LDAPException Failed to complete the specified search.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#abandon(com.sun.identity.shared.ldap.LDAPSearchResults)
+     * @see iplanet.ldap.LDAPConnection#abandon(iplanet.ldap.LDAPSearchResults)
      */
     public LDAPSearchResults search( String base, int scope, String filter,
         String[] attrs, boolean attrsOnly, LDAPSearchConstraints cons )
@@ -2695,7 +2695,7 @@ public class LDAPConnection
             (LDAPControl[])getOption(LDAPv3.SERVERCONTROLS, cons);
         for (int i = 0; (controls != null) && (i < controls.length); i++) {
             if ( controls[i].getType() ==
-                 com.sun.identity.shared.ldap.LDAPControl.LDAP_PERSIST_SEARCH_CONTROL) {
+                 iplanet.ldap.LDAPControl.LDAP_PERSIST_SEARCH_CONTROL) {
                 isPersistentSearch = true;
                 break;
             }
@@ -2839,7 +2839,7 @@ public class LDAPConnection
             (LDAPControl[])getOption(LDAPv3.SERVERCONTROLS, cons);
         for (int i = 0; (controls != null) && (i < controls.length); i++) {
             if ( controls[i].getType() ==
-                 com.sun.identity.shared.ldap.LDAPControl.LDAP_PERSIST_SEARCH_CONTROL) {
+                 iplanet.ldap.LDAPControl.LDAP_PERSIST_SEARCH_CONTROL) {
                 isPersistentSearch = true;
                 break;
             }
@@ -3017,7 +3017,7 @@ public class LDAPConnection
      * and value as this attribute.)
      * @return true if the entry contains the specified attribute and value.
      * @exception LDAPException Failed to perform the comparison.
-     * @see com.sun.identity.shared.ldap.LDAPAttribute
+     * @see iplanet.ldap.LDAPAttribute
      */
     public boolean compare( String DN, LDAPAttribute attr )
         throws LDAPException {
@@ -3170,7 +3170,7 @@ public class LDAPConnection
      * attributes of the new entry
      * @exception LDAPException Failed to add the specified entry to the
      * directory.
-     * @see com.sun.identity.shared.ldap.LDAPEntry
+     * @see iplanet.ldap.LDAPEntry
      */
     public void add( LDAPEntry entry ) throws LDAPException {
         add(entry, m_defaultConstraints);
@@ -3193,8 +3193,8 @@ public class LDAPConnection
      * @param cons the set of preferences to apply to this operation
      * @exception LDAPException Failed to add the specified entry to the
      * directory.
-     * @see com.sun.identity.shared.ldap.LDAPEntry
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPEntry
+     * @see iplanet.ldap.LDAPConstraints
      */
     public void add( LDAPEntry entry, LDAPConstraints cons )
         throws LDAPException {
@@ -3267,7 +3267,7 @@ public class LDAPConnection
      * @exception LDAPException Failed to execute the operation
      * @return LDAPExtendedOperation object representing the extended response
      * returned by the server.
-     * @see com.sun.identity.shared.ldap.LDAPExtendedOperation
+     * @see iplanet.ldap.LDAPExtendedOperation
      */
     public LDAPExtendedOperation extendedOperation( LDAPExtendedOperation op )
         throws LDAPException {
@@ -3296,7 +3296,7 @@ public class LDAPConnection
      * @exception LDAPException Failed to execute the operation
      * @return LDAPExtendedOperation object representing the extended response
      * returned by the server.
-     * @see com.sun.identity.shared.ldap.LDAPExtendedOperation
+     * @see iplanet.ldap.LDAPExtendedOperation
      */
     public LDAPExtendedOperation extendedOperation( LDAPExtendedOperation op,
                                                     LDAPConstraints cons)
@@ -3397,7 +3397,7 @@ public class LDAPConnection
      * @param mod a single change to make to the entry
      * @exception LDAPException Failed to make the specified change to the
      * directory entry.
-     * @see com.sun.identity.shared.ldap.LDAPModification
+     * @see iplanet.ldap.LDAPModification
      */
     public void modify( String DN, LDAPModification mod ) throws LDAPException {
         modify(DN, mod, m_defaultConstraints);
@@ -3420,8 +3420,8 @@ public class LDAPConnection
     * @param cons the set of preferences to apply to this operation
     * @exception LDAPException Failed to make the specified change to the
     * directory entry.
-    * @see com.sun.identity.shared.ldap.LDAPModification
-    * @see com.sun.identity.shared.ldap.LDAPConstraints
+    * @see iplanet.ldap.LDAPModification
+    * @see iplanet.ldap.LDAPConstraints
     */
     public void modify( String DN, LDAPModification mod,
         LDAPConstraints cons ) throws LDAPException {
@@ -3479,7 +3479,7 @@ public class LDAPConnection
      * @param mods a set of changes to make to the entry
      * @exception LDAPException Failed to make the specified changes to the
      * directory entry.
-     * @see com.sun.identity.shared.ldap.LDAPModificationSet
+     * @see iplanet.ldap.LDAPModificationSet
      */
     public void modify (String DN, LDAPModificationSet mods)
         throws LDAPException {
@@ -3499,8 +3499,8 @@ public class LDAPConnection
      * @param cons the set of preferences to apply to this operation
      * @exception LDAPException Failed to make the specified changes to the
      * directory entry.
-     * @see com.sun.identity.shared.ldap.LDAPModificationSet
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPModificationSet
+     * @see iplanet.ldap.LDAPConstraints
      */
      public void modify (String DN, LDAPModificationSet mods,
          LDAPConstraints cons) throws LDAPException {
@@ -3536,7 +3536,7 @@ public class LDAPConnection
      * to the entry
      * @exception LDAPException Failed to make the specified changes to the
      * directory entry.
-     * @see com.sun.identity.shared.ldap.LDAPModification
+     * @see iplanet.ldap.LDAPModification
      */
     public void modify (String DN, LDAPModification[] mods)
         throws LDAPException {
@@ -3557,8 +3557,8 @@ public class LDAPConnection
      * @param cons the set of preferences to apply to this operation
      * @exception LDAPException Failed to make the specified changes to the
      * directory entry.
-     * @see com.sun.identity.shared.ldap.LDAPModification
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPModification
+     * @see iplanet.ldap.LDAPConstraints
      */
     public void modify (String DN, LDAPModification[] mods,
          LDAPConstraints cons) throws LDAPException {
@@ -3644,7 +3644,7 @@ public class LDAPConnection
      * @param cons the set of preferences to apply to this operation
      * @exception LDAPException Failed to delete the specified entry from
      * the directory.
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPConstraints
      */
     public void delete( String DN, LDAPConstraints cons )
         throws LDAPException {
@@ -3835,7 +3835,7 @@ public class LDAPConnection
      * for the cn attribute: "cn=oldName" and "cn=newName").
      * @param cons the set of preferences to apply to this operation
      * @exception LDAPException Failed to rename the specified entry.
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPConstraints
      */
     public void rename (String DN,
                            String newRDN,
@@ -3917,8 +3917,8 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPEntry
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPEntry
+     * @see iplanet.ldap.LDAPResponseListener
      */
     
     public LDAPResponseListener add(LDAPEntry entry,
@@ -3948,9 +3948,9 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPEntry
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPEntry
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */    
     public LDAPResponseListener add(LDAPEntry entry,
                                     LDAPResponseListener listener,
@@ -4016,7 +4016,7 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPResponseListener
      */    
     public LDAPResponseListener bind(int version,
                                      String dn,
@@ -4050,7 +4050,7 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPResponseListener
      */    
     public LDAPResponseListener bind(String dn,
                                      String passwd,
@@ -4081,8 +4081,8 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     
     public LDAPResponseListener bind(String dn,
@@ -4122,8 +4122,8 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     public LDAPResponseListener bind(int version,
                                      String dn,
@@ -4143,8 +4143,8 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
 
     public LDAPResponseListener delete(String dn,
@@ -4169,8 +4169,8 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     public LDAPResponseListener delete(String dn,
                                       LDAPResponseListener listener,
@@ -4224,8 +4224,8 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPModification
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPModification
+     * @see iplanet.ldap.LDAPResponseListener
      */
     public LDAPResponseListener modify(String dn,
                                        LDAPModification mod,
@@ -4255,9 +4255,9 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPModification
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPModification
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     public LDAPResponseListener modify(String dn,
                                        LDAPModification mod,
@@ -4310,8 +4310,8 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPModificationSet
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPModificationSet
+     * @see iplanet.ldap.LDAPResponseListener
      */
     public LDAPResponseListener modify(String dn,
                                        LDAPModificationSet mods,
@@ -4333,9 +4333,9 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPModificationSet
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPModificationSet
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     public LDAPResponseListener modify(String dn,
                                        LDAPModificationSet mods,
@@ -4374,7 +4374,7 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPResponseListener
      */    
     public LDAPResponseListener rename(String dn,
                                        String newRdn,
@@ -4403,8 +4403,8 @@ public class LDAPConnection
      * @return LDAPResponseListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPResponseListener
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPResponseListener
+     * @see iplanet.ldap.LDAPConstraints
      */
     
     public LDAPResponseListener rename(String dn,
@@ -4477,7 +4477,7 @@ public class LDAPConnection
      * @return LDAPSearchListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#abandon(com.sun.identity.shared.ldap.LDAPSearchListener)
+     * @see iplanet.ldap.LDAPConnection#abandon(iplanet.ldap.LDAPSearchListener)
      */
     public LDAPSearchListener search(String base,
                                      int scope,
@@ -4527,7 +4527,7 @@ public class LDAPConnection
      * @return LDAPSearchListener handler for messages returned from a server
      * in response to this request.
      * @exception LDAPException Failed to send request.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#abandon(com.sun.identity.shared.ldap.LDAPSearchListener)
+     * @see iplanet.ldap.LDAPConnection#abandon(iplanet.ldap.LDAPSearchListener)
      */
     public LDAPSearchListener search(String base,
                                      int scope,
@@ -4858,13 +4858,13 @@ public class LDAPConnection
      * example, when getting the SIZELIMIT option, cast the returned
      * value as an <CODE>Integer</CODE>.)
      * @exception LDAPException Failed to get the specified option.
-     * @see com.sun.identity.shared.ldap.LDAPRebind
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
-     * @see com.sun.identity.shared.ldap.LDAPSearchConstraints
-     * @see com.sun.identity.shared.ldap.LDAPReferralException
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getSearchConstraints
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
+     * @see iplanet.ldap.LDAPRebind
+     * @see iplanet.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPSearchConstraints
+     * @see iplanet.ldap.LDAPReferralException
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPConnection#getSearchConstraints
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, iplanet.ldap.LDAPSearchConstraints)
      */
     public Object getOption( int option ) throws LDAPException {
         if (option == LDAPv2.PROTOCOL_VERSION) {
@@ -5056,13 +5056,13 @@ public class LDAPConnection
      * (e.g. boolean->Boolean,
      *   integer->Integer)
      * @exception LDAPException Failed to set the specified option.
-     * @see com.sun.identity.shared.ldap.LDAPRebind
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
-     * @see com.sun.identity.shared.ldap.LDAPSearchConstraints
-     * @see com.sun.identity.shared.ldap.LDAPReferralException
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getSearchConstraints
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)
+     * @see iplanet.ldap.LDAPRebind
+     * @see iplanet.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPSearchConstraints
+     * @see iplanet.ldap.LDAPReferralException
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPConnection#getSearchConstraints
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, iplanet.ldap.LDAPSearchConstraints)
      */
     public void setOption( int option, Object value ) throws LDAPException {
         if (option == LDAPv2.PROTOCOL_VERSION) {
@@ -5145,8 +5145,8 @@ public class LDAPConnection
      * </CODE> object returned with the result.
      * @return an array of the controls returned by an operation, or
      * null if none.
-     * @see com.sun.identity.shared.ldap.LDAPControl
-     * @see com.sun.identity.shared.ldap.LDAPSearchResults#getResponseControls
+     * @see iplanet.ldap.LDAPControl
+     * @see iplanet.ldap.LDAPSearchResults#getResponseControls
      */
     public LDAPControl[] getResponseControls() {
         LDAPControl[] controls = null;
@@ -5244,8 +5244,8 @@ public class LDAPConnection
      * @return a copy of the <CODE>LDAPConstraints</CODE> object representing the
      * set of constraints that apply (by default) to all operations
      * performed through this connection.
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPConnection#getOption
      */
     public LDAPConstraints getConstraints () {
         return (LDAPConstraints)getSearchConstraints();
@@ -5297,9 +5297,9 @@ public class LDAPConnection
      * @return a copy of the <CODE>LDAPSearchConstraints</CODE> object 
      * representing the set of search constraints that apply (by default) to 
      * all searches performed through this connection.
-     * @see com.sun.identity.shared.ldap.LDAPSearchConstraints
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, com.sun.identity.shared.ldap.LDAPSearchConstraints)  
+     * @see iplanet.ldap.LDAPSearchConstraints
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean, iplanet.ldap.LDAPSearchConstraints)  
      */
     public LDAPSearchConstraints getSearchConstraints () {
         return (LDAPSearchConstraints)m_defaultConstraints.clone();
@@ -5310,8 +5310,8 @@ public class LDAPConnection
      * Set the default constraint set for all operations. 
      * @param cons <CODE>LDAPConstraints</CODE> object to use as the default
      * constraint set
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getConstraints
-     * @see com.sun.identity.shared.ldap.LDAPConstraints
+     * @see iplanet.ldap.LDAPConnection#getConstraints
+     * @see iplanet.ldap.LDAPConstraints
      */
     public void setConstraints(LDAPConstraints cons) {
         m_defaultConstraints.setHopLimit(cons.getHopLimit());
@@ -5349,8 +5349,8 @@ public class LDAPConnection
      * Set the default constraint set for all search operations. 
      * @param cons <CODE>LDAPSearchConstraints</CODE> object to use as the
      * default constraint set
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getSearchConstraints
-     * @see com.sun.identity.shared.ldap.LDAPSearchConstraints
+     * @see iplanet.ldap.LDAPConnection#getSearchConstraints
+     * @see iplanet.ldap.LDAPSearchConstraints
      */
     public void setSearchConstraints(LDAPSearchConstraints cons) {
         m_defaultConstraints = (LDAPSearchConstraints)cons.clone();
@@ -6050,7 +6050,7 @@ public class LDAPConnection
      * representation.
      *
      * @return string representation of the connection.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#clone
+     * @see iplanet.ldap.LDAPConnection#clone
      */    
     public String toString() {
         int cloneCnt = (m_thread == null) ? 0 : m_thread.getClientCount();
@@ -6102,7 +6102,7 @@ public class LDAPConnection
      * Prints out the LDAP Java SDK version and the highest LDAP
      * protocol version supported by the SDK. To view this
      * information, open a terminal window, and enter:
-     * <PRE>java com.sun.identity.shared.ldap.LDAPConnection
+     * <PRE>java iplanet.ldap.LDAPConnection
      * </PRE>
      * @param args not currently used
      */
@@ -6114,8 +6114,8 @@ public class LDAPConnection
     /**
      * Option specifying the maximum number of unread entries to be cached in any
      * LDAPSearchResults without suspending reading from the server.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getOption
-     * @see com.sun.identity.shared.ldap.LDAPConnection#setOption
+     * @see iplanet.ldap.LDAPConnection#getOption
+     * @see iplanet.ldap.LDAPConnection#setOption
      */
     public static final int MAXBACKLOG   = 30;
 

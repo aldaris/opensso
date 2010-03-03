@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUnbindRequest.java,v 1.1 2009-11-20 23:52:59 ww203982 Exp $
+ * $Id: LDAPUnbindRequest.java,v 1.2 2010-03-03 21:31:32 beomsuk Exp $
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
-import com.sun.identity.shared.ldap.client.opers.JDAPProtocolOp;
+import iplanet.ldap.client.opers.JDAPProtocolOp;
 import java.util.LinkedList;
 
 public class LDAPUnbindRequest extends LDAPRequest {

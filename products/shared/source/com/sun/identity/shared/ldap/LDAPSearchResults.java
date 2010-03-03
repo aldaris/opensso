@@ -19,11 +19,11 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.client.*;
-import com.sun.identity.shared.ldap.client.opers.*;
+import iplanet.ldap.client.*;
+import iplanet.ldap.client.opers.*;
 import java.io.*;
 
 /**
@@ -38,8 +38,8 @@ import java.io.*;
  * <P>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean)
- * @see com.sun.identity.shared.ldap.LDAPConnection#abandon(com.sun.identity.shared.ldap.LDAPSearchResults)
+ * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean)
+ * @see iplanet.ldap.LDAPConnection#abandon(iplanet.ldap.LDAPSearchResults)
  */
 public class LDAPSearchResults implements Enumeration, java.io.Serializable {
 
@@ -68,7 +68,7 @@ public class LDAPSearchResults implements Enumeration, java.io.Serializable {
      * Note that this does not actually generate the results;
      * you need to call <CODE>LDAPConnection.search</CODE> to
      * perform the search and get the results.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean)
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean)
      */
     public LDAPSearchResults() {
         entries = new Vector();
@@ -93,7 +93,7 @@ public class LDAPSearchResults implements Enumeration, java.io.Serializable {
      * Constructs an enumeration of search results. Used when returning results
      * from a cache.
      * @param v the vector containing LDAPEntries
-     * @see com.sun.identity.shared.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean)
+     * @see iplanet.ldap.LDAPConnection#search(java.lang.String, int, java.lang.String, java.lang.String[], boolean)
      */
     LDAPSearchResults(Vector v) {
         this();
@@ -238,7 +238,7 @@ public class LDAPSearchResults implements Enumeration, java.io.Serializable {
      * instantiate the control. If the instantiation fails, the control is
      * returned as a basic <CODE>LDAPControl</CODE>.
      * @return an array of type <CODE>LDAPControl</CODE>.
-     * @see com.sun.identity.shared.ldap.LDAPControl#register
+     * @see iplanet.ldap.LDAPControl#register
      */
     public LDAPControl[] getResponseControls() {
         return currConn.getResponseControls(msgID);
@@ -350,7 +350,7 @@ public class LDAPSearchResults implements Enumeration, java.io.Serializable {
      * if the next result is a referral), or LDAPException 
      * if a limit on the number of entries or the time was 
      * exceeded.
-     * @see com.sun.identity.shared.ldap.LDAPSearchResults#hasMoreElements()
+     * @see iplanet.ldap.LDAPSearchResults#hasMoreElements()
      */
     public LDAPEntry next() throws LDAPException {
         Object o = nextElement();
@@ -392,7 +392,7 @@ public class LDAPSearchResults implements Enumeration, java.io.Serializable {
      * } 
      * </PRE> 
      * @return the next element in the search results.
-     * @see com.sun.identity.shared.ldap.LDAPSearchResults#hasMoreElements()
+     * @see iplanet.ldap.LDAPSearchResults#hasMoreElements()
      */
     public Object nextElement() {
         if ( entries.size() > 0 ) {
@@ -449,8 +449,8 @@ public class LDAPSearchResults implements Enumeration, java.io.Serializable {
      * }
      * </PRE>
      * @return <CODE>true</CODE> if there are more search results.
-     * @see com.sun.identity.shared.ldap.LDAPSearchResults#nextElement()
-     * @see com.sun.identity.shared.ldap.LDAPSearchResults#next()
+     * @see iplanet.ldap.LDAPSearchResults#nextElement()
+     * @see iplanet.ldap.LDAPSearchResults#next()
      */
     public boolean hasMoreElements() {
 

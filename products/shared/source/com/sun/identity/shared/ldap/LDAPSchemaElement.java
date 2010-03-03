@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 
@@ -71,9 +71,9 @@ import java.util.*;
  * </UL>
  * <P>
  *
- * @see com.sun.identity.shared.ldap.LDAPObjectClassSchema
- * @see com.sun.identity.shared.ldap.LDAPAttributeSchema
- * @see com.sun.identity.shared.ldap.LDAPMatchingRuleSchema
+ * @see iplanet.ldap.LDAPObjectClassSchema
+ * @see iplanet.ldap.LDAPAttributeSchema
+ * @see iplanet.ldap.LDAPMatchingRuleSchema
  * @version 1.0
  **/
 

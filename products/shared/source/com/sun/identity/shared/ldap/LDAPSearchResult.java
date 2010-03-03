@@ -19,10 +19,10 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
-import com.sun.identity.shared.ldap.client.opers.JDAPSearchResponse;
-import com.sun.identity.shared.ldap.ber.stream.BERElement;
+import iplanet.ldap.client.opers.JDAPSearchResponse;
+import iplanet.ldap.ber.stream.BERElement;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Enumeration;
@@ -47,7 +47,7 @@ public class LDAPSearchResult extends LDAPMessage {
      * @param msgid message identifier
      * @param rsp search operation response
      * @param controls array of controls or null
-     * @see com.sun.identity.shared.ldap.LDAPEntry
+     * @see iplanet.ldap.LDAPEntry
      */
     LDAPSearchResult(int msgid, JDAPSearchResponse rsp, LDAPControl[]controls) {
         super(msgid, rsp, controls);
@@ -109,7 +109,7 @@ public class LDAPSearchResult extends LDAPMessage {
      * Returns the entry of a server search response.
      * @return an entry returned by the server in response to a search
      * request.
-     * @see com.sun.identity.shared.ldap.LDAPEntry
+     * @see iplanet.ldap.LDAPEntry
      */
     public LDAPEntry getEntry() {
         if (m_entry == null) {

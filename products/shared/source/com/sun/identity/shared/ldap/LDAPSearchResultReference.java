@@ -19,10 +19,10 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
-import com.sun.identity.shared.ldap.client.opers.JDAPSearchResultReference;
-import com.sun.identity.shared.ldap.ber.stream.BERElement;
+import iplanet.ldap.client.opers.JDAPSearchResultReference;
+import iplanet.ldap.ber.stream.BERElement;
 import java.util.BitSet;
 import java.util.LinkedList;
 
@@ -50,7 +50,7 @@ public class LDAPSearchResultReference extends LDAPMessage {
      * @param msgid message identifier
      * @param resRef search result reference response
      * @param controls array of controls or null
-     * @see com.sun.identity.shared.ldap.LDAPEntry
+     * @see iplanet.ldap.LDAPEntry
      */
     LDAPSearchResultReference(int msgid, JDAPSearchResultReference resRef, LDAPControl[]controls) {
         super(msgid, resRef, controls);    

@@ -19,9 +19,9 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.controls;
+package iplanet.ldap.controls;
 
-import com.sun.identity.shared.ldap.LDAPControl;
+import iplanet.ldap.LDAPControl;
 
 /**
  * Represents an LDAP v3 server control that contains a string as its
@@ -41,7 +41,7 @@ abstract class LDAPStringControl extends LDAPControl {
      * @param oid the oid of this control
      * @param critical <code>true</code> if this control is critical to the search
      * @param value the value associated with this control
-     * @see com.sun.identity.shared.ldap.LDAPcontrol
+     * @see iplanet.ldap.LDAPcontrol
      */
     public LDAPStringControl( String oid, boolean critical, byte[] value ) {
         super( oid, critical, value );
@@ -76,7 +76,7 @@ abstract class LDAPStringControl extends LDAPControl {
      * @param type the OID of the control to look for
      * @return a message string, or null if the server did
      * not return a string.
-     * @see com.sun.identity.shared.ldap.LDAPConnection#getResponseControls
+     * @see iplanet.ldap.LDAPConnection#getResponseControls
      */
     public static String parseResponse( LDAPControl[] controls, String type ) {
         String msg = null;

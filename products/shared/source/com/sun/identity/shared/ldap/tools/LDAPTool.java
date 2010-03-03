@@ -1,4 +1,4 @@
-package com.sun.identity.shared.ldap.tools;
+package iplanet.ldap.tools;
 
 /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  *
@@ -22,9 +22,9 @@ package com.sun.identity.shared.ldap.tools;
  * Contributor(s): 
  */
 
-import com.sun.identity.shared.ldap.*;
-import com.sun.identity.shared.ldap.util.*;
-import com.sun.identity.shared.ldap.controls.*;
+import iplanet.ldap.*;
+import iplanet.ldap.util.*;
+import iplanet.ldap.controls.*;
 
 /**
  * LDAPTool

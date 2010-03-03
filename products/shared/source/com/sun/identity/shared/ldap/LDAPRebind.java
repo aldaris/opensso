@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 import java.io.*;
@@ -40,7 +40,7 @@ import java.io.*;
  * For all other LDAP servers, anonymous authentication is used.
  *
  * <PRE>
- * public class myLDAPRebind implements com.sun.identity.shared.ldap.LDAPRebind
+ * public class myLDAPRebind implements iplanet.ldap.LDAPRebind
  * {
  *  private String myDN;
  *  private String myPW;
@@ -71,7 +71,7 @@ public interface LDAPRebind {
      * can use to get the DN and password to use for authentication (if the client
      * is set up to follow referrals automatically).
      * @return LDAPRebindAuth object containing authentication information.
-     * @see com.sun.identity.shared.ldap.LDAPRebindAuth
+     * @see iplanet.ldap.LDAPRebindAuth
      */
     public LDAPRebindAuth getRebindAuthentication(String host,
       int port);

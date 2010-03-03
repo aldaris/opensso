@@ -20,12 +20,12 @@
  * Contributor(s): 
  */
 
-package com.sun.identity.shared.ldap.factory;
+package iplanet.ldap.factory;
 
 import java.net.*; 
 import java.io.*; 
 import javax.net.ssl.*; 
-import com.sun.identity.shared.ldap.*;
+import iplanet.ldap.*;
 
 /**
  * Creates an SSL socket connection to a server, using the standard JSSE
@@ -35,7 +35,7 @@ import com.sun.identity.shared.ldap.*;
  *
  * @version 1.0
  * @see LDAPSocketFactory
- * @see LDAPConnection#LDAPConnection(com.sun.identity.shared.ldap.LDAPSocketFactory)
+ * @see LDAPConnection#LDAPConnection(iplanet.ldap.LDAPSocketFactory)
  */
 public class JSSESocketFactory implements LDAPTLSSocketFactory,
                                           java.io.Serializable {

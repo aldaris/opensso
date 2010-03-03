@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 
@@ -28,8 +28,8 @@ import java.util.*;
  * definitions - attributes and matching rules
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPAttributeSchema
- * @see com.sun.identity.shared.ldap.LDAPMatchingRuleSchema
+ * @see iplanet.ldap.LDAPAttributeSchema
+ * @see iplanet.ldap.LDAPMatchingRuleSchema
  **/
 
 class LDAPSyntaxSchemaElement extends LDAPSchemaElement {

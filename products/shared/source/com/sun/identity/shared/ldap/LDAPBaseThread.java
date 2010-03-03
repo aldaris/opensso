@@ -1,5 +1,5 @@
 
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 
 public class LDAPBaseThread extends Thread {

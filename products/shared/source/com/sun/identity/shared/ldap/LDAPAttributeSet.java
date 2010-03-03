@@ -19,18 +19,18 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.client.*;
-import com.sun.identity.shared.ldap.client.opers.*;
+import iplanet.ldap.client.*;
+import iplanet.ldap.client.opers.*;
 
 /**
  * Represents a set of attributes (for example, the set of attributes
  * in an entry).
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPAttribute
+ * @see iplanet.ldap.LDAPAttribute
  */
 public class LDAPAttributeSet implements Cloneable, java.io.Serializable {
     static final long serialVersionUID = 5018474561697778100L;
@@ -118,9 +118,9 @@ public class LDAPAttributeSet implements Cloneable, java.io.Serializable {
      * </PRE>
      * @return attribute set containing the attributes that have
      * the specified subtypes.
-     * @see com.sun.identity.shared.ldap.LDAPAttribute
-     * @see com.sun.identity.shared.ldap.LDAPAttributeSet#getAttribute
-     * @see com.sun.identity.shared.ldap.LDAPEntry#getAttributeSet
+     * @see iplanet.ldap.LDAPAttribute
+     * @see iplanet.ldap.LDAPAttributeSet#getAttribute
+     * @see iplanet.ldap.LDAPEntry#getAttributeSet
      */
     public LDAPAttributeSet getSubset(String subtype) {
         LDAPAttributeSet attrs = new LDAPAttributeSet();
@@ -155,7 +155,7 @@ public class LDAPAttributeSet implements Cloneable, java.io.Serializable {
      *</PRE>
      * @return attribute that has exactly the same name, or null
      * (if no attribute in the set matches the specified name).
-     * @see com.sun.identity.shared.ldap.LDAPAttribute
+     * @see iplanet.ldap.LDAPAttribute
      */
     public LDAPAttribute getAttribute( String attrName ) {
         prepareHashtable();
@@ -230,7 +230,7 @@ public class LDAPAttributeSet implements Cloneable, java.io.Serializable {
      * @param lang a language specification
      * @return the attribute that matches the base name and that best
      * matches any specified language subtype.
-     * @see com.sun.identity.shared.ldap.LDAPAttribute
+     * @see iplanet.ldap.LDAPAttribute
      */
     public LDAPAttribute getAttribute( String attrName, String lang ) {
         if ( (lang == null) || (lang.length() < 1) )

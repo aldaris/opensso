@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap.util;
+package iplanet.ldap.util;
 
 import java.util.*;
 import java.io.*;
@@ -30,10 +30,10 @@ import java.util.StringTokenizer;
  * distinguished name is used to identify an entry in a directory.
  * <P>
  *
- * The <CODE>com.sun.identity.shared.ldap.LDAPDN</CODE> class uses this class
+ * The <CODE>iplanet.ldap.LDAPDN</CODE> class uses this class
  * internally.  In most cases, when working with DNs in the
  * LDAP Java classes, you should use the
- * <CODE>com.sun.identity.shared.ldap.LDAPDN</CODE> class.
+ * <CODE>iplanet.ldap.LDAPDN</CODE> class.
  * <P>
  *
  * The following DNs are examples of the different formats
@@ -47,7 +47,7 @@ import java.util.StringTokenizer;
  * <P>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPDN
+ * @see iplanet.ldap.LDAPDN
  */
 public final class DN implements Serializable {
 
@@ -61,8 +61,8 @@ public final class DN implements Serializable {
      * Type specifying a DN in the RFC format.
      * <P>
      *
-     * @see com.sun.identity.shared.ldap.util.DN#getDNType
-     * @see com.sun.identity.shared.ldap.util.DN#setDNType
+     * @see iplanet.ldap.util.DN#getDNType
+     * @see iplanet.ldap.util.DN#setDNType
      */
     public static int RFC = 0;
 
@@ -70,8 +70,8 @@ public final class DN implements Serializable {
      * Type specifying a DN in the OSF format.
      * <P>
      *
-     * @see com.sun.identity.shared.ldap.util.DN#getDNType
-     * @see com.sun.identity.shared.ldap.util.DN#setDNType
+     * @see iplanet.ldap.util.DN#getDNType
+     * @see iplanet.ldap.util.DN#setDNType
      */
     public static int OSF = 1;
 
@@ -181,7 +181,7 @@ public final class DN implements Serializable {
      *
      * @param rdn the relative distinguished name to add to the 
      * beginning of the current DN
-     * @see com.sun.identity.shared.ldap.util.RDN
+     * @see iplanet.ldap.util.RDN
      */
     public void addRDNToFront(RDN rdn) {
         m_rdns.add(0, rdn);
@@ -193,7 +193,7 @@ public final class DN implements Serializable {
      * <P>
      *
      * @param rdn the relative distinguished name to append to the current DN
-     * @see com.sun.identity.shared.ldap.util.RDN
+     * @see iplanet.ldap.util.RDN
      */
     public void addRDNToBack(RDN rdn) {
         m_rdns.add(rdn);
@@ -207,7 +207,7 @@ public final class DN implements Serializable {
      * <P>
      *
      * @param rdn the relative distinguished name to add to the current DN
-     * @see com.sun.identity.shared.ldap.util.RDN
+     * @see iplanet.ldap.util.RDN
      */
     public void addRDN(RDN rdn) {
         if (m_dnType == RFC) {
@@ -223,9 +223,9 @@ public final class DN implements Serializable {
      *
      * @param type one of the following constants: <CODE>DN.RFC</CODE>
      * (to use the RFC format) or <CODE>DN.OSF</CODE> (to use the OSF format)
-     * @see com.sun.identity.shared.ldap.util.DN#getDNType
-     * @see com.sun.identity.shared.ldap.util.DN#RFC
-     * @see com.sun.identity.shared.ldap.util.DN#OSF
+     * @see iplanet.ldap.util.DN#getDNType
+     * @see iplanet.ldap.util.DN#RFC
+     * @see iplanet.ldap.util.DN#OSF
      */
     public void setDNType(int type) {
         m_dnType = type;
@@ -238,9 +238,9 @@ public final class DN implements Serializable {
      * @return one of the following constants: <CODE>DN.RFC</CODE>
      * (if the DN is in RFC format) or <CODE>DN.OSF</CODE>
      * (if the DN is in OSF format).
-     * @see com.sun.identity.shared.ldap.util.DN#setDNType
-     * @see com.sun.identity.shared.ldap.util.DN#RFC
-     * @see com.sun.identity.shared.ldap.util.DN#OSF
+     * @see iplanet.ldap.util.DN#setDNType
+     * @see iplanet.ldap.util.DN#RFC
+     * @see iplanet.ldap.util.DN#OSF
      */
     public int getDNType() {
         return m_dnType;
@@ -258,7 +258,7 @@ public final class DN implements Serializable {
      * Returns a list of the components (<CODE>RDN</CODE> objects)
      * that make up the current DN.
      * @return a list of the components of this DN.
-     * @see com.sun.identity.shared.ldap.util.RDN
+     * @see iplanet.ldap.util.RDN
      */
     public List getRDNs() {
         return m_rdns;

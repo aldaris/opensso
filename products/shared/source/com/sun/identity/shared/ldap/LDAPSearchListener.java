@@ -19,10 +19,10 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
-import com.sun.identity.shared.ldap.client.*;
+import iplanet.ldap.client.*;
 
 /**
  * Manages search results, references and responses returned on one or 
@@ -61,7 +61,7 @@ public class LDAPSearchListener extends LDAPMessageQueue {
      * @param asynchOp a boolean flag indicating whether the object is used 
      * for asynchronous LDAP operations
      * @param cons LDAP search constraints
-     * @see com.sun.identity.shared.ldap.LDAPAsynchronousConnection
+     * @see iplanet.ldap.LDAPAsynchronousConnection
      */    
     LDAPSearchListener ( boolean asynchOp, LDAPSearchConstraints cons ) {
         super ( asynchOp );

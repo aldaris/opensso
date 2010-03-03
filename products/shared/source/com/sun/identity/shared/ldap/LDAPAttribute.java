@@ -19,17 +19,17 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.io.*;
 import java.util.*;
-import com.sun.identity.shared.ldap.ber.stream.*;
+import iplanet.ldap.ber.stream.*;
 
 /**
  * Represents the name and values of an attribute in an entry.
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPAttributeSet
+ * @see iplanet.ldap.LDAPAttributeSet
  */
 public class LDAPAttribute implements java.io.Serializable {
 
@@ -242,7 +242,7 @@ public class LDAPAttribute implements java.io.Serializable {
      *
      * @param attrName name of the attribute from which to extract the subtypes
      * @return array of subtypes, or null (if the name has no subtypes).
-     * @see com.sun.identity.shared.ldap.LDAPAttribute#getBaseName
+     * @see iplanet.ldap.LDAPAttribute#getBaseName
      */
     public static String[] getSubtypes(String attrName) {
         StringTokenizer st = new StringTokenizer(attrName, ";");
@@ -302,7 +302,7 @@ public class LDAPAttribute implements java.io.Serializable {
      *
      * @param attrName name of the attribute from which to extract the base name
      * @return base name (the attribute name without any subtypes).
-     * @see com.sun.identity.shared.ldap.LDAPAttribute#getSubtypes
+     * @see iplanet.ldap.LDAPAttribute#getSubtypes
      */
     public static String getBaseName(String attrName) {
         String basename = attrName;
@@ -321,7 +321,7 @@ public class LDAPAttribute implements java.io.Serializable {
      * <P>
      *
      * @return base name (the attribute name without any subtypes).
-     * @see com.sun.identity.shared.ldap.LDAPAttribute#getSubtypes
+     * @see iplanet.ldap.LDAPAttribute#getSubtypes
      */
     public String getBaseName() {
         return getBaseName(getName());
@@ -336,7 +336,7 @@ public class LDAPAttribute implements java.io.Serializable {
      *
      * @param subtype the single subtype for which you want to check
      * @return true if the attribute name contains the specified subtype.
-     * @see com.sun.identity.shared.ldap.LDAPAttribute#getSubtypes
+     * @see iplanet.ldap.LDAPAttribute#getSubtypes
      */
     public boolean hasSubtype(String subtype) {
         String[] mytypes = getSubtypes();
@@ -357,7 +357,7 @@ public class LDAPAttribute implements java.io.Serializable {
      * <P>
      * @param subtypes an array of subtypes to check
      * @return true if the attribute name contains all subtypes
-     * @see com.sun.identity.shared.ldap.LDAPAttribute#getSubtypes
+     * @see iplanet.ldap.LDAPAttribute#getSubtypes
      */
     public boolean hasSubtypes(String[] subtypes) {
         for(int i = 0; i < subtypes.length; i++) {

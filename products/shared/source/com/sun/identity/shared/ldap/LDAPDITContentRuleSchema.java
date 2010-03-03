@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package com.sun.identity.shared.ldap;
+package iplanet.ldap;
 
 import java.util.*;
 
@@ -91,7 +91,7 @@ import java.util.*;
  * </PRE>
  *
  * @version 1.0
- * @see com.sun.identity.shared.ldap.LDAPSchemaElement
+ * @see iplanet.ldap.LDAPSchemaElement
  **/
 
 public class LDAPDITContentRuleSchema extends LDAPSchemaElement {
