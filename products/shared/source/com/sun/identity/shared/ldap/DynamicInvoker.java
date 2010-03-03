@@ -19,7 +19,7 @@
  *
  * Contributor(s): 
  */
-package iplanet.ldap;
+package com.sun.identity.shared.ldap;
 
 import java.lang.reflect.*;
 import java.util.Hashtable;
