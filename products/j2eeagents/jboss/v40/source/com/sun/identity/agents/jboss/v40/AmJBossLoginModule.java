@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmJBossLoginModule.java,v 1.1 2008-12-11 15:01:02 naghaon Exp $
+ * $Id: AmJBossLoginModule.java,v 1.2 2010-03-04 20:46:44 huacui Exp $
  *
  */
 
@@ -154,7 +154,9 @@ public class AmJBossLoginModule extends UsernamePasswordLoginModule {
      * @throws LoginException
      */
     public Group[] getRoleSets() throws LoginException {
-        Group[] roleSets = {userRoles};
+        Group callerPrincipal = new SimpleGroup("CallerPrincipal");
+        callerPrincipal.addMember(getIdentity());
+        Group[] roleSets = {userRoles, callerPrincipal};
         return roleSets;
     }
     

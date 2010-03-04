@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmAgentBaseFilter.java,v 1.6 2009-03-26 18:29:23 ww203982 Exp $
+ * $Id: AmAgentBaseFilter.java,v 1.7 2010-03-04 20:46:42 huacui Exp $
  *
  */
 
@@ -94,10 +94,14 @@ public abstract class AmAgentBaseFilter implements Filter
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 break;
 
+            case AmFilterResultStatus.INT_STATUS_UNAUTHORIZED :
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                break;
+
             default :
                 throw new AgentException("Unknown filter result status: "
-                        				+ result.getStatus() + ":" 
-                        				+ result.getStatus().getIntValue());
+                        	         + result.getStatus() + ":"
+                        		 + result.getStatus().getIntValue());
             }
         } catch(Exception ex) {
             throw new ServletException(

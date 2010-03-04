@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTaskHandler.java,v 1.4 2008-06-25 05:51:48 qcheng Exp $
+ * $Id: SSOTaskHandler.java,v 1.5 2010-03-04 20:46:43 huacui Exp $
  *
  */
 
@@ -100,8 +100,13 @@ implements ISSOTaskHandler {
                                + tokenValidator.getSSOTokenValue(
                                        ctx.getHttpServletRequest()));
                 }
-                doCookiesReset(ctx);
-                result = doSSOLogin(ctx);
+                if (getConfigurationBoolean(CONFIG_UNAUTHORIZED_RESPONSE_ENABLE,
+                        DEFAULT_UNAUTHORIZED_RESPONSE_ENABLE)) {
+                    result = new AmFilterResult(AmFilterResultStatus.STATUS_UNAUTHORIZED);
+                } else {
+                    doCookiesReset(ctx);
+                    result = doSSOLogin(ctx);
+                }
             }
         } else {
             if (ssoContext.isSSOCacheEnabled()) {

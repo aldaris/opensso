@@ -41,7 +41,7 @@
 
  *
 
- * $Id: IFilterConfigurationConstants.java,v 1.15 2009-10-15 23:22:29 leiming Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.16 2010-03-04 20:46:43 huacui Exp $
 
  *
 
@@ -539,6 +539,8 @@ public interface IFilterConfigurationConstants {
         "ignore.path.info";
 
 
+    public static final String CONFIG_UNAUTHORIZED_RESPONSE_ENABLE =
+        "unauthorized.response.enable";
 
 
     //Default Values
@@ -684,8 +686,10 @@ public interface IFilterConfigurationConstants {
     public static final boolean DEFAULT_WEBSERVICE_PROCESS_GET = true;
 
 
-    public static final boolean DEFAULT_IGNORE_PATH_INFO = false; 
+    public static final boolean DEFAULT_IGNORE_PATH_INFO = false;
 
+    public static final boolean DEFAULT_UNAUTHORIZED_RESPONSE_ENABLE = false;
+    
 
     // Other supporting constants
 

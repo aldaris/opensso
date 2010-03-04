@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterResultStatus.java,v 1.3 2008-06-25 05:51:43 qcheng Exp $
+ * $Id: AmFilterResultStatus.java,v 1.4 2010-03-04 20:46:43 huacui Exp $
  *
  */
 
@@ -40,12 +40,14 @@ public class AmFilterResultStatus extends ConstrainedSelection {
     public static final int INT_STATUS_FORBIDDEN = 2;
     public static final int INT_STATUS_SERVE_DATA = 3;
     public static final int INT_STATUS_SERVER_ERROR = 4;
+    public static final int INT_STATUS_UNAUTHORIZED = 5;
     
     public static final String STR_STATUS_CONTINUE = "CONTINUE";
     public static final String STR_STATUS_REDIRECT = "REDIRECT";
     public static final String STR_STATUS_FORBIDDEN = "FORBIDDEN";
     public static final String STR_STATUS_SERVE_DATA = "SERVE DATA";
     public static final String STR_STATUS_SERVER_ERROR = "SERVER ERROR";
+    public static final String STR_STATUS_UNAUTHORIZED = "UNAUTHORIZED";
     
     public static final AmFilterResultStatus STATUS_CONTINUE =
         new AmFilterResultStatus(STR_STATUS_CONTINUE, INT_STATUS_CONTINUE);
@@ -61,10 +63,14 @@ public class AmFilterResultStatus extends ConstrainedSelection {
 
     public static final AmFilterResultStatus STATUS_SERVER_ERROR =
         new AmFilterResultStatus(STR_STATUS_SERVER_ERROR, INT_STATUS_SERVER_ERROR);
+
+    public static final AmFilterResultStatus STATUS_UNAUTHORIZED =
+        new AmFilterResultStatus(STR_STATUS_UNAUTHORIZED, INT_STATUS_UNAUTHORIZED);
     
     private static final AmFilterResultStatus[] values =
         new AmFilterResultStatus[] { STATUS_CONTINUE, 
-            STATUS_REDIRECT, STATUS_FORBIDDEN, STATUS_SERVE_DATA };
+            STATUS_REDIRECT, STATUS_FORBIDDEN, STATUS_SERVE_DATA,
+            STATUS_SERVER_ERROR, STATUS_UNAUTHORIZED};
     
     
     public static AmFilterResultStatus getStatus(String status) {

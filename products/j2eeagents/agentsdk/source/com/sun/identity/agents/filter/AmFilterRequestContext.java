@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterRequestContext.java,v 1.9 2008-10-07 17:32:31 huacui Exp $
+ * $Id: AmFilterRequestContext.java,v 1.10 2010-03-04 20:46:43 huacui Exp $
  *
  */
 package com.sun.identity.agents.filter;
@@ -469,6 +469,16 @@ public class AmFilterRequestContext implements IUtilConstants {
      */
     public AmFilterResult getServerErrorResult() {
         return new AmFilterResult(AmFilterResultStatus.STATUS_SERVER_ERROR);
+    }
+
+    /**
+     * Returns an <code>AmFilterResult</code> instance that represents an
+     * unauthorized error result for filter processing.
+     *
+     * @return an <code>AmFilterResult</code> to indicate an unauthorized error
+     */
+    public AmFilterResult getUnauthorizedResult() {
+        return new AmFilterResult(AmFilterResultStatus.STATUS_UNAUTHORIZED);
     }
 
     /**
